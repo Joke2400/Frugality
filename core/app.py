@@ -1,6 +1,7 @@
 from flask import redirect, url_for, render_template, request, session, flash
 from core import app
 
+'''
 @app.route("/main/")
 def main():
     return render_template("index.html")
@@ -15,6 +16,15 @@ def login():
         session.permanent = True
         user = request.form["name"]
         session["user"] = user
+
+        found_user = users.query.filter_by(name=user).first()
+        if found_user:
+            session["email"] = found_user.email
+        else:
+            usr = users(user, "")
+            db.session.add(usr)
+            db.session.commit()
+
         flash("Login successful")
         return redirect(url_for("user"))
     else:
@@ -31,6 +41,10 @@ def logout():
     session.pop("email", None)
     return redirect(url_for("login"))
 
+@app.route("/view")
+def view():
+    return render_template("view.html", values=users.query.all())
+
 @app.route("/user/", methods=["POST", "GET"])
 def user():
     email = None
@@ -40,6 +54,9 @@ def user():
         if request.method == "POST":
             email = request.form["email"]
             session["email"] = email
+            found_user = users.query.filter_by(name=user).first()
+            found_user.email = email
+            db.session.commit()
             flash(f"Email was saved")
         else:
             if "email" in session:
@@ -49,4 +66,4 @@ def user():
     else:
         flash("You are not logged in")
         return redirect(url_for("login"))
-
+'''

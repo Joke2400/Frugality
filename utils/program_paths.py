@@ -17,15 +17,19 @@ class Paths:
 
     @classmethod
     def database(cls):
-        return cls.project.path / "data" / "database.db"
+        return cls.project / "data" / "database.db"
 
     @classmethod
     def test_database(cls):
-        return cls.project.path / "data" / "test_database.db"
+        return cls.project / "data" / "test_database.db"
+
+    @classmethod
+    def templates(cls):
+        return cls.project / "data" / "templates"
 
     @classmethod
     def log(cls):
-        return cls.project.path / "log.txt"
+        return cls.project / "log.txt"
 
     @classmethod
     def settings(cls):
