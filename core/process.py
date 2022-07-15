@@ -4,7 +4,6 @@ from datetime import timedelta
 from flask_sqlalchemy import SQLAlchemy
 
 from utils import Paths
-from .database_manager import data_manager
 
 class Process:
     
@@ -16,8 +15,11 @@ class Process:
         self.app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
         self.app.permanent_session_lifetime = timedelta(days=1)
         self.db = SQLAlchemy(self.app)
-        self.data_manager = data_manager(self.db)
 
     def start(self):
+        from .database_manager import data_manager
+        #Breaking convention to avoid a circular import :)
+        #Otherwise sqlalchemy_db_classes would need to be in same file as data_manager
+        self.data_manager = data_manager
         self.data_manager.start_db()
         self.app.run() 
