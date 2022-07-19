@@ -1,39 +1,5 @@
 
 
-    def start_database1(self, path):
-        engine = create_engine(url=f"sqlite:///{path}", echo=False)
-        Base.metadata.create_all(bind=engine)
-        self.sessionmaker = sessionmaker(bind=engine)
-        return engine
-
-    def reset_database(self):
-        print("[reset_database]: Removing and resetting database.")
-        if self.session is not None:
-            self.session.close()
-        try:
-            os.remove(FilePaths.database_path)
-        except FileNotFoundError:
-            print("[reset_database]: Could not find existing database file.")
-            self.db_engine = None
-        else:
-            self.db_engine = self.start_database(path=self.db_path)
-            self.init_chains()
-            self.session = self.get_session()
-            print(
-                f"[reset_database]: Created new database at: {self.db_path}\n")
-
-    def get_session(self):
-        if self.session is None or not isinstance(self.session, Session):
-            session = self.sessionmaker()
-            print("\n[get_session]: New database session started.")
-            return session
-        return self.session
-
-    def close_session(self):
-        self.session.close()
-        self.session = None
-        print("\n[close_session]: Current database session closed.")
-
     def basic_query(self, table, payload, first=False):
         result = self.session.query(table).filter_by(**payload).all()
         if first:

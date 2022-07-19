@@ -1,68 +1,42 @@
 from data.urls import SKaupatURLs as s_urls
-from urllib.parse import quote
 import requests
 
-def run():
+def run(store_id):
     api_url = s_urls.api_url
-    query = """query GetDeliveryAreas($deliveryMethod: DeliveryMethod, $brand: String, $onlySKaupat: Boolean, $postalCode: String) {
+    query1 = """query GetDeliveryAreas($deliveryMethod: DeliveryMethod, $brand: String, $onlySKaupat: Boolean, $postalCode: String) {
         deliveryAreas(
             deliveryMethod: $deliveryMethod
             brand: $brand
             onlySKaupat: $onlySKaupat
             postalCode: $postalCode
         ) {
-                name
                 areaId
-                storeId
-                price
-                description
-                deliveryMethod
-                alcoholSellingAllowed
-                isFastTrack
                 store {
                     name
                     id
                     brand
-                    city
-                    street
-                    postalCode
-                    availablePaymentMethods
                     __typename
                 }
-                districts {
-                    city
-                    postalCode
-                    __typename
-                }
-                address {
-                    city
-                    postalCode
-                    street
-                    __typename
-                }
-                __typename
         }
     }
     """
-    operation_name = "GetDeliveryAreas"
+    query2 = """query GetStoreInfo($StoreID: ID!) {
+        store(id: $StoreID) {
+            name
+            id
+            brand
+            __typename
+        }
+    }
+    """
+    operation_name = "GetStoreInfo"
     variables = {
-        "brand": "",
-        "deliveryMethod": "PICKUP",
-        "onlySkaupat": True,
-        "postalCode": ""
+        "StoreID": int(store_id)
     }
     
-    #query2 = "Prisma"
-    #variables = {"query": query2, "brand": "", "cursor": ""}
-    #operation_url = api_url + "?operationName=RemoteStoreSearch"
-    #get_request = requests.get(url=operation_url, params={"variables": variables})
-    #print(get_request.status_code)
-    #print(get_request.text)
-
     post_request = requests.post(url=api_url, json={
         "operationName": operation_name,
         "variables": variables,
-        "query": query
+        "query": query2
         })
-    print(post_request.status_code)
-    print(post_request.text)
+    return post_request.text

@@ -15,3 +15,15 @@
     <p><input type="submit" name="submit" /></p>
 </form>
 {% endblock %}
+
+
+<div id="query_block">
+    <form action="#">
+        <input id="operation" type="text" value="" placeholder="Enter operation">
+        <input id="variables" type="text" value="" placeholder="Enter variables">
+    </form>
+    <button id="b" onclick="sendQuery()">Query</button>
+</div>
+<div id="response_div">
+    <p id="response_embed"></p>
+</div>

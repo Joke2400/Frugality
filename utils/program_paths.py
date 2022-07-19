@@ -28,6 +28,10 @@ class Paths:
         return cls.project / "data" / "templates"
 
     @classmethod
+    def static(cls):
+        return cls.project / "data" / "static"
+
+    @classmethod
     def log(cls):
         return cls.project / "log.txt"
 
