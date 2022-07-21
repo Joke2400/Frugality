@@ -1,0 +1,16 @@
+api/__pycache__/__init__.cpython-310.pyc
+api/__pycache__/api_functions.cpython-310.pyc
+.vscode/settings.json
+api/__pycache__/queries.cpython-310.pyc
+__pycache__/main.cpython-310.pyc
+core/__pycache__/__init__.cpython-310.pyc
+core/__pycache__/app.cpython-310.pyc
+core/__pycache__/process.cpython-310.pyc
+data/__pycache__/urls.cpython-310.pyc
+temp/__pycache__/test.cpython-310.pyc
+utils/__pycache__/__init__.cpython-310.pyc
+utils/__pycache__/descriptors.cpython-310.pyc
+utils/__pycache__/program_paths.cpython-310.pyc
+core/database_manager/__pycache__/__init__.cpython-310.pyc
+core/database_manager/__pycache__/manager.cpython-310.pyc
+core/database_manager/__pycache__/sqlalchemy_db_classes.cpython-310.pyc

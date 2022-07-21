@@ -32,6 +32,5 @@ body p {
 @media (min-width: 40em) {
     .content {
         grid-auto-flow: column;
-        grid-template-rows: 1fr 1fr 1fr;
     }
 }
