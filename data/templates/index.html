@@ -1,49 +1,32 @@
 {% extends "base.html" %}
 {% block page_title %}Frugality{% endblock %}
 {%block content %}
-<div class="content">
-    <div>
+<nav>Nav</nav>
+<div class="header">Header</div>
+<div class="content-large">
+    <div id="text">
         <h2>Lorem ipsum dolor</h2>
         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,
             molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum
             numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium
-            optio, eaque rerum! Provident similique accusantium nemo autem.</p>
+            optio, eaque rerum! Provident similique accusantium nemo autem.
+        
+            542862479
+        </p>
     </div>
-    <div>
-        <h2>Lorem ipsum dolor</h2>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,
-            molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum
-            numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium
-            optio, eaque rerum! Provident similique accusantium nemo autem.</p>
+    <div id="query_block">
+        <form>
+            <input id="operation" type="text" value="" placeholder="Enter operation">
+        </form>
+        <form>
+            <input id="variables" type="text" value="" placeholder="Enter variables">
+        </form>
+        <button onclick="sendQuery()">Query</button>
+        <div id="response_div">
+            <p id="response_embed"></p>
+        </div>
     </div>
-    <div>
-        <h2>Lorem ipsum dolor</h2>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,
-            molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum
-            numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium
-            optio, eaque rerum! Provident similique accusantium nemo autem.</p>
-    </div>
-    <div>
-        <h2>Lorem ipsum dolor</h2>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,
-            molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum
-            numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium
-            optio, eaque rerum! Provident similique accusantium nemo autem.</p>
-    </div>
-    <div>
-        <h2>Lorem ipsum dolor</h2>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,
-            molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum
-            numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium
-            optio, eaque rerum! Provident similique accusantium nemo autem.</p>
-    </div>
-    <div>
-        <h2>Lorem ipsum dolor</h2>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,
-            molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum
-            numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium
-            optio, eaque rerum! Provident similique accusantium nemo autem.</p>
-    </div>
-    
 </div>
+<div class="sidebar">Sidebar</div>
+<div class="footer">Footer</div>
 {% endblock %}

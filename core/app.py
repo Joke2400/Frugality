@@ -8,19 +8,37 @@ from api import queries, send_post
 def main():
     return render_template("index.html")
 
+@app.route("/")
+def base_url_redirect():
+    return redirect(url_for("main"))
+
+@app.route("/recipes")
+@app.route("/recipes/")
+def recipes():
+    return render_template("recipes.html")
+
 @app.route("/query/", methods=["POST"])
 def query():
     if request.method == "POST":
-        operation = request.json["operation"]
-        variables = request.json["variables"]
         print(f"Operation: {operation} ({type(operation)})")
-        print(f"Operation: {variables} ({type(variables)})")
+        operation = request.json["operation"] if not None else ""
+    
         if operation in queries:
             query = queries[operation]
             variables = json.loads(variables)
             response = send_post(query, operation, variables)
         return {"data": response.text}
 
-@app.route("/")
-def base_url_redirect():
-    return redirect(url_for("main"))
+
+@app.route("/recipes/fetch")
+@app.route("/recipes/fetch/")
+def recipe_fetch():
+    return {"data": (
+        {"name": "Chicken and rice"},
+        {"name": "Noodles"},
+        {"name": "Tomato soup"},
+        {"name": "Banana split"},
+        {"name": "Pepperoni Pizza"},
+        {"name": "Pea soup"},
+        {"name": "Meatballs"},
+        )}

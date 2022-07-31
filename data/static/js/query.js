@@ -17,23 +17,13 @@ function sendQuery() {
     });
 }
 
-function createRecipe() {
-    var elements = document.getElementsByClassName("ingredient");
-    var ingredients = []
-    for(var i = 0; i < elements.length; i++) {
-        let name = elements[i].name
-        let amount = elements[i].amount
-        ingredients.push({name: name, amount: amount})
-    }
-    let fetchData = {
-        method: "post",
-        headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            ingredients: ingredients
-        })
-    }
-    fetch("/new_recipe/", fetchData)
-}
+let button = document.createElement("button")
+new_element.className = "recipe-button"
+let header = document.createElement("h4");
+header.innerHTML = orderNum
+let paragraph = document.createElement("p");
+paragraph.innerHTML = recipeName
+
+new_element.appendChild(button)
+button.appendChild(header)
+button.appendChild(paragraph)
