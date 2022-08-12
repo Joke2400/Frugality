@@ -1,5 +1,6 @@
 queries = {}
 
+#Hardcoding the queries into a dict for simplicity
 queries["GetDeliveryAreas"] = """query GetDeliveryAreas($deliveryMethod: DeliveryMethod, $brand: String, $onlySKaupat: Boolean, $postalCode: String) {
         deliveryAreas(
             deliveryMethod: $deliveryMethod
