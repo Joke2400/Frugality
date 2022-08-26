@@ -11,7 +11,7 @@ Basic project idea/vision:
 - Grocery bag price calulcator
 - Scope of the project is limited to the larger grocery store chains situated in Finland
 - Able to compare competitors store prices for entire grocery lists / individual recipes / individual items
-- Able to utilize google maps api to search nearby stores by utilizing a given address (user defined radius)
+- Able to utilize google maps api to search nearby stores by utilizing a given street address (user defined radius)
 - Able to factor in transit cost into final calculation
 - Able to factor in potential delivery cost into final calculation
 
