@@ -11,5 +11,7 @@ def send_post(query, operation_name, variables):
     })
     return request
 
-def send_get(query, operation_name, variables):
-    raise NotImplementedError
+def send_get(operation_name, variables):
+    payload = {"operationName": operation_name, "variables": variables}
+    request = requests.get(url=api_url, params=payload)
+    return request

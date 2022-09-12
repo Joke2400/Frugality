@@ -1,17 +1,22 @@
 {% extends "base.html" %}
 {% block page_title %}Frugality{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/style.css')}}">
+{% endblock %}
+
+{% block scripts %}
+<script defer src="{{url_for('static', filename='js/query.js')}}"></script>
+{% endblock %}
+
 {%block content %}
 <nav>Nav</nav>
 <div class="header">Header</div>
 <div class="content-large">
     <div id="text">
-        <h2>Lorem ipsum dolor</h2>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,
-            molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum
-            numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium
-            optio, eaque rerum! Provident similique accusantium nemo autem.
-        
-            542862479
+        <h2>Groceries price calculator</h2>
+        <p>This app is currently in very early development. This page simply sends out
+            a request to the server to fetch the price of a predefined shopping list.
         </p>
     </div>
     <div id="query_block">
@@ -19,7 +24,13 @@
             <input id="operation" type="text" value="" placeholder="Enter operation">
         </form>
         <form>
-            <input id="variables" type="text" value="" placeholder="Enter variables">
+            <input id="store_id" type="text" value="" placeholder="Enter store ID">
+        </form>
+        <form>
+            <input id="query" type="text" value="" placeholder="Enter query">
+        </form>
+        <form>
+            <input id="category" type="text" value="" placeholder="Enter category (THIS IS CURRENTLY A PLACEHOLDER)">
         </form>
         <button onclick="sendQuery()">Query</button>
         <div id="response_div">

@@ -9,10 +9,9 @@
 }
 
 #query_block {
-    display:inline-block;
-    overflow: scroll;
+    display:grid;
     grid-column-start: 2;
-    grid-row: 1 / span 2;
+    grid-row: 1 / span 3;
 }
 
 #query_block form input {
