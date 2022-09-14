@@ -1,5 +1,5 @@
 from .process import Process
-from .app_dataclasses import QueryItem
+from .app_dataclasses import QueryItem, ResultItem
 
 process = Process()
 app = process.app

@@ -10,34 +10,101 @@
 {% endblock %}
 
 {%block content %}
-<nav>Nav</nav>
-<div class="header">Header</div>
-<div class="content-large">
-    <div id="text">
-        <h2>Groceries price calculator</h2>
-        <p>This app is currently in very early development. This page simply sends out
-            a request to the server to fetch the price of a predefined shopping list.
-        </p>
-    </div>
-    <div id="query_block">
-        <form>
-            <input id="operation" type="text" value="" placeholder="Enter operation">
-        </form>
-        <form>
-            <input id="store_id" type="text" value="" placeholder="Enter store ID">
-        </form>
-        <form>
-            <input id="query" type="text" value="" placeholder="Enter query">
-        </form>
-        <form>
-            <input id="category" type="text" value="" placeholder="Enter category (THIS IS CURRENTLY A PLACEHOLDER)">
-        </form>
-        <button onclick="sendQuery()">Query</button>
-        <div id="response_div">
+<div class="container">
+    <nav>Nav</nav>
+    <div class="content-large">
+        <div id="overview">
+            <h2>Groceries price calculator</h2>
+            <p>This app is currently in very early development. This page simply sends out
+                a request to the server to fetch the price of a predefined shopping list.
+            </p>
+        </div>
+        <div class="query_element">
+            <form>
+                <input id="operation" type="text" value="Groceries" placeholder="Enter operation">
+            </form>
+            <form>
+                <input id="store_id" type="text" value="542862479" placeholder="Enter store ID">
+            </form>
+            <form>
+                <input class="query_field" type="text" value="" placeholder="Enter query">
+                <input class="amount_field" type="text" value="" placeholder="Amount">
+                <select class="categories_select" id="select">
+                    <option value="hedelmat-ja-vihannekset-1">Hedelmät ja vihannekset</option>
+                    <option value="leivat-keksit-ja-leivonnaiset-1">Leivät ja leivonnaiset</option>
+                    <option value="liha-ja-kasviproteiinit-1">Liha ja kasviproteiinit</option>
+                    <option value="kala-ja-merenelavat-1">Kala ja merenelävät</option>
+                    <option value="maito-munat-ja-rasvat-0">Maito, munat ja rasvat</option>
+                    <option value="juustot-0">Juustot</option>
+                </select>
+            </form>
+            <form>
+                <input class="query_field" type="text" value="" placeholder="Enter query">
+                <input class="amount_field" type="text" value="" placeholder="Amount">
+                <select class="categories_select" id="select">
+                    <option value="hedelmat-ja-vihannekset-1">Hedelmät ja vihannekset</option>
+                    <option value="leivat-keksit-ja-leivonnaiset-1">Leivät ja leivonnaiset</option>
+                    <option value="liha-ja-kasviproteiinit-1">Liha ja kasviproteiinit</option>
+                    <option value="kala-ja-merenelavat-1">Kala ja merenelävät</option>
+                    <option value="maito-munat-ja-rasvat-0">Maito, munat ja rasvat</option>
+                    <option value="juustot-0">Juustot</option>
+                </select>
+            </form>
+            <form>
+                <input class="query_field" type="text" value="" placeholder="Enter query">
+                <input class="amount_field" type="text" value="" placeholder="Amount">
+                <select class="categories_select" id="select">
+                    <option value="hedelmat-ja-vihannekset-1">Hedelmät ja vihannekset</option>
+                    <option value="leivat-keksit-ja-leivonnaiset-1">Leivät ja leivonnaiset</option>
+                    <option value="liha-ja-kasviproteiinit-1">Liha ja kasviproteiinit</option>
+                    <option value="kala-ja-merenelavat-1">Kala ja merenelävät</option>
+                    <option value="maito-munat-ja-rasvat-0">Maito, munat ja rasvat</option>
+                    <option value="juustot-0">Juustot</option>
+                </select>
+            </form>
+            <form>
+                <input class="query_field" type="text" value="" placeholder="Enter query">
+                <input class="amount_field" type="text" value="" placeholder="Amount">
+                <select class="categories_select" id="select">
+                    <option value="hedelmat-ja-vihannekset-1">Hedelmät ja vihannekset</option>
+                    <option value="leivat-keksit-ja-leivonnaiset-1">Leivät ja leivonnaiset</option>
+                    <option value="liha-ja-kasviproteiinit-1">Liha ja kasviproteiinit</option>
+                    <option value="kala-ja-merenelavat-1">Kala ja merenelävät</option>
+                    <option value="maito-munat-ja-rasvat-0">Maito, munat ja rasvat</option>
+                    <option value="juustot-0">Juustot</option>
+                </select>
+            </form>
+            <form>
+                <input class="query_field" type="text" value="" placeholder="Enter query">
+                <input class="amount_field" type="text" value="" placeholder="Amount">
+                <select class="categories_select" id="select">
+                    <option value="hedelmat-ja-vihannekset-1">Hedelmät ja vihannekset</option>
+                    <option value="leivat-keksit-ja-leivonnaiset-1">Leivät ja leivonnaiset</option>
+                    <option value="liha-ja-kasviproteiinit-1">Liha ja kasviproteiinit</option>
+                    <option value="kala-ja-merenelavat-1">Kala ja merenelävät</option>
+                    <option value="maito-munat-ja-rasvat-0">Maito, munat ja rasvat</option>
+                    <option value="juustot-0">Juustot</option>
+                </select>
+            </form>
+            <form>
+                <input class="query_field" type="text" value="" placeholder="Enter query">
+                <input class="amount_field" type="text" value="" placeholder="Amount">
+                <select class="categories_select" id="select">
+                    <option value="hedelmat-ja-vihannekset-1">Hedelmät ja vihannekset</option>
+                    <option value="leivat-keksit-ja-leivonnaiset-1">Leivät ja leivonnaiset</option>
+                    <option value="liha-ja-kasviproteiinit-1">Liha ja kasviproteiinit</option>
+                    <option value="kala-ja-merenelavat-1">Kala ja merenelävät</option>
+                    <option value="maito-munat-ja-rasvat-0">Maito, munat ja rasvat</option>
+                    <option value="juustot-0">Juustot</option>
+                </select>
+            </form>
+            <button onclick="sendQuery()">Query</button>
+        </div>
+        <div class="response_element">
             <p id="response_embed"></p>
         </div>
     </div>
+    <div class="sidebar">Sidebar</div>
+    <div class="footer">Footer</div>
 </div>
-<div class="sidebar">Sidebar</div>
-<div class="footer">Footer</div>
 {% endblock %}

@@ -37,7 +37,7 @@ queries["GetStoreInfo"] = """query GetStoreInfo($StoreID: ID!) {
         store(id: $StoreID) {
             name
             id
-            brand6413605229549
+            brand
         }
     }
     """

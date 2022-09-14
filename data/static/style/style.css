@@ -1,40 +1,87 @@
-
-#response_div {
-    overflow-wrap: break-word;
+body {
+    margin: 0em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-#text {
-    grid-column-start: 1;
-    grid-row: 1 / span 2;
+nav {
+    padding: 0.2em;
+    border: 3px solid black;
+    grid-area: nav;
 }
 
-#query_block {
-    display:grid;
-    grid-column-start: 2;
-    grid-row: 1 / span 3;
-}
+.container {
+    margin: 10em;
+    width: 50vw;
+    height: 70vh;
+    display: grid;
+    grid-template-areas:
+        "nav nav nav"
+        "content-large content-large sidebar"
+        "content-large content-large sidebar"
+        "footer footer footer";
+    grid-template-columns: 1fr 1fr 0.5fr;
+    grid-template-rows: 4em 4em 1fr 5em;
+    gap: 1em;
 
-#query_block form input {
-    width: 100%;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 15px;
     padding: 0.5em;
-    margin-bottom: 1em;
-    border-bottom: 2px solid gray;
-    border-radius: 0.3em;
     box-sizing: border-box;
 }
 
-#query_block form input:focus {
-    background-color: lightblue;
+.content-large {
+    grid-area: content-large;
+    display: flex;
+    flex-flow: column wrap;
+    padding: 1em;
+    padding-top: 2em;
+    margin: 0;
+    border: 3px solid black;
+    border-radius: 0.3em;
+    overflow: hidden;
 }
 
-#query_block button {
-    background-color: azure;
-    border: 2px solid gray;
+.content-large form {
+    background-color: rgba(135, 255, 149, 0.5)
+}
+
+#overview {
+    background-color: rgba(85, 85, 255, 0.5)
+}
+
+.footer {
+    grid-area: footer;
+    background-color: white;
+    padding: 1em;
+    border: 3px solid black;
     border-radius: 0.3em;
-    width: 30%;
-    margin-bottom: 1em;
-    position: relative;
-    left: 50%;
-    transform: translate(-50%, 0%)
-    
+}
+
+.sidebar {
+    grid-area: sidebar;
+    background-color: white;
+    padding: 1em;
+    border: 3px solid black;
+    border-radius: 0.3em;
+}
+
+@media only screen and (max-width: 50em) {
+    .container {
+        grid-template-areas:
+        "nav"
+        "sidebar"
+        "content-large"
+        "content-large"
+        "content-large"
+        "content-large"
+        "footer";
+        grid-template-columns: 1fr;
+        grid-template-rows: 3em 4em 1fr 1fr 1fr 1fr 8em;  
+    }
+
+    .content-large {
+        flex-flow: row wrap;
+    }
 }
