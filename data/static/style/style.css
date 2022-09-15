@@ -1,0 +1,87 @@
+body {
+    margin: 0em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+nav {
+    padding: 0.2em;
+    border: 3px solid black;
+    grid-area: nav;
+}
+
+.container {
+    margin: 10em;
+    width: 50vw;
+    height: 70vh;
+    display: grid;
+    grid-template-areas:
+        "nav nav nav"
+        "content-large content-large sidebar"
+        "content-large content-large sidebar"
+        "footer footer footer";
+    grid-template-columns: 1fr 1fr 0.5fr;
+    grid-template-rows: 4em 4em 1fr 5em;
+    gap: 1em;
+
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 15px;
+    padding: 0.5em;
+    box-sizing: border-box;
+}
+
+.content-large {
+    grid-area: content-large;
+    display: flex;
+    flex-flow: column wrap;
+    padding: 1em;
+    padding-top: 2em;
+    margin: 0;
+    border: 3px solid black;
+    border-radius: 0.3em;
+    overflow: hidden;
+}
+
+.content-large form {
+    background-color: rgba(135, 255, 149, 0.5)
+}
+
+#overview {
+    background-color: rgba(85, 85, 255, 0.5)
+}
+
+.footer {
+    grid-area: footer;
+    background-color: white;
+    padding: 1em;
+    border: 3px solid black;
+    border-radius: 0.3em;
+}
+
+.sidebar {
+    grid-area: sidebar;
+    background-color: white;
+    padding: 1em;
+    border: 3px solid black;
+    border-radius: 0.3em;
+}
+
+@media only screen and (max-width: 50em) {
+    .container {
+        grid-template-areas:
+        "nav"
+        "sidebar"
+        "content-large"
+        "content-large"
+        "content-large"
+        "content-large"
+        "footer";
+        grid-template-columns: 1fr;
+        grid-template-rows: 3em 4em 1fr 1fr 1fr 1fr 8em;  
+    }
+
+    .content-large {
+        flex-flow: row wrap;
+    }
+}

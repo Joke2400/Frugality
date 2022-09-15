@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block page_title %}Frugality{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/recipes_style.css')}}">
+{% endblock %}
+
+{% block scripts %}
+<script defer src="{{url_for('static', filename='js/recipes.js')}}"></script>
+{% endblock %}
+
+
+{%block content %}
+<div class="container">
+    <nav>Navigation panel</nav>
+    <div class="content-large">
+        <ol class="recipe-list">
+            <li>
+                <div class="recipe-div">
+                    <button class="add-recipe" onclick="createRecipeDisplay()">
+                        <h2>+</h3>
+                    </button>
+                </div>
+            </li> 
+        </ol>
+    </div>
+    <div class="sidebar">Sidebar</div>
+    <div class="footer">Footer</div>
+</div>
+{% endblock %}

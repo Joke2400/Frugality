@@ -1,22 +1,42 @@
 from data.urls import SKaupatURLs as s_urls
-from urllib.parse import quote
 import requests
 
-def run():
-    query1 = """query {
-        deliveryArea(id: "ad3fa780-6afb-49da-8513-0c48753b0a7f") {
-            name
-        }
-    }"""
-    query2 = """query {
-        __schema {
-            types {
-                name
-            }
-        }
-    }"""
-
+def run(store_id):
     api_url = s_urls.api_url
-    r = requests.post(url=api_url, json={"query": query1})
-    print(r.status_code)
-    print(r.text)
+    query1 = """query GetDeliveryAreas($deliveryMethod: DeliveryMethod, $brand: String, $onlySKaupat: Boolean, $postalCode: String) {
+        deliveryAreas(
+            deliveryMethod: $deliveryMethod
+            brand: $brand
+            onlySKaupat: $onlySKaupat
+            postalCode: $postalCode
+        ) {
+                areaId
+                store {
+                    name
+                    id
+                    brand
+                    __typename
+                }
+        }
+    }
+    """
+    query2 = """query GetStoreInfo($StoreID: ID!) {
+        store(id: $StoreID) {
+            name
+            id
+            brand
+            __typename
+        }
+    }
+    """
+    operation_name = "GetStoreInfo"
+    variables = {
+        "StoreID": int(store_id)
+    }
+    
+    post_request = requests.post(url=api_url, json={
+        "operationName": operation_name,
+        "variables": variables,
+        "query": query2
+        })
+    return post_request.text
