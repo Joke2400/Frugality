@@ -1,10 +1,6 @@
 from flask import redirect, url_for, render_template, request, session, flash
-from api import queries, send_post
-from core.app_dataclasses import AmountTuple
-from utils import validate_post, get_quantity
-from core import app, QueryItem
-
-import json
+from utils import validate_post, get_quantity, get_specifiers, get_groceries, print_results
+from core import app, QueryItem, AmountTuple, ProductList
 
 @app.route("/main/", methods=["POST", "GET"])
 def main():
@@ -16,70 +12,34 @@ def base_url_redirect():
 
 @app.route("/query/", methods=["POST"])
 def query():
+    # TODO: Input sanitization will happen in validate_post(), 
+    # Flask I think has some funcs for that, 
+    # must be done before this gets hosted anywhere
     if validate_post(request=request):
         operation = request.json["operation"]
         print(f"\nCurrent operation: {operation}")
+        product_queries = []
         for q, a, c in zip(
             request.json["queries"],
             request.json["amounts"],
             request.json["categories"]):
-            t = AmountTuple(amount=a, **get_quantity())
-            QueryItem(
-                name=q,
-                amt=t,
-                category=c,
-                must_contain=m)
-        """
+            t = AmountTuple(amount=int(a), **get_quantity(q))
+            m = get_specifiers(q)
+            product_queries.append(
+                QueryItem(
+                    name=q,
+                    amt=t,
+                    category=c,
+                    must_contain=m))
+
         if operation == "Groceries":
-            query_operation = "GetProductByName"
-            query = queries[operation]
-            
-            avg_prices = []
-            min_prices = []
-            max_prices = []
-            for i in query_items:
-                variables = {
-                    "StoreID": request.json["store_id"],
-                    "limit": 10
-                    }
-                variables["query"] = i.query
-                if i.amt is not None:
-                    variables["query"] = i.query + " " + i.amt
-                variables["slugs"] = i.category if i.category is not None else ""
-                response = send_post(
-                    query=query,
-                    operation_name=operation,
-                    variables=variables
-                )
-                response_json = json.loads(response.text)
-                items = response_json["data"]["store"]["products"]["items"]
-                items = [ResultItem(
-                    name=i["name"],
-                    ean=i["ean"],
-                    price=i["price"],
-                    basic_quantity_unit=i["basicQuantityUnit"],
-                    comparison_price=i["comparisonPrice"],
-                    comparison_unit=i["comparisonUnit"]
-                ) for i in items]
-                max_priced_item = max(items, key=lambda x: x.comparison_price)
-                min_priced_item = min(items, key=lambda x: x.comparison_price)
-                avg_priced_item = sum(i.comparison_price for i in items) / len(items)
-                min_prices.append(min_priced_item.comparison_price)
-                max_prices.append(max_priced_item.comparison_price)
-                avg_prices.append(avg_priced_item)
-                print(f"\nQuery: {variables['query']}, Category: {variables['slugs']}\n")
-                print(f"Cheapest: {'': ^20}{min_priced_item.comparison_price:.2f}{'':<2}€/{min_priced_item.comparison_unit}{'':^7}{min_priced_item.name}")
-                print(f"Most expensive: {'': ^14}{max_priced_item.comparison_price:.2f}{'':<2}€/{min_priced_item.comparison_unit}{'':^7}{max_priced_item.name}")
-                print(f"Average price: {'': ^15}{avg_priced_item:.2f}{'':<2}€/{min_priced_item.comparison_unit}")
-
-            print("\n")
-            print(f"Min: {'': ^25}{sum(min_prices):.2f}€")
-            print(f"Max: {'': ^25}{sum(max_prices):.2f}€")
-            print(f"Avg: {'': ^25}{sum(avg_prices):.2f}€")
-            print("")
-
-            #TODO: Check that string contain a certain word, ex searching currently hillosokeri also yields all produkts with just sokeri
-
-            return {"data": "DONE!"}
-        """
-    return {"data": "[ERROR]: Validation failed, JSON is missing"}
+            results = [ProductList(r,q,c) for r,q,c in get_groceries(
+                request=request,
+                product_queries=product_queries,
+                limit=10)]
+            print_results(results)
+        else:
+            return {"data": "[ERROR]: Operation not found."}
+    else:
+        return {"data": "[ERROR]: Request validation failed."}
+    return {"data": "DONE!"}
