@@ -1,11 +1,10 @@
-from typing import NamedTuple
 from flask import redirect, url_for, render_template, request, session, flash
 from api import queries, send_post
-from utils import validate_post
-from core import app, QueryItem, ResultItem
+from core.app_dataclasses import AmountTuple
+from utils import validate_post, get_quantity
+from core import app, QueryItem
 
 import json
-import re
 
 @app.route("/main/", methods=["POST", "GET"])
 def main():
@@ -20,20 +19,14 @@ def query():
     if validate_post(request=request):
         operation = request.json["operation"]
         print(f"\nCurrent operation: {operation}")
-        patterns = ["(\d+)(l|k?gm?)", "laktoositon"]
         for q, a, c in zip(
             request.json["queries"],
             request.json["amounts"],
             request.json["categories"]):
-            m = []
-            for p in patterns:
-                m.append(re.findall(
-                pattern=p, 
-                string=q,
-                flags=re.I|re.M))
+            t = AmountTuple(amount=a, **get_quantity())
             QueryItem(
                 name=q,
-                amt=a,
+                amt=t,
                 category=c,
                 must_contain=m)
         """
