@@ -1,6 +1,7 @@
 # Frugality v 0.1 - WIP
 
 Current iteration of the groceries price calculator.
+WIP, should not be hosted outside of local networks
 
 Changes: Data is collected directly via an API. (Websites without one will still use the webscraper for this task)
 The webscraper module is currently not functional/being used as I was in the middle of an overhaul when the target website changed domains (and it's overall structure) :(. This has been left in though, as scraping other competitor websites may still require it in the future.
