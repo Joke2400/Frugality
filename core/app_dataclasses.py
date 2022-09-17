@@ -36,7 +36,7 @@ class ProductList:
     def __init__(self, response, query_string, category):
         self.query_string = query_string
         self.category = category
-        self.response = json.loads(response)
+        self.response = json.loads(response.text)
         self.items = [ResultItem(
             name=i["name"],
             ean=i["ean"],

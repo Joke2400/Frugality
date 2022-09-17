@@ -14,7 +14,7 @@ nav {
 .container {
     margin: 10em;
     width: 50vw;
-    height: 70vh;
+    height: 80vh;
     display: grid;
     grid-template-areas:
         "nav nav nav"
