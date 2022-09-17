@@ -14,3 +14,9 @@ utils/__pycache__/program_paths.cpython-310.pyc
 core/database_manager/__pycache__/__init__.cpython-310.pyc
 core/database_manager/__pycache__/manager.cpython-310.pyc
 core/database_manager/__pycache__/sqlalchemy_db_classes.cpython-310.pyc
+utils/__pycache__/flask_app_funcs.cpython-310.pyc
+utils/__pycache__/util_funcs.cpython-310.pyc
+core/__pycache__/app_dataclasses.cpython-310.pyc
+api/__pycache__/skaupat_api_funcs.cpython-310.pyc
+api/__pycache__/skaupat_queries.cpython-310.pyc
+temp/test.py
