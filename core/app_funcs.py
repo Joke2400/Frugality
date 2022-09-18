@@ -1,18 +1,20 @@
+from core import ProductList
 import re
 
-from core.app_dataclasses import ProductList
 
-def basic_regex(p, s):
+def basic_regex(p: str, s: str) -> list[str]:
     return re.findall(
-        pattern=p, 
+        pattern=p,
         string=s,
-        flags=re.I|re.M)
+        flags=re.I | re.M)
 
-def validate_post(request):
+
+def validate_post(request) -> bool:
     if request.method == "POST":
         if request.json is None:
             return False
     return True
+
 
 def get_quantity(s):
     r = basic_regex("(\d+)(l|k?gm?)", s)
@@ -23,8 +25,10 @@ def get_quantity(s):
         "quantity": int(r[0]) if r[0] != "" else None,
         "unit":     r[1] if r[1] != "" else None}
 
+
 def get_specifiers(s):
     return basic_regex("laktoositon", s)
+
 
 def print_results(results):
     ProductList.update_total_cost()

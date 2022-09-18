@@ -1,4 +1,5 @@
-from .sqlalchemy_db_classes import StoreChain
+import core.database_manager.sqlalchemy_db_classes as dbc
+
 
 class DataManager:
 
@@ -16,5 +17,5 @@ class DataManager:
         self.db.create_all()
         chain_names = ["s-market", "prisma", "sale", "alepa", "abc"]
         for chain in chain_names:
-            self.db.session.add(StoreChain(chain))
+            self.db.session.add(dbc.StoreChain(chain))
         self.db.session.commit()

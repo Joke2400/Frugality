@@ -22,6 +22,6 @@ function sendQuery() {
     }
     fetch("/query/", fetchData).then(response => response.json())
     .then(function(data) {
-        document.getElementById("response_embed").innerHTML = data["data"];
+        document.getElementById("response_embed").innerHTML = JSON.stringify(data["data"]);
     });
 }

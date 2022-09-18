@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class BaseValidator(ABC):
 
     def __init__(self, check, set_public=None):
@@ -26,28 +27,38 @@ class BaseValidator(ABC):
     @abstractmethod
     def validate(self, value):
         pass
-    
+
+
 class SpecifiedOrNoneValidator(BaseValidator):
 
     def validate(self, value):
         if not isinstance(value, self.check):
             if value is not None:
-                raise TypeError(f"Validation failed on attribute: '{self.public_name}'.")
+                raise TypeError(
+                    f"Validation failed on attribute: \
+                        '{self.public_name}'.")
         return value
+
 
 class SpecifiedOnlyValidator(BaseValidator):
 
     def validate(self, value):
         if not isinstance(value, self.check):
-            raise TypeError(f"Validation failed on attribute: '{self.public_name}'.")
+            raise TypeError(
+                f"Validation failed on attribute: \
+                    '{self.public_name}'.")
         return value
+
 
 class ListContentValidator(BaseValidator):
 
     def validate(self, value):
         if not all(isinstance(item, self.check) for item in value):
-            raise TypeError(f"Validation failed on list: '{self.public_name}'.")
+            raise TypeError(
+                f"Validation failed on list: \
+                    '{self.public_name}'.")
         return value
+
 
 class StringValidator(BaseValidator):
 
@@ -57,5 +68,7 @@ class StringValidator(BaseValidator):
     def validate(self, value):
         if not isinstance(value, str):
             if value is not None:
-                raise TypeError(f"Attribute: '{self.public_name}' only accepts input of type: str")
+                raise TypeError(
+                    f"Attribute: '{self.public_name}' \
+                        only accepts input of type: str")
         return value

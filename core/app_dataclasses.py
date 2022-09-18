@@ -24,7 +24,6 @@ class ResultItem:
     cmp_price: float
     cmp_unit: str
 
-
 class ProductList:
     total_cheap = 0
     total_expensive = 0
@@ -46,7 +45,8 @@ class ProductList:
             cmp_unit=i["comparisonUnit"]
         ) for i in 
         self.response["data"]["store"]["products"]["items"]]
-        self.closest = self.items[0]
+        if len(self.items) > 0:
+            self.closest = self.items[0]
         
         self.highest = max(
             self.items, key=lambda x: x.cmp_price)
@@ -63,12 +63,22 @@ class ProductList:
             self.lowest.cmp_price)
         self.avg_prices.append(
             self.avg)
+        self.update_total_cost()
 
     @classmethod
     def update_total_cost(cls):
         cls.total_cheap = sum(cls.min_prices)
         cls.total_expensive = sum(cls.max_prices)
         cls.total_avg = sum(cls.avg_prices)
+
+    @classmethod
+    def reset_total_cost(cls):
+        cls.total_cheap = 0
+        cls.total_expensive = 0
+        cls.total_avg = 0
+        cls.min_prices = []
+        cls.max_prices = []
+        cls.avg_prices = []
     
     def __str__(self):
         return \

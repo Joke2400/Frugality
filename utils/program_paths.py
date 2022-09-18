@@ -1,6 +1,7 @@
 from pathlib import Path
 from os import getlogin
 
+
 class Paths:
 
     project = Path(f"C:\\Users\\{getlogin()}\\Desktop\\Frugality")

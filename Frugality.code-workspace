@@ -7,6 +7,14 @@
 	"settings": {
 		"files.exclude": {
 			"**/__pycache__": true
-		}
+		},
+		"python.linting.flake8Enabled": true,
+		"python.linting.mypyEnabled": true,
+		"python.linting.prospectorEnabled": false,
+		"python.linting.pycodestyleEnabled": true,
+		"python.linting.pydocstyleEnabled": false,
+		"python.linting.pylamaEnabled": true,
+		"python.linting.pylintEnabled": false,
+		"python.linting.banditEnabled": true
 	}
 }

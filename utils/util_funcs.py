@@ -1,5 +1,6 @@
-import time
 from functools import wraps
+import time
+
 
 def timer(func):
     @wraps(func)

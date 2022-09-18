@@ -20,3 +20,4 @@ core/__pycache__/app_dataclasses.cpython-310.pyc
 api/__pycache__/skaupat_api_funcs.cpython-310.pyc
 api/__pycache__/skaupat_queries.cpython-310.pyc
 temp/test.py
+core/__pycache__/app_funcs.cpython-310.pyc
