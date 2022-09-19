@@ -3,7 +3,7 @@ from core import process
 
 if __name__ == "__main__":
     # run()
-    process.start(debug=True, reset=True)
+    process.start(debug=True, reset=False)
 
     # TODO: Input sanitization will happen in validate_post(),
     # Flask I think has some funcs for that,
@@ -14,3 +14,4 @@ if __name__ == "__main__":
     # TODO: Logging
     # TODO: Typehints
     # TODO: Unittests
+    # TODO: Database ofc
