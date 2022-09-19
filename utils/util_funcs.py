@@ -1,5 +1,7 @@
 from functools import wraps
+from utils import Paths
 import time
+import logging
 
 
 def timer(func):
@@ -12,3 +14,32 @@ def timer(func):
         print(f"Function: {func.__name__} Took {elapsed:.4f} second(s)")
         return result
     return wrapper
+
+
+def configure_logger(name: str, level: int = logging.DEBUG,
+                     log_to_stream: bool = False,
+                     log_to_file: bool = True) -> logging.Logger:
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+    formatter = logging.Formatter("%(asctime)s:%(name)s:%(message)s")
+    if log_to_stream:
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
+        logger.addHandler(stream_handler)
+    if log_to_file:
+        file_handler = logging.FileHandler(Paths.logs() / f"{name}")
+        file_handler.setLevel(logging.ERROR)
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+    return logger
+
+def add_logging(func, logger: logging.Logger):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        logger.debug(f"Function: {func.__name__} \
+            Args: {args} Kwargs: {kwargs} \
+            Result: {result}")
+        return result
+    return wrapper
+

@@ -33,8 +33,8 @@ class Paths:
         return cls.project / "data" / "static"
 
     @classmethod
-    def log(cls):
-        return cls.project / "log.txt"
+    def logs(cls):
+        return cls.project / "data" / "logs"
 
     @classmethod
     def settings(cls):
