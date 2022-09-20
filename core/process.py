@@ -41,4 +41,5 @@ class Process:
         # Avoiding a circular import :)
         self.data_manager = DataManager(db=self.db)
         self.data_manager.start_db(reset=reset)
+        logger.info("Starting Flask app...")
         self.app.run(debug=debug)

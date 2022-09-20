@@ -1,0 +1,20 @@
+(2022-09-20 13:27:45) [api.skaupat_api_funcs]: Received empty query, continuing
+(2022-09-20 13:27:45) [api.skaupat_api_funcs]: Received empty query, continuing
+(2022-09-20 13:27:45) [api.skaupat_api_funcs]: Received empty query, continuing
+(2022-09-20 13:27:45) [api.skaupat_api_funcs]: Received empty query, continuing
+(2022-09-20 13:27:45) [api.skaupat_api_funcs]: product_queries len(): 2
+(2022-09-20 13:27:45) [api.skaupat_api_funcs]: Order: 0 Query: Maito Slugs: maito-munat-ja-rasvat-0
+(2022-09-20 13:27:45) [api.skaupat_api_funcs]: Order: 1 Query: Oltermanni Slugs: juustot-0
+(2022-09-20 13:27:45) [api.skaupat_api_funcs]: (asyncio.gather) tasks len(): 2
+(2022-09-20 13:27:45) [api.skaupat_api_funcs]: Query: Maito Response: <Response [200]>
+(2022-09-20 13:27:45) [api.skaupat_api_funcs]: Query: Oltermanni Response: <Response [200]>
+(2022-09-20 13:28:10) [api.skaupat_api_funcs]: Received empty query, continuing
+(2022-09-20 13:28:10) [api.skaupat_api_funcs]: Received empty query, continuing
+(2022-09-20 13:28:10) [api.skaupat_api_funcs]: Received empty query, continuing
+(2022-09-20 13:28:10) [api.skaupat_api_funcs]: Received empty query, continuing
+(2022-09-20 13:28:10) [api.skaupat_api_funcs]: product_queries len(): 2
+(2022-09-20 13:28:10) [api.skaupat_api_funcs]: Order: 0 Query: Maito Slugs: maito-munat-ja-rasvat-0
+(2022-09-20 13:28:10) [api.skaupat_api_funcs]: Order: 1 Query: Oltermanni Slugs: juustot-0
+(2022-09-20 13:28:10) [api.skaupat_api_funcs]: (asyncio.gather) tasks len(): 2
+(2022-09-20 13:28:10) [api.skaupat_api_funcs]: Query: Oltermanni Response: <Response [200]>
+(2022-09-20 13:28:11) [api.skaupat_api_funcs]: Query: Maito Response: <Response [200]>

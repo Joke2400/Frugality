@@ -2,8 +2,7 @@
 from .program_paths import Paths
 from .util_funcs import (
     timer,
-    configure_logger,
-    add_logging
+    configure_logger
 )
 
 # from .descriptors import *

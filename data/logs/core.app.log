@@ -1,0 +1,199 @@
+(2022-09-20 13:06:31) [core.app]: 
+Current operation: Groceries
+(2022-09-20 13:06:31) [core.app]: Query: Maito, Category: maito-munat-ja-rasvat-0
+        Cheapest:          0.75  €/LTR               Kotimaista rasvaton maito 1l
+        Most expensive:    2.90  €/LTR               Valio Eila® kevytmaitojuoma 5 dl laktoositon
+        Average price:     1.55  €/LTR
+        
+(2022-09-20 13:06:31) [core.app]: Query: Oltermanni, Category: juustot-0
+        Cheapest:          6.65  €/KGM               Valio Oltermanni® e1 kg
+        Most expensive:    31.60  €/KGM               Nuova Castelli Parmigiano Reggiano stick juusto 125 g
+        Average price:     13.58  €/KGM
+        
+(2022-09-20 13:15:11) [core.app]: Current operation: Groceries
+(2022-09-20 13:15:12) [core.app]: Query: Maito, Category: maito-munat-ja-rasvat-0
+        Cheapest:          0.75  €/LTR               Kotimaista rasvaton maito 1l
+        Most expensive:    2.90  €/LTR               Valio Eila® kevytmaitojuoma 5 dl laktoositon
+        Average price:     1.55  €/LTR
+        
+(2022-09-20 13:15:12) [core.app]: Query: Oltermanni, Category: juustot-0
+        Cheapest:          6.65  €/KGM               Valio Oltermanni® e1 kg
+        Most expensive:    31.60  €/KGM               Nuova Castelli Parmigiano Reggiano stick juusto 125 g
+        Average price:     13.58  €/KGM
+        
+(2022-09-20 13:17:15) [core.app]: Current operation: Groceries
+(2022-09-20 13:17:15) [core.app]: Query: Maito, Category: maito-munat-ja-rasvat-0
+        Cheapest:          0.75  €/LTR               Kotimaista rasvaton maito 1l
+        Most expensive:    2.90  €/LTR               Valio Eila® kevytmaitojuoma 5 dl laktoositon
+        Average price:     1.55  €/LTR
+        
+(2022-09-20 13:17:15) [core.app]: Query: Oltermanni, Category: juustot-0
+        Cheapest:          6.65  €/KGM               Valio Oltermanni® e1 kg
+        Most expensive:    31.60  €/KGM               Nuova Castelli Parmigiano Reggiano stick juusto 125 g
+        Average price:     13.58  €/KGM
+        
+(2022-09-20 13:20:32) [core.app]: Current operation: Groceries
+(2022-09-20 13:20:32) [core.app]: Query: Maito, Category: maito-munat-ja-rasvat-0
+        Cheapest:          0.75  €/LTR               Kotimaista rasvaton maito 1l
+        Most expensive:    2.90  €/LTR               Valio Eila® kevytmaitojuoma 5 dl laktoositon
+        Average price:     1.55  €/LTR
+        
+(2022-09-20 13:20:32) [core.app]: Query: Oltermanni, Category: juustot-0
+        Cheapest:          6.65  €/KGM               Valio Oltermanni® e1 kg
+        Most expensive:    31.60  €/KGM               Nuova Castelli Parmigiano Reggiano stick juusto 125 g
+        Average price:     13.13  €/KGM
+        
+(2022-09-20 13:24:50) [core.app]: Current operation: Groceries
+(2022-09-20 13:24:50) [core.app]: Query: Maito, Category: maito-munat-ja-rasvat-0
+        Cheapest:          0.75  €/LTR               Kotimaista rasvaton maito 1l
+        Most expensive:    2.90  €/LTR               Valio Eila® kevytmaitojuoma 5 dl laktoositon
+        Average price:     1.55  €/LTR
+        
+(2022-09-20 13:24:50) [core.app]: Query: Oltermanni, Category: juustot-0
+        Cheapest:          6.65  €/KGM               Valio Oltermanni® e1 kg
+        Most expensive:    31.60  €/KGM               Nuova Castelli Parmigiano Reggiano stick juusto 125 g
+        Average price:     13.13  €/KGM
+        
+(2022-09-20 13:24:58) [core.app]: Current operation: Groceries
+(2022-09-20 13:24:58) [core.app]: Query: Maito, Category: maito-munat-ja-rasvat-0
+        Cheapest:          0.75  €/LTR               Kotimaista rasvaton maito 1l
+        Most expensive:    2.90  €/LTR               Valio Eila® kevytmaitojuoma 5 dl laktoositon
+        Average price:     1.55  €/LTR
+        
+(2022-09-20 13:24:58) [core.app]: Query: Oltermanni, Category: juustot-0
+        Cheapest:          6.65  €/KGM               Valio Oltermanni® e1 kg
+        Most expensive:    31.60  €/KGM               Nuova Castelli Parmigiano Reggiano stick juusto 125 g
+        Average price:     13.58  €/KGM
+        
+(2022-09-20 13:24:59) [core.app]: Current operation: Groceries
+(2022-09-20 13:24:59) [core.app]: Current operation: Groceries
+(2022-09-20 13:24:59) [core.app]: Query: Maito, Category: maito-munat-ja-rasvat-0
+        Cheapest:          0.75  €/LTR               Kotimaista rasvaton maito 1l
+        Most expensive:    2.90  €/LTR               Valio Eila® kevytmaitojuoma 5 dl laktoositon
+        Average price:     1.55  €/LTR
+        
+(2022-09-20 13:24:59) [core.app]: Query: Oltermanni, Category: juustot-0
+        Cheapest:          6.65  €/KGM               Valio Oltermanni® e1 kg
+        Most expensive:    31.60  €/KGM               Nuova Castelli Parmigiano Reggiano stick juusto 125 g
+        Average price:     13.13  €/KGM
+        
+(2022-09-20 13:24:59) [core.app]: Query: Maito, Category: maito-munat-ja-rasvat-0
+        Cheapest:          0.75  €/LTR               Kotimaista rasvaton maito 1l
+        Most expensive:    2.90  €/LTR               Valio Eila® kevytmaitojuoma 5 dl laktoositon
+        Average price:     1.55  €/LTR
+        
+(2022-09-20 13:24:59) [core.app]: Query: Oltermanni, Category: juustot-0
+        Cheapest:          6.65  €/KGM               Valio Oltermanni® e1 kg
+        Most expensive:    31.60  €/KGM               Nuova Castelli Parmigiano Reggiano stick juusto 125 g
+        Average price:     13.58  €/KGM
+        
+(2022-09-20 13:25:06) [core.app]: Current operation: Groceries
+(2022-09-20 13:25:51) [core.app]: Query: Maito, Category: maito-munat-ja-rasvat-0
+        Cheapest:          0.75  €/LTR               Kotimaista rasvaton maito 1l
+        Most expensive:    2.90  €/LTR               Valio Eila® kevytmaitojuoma 5 dl laktoositon
+        Average price:     1.55  €/LTR
+        
+(2022-09-20 13:25:51) [core.app]: Query: Oltermanni, Category: juustot-0
+        Cheapest:          6.65  €/KGM               Valio Oltermanni® e1 kg
+        Most expensive:    31.60  €/KGM               Nuova Castelli Parmigiano Reggiano stick juusto 125 g
+        Average price:     13.13  €/KGM
+        
+(2022-09-20 13:26:38) [core.app]: Current operation: Groceries
+(2022-09-20 13:26:38) [core.app]: Query: Maito, Category: maito-munat-ja-rasvat-0
+        Cheapest:          0.75  €/LTR               Kotimaista rasvaton maito 1l
+        Most expensive:    2.90  €/LTR               Valio Eila® kevytmaitojuoma 5 dl laktoositon
+        Average price:     1.55  €/LTR
+        
+(2022-09-20 13:26:38) [core.app]: Query: Oltermanni, Category: juustot-0
+        Cheapest:          6.65  €/KGM               Valio Oltermanni® e1 kg
+        Most expensive:    31.60  €/KGM               Nuova Castelli Parmigiano Reggiano stick juusto 125 g
+        Average price:     13.58  €/KGM
+        
+(2022-09-20 13:27:07) [core.app]: Current operation: Groceries
+(2022-09-20 13:27:08) [core.app]: Query: Maito, Category: maito-munat-ja-rasvat-0
+        Cheapest:          0.75  €/LTR               Kotimaista rasvaton maito 1l
+        Most expensive:    2.90  €/LTR               Valio Eila® kevytmaitojuoma 5 dl laktoositon
+        Average price:     1.55  €/LTR
+        
+(2022-09-20 13:27:08) [core.app]: Query: Oltermanni, Category: juustot-0
+        Cheapest:          6.65  €/KGM               Valio Oltermanni® e1 kg
+        Most expensive:    31.60  €/KGM               Nuova Castelli Parmigiano Reggiano stick juusto 125 g
+        Average price:     13.58  €/KGM
+        
+(2022-09-20 13:27:09) [core.app]: Current operation: Groceries
+(2022-09-20 13:27:09) [core.app]: Query: Maito, Category: maito-munat-ja-rasvat-0
+        Cheapest:          0.75  €/LTR               Kotimaista rasvaton maito 1l
+        Most expensive:    2.90  €/LTR               Valio Eila® kevytmaitojuoma 5 dl laktoositon
+        Average price:     1.55  €/LTR
+        
+(2022-09-20 13:27:09) [core.app]: Query: Oltermanni, Category: juustot-0
+        Cheapest:          6.65  €/KGM               Valio Oltermanni® e1 kg
+        Most expensive:    31.60  €/KGM               Nuova Castelli Parmigiano Reggiano stick juusto 125 g
+        Average price:     13.13  €/KGM
+        
+(2022-09-20 13:27:12) [core.app]: Current operation: Groceries
+(2022-09-20 13:27:13) [core.app]: Query: Maito, Category: maito-munat-ja-rasvat-0
+        Cheapest:          0.75  €/LTR               Kotimaista rasvaton maito 1l
+        Most expensive:    2.90  €/LTR               Valio Eila® kevytmaitojuoma 5 dl laktoositon
+        Average price:     1.55  €/LTR
+        
+(2022-09-20 13:27:13) [core.app]: Query: Oltermanni, Category: juustot-0
+        Cheapest:          6.65  €/KGM               Valio Oltermanni® e1 kg
+        Most expensive:    31.60  €/KGM               Nuova Castelli Parmigiano Reggiano stick juusto 125 g
+        Average price:     13.13  €/KGM
+        
+(2022-09-20 13:27:26) [core.app]: Current operation: Groceries
+(2022-09-20 13:27:27) [core.app]: Query: Maito, Category: maito-munat-ja-rasvat-0
+        Cheapest:          0.75  €/LTR               Kotimaista rasvaton maito 1l
+        Most expensive:    2.90  €/LTR               Valio Eila® kevytmaitojuoma 5 dl laktoositon
+        Average price:     1.55  €/LTR
+        
+(2022-09-20 13:27:27) [core.app]: Query: Oltermanni, Category: juustot-0
+        Cheapest:          6.65  €/KGM               Valio Oltermanni® e1 kg
+        Most expensive:    31.60  €/KGM               Nuova Castelli Parmigiano Reggiano stick juusto 125 g
+        Average price:     13.13  €/KGM
+        
+(2022-09-20 13:27:35) [core.app]: Current operation: Groceries
+(2022-09-20 13:27:35) [core.app]: Query: Maito, Category: maito-munat-ja-rasvat-0
+        Cheapest:          0.75  €/LTR               Kotimaista rasvaton maito 1l
+        Most expensive:    2.90  €/LTR               Valio Eila® kevytmaitojuoma 5 dl laktoositon
+        Average price:     1.55  €/LTR
+        
+(2022-09-20 13:27:35) [core.app]: Query: Oltermanni, Category: juustot-0
+        Cheapest:          6.65  €/KGM               Valio Oltermanni® e1 kg
+        Most expensive:    31.60  €/KGM               Nuova Castelli Parmigiano Reggiano stick juusto 125 g
+        Average price:     13.58  €/KGM
+        
+(2022-09-20 13:27:45) [core.app]: Current operation: Groceries
+(2022-09-20 13:27:45) [core.app]: Query: Maito, Category: maito-munat-ja-rasvat-0
+        Cheapest:          0.75  €/LTR               Kotimaista rasvaton maito 1l
+        Most expensive:    2.90  €/LTR               Valio Eila® kevytmaitojuoma 5 dl laktoositon
+        Average price:     1.55  €/LTR
+        
+(2022-09-20 13:27:45) [core.app]: Query: Oltermanni, Category: juustot-0
+        Cheapest:          6.65  €/KGM               Valio Oltermanni® e1 kg
+        Most expensive:    31.60  €/KGM               Nuova Castelli Parmigiano Reggiano stick juusto 125 g
+        Average price:     13.58  €/KGM
+        
+(2022-09-20 13:28:10) [core.app]: Current operation: Groceries
+(2022-09-20 13:28:11) [core.app]: Query: Maito, Category: maito-munat-ja-rasvat-0
+        Cheapest:          0.75  €/LTR               Kotimaista rasvaton maito 1l
+        Most expensive:    2.90  €/LTR               Valio Eila® kevytmaitojuoma 5 dl laktoositon
+        Average price:     1.55  €/LTR
+        
+(2022-09-20 13:28:11) [core.app]: Query: Oltermanni, Category: juustot-0
+        Cheapest:          6.65  €/KGM               Valio Oltermanni® e1 kg
+        Most expensive:    31.60  €/KGM               Nuova Castelli Parmigiano Reggiano stick juusto 125 g
+        Average price:     13.58  €/KGM
+        
+(2022-09-20 13:30:26) [core.app]: Current operation: Groceries
+(2022-09-20 13:30:26) [core.app]: Query: Maito, Category: maito-munat-ja-rasvat-0
+        Cheapest:          0.75  €/LTR               Kotimaista rasvaton maito 1l
+        Most expensive:    2.90  €/LTR               Valio Eila® kevytmaitojuoma 5 dl laktoositon
+        Average price:     1.55  €/LTR
+        
+(2022-09-20 13:30:26) [core.app]: Query: Oltermanni, Category: juustot-0
+        Cheapest:          6.65  €/KGM               Valio Oltermanni® e1 kg
+        Most expensive:    31.60  €/KGM               Nuova Castelli Parmigiano Reggiano stick juusto 125 g
+        Average price:     13.58  €/KGM
+        
