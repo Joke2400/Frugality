@@ -9,7 +9,7 @@ import asyncio
 TEST_MODE = True
 TRACK = True
 LIFETIME = timedelta(days=1)
-logger = configure_logger(name=__name__, level=20 if not TEST_MODE else 10,
+logger = configure_logger(name=__name__, level=20,
                           log_to_stream=True, log_to_file=True)
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 

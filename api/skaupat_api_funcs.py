@@ -13,7 +13,8 @@ from core import (
 )
 
 api_url = s_urls.api_url
-logger = configure_logger(name=__name__, level=20)
+logger = configure_logger(name=__name__, level=20,
+                          log_to_stream=True, log_to_file=True)
 
 
 def send_post(query_string: str, params: dict) -> requests.Response:
@@ -55,14 +56,15 @@ async def get_groceries(request, product_queries, limit=24):
             "slugs": p.category
         }
         logger.debug(
-            f"Order: {c} Query: {p.name} Slugs: {p.category}")
+            f"(get_groceries) List index: {c} [Query: '{p.name}' " +
+            "Category: '{p.category}']")
         tasks.append(
             parse_response(
                 query=query,
                 variables=variables,
                 operation=operation))
     logger.debug(
-        f"(asyncio.gather) tasks len(): {len(tasks)}")
+        f"(get_groceries) Tasks len(): {len(tasks)}")
     return await asyncio.gather(*tasks)
 
 
