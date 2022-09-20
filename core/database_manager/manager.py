@@ -12,11 +12,12 @@ class DataManager:
 
     def start_db(self, reset=False):
         if reset:
+            logger.info(
+                "Reset flag is set to True, resetting database...")
             self.reset_db()
-            logger.info("Resetting database to default.")
         else:
-            self.db.create_all()
             logger.info("Starting database...")
+            self.db.create_all()
 
     def reset_db(self):
         self.db.drop_all()
@@ -26,4 +27,4 @@ class DataManager:
         for chain in chain_names:
             self.db.session.add(dbc.StoreChain(chain))
         self.db.session.commit()
-        logger.info("Created new database tables.")
+        logger.info("Created database tables.")

@@ -10,8 +10,9 @@ if __name__ == "__main__":
     # must be done before this gets hosted anywhere
 
     # TODO: Ensure that results contain string in QueryItem.must_contain
-
     # TODO: Logging
     # TODO: Typehints
     # TODO: Unittests
     # TODO: Database ofc
+    # TODO: Settings file
+    # TODO: Datamanager funcs for adding/deleting product info
