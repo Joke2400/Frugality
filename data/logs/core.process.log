@@ -1,20 +1,48 @@
-(2022-09-20 17:07:47) [DEBUG] [core.process]: Deleted log file at: 
+(2022-09-21 10:49:46) [DEBUG] [util_funcs.py] (configure_logger): Deleted log file at: 
 	C:\Users\Joke\Desktop\Frugality\data\logs\core.process.log.
-(2022-09-20 17:07:47) [INFO] [core.process]: Set database uri to: 'sqlite:///C:\Users\Joke\Desktop\Frugality\data\test_database.db'.
-(2022-09-20 17:07:47) [DEBUG] [core.process]: Set SQLALCHEMY_TRACK_MODIFICATIONS to: True.
-(2022-09-20 17:07:47) [DEBUG] [core.process]: Set Flask session lifetime to: 1 day, 0:00:00.
-(2022-09-20 17:07:47) [INFO] [core.process]: Starting Flask app...
-(2022-09-20 17:07:48) [DEBUG] [core.process]: Permission denied for log file at:
+(2022-09-21 10:49:46) [INFO] [process.py] (__init__): Set database uri to: 'sqlite:///C:\Users\Joke\Desktop\Frugality\data\test_database.db'.
+(2022-09-21 10:49:46) [DEBUG] [process.py] (__init__): Set SQLALCHEMY_TRACK_MODIFICATIONS to: True.
+(2022-09-21 10:49:46) [DEBUG] [process.py] (__init__): Set Flask session lifetime to: 1 day, 0:00:00.
+(2022-09-21 10:49:46) [INFO] [process.py] (start): Starting Flask app...
+(2022-09-21 10:49:46) [DEBUG] [util_funcs.py] (configure_logger): Permission denied for log file at:
 	C:\Users\Joke\Desktop\Frugality\data\logs\core.process.log
 	(This might be due to Flask restarting in debug!)
-(2022-09-20 17:07:48) [INFO] [core.process]: Set database uri to: 'sqlite:///C:\Users\Joke\Desktop\Frugality\data\test_database.db'.
-(2022-09-20 17:07:48) [DEBUG] [core.process]: Set SQLALCHEMY_TRACK_MODIFICATIONS to: True.
-(2022-09-20 17:07:48) [DEBUG] [core.process]: Set Flask session lifetime to: 1 day, 0:00:00.
-(2022-09-20 17:07:48) [INFO] [core.process]: Starting Flask app...
-(2022-09-20 17:09:17) [DEBUG] [core.process] Permission denied for log file at:
+(2022-09-21 10:49:46) [INFO] [process.py] (__init__): Set database uri to: 'sqlite:///C:\Users\Joke\Desktop\Frugality\data\test_database.db'.
+(2022-09-21 10:49:46) [DEBUG] [process.py] (__init__): Set SQLALCHEMY_TRACK_MODIFICATIONS to: True.
+(2022-09-21 10:49:46) [DEBUG] [process.py] (__init__): Set Flask session lifetime to: 1 day, 0:00:00.
+(2022-09-21 10:49:47) [INFO] [process.py] (start): Starting Flask app...
+(2022-09-21 10:51:50) [DEBUG] [util_funcs.py].(configure_logger): Permission denied for log file at:
 	C:\Users\Joke\Desktop\Frugality\data\logs\core.process.log
 	(This might be due to Flask restarting in debug!)
-(2022-09-20 17:09:17) [INFO] [core.process] Set database uri to: 'sqlite:///C:\Users\Joke\Desktop\Frugality\data\test_database.db'.
-(2022-09-20 17:09:17) [DEBUG] [core.process] Set SQLALCHEMY_TRACK_MODIFICATIONS to: True.
-(2022-09-20 17:09:17) [DEBUG] [core.process] Set Flask session lifetime to: 1 day, 0:00:00.
-(2022-09-20 17:09:17) [INFO] [core.process] Starting Flask app...
+(2022-09-21 10:51:50) [INFO] [process.py].(__init__): Set database uri to: 'sqlite:///C:\Users\Joke\Desktop\Frugality\data\test_database.db'.
+(2022-09-21 10:51:50) [DEBUG] [process.py].(__init__): Set SQLALCHEMY_TRACK_MODIFICATIONS to: True.
+(2022-09-21 10:51:50) [DEBUG] [process.py].(__init__): Set Flask session lifetime to: 1 day, 0:00:00.
+(2022-09-21 10:51:50) [INFO] [process.py].(start): Starting Flask app...
+(2022-09-21 10:52:00) [DEBUG] [util_funcs.py].configure_logger: Permission denied for log file at:
+	C:\Users\Joke\Desktop\Frugality\data\logs\core.process.log
+	(This might be due to Flask restarting in debug!)
+(2022-09-21 10:52:00) [INFO] [process.py].__init__: Set database uri to: 'sqlite:///C:\Users\Joke\Desktop\Frugality\data\test_database.db'.
+(2022-09-21 10:52:00) [DEBUG] [process.py].__init__: Set SQLALCHEMY_TRACK_MODIFICATIONS to: True.
+(2022-09-21 10:52:00) [DEBUG] [process.py].__init__: Set Flask session lifetime to: 1 day, 0:00:00.
+(2022-09-21 10:52:00) [INFO] [process.py].start: Starting Flask app...
+(2022-09-21 10:52:17) [DEBUG] [util_funcs.py.configure_logger]: Permission denied for log file at:
+	C:\Users\Joke\Desktop\Frugality\data\logs\core.process.log
+	(This might be due to Flask restarting in debug!)
+(2022-09-21 10:52:17) [INFO] [process.py.__init__]: Set database uri to: 'sqlite:///C:\Users\Joke\Desktop\Frugality\data\test_database.db'.
+(2022-09-21 10:52:17) [DEBUG] [process.py.__init__]: Set SQLALCHEMY_TRACK_MODIFICATIONS to: True.
+(2022-09-21 10:52:17) [DEBUG] [process.py.__init__]: Set Flask session lifetime to: 1 day, 0:00:00.
+(2022-09-21 10:52:17) [INFO] [process.py.start]: Starting Flask app...
+(2022-09-21 10:52:43) [DEBUG] [util_funcs.py] (configure_logger): Permission denied for log file at:
+	C:\Users\Joke\Desktop\Frugality\data\logs\core.process.log
+	(This might be due to Flask restarting in debug!)
+(2022-09-21 10:52:43) [INFO] [process.py] (__init__): Set database uri to: 'sqlite:///C:\Users\Joke\Desktop\Frugality\data\test_database.db'.
+(2022-09-21 10:52:43) [DEBUG] [process.py] (__init__): Set SQLALCHEMY_TRACK_MODIFICATIONS to: True.
+(2022-09-21 10:52:43) [DEBUG] [process.py] (__init__): Set Flask session lifetime to: 1 day, 0:00:00.
+(2022-09-21 10:52:43) [INFO] [process.py] (start): Starting Flask app...
+(2022-09-21 10:54:26) [DEBUG] [util_funcs.py] {configure_logger}: Permission denied for log file at:
+	C:\Users\Joke\Desktop\Frugality\data\logs\core.process.log
+	(This might be due to Flask restarting in debug!)
+(2022-09-21 10:54:26) [INFO] [process.py] {__init__}: Set database uri to: 'sqlite:///C:\Users\Joke\Desktop\Frugality\data\test_database.db'.
+(2022-09-21 10:54:26) [DEBUG] [process.py] {__init__}: Set SQLALCHEMY_TRACK_MODIFICATIONS to: True.
+(2022-09-21 10:54:26) [DEBUG] [process.py] {__init__}: Set Flask session lifetime to: 1 day, 0:00:00.
+(2022-09-21 10:54:26) [INFO] [process.py] {start}: Starting Flask app...

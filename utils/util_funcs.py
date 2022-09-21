@@ -23,17 +23,18 @@ def configure_logger(name: str, level: int = logging.INFO,
                      keep_previous: bool = False) -> logging.Logger:
     logger = logging.getLogger(name)
     formatter = logging.Formatter(
-        "(%(asctime)s) [%(levelname)s] [%(name)s] %(message)s", "%Y-%m-%d %H:%M:%S")
+        fmt="(%(asctime)s) [%(levelname)s] [%(filename)s] " +
+        "{%(funcName)s}: %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S")
     logger.setLevel(logging.DEBUG)
     if log_to_stream:
-        stream_handler = logging.StreamHandler()
-        stream_handler.setFormatter(formatter)
-        stream_handler.setLevel(level)
-        logger.addHandler(stream_handler)
+        sh = logging.StreamHandler()
+        sh.setFormatter(formatter)
+        sh.setLevel(level)
+        logger.addHandler(sh)
 
     if log_to_file:
-        logs_folder = Paths.logs()
-        log_path = logs_folder / f"{name}.log"
+        log_path = Paths.logs() / f"{name}.log"
 
         if not keep_previous:
             result = None
@@ -46,11 +47,11 @@ def configure_logger(name: str, level: int = logging.INFO,
                 result = "Permission denied for log file at:" + \
                     f"\n\t{log_path}" + \
                     "\n\t(This might be due to Flask restarting in debug!)"
-        file_handler = logging.FileHandler(log_path)
-        file_handler.setFormatter(formatter)
-        file_handler.setLevel(logging.DEBUG)
+        fh = logging.FileHandler(log_path)
+        fh.setFormatter(formatter)
+        fh.setLevel(logging.DEBUG)
 
-        logger.addHandler(file_handler)
+        logger.addHandler(fh)
         if result:
             logger.debug(result)
     return logger

@@ -1,11 +1,27 @@
-(2022-09-20 17:07:47) [DEBUG] [core.database_manager.manager]: Deleted log file at: 
+(2022-09-21 10:49:46) [DEBUG] [util_funcs.py] (configure_logger): Deleted log file at: 
 	C:\Users\Joke\Desktop\Frugality\data\logs\core.database_manager.manager.log.
-(2022-09-20 17:07:47) [INFO] [core.database_manager.manager]: Starting database...
-(2022-09-20 17:07:48) [DEBUG] [core.database_manager.manager]: Permission denied for log file at:
+(2022-09-21 10:49:46) [INFO] [manager.py] (start_db): Starting database...
+(2022-09-21 10:49:47) [DEBUG] [util_funcs.py] (configure_logger): Permission denied for log file at:
 	C:\Users\Joke\Desktop\Frugality\data\logs\core.database_manager.manager.log
 	(This might be due to Flask restarting in debug!)
-(2022-09-20 17:07:48) [INFO] [core.database_manager.manager]: Starting database...
-(2022-09-20 17:09:17) [DEBUG] [core.database_manager.manager] Permission denied for log file at:
+(2022-09-21 10:49:47) [INFO] [manager.py] (start_db): Starting database...
+(2022-09-21 10:51:50) [DEBUG] [util_funcs.py].(configure_logger): Permission denied for log file at:
 	C:\Users\Joke\Desktop\Frugality\data\logs\core.database_manager.manager.log
 	(This might be due to Flask restarting in debug!)
-(2022-09-20 17:09:17) [INFO] [core.database_manager.manager] Starting database...
+(2022-09-21 10:51:50) [INFO] [manager.py].(start_db): Starting database...
+(2022-09-21 10:52:00) [DEBUG] [util_funcs.py].configure_logger: Permission denied for log file at:
+	C:\Users\Joke\Desktop\Frugality\data\logs\core.database_manager.manager.log
+	(This might be due to Flask restarting in debug!)
+(2022-09-21 10:52:00) [INFO] [manager.py].start_db: Starting database...
+(2022-09-21 10:52:17) [DEBUG] [util_funcs.py.configure_logger]: Permission denied for log file at:
+	C:\Users\Joke\Desktop\Frugality\data\logs\core.database_manager.manager.log
+	(This might be due to Flask restarting in debug!)
+(2022-09-21 10:52:17) [INFO] [manager.py.start_db]: Starting database...
+(2022-09-21 10:52:43) [DEBUG] [util_funcs.py] (configure_logger): Permission denied for log file at:
+	C:\Users\Joke\Desktop\Frugality\data\logs\core.database_manager.manager.log
+	(This might be due to Flask restarting in debug!)
+(2022-09-21 10:52:43) [INFO] [manager.py] (start_db): Starting database...
+(2022-09-21 10:54:26) [DEBUG] [util_funcs.py] {configure_logger}: Permission denied for log file at:
+	C:\Users\Joke\Desktop\Frugality\data\logs\core.database_manager.manager.log
+	(This might be due to Flask restarting in debug!)
+(2022-09-21 10:54:26) [INFO] [manager.py] {start_db}: Starting database...

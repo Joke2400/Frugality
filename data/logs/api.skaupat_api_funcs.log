@@ -1,8 +1,0 @@
-(2022-09-20 17:07:47) [DEBUG] [api.skaupat_api_funcs]: Deleted log file at: 
-	C:\Users\Joke\Desktop\Frugality\data\logs\api.skaupat_api_funcs.log.
-(2022-09-20 17:07:48) [DEBUG] [api.skaupat_api_funcs]: Permission denied for log file at:
-	C:\Users\Joke\Desktop\Frugality\data\logs\api.skaupat_api_funcs.log
-	(This might be due to Flask restarting in debug!)
-(2022-09-20 17:09:17) [DEBUG] [api.skaupat_api_funcs] Permission denied for log file at:
-	C:\Users\Joke\Desktop\Frugality\data\logs\api.skaupat_api_funcs.log
-	(This might be due to Flask restarting in debug!)

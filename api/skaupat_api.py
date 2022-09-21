@@ -56,7 +56,7 @@ async def get_groceries(request, product_queries, limit=24):
             "slugs": p.category
         }
         logger.debug(
-            f"(get_groceries) List index: {c} [Query: '{p.name}' " +
+            f"List index: {c} [Query: '{p.name}' " +
             "Category: '{p.category}']")
         tasks.append(
             parse_response(
@@ -64,28 +64,39 @@ async def get_groceries(request, product_queries, limit=24):
                 variables=variables,
                 operation=operation))
     logger.debug(
-        f"(get_groceries) Tasks len(): {len(tasks)}")
+        f"Tasks len(): {len(tasks)}")
     return await asyncio.gather(*tasks)
 
 
 def parse_input(request):
     product_queries = []
+    logger.debug("Parsing user input...")
     for query, amt, cat in zip(
             request.json["queries"],
             request.json["amounts"],
             request.json["categories"]):
-        if query == "":
-            logger.debug("Received empty query, continuing")
+        if query == "" or query is None:
+            logger.debug(
+                "Received an empty query, skipping...")
             continue
-        amt = int(amt) if amt != "" else 1
+
+        try:
+            if amt != "" and amt is not None:
+                amt = int(amt)
+        except ValueError:
+            logger.exception(
+                "Amt could not be converted to 'int'")
+            amt = 1
         tup = AmountTuple(amount=amt, **get_quantity(query))
         contain = get_specifiers(query)
+
         product_queries.append(
             QueryItem(
                 name=query,
                 amt=tup,
                 category=cat,
                 must_contain=contain))
+
     logger.debug(
         f"product_queries len(): {len(product_queries)}")
     return product_queries
