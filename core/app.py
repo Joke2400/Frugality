@@ -1,11 +1,11 @@
 from flask import redirect, url_for, render_template, request
-from core import app, validate_post, ProductList
+from core import app, validate_post, ProductList, parse_input
+from api import get_groceries
 from utils import timer, LoggerManager as lgm
 
 import asyncio
-import api
 
-logger = lgm.get_logger(name=__name__, level=20, stream=True)
+logger = lgm.get_logger(name=__name__)
 
 
 @app.route("/main/", methods=["POST", "GET"])
@@ -23,12 +23,12 @@ def base_url_redirect():
 def query():
     if validate_post(request=request):
         operation = request.json["operation"]
-        product_queries = api.parse_input(request=request)
+        product_queries = parse_input(request=request)
 
         ProductList.reset_total_cost()
         if operation == "Groceries":
             logger.info(f"Current operation: {operation}")
-            results = asyncio.run(api.get_groceries(
+            results = asyncio.run(get_groceries(
                 request=request,
                 product_queries=product_queries,
                 limit=24))

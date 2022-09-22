@@ -9,7 +9,7 @@ TEST_MODE = True
 TRACK = True
 LIFETIME = timedelta(days=1)
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-logger = lgm.get_logger(name=__name__, level=20, stream=True)
+logger = lgm.get_logger(name=__name__)
 
 
 class Process:

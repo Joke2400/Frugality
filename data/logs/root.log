@@ -1,42 +1,45 @@
-(2022-09-22 00:23:31) [DEBUG] [logger_manager]: Logger 'core' was not found in loggers dict.
-(2022-09-22 00:23:31) [DEBUG] [logger_manager]: Creating new logger 'core', with level: '20'.
-(2022-09-22 00:23:31) [DEBUG] [logger_manager]: Added streamhandler to 'core'.
-(2022-09-22 00:23:31) [DEBUG] [logger_manager]: Deleted log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\core.log'.
-(2022-09-22 00:23:31) [DEBUG] [logger_manager]: Added filehandler to 'core'.
-(2022-09-22 00:23:31) [DEBUG] [logger_manager]: Created logger: 'core'
+(2022-09-22 16:34:33) [DEBUG] ['root']: Directory loggers: {}
+(2022-09-22 16:34:33) [DEBUG] ['root']: Directory logger 'core' was not found in loggers dict.
+(2022-09-22 16:34:33) [DEBUG] ['root']: Adding basic formatter to 'core'.
+(2022-09-22 16:34:33) [DEBUG] ['root']: Added streamhandler to 'core'.
+(2022-09-22 16:34:33) [DEBUG] ['root']: Deleted log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\core.log'.
+(2022-09-22 16:34:33) [DEBUG] ['root']: Added filehandler to 'core'.
+(2022-09-22 16:34:33) [DEBUG] ['root']: Created directory logger: 'core'
 
-(2022-09-22 00:23:31) [DEBUG] [logger_manager]: Current loggers: {'core': <Logger core (DEBUG)>}
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Searched for and found logger 'core' in loggers dict.
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Logger 'api' was not found in loggers dict.
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Creating new logger 'api', with level: '20'.
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Added streamhandler to 'api'.
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Deleted log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\api.log'.
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Added filehandler to 'api'.
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Created logger: 'api'
+(2022-09-22 16:34:33) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
+(2022-09-22 16:34:33) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-09-22 16:34:33) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app_funcs'
+(2022-09-22 16:34:33) [DEBUG] ['root']: Created logger: 'core.app_funcs'
 
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Current loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>}
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Searched for and found logger 'core' in loggers dict.
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Searched for and found logger 'core' in loggers dict.
-(2022-09-22 00:23:32) [INFO] [_internal]:  * Running on http://127.0.0.1:5000 (Press CTRL+C to quit)
-(2022-09-22 00:23:32) [INFO] [_internal]:  * Restarting with stat
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Logger 'core' was not found in loggers dict.
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Creating new logger 'core', with level: '20'.
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Added streamhandler to 'core'.
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Permission denied for log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\core.log'  Unable to delete.
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Added filehandler to 'core'.
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Created logger: 'core'
+(2022-09-22 16:34:33) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
+(2022-09-22 16:34:33) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-09-22 16:34:33) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'process'
+(2022-09-22 16:34:33) [DEBUG] ['root']: Created logger: 'core.process'
 
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Current loggers: {'core': <Logger core (DEBUG)>}
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Searched for and found logger 'core' in loggers dict.
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Logger 'api' was not found in loggers dict.
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Creating new logger 'api', with level: '20'.
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Added streamhandler to 'api'.
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Permission denied for log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\api.log'  Unable to delete.
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Added filehandler to 'api'.
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Created logger: 'api'
+(2022-09-22 16:34:33) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
+(2022-09-22 16:34:33) [DEBUG] ['root']: Directory logger 'api' was not found in loggers dict.
+(2022-09-22 16:34:33) [DEBUG] ['root']: Adding basic formatter to 'api'.
+(2022-09-22 16:34:33) [DEBUG] ['root']: Deleted log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\api.log'.
+(2022-09-22 16:34:33) [DEBUG] ['root']: Added filehandler to 'api'.
+(2022-09-22 16:34:33) [DEBUG] ['root']: Created directory logger: 'api'
 
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Current loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>}
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Searched for and found logger 'core' in loggers dict.
-(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Searched for and found logger 'core' in loggers dict.
-(2022-09-22 00:23:32) [WARNING] [_internal]:  * Debugger is active!
-(2022-09-22 00:23:32) [INFO] [_internal]:  * Debugger PIN: 255-239-494
+(2022-09-22 16:34:33) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>}
+(2022-09-22 16:34:33) [DEBUG] ['root']: Searched for and found logger 'api' in loggers dict.
+(2022-09-22 16:34:33) [DEBUG] ['root']: Creating new child of logger 'api', with name: 'api'
+(2022-09-22 16:34:33) [DEBUG] ['root']: Created logger: 'api.api'
+
+(2022-09-22 16:34:33) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>}
+(2022-09-22 16:34:33) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-09-22 16:34:33) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app'
+(2022-09-22 16:34:33) [DEBUG] ['root']: Created logger: 'core.app'
+
+(2022-09-22 16:34:33) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>}
+(2022-09-22 16:34:33) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-09-22 16:34:33) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'database_manager.manager'
+(2022-09-22 16:34:33) [DEBUG] ['root']: Created logger: 'core.database_manager.manager'
+
+(2022-09-22 16:34:33) [INFO] ['werkzeug']:  * Running on http://127.0.0.1:5000 (Press CTRL+C to quit)
+(2022-09-22 16:34:40) [DEBUG] ['asyncio']: Using selector: SelectSelector
+(2022-09-22 16:34:40) [DEBUG] ['urllib3.connectionpool']: Starting new HTTPS connection (1): cfapi.voikukka.fi:443
+(2022-09-22 16:34:40) [DEBUG] ['urllib3.connectionpool']: https://cfapi.voikukka.fi:443 "POST /graphql HTTP/1.1" 200 691
+(2022-09-22 16:34:40) [INFO] ['werkzeug']: 127.0.0.1 - - [22/Sep/2022 16:34:40] "POST /query/ HTTP/1.1" 200 -

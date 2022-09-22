@@ -1,9 +1,9 @@
 from core import process
-#from temp.test import run
+#from temp import run
 
 if __name__ == "__main__":
     #run()
-    process.start(debug=True, reset=False)
+    process.start(debug=False, reset=False)
 
     # TODO: Input sanitization will happen in validate_post(),
     # Flask I think has some funcs for that,

@@ -6,14 +6,10 @@ from utils import LoggerManager as lgm
 from api import s_queries
 from core import (
     ProductList,
-    AmountTuple,
-    get_quantity,
-    get_specifiers,
-    QueryItem
 )
 
 api_url = s_urls.api_url
-logger = lgm.get_logger(name=__name__, level=20, stream=True)
+logger = lgm.get_logger(name=__name__)
 
 
 def send_post(query_string: str, params: dict) -> requests.Response:
@@ -65,37 +61,3 @@ async def get_groceries(request, product_queries, limit=24):
     logger.debug(
         f"Tasks len(): {len(tasks)}")
     return await asyncio.gather(*tasks)
-
-
-def parse_input(request):
-    product_queries = []
-    logger.debug("Parsing user input...")
-    for query, amt, cat in zip(
-            request.json["queries"],
-            request.json["amounts"],
-            request.json["categories"]):
-        if query == "" or query is None:
-            logger.debug(
-                "Received an empty query, skipping...")
-            continue
-
-        try:
-            if amt != "" and amt is not None:
-                amt = int(amt)
-        except ValueError:
-            logger.exception(
-                "Amt could not be converted to 'int'")
-            amt = 1
-        tup = AmountTuple(amount=amt, **get_quantity(query))
-        contain = get_specifiers(query)
-
-        product_queries.append(
-            QueryItem(
-                name=query,
-                amt=tup,
-                category=cat,
-                must_contain=contain))
-
-    logger.debug(
-        f"product_queries len(): {len(product_queries)}")
-    return product_queries
