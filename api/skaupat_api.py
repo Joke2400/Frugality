@@ -2,7 +2,7 @@ import asyncio
 import requests
 
 from data.urls import SKaupatURLs as s_urls
-from utils import configure_logger
+from utils import LoggerManager as lgm
 from api import s_queries
 from core import (
     ProductList,
@@ -13,8 +13,7 @@ from core import (
 )
 
 api_url = s_urls.api_url
-logger = configure_logger(name=__name__, level=20,
-                          log_to_stream=True, log_to_file=True)
+logger = lgm.get_logger(name=__name__, level=20, stream=True)
 
 
 def send_post(query_string: str, params: dict) -> requests.Response:

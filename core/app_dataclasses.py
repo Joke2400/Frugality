@@ -1,19 +1,21 @@
 from typing import NamedTuple
 from dataclasses import dataclass
-from utils import timer
 import json
-    
+
+
 class AmountTuple(NamedTuple):
     amount: int
-    quantity: int = None
-    unit: str = None
+    quantity: int | None = None
+    unit: str | None = None
+
 
 @dataclass
 class QueryItem:
     name: str
     amt: AmountTuple
-    category: str = None
-    must_contain: str|list[str] = None
+    category: str | None = None
+    must_contain: str | list[str] | None = None
+
 
 @dataclass
 class ResultItem:

@@ -1,8 +1,8 @@
 from core import process
-# from temp.test import run
+#from temp.test import run
 
 if __name__ == "__main__":
-    # run()
+    #run()
     process.start(debug=True, reset=False)
 
     # TODO: Input sanitization will happen in validate_post(),

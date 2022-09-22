@@ -1,8 +1,8 @@
-import core.database_manager.sqlalchemy_db_classes as dbc
-from utils import configure_logger
+from utils import LoggerManager as lgm
+import core.database_manager.sqlalchemy_classes as dbc
 
-logger = configure_logger(name=__name__, level=20,
-                          log_to_stream=True, log_to_file=True)
+
+logger = lgm.get_logger(name=__name__, level=20, stream=True)
 
 
 class DataManager:

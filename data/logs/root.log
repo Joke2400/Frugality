@@ -1,0 +1,42 @@
+(2022-09-22 00:23:31) [DEBUG] [logger_manager]: Logger 'core' was not found in loggers dict.
+(2022-09-22 00:23:31) [DEBUG] [logger_manager]: Creating new logger 'core', with level: '20'.
+(2022-09-22 00:23:31) [DEBUG] [logger_manager]: Added streamhandler to 'core'.
+(2022-09-22 00:23:31) [DEBUG] [logger_manager]: Deleted log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\core.log'.
+(2022-09-22 00:23:31) [DEBUG] [logger_manager]: Added filehandler to 'core'.
+(2022-09-22 00:23:31) [DEBUG] [logger_manager]: Created logger: 'core'
+
+(2022-09-22 00:23:31) [DEBUG] [logger_manager]: Current loggers: {'core': <Logger core (DEBUG)>}
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Searched for and found logger 'core' in loggers dict.
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Logger 'api' was not found in loggers dict.
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Creating new logger 'api', with level: '20'.
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Added streamhandler to 'api'.
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Deleted log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\api.log'.
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Added filehandler to 'api'.
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Created logger: 'api'
+
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Current loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>}
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Searched for and found logger 'core' in loggers dict.
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Searched for and found logger 'core' in loggers dict.
+(2022-09-22 00:23:32) [INFO] [_internal]:  * Running on http://127.0.0.1:5000 (Press CTRL+C to quit)
+(2022-09-22 00:23:32) [INFO] [_internal]:  * Restarting with stat
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Logger 'core' was not found in loggers dict.
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Creating new logger 'core', with level: '20'.
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Added streamhandler to 'core'.
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Permission denied for log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\core.log'  Unable to delete.
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Added filehandler to 'core'.
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Created logger: 'core'
+
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Current loggers: {'core': <Logger core (DEBUG)>}
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Searched for and found logger 'core' in loggers dict.
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Logger 'api' was not found in loggers dict.
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Creating new logger 'api', with level: '20'.
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Added streamhandler to 'api'.
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Permission denied for log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\api.log'  Unable to delete.
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Added filehandler to 'api'.
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Created logger: 'api'
+
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Current loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>}
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Searched for and found logger 'core' in loggers dict.
+(2022-09-22 00:23:32) [DEBUG] [logger_manager]: Searched for and found logger 'core' in loggers dict.
+(2022-09-22 00:23:32) [WARNING] [_internal]:  * Debugger is active!
+(2022-09-22 00:23:32) [INFO] [_internal]:  * Debugger PIN: 255-239-494

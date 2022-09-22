@@ -1,8 +1,10 @@
 
 from .program_paths import Paths
-from .util_funcs import (
-    timer,
-    configure_logger
-)
+from .logger_manager import LoggerManager
+from .util_funcs import timer
 
-# from .descriptors import *
+
+LoggerManager.configure(
+    logs_path=Paths.logs(),
+    keep_logs=False
+)

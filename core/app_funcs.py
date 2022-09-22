@@ -1,12 +1,17 @@
 from core import ProductList
+from utils import LoggerManager as lgm
 import re
+
+logger = lgm.get_logger(name=__name__, level=20, stream=True)
 
 
 def basic_regex(p: str, s: str) -> list[str]:
-    return re.findall(
+    result = re.findall(
         pattern=p,
         string=s,
         flags=re.I | re.M)
+    logger.debug(f"Regex result: {result}")
+    return result
 
 
 def validate_post(request) -> bool:
@@ -33,8 +38,7 @@ def get_specifiers(s):
 def print_results(results):
     ProductList.update_total_cost()
     for r in results:
-        print(r)
-    print(f"Min: {'': ^3}{ProductList.total_cheap:.2f}€")
-    print(f"Max: {'': ^3}{ProductList.total_expensive:.2f}€")
-    print(f"Avg: {'': ^3}{ProductList.total_avg:.2f}€")
-    print("")
+        logger.info(r)
+    logger.info(f"Min: {'': ^3}{ProductList.total_cheap:.2f}€")
+    logger.info(f"Max: {'': ^3}{ProductList.total_expensive:.2f}€")
+    logger.info(f"Avg: {'': ^3}{ProductList.total_avg:.2f}€\n")

@@ -21,3 +21,6 @@ api/__pycache__/skaupat_api_funcs.cpython-310.pyc
 api/__pycache__/skaupat_queries.cpython-310.pyc
 temp/test.py
 core/__pycache__/app_funcs.cpython-310.pyc
+utils/__pycache__/logger_manager.cpython-310.pyc
+api/__pycache__/skaupat_api.cpython-310.pyc
+api/__pycache__/skaupat_api.cpython-310.pyc

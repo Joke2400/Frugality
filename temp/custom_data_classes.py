@@ -1,6 +1,6 @@
 from typing import NamedTuple
 from .helper_functions import haversine
-from ..utils.descriptors import DataStringAttribute, LocationAttribute
+from .descriptors import DataStringAttribute, LocationAttribute
 
 class LocationTuple(NamedTuple):
     formatted_address : str

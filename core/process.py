@@ -1,17 +1,15 @@
 from flask_sqlalchemy import SQLAlchemy
-from utils import configure_logger
 from datetime import timedelta
 from flask import Flask
-from utils import Paths
+from utils import Paths, LoggerManager as lgm
 
 import asyncio
 
 TEST_MODE = True
 TRACK = True
 LIFETIME = timedelta(days=1)
-logger = configure_logger(name=__name__, level=20,
-                          log_to_stream=True, log_to_file=True)
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+logger = lgm.get_logger(name=__name__, level=20, stream=True)
 
 
 class Process:
@@ -41,5 +39,5 @@ class Process:
         # Avoiding a circular import :)
         self.data_manager = DataManager(db=self.db)
         self.data_manager.start_db(reset=reset)
-        logger.info("Starting Flask app...")
+        logger.info("Starting Flask app...\n")
         self.app.run(debug=debug)
