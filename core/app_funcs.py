@@ -35,6 +35,8 @@ def get_quantity(s):
 
 
 def get_specifiers(s):
+    # TODO: Rename function
+    # TODO: Replan concept behind must_contain variable
     return basic_regex("laktoositon", s)
 
 
@@ -71,14 +73,5 @@ def parse_input(request):
                 must_contain=contain))
 
     logger.debug(
-        f"Product queries len({len(product_queries)})")
+        f"Product queries len({len(product_queries)})\n")
     return product_queries
-
-
-def print_results(results):
-    core.ProductList.update_total_cost()
-    for r in results:
-        logger.info(r)
-    logger.info(f"Min: {'': ^3}{core.ProductList.total_cheap:.2f}€")
-    logger.info(f"Max: {'': ^3}{core.ProductList.total_expensive:.2f}€")
-    logger.info(f"Avg: {'': ^3}{core.ProductList.total_avg:.2f}€\n")

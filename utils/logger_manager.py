@@ -53,7 +53,7 @@ class LoggerManager:
 
         cls.root_log_path = cls._get_log_path(log_name="root.log")
         sh = logging.StreamHandler()
-        sh.setLevel(logging.WARNING)
+        sh.setLevel(logging.INFO)
         sh.setFormatter(cls.basic_formatter)
 
         logging.basicConfig(

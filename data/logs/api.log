@@ -1,3 +1,2 @@
-(2022-09-22 16:34:40) [DEBUG] ['api']: List index: 0 [Query: 'Maito Laktoositon 1L' Category: '{p.category}']
-(2022-09-22 16:34:40) [DEBUG] ['api']: Tasks len(): 1
-(2022-09-22 16:34:40) [DEBUG] ['api']: Query: Maito Laktoositon 1L Response: <Response [200]>
+(2022-09-23 13:30:31) [DEBUG] ['api']: Async tasks len(): 0
+

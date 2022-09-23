@@ -1,5 +1,6 @@
 import asyncio
 import requests
+import json
 
 from data.urls import SKaupatURLs as s_urls
 from utils import LoggerManager as lgm
@@ -10,11 +11,19 @@ from core import (
 
 api_url = s_urls.api_url
 logger = lgm.get_logger(name=__name__)
+query_logger = lgm.get_logger(name="query", level=20)
 
 
 def send_post(query_string: str, params: dict) -> requests.Response:
     response = requests.post(url=api_url, json=params, timeout=1)
-    logger.debug(f"Query: {query_string} Response: {response}")
+    logger.debug(
+        f"Queried: '{query_string}', got response [{response.status_code}]")
+    status = response.status_code
+    response = json.loads(response.text)
+    query_logger.debug(
+        f"Queried: '{query_string}', got response" +
+        f"[{status}]\nResponse text:" +
+        json.dumps(response, indent=4))
     return response
 
 
@@ -36,6 +45,8 @@ async def parse_response(query: str, variables: dict,
         response=response,
         query_string=variables["query"],
         category=variables["slugs"])
+    logger.debug(
+        f"Created ProductList from query string: '{variables['query']}'")
     return products
 
 
@@ -51,13 +62,13 @@ async def get_groceries(request, product_queries, limit=24):
             "slugs": p.category
         }
         logger.debug(
-            f"List index: {c} [Query: '{p.name}' " +
-            "Category: '{p.category}']")
+            f"Query @ index: {c} [Query: '{p.name}' " +
+            f"Category: '{p.category}']")
         tasks.append(
             parse_response(
                 query=query,
                 variables=variables,
                 operation=operation))
     logger.debug(
-        f"Tasks len(): {len(tasks)}")
+        f"Async tasks len(): {len(tasks)}\n")
     return await asyncio.gather(*tasks)

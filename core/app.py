@@ -25,7 +25,6 @@ def query():
         operation = request.json["operation"]
         product_queries = parse_input(request=request)
 
-        ProductList.reset_total_cost()
         if operation == "Groceries":
             logger.info(f"Current operation: {operation}")
             results = asyncio.run(get_groceries(
@@ -34,10 +33,7 @@ def query():
                 limit=24))
             for r in results:
                 logger.info(r)
-            return {"data": {
-                "total_cheap": f"{ProductList.total_cheap:.2f}",
-                "total_expensive": f"{ProductList.total_expensive:.2f}",
-                "total_avg": f"{ProductList.total_avg:.2f}"}}
+            return {"data": ""}
         else:
             return {"data": "[ERROR]: Operation not found."}
     else:

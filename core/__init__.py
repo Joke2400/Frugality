@@ -12,7 +12,6 @@ from .app_funcs import (
     get_quantity,
     get_specifiers,
     validate_post,
-    print_results,
     parse_input
 )
 from .process import Process
