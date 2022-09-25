@@ -17,20 +17,21 @@ def basic_regex(p: str, s: str) -> list[str] | None:
     return None
 
 
-def validate_post(request) -> bool:
+def validate_post(request) -> dict | None:
     if request.method == "POST":
-        if request.json is None:
-            return False
-    return True
+        if request.json is not None:
+            return request.json
+    return None
 
 
-def get_quantity(s):
-    r = basic_regex("(\d+)(l|k?gm?)", s)
-    if r is not None:
-        r = r[0]
-        return {
-            "quantity": int(r[0]) if r[0] != "" else None,
-            "unit":     r[1] if r[1] != "" else None}
+def get_quantity(s: str):
+    if isinstance(s, str):
+        r = basic_regex(r"(\d+)(l|k?gm?)", s)
+        if r is not None:
+            r = r[0]
+            return {
+                "quantity": int(r[0]) if r[0] != "" else None,
+                "unit":     r[1] if r[1] != "" else None}
     return {"quantity": None, "unit": None}
 
 
@@ -41,9 +42,9 @@ def get_specifiers(s):
 
 
 def parse_input(request):
-    product_queries = []
     logger.debug(
         "Parsing request JSON...")
+    product_queries = []
     for query, amt, cat in zip(
             request.json["queries"],
             request.json["amounts"],
@@ -57,7 +58,11 @@ def parse_input(request):
 
         try:
             if amt != "" and amt is not None:
-                amt = int(amt)
+                amt = abs(int(amt))
+                if amt > 100:
+                    amt = 100
+            else:
+                amt = 1
         except ValueError:
             logger.exception(
                 "Amt could not be converted to 'int'")
