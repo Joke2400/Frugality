@@ -21,7 +21,6 @@ def base_url_redirect():
 @app.route("/query/", methods=["POST"])
 @timer
 def query():
-    request_json = validate_post(request)
     if validate_post(request=request):
         operation = request.json["operation"]
         product_queries = parse_input(request=request)

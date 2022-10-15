@@ -4,3 +4,5 @@ from core import process
 if __name__ == "__main__":
     #run()
     process.start(debug=True, reset=False)
+
+    #TODO: Complete overhaul of data classes, and app funcs

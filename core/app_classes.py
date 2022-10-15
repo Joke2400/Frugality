@@ -1,7 +1,6 @@
 from utils import LoggerManager as lgm
 from typing import NamedTuple
 from dataclasses import dataclass
-import json
 
 
 logger = lgm.get_logger(name=__name__)
@@ -24,11 +23,13 @@ class QueryItem:
 @dataclass
 class ResultItem:
     name: str
+    amt: AmountTuple
     ean: str
     price: float
     quantity_unit: str
     cmp_price: float
     cmp_unit: str
+    category: str | None = None
 
 
 class ProductList:
