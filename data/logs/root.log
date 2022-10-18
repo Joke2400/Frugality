@@ -1,108 +1,113 @@
-(2022-09-25 19:20:03) [DEBUG] ['root']: Directory loggers: {}
-(2022-09-25 19:20:03) [DEBUG] ['root']: Directory logger 'core' was not found in loggers dict.
-(2022-09-25 19:20:03) [DEBUG] ['root']: Adding basic formatter to 'core'.
-(2022-09-25 19:20:03) [DEBUG] ['root']: Added streamhandler to 'core'.
-(2022-09-25 19:20:03) [DEBUG] ['root']: Deleted log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\core.log'.
-(2022-09-25 19:20:03) [DEBUG] ['root']: Added filehandler to 'core'.
-(2022-09-25 19:20:03) [DEBUG] ['root']: Created directory logger: 'core'
+(2022-10-13 17:37:28) [DEBUG] ['root']: Directory loggers: {}
+(2022-10-13 17:37:28) [DEBUG] ['root']: Directory logger 'core' was not found in loggers dict.
+(2022-10-13 17:37:28) [DEBUG] ['root']: Adding basic formatter to 'core'.
+(2022-10-13 17:37:28) [DEBUG] ['root']: Added streamhandler to 'core'.
+(2022-10-13 17:37:28) [DEBUG] ['root']: Deleted log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\core.log'.
+(2022-10-13 17:37:28) [DEBUG] ['root']: Added filehandler to 'core'.
+(2022-10-13 17:37:28) [DEBUG] ['root']: Created directory logger: 'core'
 
-(2022-09-25 19:20:03) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
-(2022-09-25 19:20:03) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
-(2022-09-25 19:20:03) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app_dataclasses'
-(2022-09-25 19:20:03) [DEBUG] ['root']: Created logger: 'core.app_dataclasses'
+(2022-10-13 17:37:28) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
+(2022-10-13 17:37:28) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-10-13 17:37:28) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app_dataclasses'
+(2022-10-13 17:37:28) [DEBUG] ['root']: Created logger: 'core.app_dataclasses'
 
-(2022-09-25 19:20:03) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
-(2022-09-25 19:20:03) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
-(2022-09-25 19:20:03) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app_funcs'
-(2022-09-25 19:20:03) [DEBUG] ['root']: Created logger: 'core.app_funcs'
+(2022-10-13 17:37:28) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
+(2022-10-13 17:37:28) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-10-13 17:37:28) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app_funcs'
+(2022-10-13 17:37:28) [DEBUG] ['root']: Created logger: 'core.app_funcs'
 
-(2022-09-25 19:20:03) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
-(2022-09-25 19:20:03) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
-(2022-09-25 19:20:03) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'process'
-(2022-09-25 19:20:03) [DEBUG] ['root']: Created logger: 'core.process'
+(2022-10-13 17:37:28) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
+(2022-10-13 17:37:28) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-10-13 17:37:28) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'process'
+(2022-10-13 17:37:28) [DEBUG] ['root']: Created logger: 'core.process'
 
-(2022-09-25 19:20:03) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
-(2022-09-25 19:20:03) [DEBUG] ['root']: Directory logger 'api' was not found in loggers dict.
-(2022-09-25 19:20:03) [DEBUG] ['root']: Adding basic formatter to 'api'.
-(2022-09-25 19:20:03) [DEBUG] ['root']: Deleted log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\api.log'.
-(2022-09-25 19:20:03) [DEBUG] ['root']: Added filehandler to 'api'.
-(2022-09-25 19:20:03) [DEBUG] ['root']: Created directory logger: 'api'
+(2022-10-13 17:37:28) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
+(2022-10-13 17:37:28) [DEBUG] ['root']: Directory logger 'api' was not found in loggers dict.
+(2022-10-13 17:37:28) [DEBUG] ['root']: Adding basic formatter to 'api'.
+(2022-10-13 17:37:28) [DEBUG] ['root']: Deleted log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\api.log'.
+(2022-10-13 17:37:28) [DEBUG] ['root']: Added filehandler to 'api'.
+(2022-10-13 17:37:28) [DEBUG] ['root']: Created directory logger: 'api'
 
-(2022-09-25 19:20:03) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>}
-(2022-09-25 19:20:03) [DEBUG] ['root']: Directory logger 'query' was not found in loggers dict.
-(2022-09-25 19:20:03) [DEBUG] ['root']: Adding basic formatter to 'query'.
-(2022-09-25 19:20:03) [DEBUG] ['root']: Deleted log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\query.log'.
-(2022-09-25 19:20:03) [DEBUG] ['root']: Added filehandler to 'query'.
-(2022-09-25 19:20:03) [DEBUG] ['root']: Created directory logger: 'query'
+(2022-10-13 17:37:28) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>}
+(2022-10-13 17:37:28) [DEBUG] ['root']: Directory logger 'query' was not found in loggers dict.
+(2022-10-13 17:37:28) [DEBUG] ['root']: Adding basic formatter to 'query'.
+(2022-10-13 17:37:28) [DEBUG] ['root']: Deleted log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\query.log'.
+(2022-10-13 17:37:28) [DEBUG] ['root']: Added filehandler to 'query'.
+(2022-10-13 17:37:28) [DEBUG] ['root']: Created directory logger: 'query'
 
-(2022-09-25 19:20:03) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
-(2022-09-25 19:20:03) [DEBUG] ['root']: Searched for and found logger 'api' in loggers dict.
-(2022-09-25 19:20:03) [DEBUG] ['root']: Creating new child of logger 'api', with name: 'api'
-(2022-09-25 19:20:03) [DEBUG] ['root']: Created logger: 'api.api'
+(2022-10-13 17:37:28) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
+(2022-10-13 17:37:28) [DEBUG] ['root']: Searched for and found logger 'api' in loggers dict.
+(2022-10-13 17:37:28) [DEBUG] ['root']: Creating new child of logger 'api', with name: 'api'
+(2022-10-13 17:37:28) [DEBUG] ['root']: Created logger: 'api.api'
 
-(2022-09-25 19:20:03) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
-(2022-09-25 19:20:03) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
-(2022-09-25 19:20:03) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app'
-(2022-09-25 19:20:03) [DEBUG] ['root']: Created logger: 'core.app'
+(2022-10-13 17:37:28) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
+(2022-10-13 17:37:28) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-10-13 17:37:28) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app'
+(2022-10-13 17:37:28) [DEBUG] ['root']: Created logger: 'core.app'
 
-(2022-09-25 19:20:03) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
-(2022-09-25 19:20:03) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
-(2022-09-25 19:20:03) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'database_manager.manager'
-(2022-09-25 19:20:03) [DEBUG] ['root']: Created logger: 'core.database_manager.manager'
+(2022-10-13 17:37:28) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
+(2022-10-13 17:37:28) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-10-13 17:37:28) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'database_manager.manager'
+(2022-10-13 17:37:28) [DEBUG] ['root']: Created logger: 'core.database_manager.manager'
 
-(2022-09-25 19:20:03) [INFO] ['werkzeug']:  * Running on http://127.0.0.1:5000 (Press CTRL+C to quit)
-(2022-09-25 19:20:03) [INFO] ['werkzeug']:  * Restarting with stat
-(2022-09-25 19:20:04) [DEBUG] ['root']: Directory loggers: {}
-(2022-09-25 19:20:04) [DEBUG] ['root']: Directory logger 'core' was not found in loggers dict.
-(2022-09-25 19:20:04) [DEBUG] ['root']: Adding basic formatter to 'core'.
-(2022-09-25 19:20:04) [DEBUG] ['root']: Added streamhandler to 'core'.
-(2022-09-25 19:20:04) [DEBUG] ['root']: Permission denied for log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\core.log'  Unable to delete.
-(2022-09-25 19:20:04) [DEBUG] ['root']: Added filehandler to 'core'.
-(2022-09-25 19:20:04) [DEBUG] ['root']: Created directory logger: 'core'
+(2022-10-13 17:37:28) [INFO] ['werkzeug']:  * Running on http://127.0.0.1:5000 (Press CTRL+C to quit)
+(2022-10-13 17:37:28) [INFO] ['werkzeug']:  * Restarting with stat
+(2022-10-13 17:37:29) [DEBUG] ['root']: Directory loggers: {}
+(2022-10-13 17:37:29) [DEBUG] ['root']: Directory logger 'core' was not found in loggers dict.
+(2022-10-13 17:37:29) [DEBUG] ['root']: Adding basic formatter to 'core'.
+(2022-10-13 17:37:29) [DEBUG] ['root']: Added streamhandler to 'core'.
+(2022-10-13 17:37:29) [DEBUG] ['root']: Permission denied for log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\core.log'  Unable to delete.
+(2022-10-13 17:37:29) [DEBUG] ['root']: Added filehandler to 'core'.
+(2022-10-13 17:37:29) [DEBUG] ['root']: Created directory logger: 'core'
 
-(2022-09-25 19:20:04) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
-(2022-09-25 19:20:04) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
-(2022-09-25 19:20:04) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app_dataclasses'
-(2022-09-25 19:20:04) [DEBUG] ['root']: Created logger: 'core.app_dataclasses'
+(2022-10-13 17:37:29) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
+(2022-10-13 17:37:29) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-10-13 17:37:29) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app_dataclasses'
+(2022-10-13 17:37:29) [DEBUG] ['root']: Created logger: 'core.app_dataclasses'
 
-(2022-09-25 19:20:04) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
-(2022-09-25 19:20:04) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
-(2022-09-25 19:20:04) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app_funcs'
-(2022-09-25 19:20:04) [DEBUG] ['root']: Created logger: 'core.app_funcs'
+(2022-10-13 17:37:29) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
+(2022-10-13 17:37:29) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-10-13 17:37:29) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app_funcs'
+(2022-10-13 17:37:29) [DEBUG] ['root']: Created logger: 'core.app_funcs'
 
-(2022-09-25 19:20:04) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
-(2022-09-25 19:20:04) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
-(2022-09-25 19:20:04) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'process'
-(2022-09-25 19:20:04) [DEBUG] ['root']: Created logger: 'core.process'
+(2022-10-13 17:37:29) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
+(2022-10-13 17:37:29) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-10-13 17:37:29) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'process'
+(2022-10-13 17:37:29) [DEBUG] ['root']: Created logger: 'core.process'
 
-(2022-09-25 19:20:04) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
-(2022-09-25 19:20:04) [DEBUG] ['root']: Directory logger 'api' was not found in loggers dict.
-(2022-09-25 19:20:04) [DEBUG] ['root']: Adding basic formatter to 'api'.
-(2022-09-25 19:20:04) [DEBUG] ['root']: Permission denied for log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\api.log'  Unable to delete.
-(2022-09-25 19:20:04) [DEBUG] ['root']: Added filehandler to 'api'.
-(2022-09-25 19:20:04) [DEBUG] ['root']: Created directory logger: 'api'
+(2022-10-13 17:37:29) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
+(2022-10-13 17:37:29) [DEBUG] ['root']: Directory logger 'api' was not found in loggers dict.
+(2022-10-13 17:37:29) [DEBUG] ['root']: Adding basic formatter to 'api'.
+(2022-10-13 17:37:29) [DEBUG] ['root']: Permission denied for log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\api.log'  Unable to delete.
+(2022-10-13 17:37:29) [DEBUG] ['root']: Added filehandler to 'api'.
+(2022-10-13 17:37:29) [DEBUG] ['root']: Created directory logger: 'api'
 
-(2022-09-25 19:20:04) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>}
-(2022-09-25 19:20:04) [DEBUG] ['root']: Directory logger 'query' was not found in loggers dict.
-(2022-09-25 19:20:04) [DEBUG] ['root']: Adding basic formatter to 'query'.
-(2022-09-25 19:20:04) [DEBUG] ['root']: Permission denied for log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\query.log'  Unable to delete.
-(2022-09-25 19:20:04) [DEBUG] ['root']: Added filehandler to 'query'.
-(2022-09-25 19:20:04) [DEBUG] ['root']: Created directory logger: 'query'
+(2022-10-13 17:37:29) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>}
+(2022-10-13 17:37:29) [DEBUG] ['root']: Directory logger 'query' was not found in loggers dict.
+(2022-10-13 17:37:29) [DEBUG] ['root']: Adding basic formatter to 'query'.
+(2022-10-13 17:37:29) [DEBUG] ['root']: Permission denied for log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\query.log'  Unable to delete.
+(2022-10-13 17:37:29) [DEBUG] ['root']: Added filehandler to 'query'.
+(2022-10-13 17:37:29) [DEBUG] ['root']: Created directory logger: 'query'
 
-(2022-09-25 19:20:04) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
-(2022-09-25 19:20:04) [DEBUG] ['root']: Searched for and found logger 'api' in loggers dict.
-(2022-09-25 19:20:04) [DEBUG] ['root']: Creating new child of logger 'api', with name: 'api'
-(2022-09-25 19:20:04) [DEBUG] ['root']: Created logger: 'api.api'
+(2022-10-13 17:37:29) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
+(2022-10-13 17:37:29) [DEBUG] ['root']: Searched for and found logger 'api' in loggers dict.
+(2022-10-13 17:37:29) [DEBUG] ['root']: Creating new child of logger 'api', with name: 'api'
+(2022-10-13 17:37:29) [DEBUG] ['root']: Created logger: 'api.api'
 
-(2022-09-25 19:20:04) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
-(2022-09-25 19:20:04) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
-(2022-09-25 19:20:04) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app'
-(2022-09-25 19:20:04) [DEBUG] ['root']: Created logger: 'core.app'
+(2022-10-13 17:37:29) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
+(2022-10-13 17:37:29) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-10-13 17:37:29) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app'
+(2022-10-13 17:37:29) [DEBUG] ['root']: Created logger: 'core.app'
 
-(2022-09-25 19:20:04) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
-(2022-09-25 19:20:04) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
-(2022-09-25 19:20:04) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'database_manager.manager'
-(2022-09-25 19:20:04) [DEBUG] ['root']: Created logger: 'core.database_manager.manager'
+(2022-10-13 17:37:29) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
+(2022-10-13 17:37:29) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-10-13 17:37:29) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'database_manager.manager'
+(2022-10-13 17:37:29) [DEBUG] ['root']: Created logger: 'core.database_manager.manager'
 
-(2022-09-25 19:20:04) [WARNING] ['werkzeug']:  * Debugger is active!
-(2022-09-25 19:20:04) [INFO] ['werkzeug']:  * Debugger PIN: 331-506-630
+(2022-10-13 17:37:29) [WARNING] ['werkzeug']:  * Debugger is active!
+(2022-10-13 17:37:29) [INFO] ['werkzeug']:  * Debugger PIN: 125-562-759
+(2022-10-13 17:37:35) [INFO] ['werkzeug']: 127.0.0.1 - - [13/Oct/2022 17:37:35] "[32mGET / HTTP/1.1[0m" 302 -
+(2022-10-13 17:37:35) [INFO] ['werkzeug']: 127.0.0.1 - - [13/Oct/2022 17:37:35] "GET /main/ HTTP/1.1" 200 -
+(2022-10-13 17:37:35) [INFO] ['werkzeug']: 127.0.0.1 - - [13/Oct/2022 17:37:35] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-13 17:37:35) [INFO] ['werkzeug']: 127.0.0.1 - - [13/Oct/2022 17:37:35] "GET /static/js/query.js HTTP/1.1" 200 -
+(2022-10-13 17:37:35) [INFO] ['werkzeug']: 127.0.0.1 - - [13/Oct/2022 17:37:35] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -

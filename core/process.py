@@ -28,7 +28,7 @@ class Process:
         self.app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = TRACK
         self.app.permanent_session_lifetime = LIFETIME
 
-        logger.info(f"Set database uri to: 'sqlite:///{self.db_path}'.")
+        logger.debug(f"Set database uri to: 'sqlite:///{self.db_path}'.")
         logger.debug(f"Set SQLALCHEMY_TRACK_MODIFICATIONS to: {TRACK}.")
         logger.debug(f"Set Flask session lifetime to: {LIFETIME}.")
 
