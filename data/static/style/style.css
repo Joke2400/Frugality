@@ -79,6 +79,10 @@ body {
     box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.4);
 }
 
+.item-dropdown {
+    width: fit-content;
+}
+
 .categories {
     background-color: rgb(0, 150, 176);
     border: none;
@@ -95,7 +99,7 @@ body {
     color: #f0f0f0;
 }
 
-.input_field input {
+.input input {
     background-color: rgb(0, 150, 176);
     border: none;
     border-radius: 0;
@@ -105,7 +109,7 @@ body {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
 }
 
-.send_query {
+.send-query {
     background-color: #f0fffd;
     padding: 0.5em;
     width: fit-content;
@@ -113,7 +117,7 @@ body {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
 }
 
-.query_btn {
+.query-btn {
     background-color: rgb(0, 150, 176);
     border: none;
     border-radius: 0;
@@ -123,11 +127,11 @@ body {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
 }
 
-.query_btn:hover {
+.query-btn:hover {
     background-color: rgb(0, 166, 195);
 }
 
-.input_field input:hover {
+.input-field input:hover {
     background-color: rgb(0, 166, 195);
 }
 
@@ -135,8 +139,22 @@ body {
     background-color: rgb(0, 166, 195);
 }
 
+.amt-container {
+    background-color: rgba(0, 0, 0, 0.1);
+    display: flex;
+}
 
+.amt-btn {
+    background-color: rgb(0, 150, 176);
+    border: none;
+    padding: 0.4em 0.4em;
+    color: #f0f0f0;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
+}
 
+.add-btn {
+    
+}
 
 
 
