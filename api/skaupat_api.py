@@ -7,6 +7,7 @@ from utils import LoggerManager as lgm
 from api import s_queries
 from core import (
     ProductList,
+    QueryItem
 )
 
 api_url = s_urls.api_url
@@ -50,20 +51,22 @@ async def parse_response(query: str, variables: dict,
     return products
 
 
-async def get_groceries(request, product_queries, limit=24):
-    tasks = []
+async def get_products(store_id: str, product_queries: list[QueryItem],
+                       limit: int = 24):
     operation = "GetProductByName"
-    query = s_queries[operation]
-    for c, p in enumerate(product_queries):
+    query = s_queries[operation]  # Get predefined GraphQL query
+    tasks = []
+
+    for count, p in enumerate(product_queries):
         variables = {
-            "StoreID": request.json["store_id"],
+            "StoreID": store_id,
             "limit": limit,
             "query": p.name,
             "slugs": p.category
         }
         logger.debug(
-            f"Query @ index: {c} [Query: '{p.name}' " +
-            f"Category: '{p.category}']")
+            f"Appending query @ index: {count} " +
+            f"[Query: '{p.name}' Category: '{p.category}']")
         tasks.append(
             parse_response(
                 query=query,
