@@ -28,3 +28,5 @@ __pycache__
 temp/__init__.py
 temp/test.py
 temp
+data/logs/core.log
+data/logs/root.log
