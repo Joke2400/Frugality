@@ -8,16 +8,15 @@ logger = lgm.get_logger(name=__name__)
 
 class AmountTuple(NamedTuple):
     amount: int
-    quantity: int | None = None
-    unit: str | None = None
+    quantity: int | None
+    unit: str | None
 
 
 @dataclass
 class QueryItem:
     name: str
     amt: AmountTuple
-    category: str | None = None
-    must_contain: str | list[str] | None = None
+    category: str | None
 
 
 @dataclass
@@ -29,10 +28,12 @@ class ResultItem:
     quantity_unit: str
     cmp_price: float
     cmp_unit: str
-    category: str | None = None
+    category: str | None
 
 
 class ProductList:
+
+    # Let me present: a nasty, hastily-made class
 
     def __init__(self, response, query_string, category):
         self.query_string = query_string
@@ -45,6 +46,7 @@ class ProductList:
             self.items, key=lambda x: x.cmp_price)
         self.averaged = sum(
             i.cmp_price for i in self.items) / len(self.items)
+
 
     def parse_response(self, response):
         logger.debug(

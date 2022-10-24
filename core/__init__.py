@@ -9,9 +9,9 @@ from .app_classes import (
     ProductList
 )
 from .app_funcs import (
-    get_quantity,
-    get_specifiers,
+    parse_query_data,
     validate_post,
+    extract_request_json,
     parse_input
 )
 from .process import Process
