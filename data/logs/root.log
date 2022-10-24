@@ -1,243 +1,284 @@
-(2022-10-18 22:39:32) [DEBUG] ['root']: Directory loggers: {}
-(2022-10-18 22:39:32) [DEBUG] ['root']: Directory logger 'core' was not found in loggers dict.
-(2022-10-18 22:39:32) [DEBUG] ['root']: Adding basic formatter to 'core'.
-(2022-10-18 22:39:32) [DEBUG] ['root']: Added streamhandler to 'core'.
-(2022-10-18 22:39:32) [DEBUG] ['root']: Deleted log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\core.log'.
-(2022-10-18 22:39:32) [DEBUG] ['root']: Added filehandler to 'core'.
-(2022-10-18 22:39:32) [DEBUG] ['root']: Created directory logger: 'core'
+(2022-10-19 14:56:15) [DEBUG] ['root']: Directory loggers: {}
+(2022-10-19 14:56:15) [DEBUG] ['root']: Directory logger 'core' was not found in loggers dict.
+(2022-10-19 14:56:15) [DEBUG] ['root']: Adding basic formatter to 'core'.
+(2022-10-19 14:56:15) [DEBUG] ['root']: Added streamhandler to 'core'.
+(2022-10-19 14:56:15) [DEBUG] ['root']: Deleted log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\core.log'.
+(2022-10-19 14:56:15) [DEBUG] ['root']: Added filehandler to 'core'.
+(2022-10-19 14:56:15) [DEBUG] ['root']: Created directory logger: 'core'
 
-(2022-10-18 22:39:32) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
-(2022-10-18 22:39:32) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
-(2022-10-18 22:39:32) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app_classes'
-(2022-10-18 22:39:32) [DEBUG] ['root']: Created logger: 'core.app_classes'
+(2022-10-19 14:56:15) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
+(2022-10-19 14:56:15) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-10-19 14:56:15) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app_classes'
+(2022-10-19 14:56:15) [DEBUG] ['root']: Created logger: 'core.app_classes'
 
-(2022-10-18 22:39:32) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
-(2022-10-18 22:39:32) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
-(2022-10-18 22:39:32) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app_funcs'
-(2022-10-18 22:39:32) [DEBUG] ['root']: Created logger: 'core.app_funcs'
+(2022-10-19 14:56:15) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
+(2022-10-19 14:56:15) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-10-19 14:56:15) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app_funcs'
+(2022-10-19 14:56:15) [DEBUG] ['root']: Created logger: 'core.app_funcs'
 
-(2022-10-18 22:39:32) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
-(2022-10-18 22:39:32) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
-(2022-10-18 22:39:32) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'process'
-(2022-10-18 22:39:32) [DEBUG] ['root']: Created logger: 'core.process'
+(2022-10-19 14:56:16) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
+(2022-10-19 14:56:16) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-10-19 14:56:16) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'process'
+(2022-10-19 14:56:16) [DEBUG] ['root']: Created logger: 'core.process'
 
-(2022-10-18 22:39:33) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
-(2022-10-18 22:39:33) [DEBUG] ['root']: Directory logger 'api' was not found in loggers dict.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Adding basic formatter to 'api'.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Deleted log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\api.log'.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Added filehandler to 'api'.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Created directory logger: 'api'
+(2022-10-19 14:56:16) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
+(2022-10-19 14:56:16) [DEBUG] ['root']: Directory logger 'api' was not found in loggers dict.
+(2022-10-19 14:56:16) [DEBUG] ['root']: Adding basic formatter to 'api'.
+(2022-10-19 14:56:16) [DEBUG] ['root']: Deleted log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\api.log'.
+(2022-10-19 14:56:16) [DEBUG] ['root']: Added filehandler to 'api'.
+(2022-10-19 14:56:16) [DEBUG] ['root']: Created directory logger: 'api'
 
-(2022-10-18 22:39:33) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>}
-(2022-10-18 22:39:33) [DEBUG] ['root']: Directory logger 'query' was not found in loggers dict.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Adding basic formatter to 'query'.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Deleted log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\query.log'.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Added filehandler to 'query'.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Created directory logger: 'query'
+(2022-10-19 14:56:16) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>}
+(2022-10-19 14:56:16) [DEBUG] ['root']: Directory logger 'query' was not found in loggers dict.
+(2022-10-19 14:56:16) [DEBUG] ['root']: Adding basic formatter to 'query'.
+(2022-10-19 14:56:16) [DEBUG] ['root']: Deleted log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\query.log'.
+(2022-10-19 14:56:16) [DEBUG] ['root']: Added filehandler to 'query'.
+(2022-10-19 14:56:16) [DEBUG] ['root']: Created directory logger: 'query'
 
-(2022-10-18 22:39:33) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
-(2022-10-18 22:39:33) [DEBUG] ['root']: Searched for and found logger 'api' in loggers dict.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Creating new child of logger 'api', with name: 'api'
-(2022-10-18 22:39:33) [DEBUG] ['root']: Created logger: 'api.api'
+(2022-10-19 14:56:16) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
+(2022-10-19 14:56:16) [DEBUG] ['root']: Searched for and found logger 'api' in loggers dict.
+(2022-10-19 14:56:16) [DEBUG] ['root']: Creating new child of logger 'api', with name: 'api'
+(2022-10-19 14:56:16) [DEBUG] ['root']: Created logger: 'api.api'
 
-(2022-10-18 22:39:33) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
-(2022-10-18 22:39:33) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app'
-(2022-10-18 22:39:33) [DEBUG] ['root']: Created logger: 'core.app'
+(2022-10-19 14:56:16) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
+(2022-10-19 14:56:16) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-10-19 14:56:16) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app'
+(2022-10-19 14:56:16) [DEBUG] ['root']: Created logger: 'core.app'
 
-(2022-10-18 22:39:33) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
-(2022-10-18 22:39:33) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'database_manager.manager'
-(2022-10-18 22:39:33) [DEBUG] ['root']: Created logger: 'core.database_manager.manager'
+(2022-10-19 14:56:16) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
+(2022-10-19 14:56:16) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-10-19 14:56:16) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'database_manager.manager'
+(2022-10-19 14:56:16) [DEBUG] ['root']: Created logger: 'core.database_manager.manager'
 
-(2022-10-18 22:39:33) [INFO] ['werkzeug']:  * Running on http://127.0.0.1:5000 (Press CTRL+C to quit)
-(2022-10-18 22:39:33) [INFO] ['werkzeug']:  * Restarting with stat
-(2022-10-18 22:39:33) [DEBUG] ['root']: Directory loggers: {}
-(2022-10-18 22:39:33) [DEBUG] ['root']: Directory logger 'core' was not found in loggers dict.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Adding basic formatter to 'core'.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Added streamhandler to 'core'.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Permission denied for log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\core.log'  Unable to delete.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Added filehandler to 'core'.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Created directory logger: 'core'
+(2022-10-19 14:56:16) [INFO] ['werkzeug']:  * Running on http://127.0.0.1:5000 (Press CTRL+C to quit)
+(2022-10-19 14:56:16) [INFO] ['werkzeug']:  * Restarting with stat
+(2022-10-19 14:56:16) [DEBUG] ['root']: Directory loggers: {}
+(2022-10-19 14:56:16) [DEBUG] ['root']: Directory logger 'core' was not found in loggers dict.
+(2022-10-19 14:56:16) [DEBUG] ['root']: Adding basic formatter to 'core'.
+(2022-10-19 14:56:16) [DEBUG] ['root']: Added streamhandler to 'core'.
+(2022-10-19 14:56:16) [DEBUG] ['root']: Permission denied for log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\core.log'  Unable to delete.
+(2022-10-19 14:56:16) [DEBUG] ['root']: Added filehandler to 'core'.
+(2022-10-19 14:56:16) [DEBUG] ['root']: Created directory logger: 'core'
 
-(2022-10-18 22:39:33) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
-(2022-10-18 22:39:33) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app_classes'
-(2022-10-18 22:39:33) [DEBUG] ['root']: Created logger: 'core.app_classes'
+(2022-10-19 14:56:16) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
+(2022-10-19 14:56:16) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-10-19 14:56:16) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app_classes'
+(2022-10-19 14:56:16) [DEBUG] ['root']: Created logger: 'core.app_classes'
 
-(2022-10-18 22:39:33) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
-(2022-10-18 22:39:33) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app_funcs'
-(2022-10-18 22:39:33) [DEBUG] ['root']: Created logger: 'core.app_funcs'
+(2022-10-19 14:56:16) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
+(2022-10-19 14:56:16) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-10-19 14:56:16) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app_funcs'
+(2022-10-19 14:56:16) [DEBUG] ['root']: Created logger: 'core.app_funcs'
 
-(2022-10-18 22:39:33) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
-(2022-10-18 22:39:33) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'process'
-(2022-10-18 22:39:33) [DEBUG] ['root']: Created logger: 'core.process'
+(2022-10-19 14:56:17) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
+(2022-10-19 14:56:17) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-10-19 14:56:17) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'process'
+(2022-10-19 14:56:17) [DEBUG] ['root']: Created logger: 'core.process'
 
-(2022-10-18 22:39:33) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
-(2022-10-18 22:39:33) [DEBUG] ['root']: Directory logger 'api' was not found in loggers dict.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Adding basic formatter to 'api'.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Permission denied for log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\api.log'  Unable to delete.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Added filehandler to 'api'.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Created directory logger: 'api'
+(2022-10-19 14:56:17) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>}
+(2022-10-19 14:56:17) [DEBUG] ['root']: Directory logger 'api' was not found in loggers dict.
+(2022-10-19 14:56:17) [DEBUG] ['root']: Adding basic formatter to 'api'.
+(2022-10-19 14:56:17) [DEBUG] ['root']: Permission denied for log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\api.log'  Unable to delete.
+(2022-10-19 14:56:17) [DEBUG] ['root']: Added filehandler to 'api'.
+(2022-10-19 14:56:17) [DEBUG] ['root']: Created directory logger: 'api'
 
-(2022-10-18 22:39:33) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>}
-(2022-10-18 22:39:33) [DEBUG] ['root']: Directory logger 'query' was not found in loggers dict.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Adding basic formatter to 'query'.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Permission denied for log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\query.log'  Unable to delete.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Added filehandler to 'query'.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Created directory logger: 'query'
+(2022-10-19 14:56:17) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>}
+(2022-10-19 14:56:17) [DEBUG] ['root']: Directory logger 'query' was not found in loggers dict.
+(2022-10-19 14:56:17) [DEBUG] ['root']: Adding basic formatter to 'query'.
+(2022-10-19 14:56:17) [DEBUG] ['root']: Permission denied for log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\query.log'  Unable to delete.
+(2022-10-19 14:56:17) [DEBUG] ['root']: Added filehandler to 'query'.
+(2022-10-19 14:56:17) [DEBUG] ['root']: Created directory logger: 'query'
 
-(2022-10-18 22:39:33) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
-(2022-10-18 22:39:33) [DEBUG] ['root']: Searched for and found logger 'api' in loggers dict.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Creating new child of logger 'api', with name: 'api'
-(2022-10-18 22:39:33) [DEBUG] ['root']: Created logger: 'api.api'
+(2022-10-19 14:56:17) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
+(2022-10-19 14:56:17) [DEBUG] ['root']: Searched for and found logger 'api' in loggers dict.
+(2022-10-19 14:56:17) [DEBUG] ['root']: Creating new child of logger 'api', with name: 'api'
+(2022-10-19 14:56:17) [DEBUG] ['root']: Created logger: 'api.api'
 
-(2022-10-18 22:39:33) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
-(2022-10-18 22:39:33) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app'
-(2022-10-18 22:39:33) [DEBUG] ['root']: Created logger: 'core.app'
+(2022-10-19 14:56:17) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
+(2022-10-19 14:56:17) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-10-19 14:56:17) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'app'
+(2022-10-19 14:56:17) [DEBUG] ['root']: Created logger: 'core.app'
 
-(2022-10-18 22:39:33) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
-(2022-10-18 22:39:33) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
-(2022-10-18 22:39:33) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'database_manager.manager'
-(2022-10-18 22:39:33) [DEBUG] ['root']: Created logger: 'core.database_manager.manager'
+(2022-10-19 14:56:17) [DEBUG] ['root']: Directory loggers: {'core': <Logger core (DEBUG)>, 'api': <Logger api (DEBUG)>, 'query': <Logger query (DEBUG)>}
+(2022-10-19 14:56:17) [DEBUG] ['root']: Searched for and found logger 'core' in loggers dict.
+(2022-10-19 14:56:17) [DEBUG] ['root']: Creating new child of logger 'core', with name: 'database_manager.manager'
+(2022-10-19 14:56:17) [DEBUG] ['root']: Created logger: 'core.database_manager.manager'
 
-(2022-10-18 22:39:33) [WARNING] ['werkzeug']:  * Debugger is active!
-(2022-10-18 22:39:33) [INFO] ['werkzeug']:  * Debugger PIN: 558-946-180
-(2022-10-18 22:39:35) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:39:35] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:39:35) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:39:35] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:39:35) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:39:35] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
-(2022-10-18 22:40:57) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:40:57] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:40:57) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:40:57] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:40:57) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:40:57] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:41:30) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:41:30] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:41:30) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:41:30] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:41:30) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:41:30] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:41:31) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:41:31] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:41:31) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:41:31] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
-(2022-10-18 22:41:31) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:41:31] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:41:46) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:41:46] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:41:46) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:41:46] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:41:46) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:41:46] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:42:30) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:42:30] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:42:30) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:42:30] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:42:30) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:42:30] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:46:11) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:11] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:46:11) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:11] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
-(2022-10-18 22:46:11) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:11] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:46:13) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:13] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:46:13) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:13] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
-(2022-10-18 22:46:13) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:13] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:46:14) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:14] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:46:14) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:14] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
-(2022-10-18 22:46:14) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:14] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:46:15) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:15] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:46:15) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:15] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
-(2022-10-18 22:46:15) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:15] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:46:16) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:16] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:46:16) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:16] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
-(2022-10-18 22:46:16) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:16] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:46:17) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:17] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:46:17) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:17] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
-(2022-10-18 22:46:17) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:17] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:46:18) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:18] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:46:18) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:18] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
-(2022-10-18 22:46:18) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:18] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:46:19) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:19] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:46:19) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:19] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
-(2022-10-18 22:46:19) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:19] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:46:21) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:21] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:46:21) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:21] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
-(2022-10-18 22:46:21) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:46:21] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:49:42) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:49:42] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:49:42) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:49:42] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:49:42) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:49:42] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:50:23) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:50:23] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:50:23) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:50:23] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:50:23) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:50:23] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:50:34) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:50:34] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:50:34) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:50:34] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:50:34) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:50:34] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:50:44) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:50:44] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:50:44) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:50:44] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:50:44) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:50:44] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:51:00) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:51:00] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:51:00) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:51:00] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:51:00) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:51:00] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:51:06) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:51:06] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:51:06) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:51:06] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:51:06) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:51:06] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:51:43) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:51:43] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:51:43) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:51:43] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:51:43) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:51:43] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:52:17) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:52:17] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:52:17) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:52:17] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
-(2022-10-18 22:52:17) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:52:17] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:52:17) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:52:17] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:52:17) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:52:17] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
-(2022-10-18 22:52:17) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:52:17] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:52:17) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:52:17] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:52:17) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:52:17] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
-(2022-10-18 22:52:17) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:52:17] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:52:18) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:52:18] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:52:18) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:52:18] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
-(2022-10-18 22:52:18) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:52:18] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:52:26) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:52:26] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:52:26) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:52:26] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:52:26) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:52:26] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:52:34) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:52:34] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:52:35) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:52:35] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:52:35) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:52:35] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:52:59) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:52:59] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:52:59) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:52:59] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:52:59) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:52:59] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:53:04) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:53:04] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:53:04) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:53:04] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:53:04) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:53:04] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:53:10) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:53:10] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:53:10) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:53:10] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:53:10) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:53:10] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:53:27) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:53:27] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:53:27) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:53:27] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:53:27) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:53:27] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:53:43) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:53:43] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:53:43) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:53:43] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:53:43) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:53:43] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:54:01) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:01] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:54:01) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:01] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:54:01) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:01] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:54:06) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:06] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:54:06) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:06] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:54:06) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:06] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:54:06) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:06] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:54:06) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:06] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:54:06) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:06] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
-(2022-10-18 22:54:07) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:07] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:54:07) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:07] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
-(2022-10-18 22:54:07) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:07] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:54:19) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:19] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:54:19) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:19] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:54:19) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:19] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:54:33) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:33] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:54:33) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:33] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:54:33) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:33] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:54:36) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:36] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:54:36) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:36] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:54:36) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:36] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:54:37) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:37] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:54:37) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:37] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
-(2022-10-18 22:54:37) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:37] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:54:53) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:53] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:54:53) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:53] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:54:53) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:54:53] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:55:05) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:55:05] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:55:05) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:55:05] "GET /static/style/style.css HTTP/1.1" 200 -
-(2022-10-18 22:55:05) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:55:05] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:55:05) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:55:05] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:55:06) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:55:06] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
-(2022-10-18 22:55:06) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:55:06] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
-(2022-10-18 22:55:22) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:55:22] "GET /main/ HTTP/1.1" 200 -
-(2022-10-18 22:55:22) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:55:22] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
-(2022-10-18 22:55:22) [INFO] ['werkzeug']: 127.0.0.1 - - [18/Oct/2022 22:55:22] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 14:56:17) [WARNING] ['werkzeug']:  * Debugger is active!
+(2022-10-19 14:56:17) [INFO] ['werkzeug']:  * Debugger PIN: 125-562-759
+(2022-10-19 14:56:22) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:56:22] "[32mGET / HTTP/1.1[0m" 302 -
+(2022-10-19 14:56:22) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:56:22] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 14:56:22) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:56:22] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 14:56:22) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:56:22] "GET /static/js/query.js HTTP/1.1" 200 -
+(2022-10-19 14:56:23) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:56:23] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+(2022-10-19 14:57:43) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:57:43] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 14:57:43) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:57:43] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 14:57:43) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:57:43] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 14:58:37) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:58:37] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 14:58:37) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:58:37] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 14:58:37) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:58:37] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 14:58:39) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:58:39] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 14:58:39) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:58:39] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
+(2022-10-19 14:58:39) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:58:39] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 14:58:47) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:58:47] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 14:58:47) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:58:47] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 14:58:47) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:58:47] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 14:59:10) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:59:10] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 14:59:10) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:59:10] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 14:59:10) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:59:10] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 14:59:15) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:59:15] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 14:59:15) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:59:15] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 14:59:15) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:59:15] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 14:59:25) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:59:25] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 14:59:25) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:59:25] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 14:59:25) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:59:25] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 14:59:29) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:59:29] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 14:59:29) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:59:29] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 14:59:29) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:59:29] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 14:59:33) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:59:33] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 14:59:33) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:59:33] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 14:59:33) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:59:33] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 14:59:37) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:59:37] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 14:59:38) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:59:38] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 14:59:38) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 14:59:38] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:00:59) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:00:59] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:00:59) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:00:59] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:00:59) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:00:59] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:01:12) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:01:12] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:01:12) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:01:12] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:01:12) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:01:12] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:01:26) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:01:26] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:01:26) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:01:26] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:01:26) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:01:26] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:01:31) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:01:31] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:01:31) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:01:31] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:01:31) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:01:31] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:01:34) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:01:34] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:01:34) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:01:34] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:01:34) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:01:34] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:01:39) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:01:39] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:01:39) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:01:39] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:01:39) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:01:39] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:01:48) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:01:48] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:01:48) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:01:48] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:01:48) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:01:48] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:01:58) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:01:58] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:01:58) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:01:58] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:01:58) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:01:58] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:02:03) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:02:03] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:02:03) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:02:03] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:02:03) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:02:03] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:02:11) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:02:11] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:02:11) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:02:11] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:02:11) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:02:11] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:02:15) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:02:15] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:02:15) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:02:15] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:02:15) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:02:15] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:02:41) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:02:41] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:02:41) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:02:41] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:02:41) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:02:41] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:02:45) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:02:45] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:02:45) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:02:45] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:02:45) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:02:45] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:02:51) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:02:51] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:02:51) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:02:51] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:02:51) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:02:51] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:02:54) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:02:54] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:02:54) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:02:54] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:02:54) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:02:54] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:03:06) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:03:06] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:03:06) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:03:06] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:03:06) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:03:06] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:03:09) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:03:09] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:03:09) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:03:09] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:03:09) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:03:09] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:03:15) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:03:15] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:03:15) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:03:15] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:03:15) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:03:15] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:03:26) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:03:26] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:03:26) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:03:26] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:03:26) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:03:26] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:04:08) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:04:08] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:04:08) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:04:08] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:04:08) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:04:08] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:05:45) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:05:45] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:05:45) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:05:45] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:05:45) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:05:45] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:05:49) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:05:49] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:05:49) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:05:49] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
+(2022-10-19 15:05:49) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:05:49] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:06:05) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:06:05] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:06:05) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:06:05] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:06:05) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:06:05] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:06:28) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:06:28] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:06:28) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:06:28] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:06:28) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:06:28] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:08:39) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:08:39] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:08:39) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:08:39] "[36mGET /static/style/style.css HTTP/1.1[0m" 304 -
+(2022-10-19 15:08:39) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:08:39] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:10:34) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:10:34] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:10:34) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:10:34] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:10:34) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:10:34] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:10:39) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:10:39] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:10:39) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:10:39] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:10:39) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:10:39] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:11:06) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:11:06] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:11:06) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:11:06] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:11:06) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:11:06] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:11:10) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:11:10] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:11:10) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:11:10] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:11:10) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:11:10] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:11:24) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:11:24] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:11:25) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:11:25] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:11:25) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:11:25] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:11:46) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:11:46] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:11:46) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:11:46] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:11:46) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:11:46] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:11:53) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:11:53] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:11:53) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:11:53] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:11:53) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:11:53] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:12:47) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:12:47] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:12:47) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:12:47] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:12:47) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:12:47] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:14:27) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:14:27] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:14:27) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:14:27] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:14:27) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:14:27] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:14:35) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:14:35] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:14:35) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:14:35] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:14:35) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:14:35] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:14:43) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:14:43] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:14:43) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:14:43] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:14:43) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:14:43] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:14:53) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:14:53] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:14:53) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:14:53] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:14:53) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:14:53] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:15:08) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:15:08] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:15:08) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:15:08] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:15:08) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:15:08] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:15:29) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:15:29] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:15:29) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:15:29] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:15:29) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:15:29] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:16:04) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:16:04] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:16:04) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:16:04] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:16:04) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:16:04] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:16:43) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:16:43] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:16:43) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:16:43] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:16:43) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:16:43] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:16:55) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:16:55] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:16:55) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:16:55] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:16:55) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:16:55] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:17:11) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:17:11] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:17:11) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:17:11] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:17:11) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:17:11] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:17:17) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:17:17] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:17:17) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:17:17] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:17:17) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:17:17] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:17:39) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:17:39] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:17:39) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:17:39] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:17:39) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:17:39] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:17:48) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:17:48] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:17:48) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:17:48] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:17:48) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:17:48] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
+(2022-10-19 15:17:53) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:17:53] "GET /main/ HTTP/1.1" 200 -
+(2022-10-19 15:17:53) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:17:53] "GET /static/style/style.css HTTP/1.1" 200 -
+(2022-10-19 15:17:53) [INFO] ['werkzeug']: 127.0.0.1 - - [19/Oct/2022 15:17:53] "[36mGET /static/js/query.js HTTP/1.1[0m" 304 -
