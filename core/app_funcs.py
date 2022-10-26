@@ -1,6 +1,6 @@
 from utils import LoggerManager as lgm
 from core import AmountData, QueryItem, ProductList
-from requests import Response, request
+from requests import Response
 import re
 
 logger = lgm.get_logger(name=__name__)
@@ -30,6 +30,25 @@ def regex_findall(p: str, s: str) -> list[str] | None:
     return None
 
 
+def regex_get_quantity(s: str) -> list[float | None, str | None]:
+    r = regex_findall(r"(\d+)(l|k?gm?)|(\d+)(l|k?\sgm?)", s)
+    case = [None, None]
+    if r is not None:
+        tup = r[0]
+        case = [
+            float(tup[0]) if tup[0] != "" else None,
+            tup[1] if tup[1] != "" else None
+        ]                                       # Match statement here?
+        if not case:       
+            case = [
+                float(tup[2]) if tup[2] != "" else None,
+                tup[3] if tup[3] != "" else None
+            ]
+        if case[0] is not None:
+            case[0] = case[0].replace(" ", "")
+    return case
+
+
 def parse_query_data(a: str, s: str) -> AmountData:
     try:
         amt = 1
@@ -41,14 +60,8 @@ def parse_query_data(a: str, s: str) -> AmountData:
         logger.exception(
             "'amt' could not be converted to 'int'")
         amt = 1
-
-    q, u = None, None
     if isinstance(s, str):
-        r = regex_findall(r"(\d+)(l|k?gm?)", s)
-        if r is not None:
-            f = r[0]  # We're interested only in the first result
-            q = int(f[0]) if f[0] != "" else None
-            u = f[1] if f[1] != "" else None
+        q, u = regex_get_quantity(s)
     return AmountData(q, u, amt)
 
 
@@ -83,17 +96,16 @@ def parse_input(data: tuple[list, list, list]) -> list[QueryItem]:
     return product_queries
 
 
-def parse_response(response: Response, request_params: dict):
-    request_params = request_params["variables"]
-    query = (request_params["query"], request_params["amount"])
-    store_id = request_params["StoreID"]
-    category = request_params["slugs"]
+def parse_response(response: Response, query_item: QueryItem,
+                   request_params: dict):
+    store_id = request_params["variables"]["StoreID"]
+    category = request_params["variables"]["slugs"]
 
     products = ProductList(
         response=response,
-        query=query,
+        query=query_item,
         store_id=store_id,
         category=category)
-    logger.debug(f"Created ProductList from query string: '{query[0]}'")
+    logger.debug(f"Created ProductList from query string: '{query_item.name}'")
 
     return products

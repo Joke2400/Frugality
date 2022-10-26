@@ -39,11 +39,13 @@ def query():
 
             product_lists = []
             for r in responses:
-                product_lists.append(parse_response(
-                    response=r[0], request_params=r[1]))
+                product_lists.append(parse_response(*r))
 
             for pl in product_lists:
                 logger.info(pl)
+
+            for x in product_lists[0].items:
+                print(x)
 
             return {"data": ""}
         else:

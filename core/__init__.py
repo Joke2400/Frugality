@@ -11,7 +11,8 @@ from .app_funcs import (
     parse_query_data,
     validate_post,
     extract_request_json,
-    parse_input
+    parse_input,
+    regex_get_quantity
 )
 from .process import Process
 
