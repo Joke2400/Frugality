@@ -1,115 +1,115 @@
-(2022-10-24 21:15:27) [DEBUG] ['core.process']: Set database uri to: 'sqlite:///C:\Users\Joke\Desktop\Frugality\data\test_database.db'.
-(2022-10-24 21:15:27) [DEBUG] ['core.process']: Set SQLALCHEMY_TRACK_MODIFICATIONS to: True.
-(2022-10-24 21:15:27) [DEBUG] ['core.process']: Set Flask session lifetime to: 1 day, 0:00:00.
-(2022-10-24 21:15:27) [DEBUG] ['core.app_funcs']: Parsing request JSON...
-(2022-10-24 21:15:27) [DEBUG] ['core.app_funcs']: Parsing new query: 'Maito Laktoositon 1L'
-(2022-10-24 21:15:27) [DEBUG] ['core.app_funcs']: Regex result: [('1', 'L')] ('Maito Laktoositon 1L')
-(2022-10-24 21:15:27) [DEBUG] ['core.app_funcs']: Parsing new query: 'Jauheliha 500g'
-(2022-10-24 21:15:27) [DEBUG] ['core.app_funcs']: Regex result: [('500', 'g')] ('Jauheliha 500g')
-(2022-10-24 21:15:27) [DEBUG] ['core.app_funcs']: Parsing new query: 'Banaani'
-(2022-10-24 21:15:27) [ERROR] ['core.app_funcs']: 'amt' could not be converted to 'int'
+(2022-10-26 08:43:23) [DEBUG] ['core.process']: Set database uri to: 'sqlite:///C:\Users\Joke\Desktop\Frugality\data\test_database.db'.
+(2022-10-26 08:43:23) [DEBUG] ['core.process']: Set SQLALCHEMY_TRACK_MODIFICATIONS to: True.
+(2022-10-26 08:43:23) [DEBUG] ['core.process']: Set Flask session lifetime to: 1 day, 0:00:00.
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing request JSON...
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Maito Laktoositon 1L'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: [('1', 'L')] ('Maito Laktoositon 1L')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Jauheliha 500g'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: [('500', 'g')] ('Jauheliha 500g')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Banaani'
+(2022-10-26 08:43:23) [ERROR] ['core.app_funcs']: 'amt' could not be converted to 'int'
 Traceback (most recent call last):
-  File "C:\Users\Joke\Desktop\Frugality\core\app_funcs.py", line 36, in parse_query_data
+  File "C:\Users\Joke\Desktop\Frugality\core\app_funcs.py", line 37, in parse_query_data
     amt = abs(int(a))
 ValueError: invalid literal for int() with base 10: '1.5'
-(2022-10-24 21:15:27) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Banaani')
-(2022-10-24 21:15:27) [DEBUG] ['core.app_funcs']: Parsing new query: ''
-(2022-10-24 21:15:27) [DEBUG] ['core.app_funcs']: Parsed query was empty, skipping...
-(2022-10-24 21:15:27) [DEBUG] ['core.app_funcs']: Parsing new query: 'Omena'
-(2022-10-24 21:15:27) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Omena')
-(2022-10-24 21:15:27) [DEBUG] ['core.app_funcs']: Product queries len(4)
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Banaani')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: ''
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsed query was empty, skipping...
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Omena'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Omena')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Product queries len(4)
 
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing request JSON...
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: 'Maito Laktoositon 1L'
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: [('1', 'L')] ('Maito Laktoositon 1L')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: 'Jauheliha 500g'
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: [('500', 'g')] ('Jauheliha 500g')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: 'Banaani'
-(2022-10-24 21:15:28) [ERROR] ['core.app_funcs']: 'amt' could not be converted to 'int'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing request JSON...
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Maito Laktoositon 1L'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: [('1', 'L')] ('Maito Laktoositon 1L')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Jauheliha 500g'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: [('500', 'g')] ('Jauheliha 500g')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Banaani'
+(2022-10-26 08:43:23) [ERROR] ['core.app_funcs']: 'amt' could not be converted to 'int'
 Traceback (most recent call last):
-  File "C:\Users\Joke\Desktop\Frugality\core\app_funcs.py", line 36, in parse_query_data
+  File "C:\Users\Joke\Desktop\Frugality\core\app_funcs.py", line 37, in parse_query_data
     amt = abs(int(a))
 ValueError: invalid literal for int() with base 10: '1.5'
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Banaani')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: ''
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsed query was empty, skipping...
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: 'Omena'
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Omena')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Product queries len(4)
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Banaani')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: ''
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsed query was empty, skipping...
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Omena'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Omena')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Product queries len(4)
 
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing request JSON...
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: 'Maito Laktoositon 1L'
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: [('1', 'L')] ('Maito Laktoositon 1L')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: 'Jauheliha 500g'
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: [('500', 'g')] ('Jauheliha 500g')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: 'Banaani'
-(2022-10-24 21:15:28) [ERROR] ['core.app_funcs']: 'amt' could not be converted to 'int'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing request JSON...
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Maito Laktoositon 1L'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: [('1', 'L')] ('Maito Laktoositon 1L')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Jauheliha 500g'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: [('500', 'g')] ('Jauheliha 500g')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Banaani'
+(2022-10-26 08:43:23) [ERROR] ['core.app_funcs']: 'amt' could not be converted to 'int'
 Traceback (most recent call last):
-  File "C:\Users\Joke\Desktop\Frugality\core\app_funcs.py", line 36, in parse_query_data
+  File "C:\Users\Joke\Desktop\Frugality\core\app_funcs.py", line 37, in parse_query_data
     amt = abs(int(a))
 ValueError: invalid literal for int() with base 10: '1.5'
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Banaani')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: ''
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsed query was empty, skipping...
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: 'Omena'
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Omena')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Product queries len(4)
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Banaani')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: ''
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsed query was empty, skipping...
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Omena'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Omena')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Product queries len(4)
 
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing request JSON...
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: 'Maito Laktoositon 1L'
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: [('1', 'L')] ('Maito Laktoositon 1L')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: 'Jauheliha 500g'
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: [('500', 'g')] ('Jauheliha 500g')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: 'Banaani'
-(2022-10-24 21:15:28) [ERROR] ['core.app_funcs']: 'amt' could not be converted to 'int'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing request JSON...
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Maito Laktoositon 1L'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: [('1', 'L')] ('Maito Laktoositon 1L')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Jauheliha 500g'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: [('500', 'g')] ('Jauheliha 500g')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Banaani'
+(2022-10-26 08:43:23) [ERROR] ['core.app_funcs']: 'amt' could not be converted to 'int'
 Traceback (most recent call last):
-  File "C:\Users\Joke\Desktop\Frugality\core\app_funcs.py", line 36, in parse_query_data
+  File "C:\Users\Joke\Desktop\Frugality\core\app_funcs.py", line 37, in parse_query_data
     amt = abs(int(a))
 ValueError: invalid literal for int() with base 10: '1.5'
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Banaani')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: ''
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsed query was empty, skipping...
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: 'Omena'
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Omena')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Product queries len(4)
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Banaani')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: ''
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsed query was empty, skipping...
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Omena'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Omena')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Product queries len(4)
 
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing request JSON...
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: 'Maito Laktoositon 1L'
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: [('1', 'L')] ('Maito Laktoositon 1L')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: 'Jauheliha 500g'
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: [('500', 'g')] ('Jauheliha 500g')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: 'Banaani'
-(2022-10-24 21:15:28) [ERROR] ['core.app_funcs']: 'amt' could not be converted to 'int'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing request JSON...
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Maito Laktoositon 1L'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: [('1', 'L')] ('Maito Laktoositon 1L')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Jauheliha 500g'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: [('500', 'g')] ('Jauheliha 500g')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Banaani'
+(2022-10-26 08:43:23) [ERROR] ['core.app_funcs']: 'amt' could not be converted to 'int'
 Traceback (most recent call last):
-  File "C:\Users\Joke\Desktop\Frugality\core\app_funcs.py", line 36, in parse_query_data
+  File "C:\Users\Joke\Desktop\Frugality\core\app_funcs.py", line 37, in parse_query_data
     amt = abs(int(a))
 ValueError: invalid literal for int() with base 10: '1.5'
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Banaani')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: ''
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsed query was empty, skipping...
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: 'Omena'
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Omena')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Product queries len(4)
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Banaani')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: ''
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsed query was empty, skipping...
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Omena'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Omena')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Product queries len(4)
 
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing request JSON...
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: 'Maito Laktoositon 1L'
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: [('1', 'L')] ('Maito Laktoositon 1L')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: 'Jauheliha 500g'
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: [('500', 'g')] ('Jauheliha 500g')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: 'Banaani'
-(2022-10-24 21:15:28) [ERROR] ['core.app_funcs']: 'amt' could not be converted to 'int'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing request JSON...
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Maito Laktoositon 1L'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: [('1', 'L')] ('Maito Laktoositon 1L')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Jauheliha 500g'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: [('500', 'g')] ('Jauheliha 500g')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Banaani'
+(2022-10-26 08:43:23) [ERROR] ['core.app_funcs']: 'amt' could not be converted to 'int'
 Traceback (most recent call last):
-  File "C:\Users\Joke\Desktop\Frugality\core\app_funcs.py", line 36, in parse_query_data
+  File "C:\Users\Joke\Desktop\Frugality\core\app_funcs.py", line 37, in parse_query_data
     amt = abs(int(a))
 ValueError: invalid literal for int() with base 10: '1.5'
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Banaani')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: ''
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsed query was empty, skipping...
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Parsing new query: 'Omena'
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Omena')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Product queries len(4)
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Banaani')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: ''
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsed query was empty, skipping...
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Parsing new query: 'Omena'
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Omena')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Product queries len(4)
 
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: [('1', 'L')] ('Maito Laktoositon 1L')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: [('500', 'g')] ('Jauheliha 500g')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Banaani')
-(2022-10-24 21:15:28) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: [('1', 'L')] ('Maito Laktoositon 1L')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: [('500', 'g')] ('Jauheliha 500g')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('Banaani')
+(2022-10-26 08:43:23) [DEBUG] ['core.app_funcs']: Regex result: 'None' ('')

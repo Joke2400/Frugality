@@ -30,3 +30,4 @@ temp/test.py
 temp
 data/logs/core.log
 data/logs/root.log
+api/__pycache__/skaupat_api.cpython-310.pyc

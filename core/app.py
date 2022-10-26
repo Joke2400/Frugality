@@ -1,6 +1,7 @@
 from flask import redirect, url_for, render_template, request
 from core import app, validate_post, parse_input, extract_request_json
 from api import get_products
+from core.app_funcs import parse_response
 from utils import timer, LoggerManager as lgm
 
 import asyncio
@@ -31,12 +32,19 @@ def query():
         # Simple check, needs to be improved later
         if operation == "Groceries":
             logger.info(f"Current operation: {operation}")
-            results = asyncio.run(get_products(
+            responses = asyncio.run(get_products(
                 store_id=store_id,
                 product_queries=product_queries,
                 limit=24))
-            for r in results:
-                logger.info(r)
+
+            product_lists = []
+            for r in responses:
+                product_lists.append(parse_response(
+                    response=r[0], request_params=r[1]))
+
+            for pl in product_lists:
+                logger.info(pl)
+
             return {"data": ""}
         else:
             return {"data": f"[ERROR]: Operation '{operation}' not found."}

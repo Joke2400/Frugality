@@ -1,5 +1,6 @@
 from utils import LoggerManager as lgm
-from core import AmountTuple, QueryItem
+from core import AmountData, QueryItem, ProductList
+from requests import Response, request
 import re
 
 logger = lgm.get_logger(name=__name__)
@@ -29,7 +30,7 @@ def regex_findall(p: str, s: str) -> list[str] | None:
     return None
 
 
-def parse_query_data(a: str, s: str) -> AmountTuple:
+def parse_query_data(a: str, s: str) -> AmountData:
     try:
         amt = 1
         if a is not None and a != "":
@@ -48,7 +49,7 @@ def parse_query_data(a: str, s: str) -> AmountTuple:
             f = r[0]  # We're interested only in the first result
             q = int(f[0]) if f[0] != "" else None
             u = f[1] if f[1] != "" else None
-    return AmountTuple(amt, q, u)
+    return AmountData(q, u, amt)
 
 
 def extract_request_json(request) -> tuple[list, list, list]:
@@ -73,10 +74,26 @@ def parse_input(data: tuple[list, list, list]) -> list[QueryItem]:
             logger.debug("Parsed query was empty, skipping...")
             continue
 
-        query_data = parse_query_data(a=amt, s=query)
+        amount_data = parse_query_data(a=amt, s=query)
         if cat == "":
             cat = None
         product_queries.append(
-            QueryItem(name=query, amt=query_data, category=cat))
+            QueryItem(name=query, amount=amount_data, category=cat))
     logger.debug(f"Product queries len({len(product_queries)})\n")
     return product_queries
+
+
+def parse_response(response: Response, request_params: dict):
+    request_params = request_params["variables"]
+    query = (request_params["query"], request_params["amount"])
+    store_id = request_params["StoreID"]
+    category = request_params["slugs"]
+
+    products = ProductList(
+        response=response,
+        query=query,
+        store_id=store_id,
+        category=category)
+    logger.debug(f"Created ProductList from query string: '{query[0]}'")
+
+    return products
