@@ -28,6 +28,9 @@ __pycache__
 temp/__init__.py
 temp/test.py
 temp
-data/logs/core.log
-data/logs/root.log
 api/__pycache__/skaupat_api.cpython-310.pyc
+core/app_classes.py
+data/logs/api.log
+data/logs/core.log
+data/logs/query.log
+data/logs/root.log
