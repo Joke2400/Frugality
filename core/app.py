@@ -1,45 +1,55 @@
-from flask import redirect, url_for, render_template, request, session, flash
-from utils import validate_post, get_quantity, get_specifiers, get_groceries, print_results
-from core import app, QueryItem, AmountTuple, ProductList
+from flask import redirect, url_for, render_template, request
+from core import app, validate_post, parse_input, extract_request_json
+from api import get_products
+from core.app_funcs import parse_response
+from utils import timer, LoggerManager as lgm
+
+import asyncio
+
+logger = lgm.get_logger(name=__name__)
+
 
 @app.route("/main/", methods=["POST", "GET"])
 def main():
     return render_template("index.html")
 
+
 @app.route("/")
 def base_url_redirect():
     return redirect(url_for("main"))
 
-@app.route("/query/", methods=["POST"])
-def query():
-    # TODO: Input sanitization will happen in validate_post(), 
-    # Flask I think has some funcs for that, 
-    # must be done before this gets hosted anywhere
-    if validate_post(request=request):
-        operation = request.json["operation"]
-        print(f"\nCurrent operation: {operation}")
-        product_queries = []
-        for q, a, c in zip(
-            request.json["queries"],
-            request.json["amounts"],
-            request.json["categories"]):
-            t = AmountTuple(amount=int(a), **get_quantity(q))
-            m = get_specifiers(q)
-            product_queries.append(
-                QueryItem(
-                    name=q,
-                    amt=t,
-                    category=c,
-                    must_contain=m))
 
+@app.route("/query/", methods=["POST"])
+@timer
+def query():
+    if validate_post(request):
+        operation = request.json.pop("operation")
+        store_id = request.json.pop("store_id")
+        data = extract_request_json(request)
+
+        product_queries = parse_input(data)
+
+        # Simple check, needs to be improved later
         if operation == "Groceries":
-            results = [ProductList(r,q,c) for r,q,c in get_groceries(
-                request=request,
+            logger.info(f"\nCurrent operation: {operation}\n")
+            responses = asyncio.run(get_products(
+                store_id=store_id,
                 product_queries=product_queries,
-                limit=10)]
-            print_results(results)
+                limit=10))
+
+            product_lists = []
+            for r in responses:
+                product_lists.append(parse_response(*r))
+
+            for pl in product_lists:
+                logger.info(f"Products found: {len(pl.products)}")
+                logger.info(f"Filtered products: {len(pl.filtered_products)}")
+                logger.info(pl.get_products_overview(filtered=True))
+                for y in pl.filtered_products:
+                    logger.info(f"\n{'-'*50}{y}{'-'*50}\n")
+
+            return {"data": ""}
         else:
-            return {"data": "[ERROR]: Operation not found."}
+            return {"data": f"[ERROR]: Operation '{operation}' not found."}
     else:
         return {"data": "[ERROR]: Request validation failed."}
-    return {"data": "DONE!"}

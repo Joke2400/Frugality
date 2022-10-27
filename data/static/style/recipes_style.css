@@ -147,4 +147,8 @@ nav {
         grid-template-columns: 1fr;
         grid-template-rows: 3em 4em 1fr 1fr 1fr 1fr 8em;  
     }
+
+    .content-large {
+        flex-flow: row wrap;
+    }
 }

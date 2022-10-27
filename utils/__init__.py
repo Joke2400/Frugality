@@ -1,8 +1,9 @@
+
 from .program_paths import Paths
-from .descriptors import * #Change wildcard import later
-from .flask_app_funcs import (
-    validate_post, 
-    get_quantity, 
-    get_specifiers, 
-    get_groceries, 
-    print_results)
+from .logger_manager import LoggerManager
+from .util_funcs import timer
+
+LoggerManager.configure(
+    logs_path=Paths.logs(),
+    keep_logs=False
+)
