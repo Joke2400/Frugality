@@ -17,6 +17,7 @@ def test_valid_regex_2():
     a = AmountData(quantity=500, unit="g", multiplier=100, quantity_str="500g")
     assert r == a
 
+
 def test_valid_regex_3():
     a = -65
     s = "Banaani"
@@ -24,12 +25,14 @@ def test_valid_regex_3():
     a = AmountData(quantity=None, unit=None, multiplier=65, quantity_str="")
     assert r == a
 
+
 def test_empty_regex_1():
     a = 3.6
     s = ""
     r = parse_query_data(a, s)
     a = AmountData(quantity=None, unit=None, multiplier=3, quantity_str="")
     assert r == a
+
 
 def test_empty_regex_2():
     a = 1
