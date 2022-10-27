@@ -105,18 +105,6 @@ class ProductList:
             self.items.append(item)
         logger.debug(f"Parsed '{len(self.items)}' items from response")
 
-    def _overview(self, filtered=False):
-        self.filtered = False
-        if filtered:
-            self.filtered = True
-        if len(self.items) == 0:
-            self.parse()
-
-        hi = self.highest_price
-        lo = self.lowest_price
-        av = self.average_price
-        return hi, lo, av
-
     @property
     def products(self) -> list[ProductItem]:
         if len(self.items) == 0:
@@ -155,9 +143,16 @@ class ProductList:
         i = sum(i.price.cmp_price for i in items) / len(items)
         return i
 
-    def __str__(self) -> str:
-        hi, lo, av = self._overview(filtered=False)
-        return f"\n\nQuery: '{self.query.name}'\t" + \
+    def get_products_overview(self, filtered=False):
+        self.filtered = filtered
+        if len(self.items) == 0:
+            self.parse()
+
+        hi = self.highest_price
+        lo = self.lowest_price
+        av = self.average_price
+
+        return f"Query: '{self.query.name}' " + \
                f"Category: [{self.category}]" + \
                f"\nHighest price:{'': ^5}Price/unit: " + \
                f"{hi.price_per_unit_quantity}{'': ^4}{hi.name}" + \
@@ -165,3 +160,7 @@ class ProductList:
                f"{lo.price_per_unit_quantity}{'': ^4}{lo.name}" + \
                f"\nAverage price:{'': ^5}Price/unit: " + \
                f"{av:.2f}€/{lo.amount.unit}{'': ^4}\n"
+
+    def __str__(self) -> str:
+        s = self.get_products_overview(filtered=False)
+        return s

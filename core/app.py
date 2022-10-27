@@ -31,7 +31,7 @@ def query():
 
         # Simple check, needs to be improved later
         if operation == "Groceries":
-            logger.info(f"Current operation: {operation}")
+            logger.info(f"\nCurrent operation: {operation}\n")
             responses = asyncio.run(get_products(
                 store_id=store_id,
                 product_queries=product_queries,
@@ -44,9 +44,9 @@ def query():
             for pl in product_lists:
                 logger.info(f"Products found: {len(pl.products)}")
                 logger.info(f"Filtered products: {len(pl.filtered_products)}")
-                logger.info(pl)
+                logger.info(pl.get_products_overview(filtered=True))
                 for y in pl.filtered_products:
-                    logger.info(y)
+                    logger.info(f"\n{'-'*50}{y}{'-'*50}\n")
 
             return {"data": ""}
         else:
