@@ -30,22 +30,20 @@ def regex_findall(p: str, s: str) -> list[str] | None:
     return None
 
 
-def regex_get_quantity(s: str) -> list[float | None, str | None]:
+def regex_get_quantity(s: str) -> tuple[int | None, str | None]:
     r = regex_findall(r"(\d+)(l|k?gm?)|(\d+)(l|k?\sgm?)", s)
-    case = [None, None]
+    case = (None, None)
     if r is not None:
         tup = r[0]
-        case = [
-            float(tup[0]) if tup[0] != "" else None,
+        case = (
+            int(tup[0]) if tup[0] != "" else None,
             tup[1] if tup[1] != "" else None
-        ]                                       # Match statement here?
-        if not case:       
-            case = [
-                float(tup[2]) if tup[2] != "" else None,
-                tup[3] if tup[3] != "" else None
-            ]
-        if case[0] is not None:
-            case[0] = case[0].replace(" ", "")
+        )
+        if case == (None, None):
+            case = (
+                int(tup[2]) if tup[2] != "" else None,
+                tup[3].replace(" ", "") if tup[3] != "" else None
+            )
     return case
 
 
@@ -62,7 +60,9 @@ def parse_query_data(a: str, s: str) -> AmountData:
         amt = 1
     if isinstance(s, str):
         q, u = regex_get_quantity(s)
-    return AmountData(q, u, amt)
+        if q is not None and u is not None:
+            s = str(q) + u
+    return AmountData(q, u, amt, s)
 
 
 def extract_request_json(request) -> tuple[list, list, list]:

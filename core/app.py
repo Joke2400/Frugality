@@ -35,17 +35,18 @@ def query():
             responses = asyncio.run(get_products(
                 store_id=store_id,
                 product_queries=product_queries,
-                limit=24))
+                limit=10))
 
             product_lists = []
             for r in responses:
                 product_lists.append(parse_response(*r))
 
             for pl in product_lists:
+                logger.info(f"Products found: {len(pl.products)}")
+                logger.info(f"Filtered products: {len(pl.filtered_products)}")
                 logger.info(pl)
-
-            for x in product_lists[0].items:
-                print(x)
+                for y in pl.filtered_products:
+                    logger.info(y)
 
             return {"data": ""}
         else:
