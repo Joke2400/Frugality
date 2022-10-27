@@ -8,7 +8,7 @@ logger = lgm.get_logger(name=__name__)
 
 @dataclass
 class AmountData:
-    quantity: float | None
+    quantity: int | None
     unit: str | None
     multiplier: int = 1
     quantity_str: str = ""

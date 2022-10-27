@@ -47,7 +47,13 @@ def regex_get_quantity(s: str) -> tuple[int | None, str | None]:
     return case
 
 
-def parse_query_data(a: str, s: str) -> AmountData:
+def parse_query_data(a: str, s: str | None = None) -> AmountData:
+    q, u, qs = None, None, ""
+    if isinstance(s, str):
+        q, u = regex_get_quantity(s)
+        if q is not None and u is not None:
+            qs = str(q) + u
+
     try:
         amt = 1
         if a is not None and a != "":
@@ -58,11 +64,7 @@ def parse_query_data(a: str, s: str) -> AmountData:
         logger.exception(
             "'amt' could not be converted to 'int'")
         amt = 1
-    if isinstance(s, str):
-        q, u = regex_get_quantity(s)
-        if q is not None and u is not None:
-            s = str(q) + u
-    return AmountData(q, u, amt, s)
+    return AmountData(q, u, amt, qs)
 
 
 def extract_request_json(request) -> tuple[list, list, list]:
@@ -86,7 +88,6 @@ def parse_input(data: tuple[list, list, list]) -> list[QueryItem]:
         if query is None or query == "":
             logger.debug("Parsed query was empty, skipping...")
             continue
-
         amount_data = parse_query_data(a=amt, s=query)
         if cat == "":
             cat = None
