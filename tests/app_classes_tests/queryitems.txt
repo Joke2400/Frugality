@@ -1,0 +1,5 @@
+QueryItem(name=abcdef amount=AmountData(quantity=None unit=None multiplier=100 quantity_str='') category=liha-ja-kasviproteiinit-1)
+QueryItem(name=Maito Laktoositon 1L amount=AmountData(quantity=1 unit=L multiplier=5 quantity_str='1L') category=maito-munat-ja-rasvat-0)
+QueryItem(name=sdfdfg5rtgqdgytffwsdft amount=AmountData(quantity=None unit=None multiplier=3 quantity_str='') category=None)
+QueryItem(name=400g 1kg 400g 1kg peruna amount=AmountData(quantity=400 unit=g multiplier=5 quantity_str='400g') category=hedelmat-ja-vihannekset-1)
+QueryItem(name=Ruokakerma amount=AmountData(quantity=None unit=None multiplier=1 quantity_str='') category=None)

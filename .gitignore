@@ -34,3 +34,4 @@ data/logs/api.log
 data/logs/core.log
 data/logs/query.log
 data/logs/root.log
+.coverage

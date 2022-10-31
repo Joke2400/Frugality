@@ -13,6 +13,13 @@ class AmountData:
     multiplier: int = 1
     quantity_str: str = ""
 
+    def __repr__(self) -> str:
+        return "AmountData(" +\
+               f"quantity={self.quantity} " +\
+               f"unit={self.unit} " +\
+               f"multiplier={self.multiplier} " +\
+               f"quantity_str='{self.quantity_str}')"
+
     def __str__(self) -> str:
         return f"{self.multiplier} x {self.quantity_str}"
 
@@ -22,6 +29,11 @@ class PriceData:
     unit_price: int | float  # Basic price
     cmp_price: int | float  # Comparison price (value for price/unit)
 
+    def __repr__(self) -> str:
+        return "PriceData(" +\
+               f"unit_price={self.unit_price} " +\
+               f"cmp_price={self.cmp_price})"
+
     def __str__(self) -> str:
         return f"{self.unit_price}"
 
@@ -29,8 +41,15 @@ class PriceData:
 @dataclass
 class QueryItem:
     name: str
-    amount: AmountData
+    store: tuple[str | None, int | None]
     category: str | None
+    amount: AmountData
+
+    def __repr__(self) -> str:
+        return "QueryItem(" +\
+               f"name={self.name} " +\
+               f"amount={repr(self.amount)} " + \
+               f"category={self.category})"
 
     def __str__(self) -> str:
         return f"[Name]: '{self.name}'\n" \
@@ -38,7 +57,7 @@ class QueryItem:
 
 
 @dataclass
-class ProductItem:
+class ProductItem: 
     name: str
     amount: AmountData
     category: str | None
@@ -72,10 +91,12 @@ class ProductItem:
 class ProductList:
     response: Response
     query: QueryItem
-    store_id: str
-    category: str | None
     items: list[ProductItem] = field(default_factory=list)
     filtered: bool = False
+
+    def __post_init__(self):
+        self.store = QueryItem.store
+        self.category = QueryItem.category
 
     def parse(self) -> None:
         self.items = []
@@ -114,10 +135,14 @@ class ProductList:
     @property
     def filtered_products(self) -> list[ProductItem]:
         f = self.query.amount.quantity
-        filtered = []
-        for i in filter(lambda p: p.amount.quantity == f, self.products):
-            filtered.append(i)
-        return filtered
+        p = self.products
+        if f is not None or f != "":
+            items = []
+            for i in filter(lambda p: p.amount.quantity == f, p):
+                items.append(i)
+        else:
+            items = p
+        return items
 
     @property
     def highest_price(self) -> ProductItem:

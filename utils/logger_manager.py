@@ -128,7 +128,7 @@ class LoggerManager:
                           formatter: logging.Formatter = None,
                           stream: bool = False, file: bool = True) -> None:
         """
-        Configures the directory logger with stream and filehandlers 
+        Configures the directory logger with stream and filehandlers
         based on given boolean values.
         """
         if formatter is None:

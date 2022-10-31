@@ -5,6 +5,7 @@ from core.app_funcs import parse_response
 from utils import timer, LoggerManager as lgm
 
 import asyncio
+import json
 
 logger = lgm.get_logger(name=__name__)
 
@@ -38,15 +39,31 @@ def query():
                 limit=10))
 
             product_lists = []
-            for r in responses:
-                product_lists.append(parse_response(*r))
+            with open("./tests/app_classes_tests/responses.json", "w") as f1:
+                with open(
+                        "./tests/app_classes_tests/queryitems.txt", "w") as f2:
+                    for r in responses:
+                        f1.write(json.dumps(r[0]))
+                        f2.write(repr(r[1]) + "\n")
+                        f2.write("\n")
+                        product_lists.append(parse_response(*r))
 
             for pl in product_lists:
-                logger.info(f"Products found: {len(pl.products)}")
-                logger.info(f"Filtered products: {len(pl.filtered_products)}")
-                logger.info(pl.get_products_overview(filtered=True))
-                for y in pl.filtered_products:
-                    logger.info(f"\n{'-'*50}{y}{'-'*50}\n")
+                p = len(pl.products)
+                pf = len(pl.filtered_products)
+                f = pl.query.amount.quantity
+                logger.info(f"Products found: {p}")
+
+                if f is not None or f != "":
+                    logger.info(
+                        f"Excluding products that do not contain: '{f}'")
+                    logger.info(f"Filtered out {p - pf} products " +
+                                f"Remaining products: {pf}")
+                    logger.info(pl.get_products_overview(filtered=True))
+                    #for y in pl.filtered_products:
+                        #logger.info(f"\n{'-'*50}{y}{'-'*50}\n")
+                else:
+                    logger.info(pl.get_products_overview(filtered=False))
 
             return {"data": ""}
         else:

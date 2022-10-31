@@ -18,55 +18,6 @@ def validate_post(request) -> bool:
     # TODO: Add some input validation
 
 
-def regex_findall(p: str, s: str) -> list[str] | None:
-    result = re.findall(
-        pattern=p,
-        string=s,
-        flags=re.I | re.M)
-    if len(result) != 0:
-        logger.debug(f"Regex result: {result} ('{s}')")
-        return result
-    logger.debug(f"Regex result: 'None' ('{s}')")
-    return None
-
-
-def regex_get_quantity(s: str) -> tuple[int | None, str | None]:
-    r = regex_findall(r"(\d+)(l|k?gm?)|(\d+)(l|k?\sgm?)", s)
-    case = (None, None)
-    if r is not None:
-        tup = r[0]
-        case = (
-            int(tup[0]) if tup[0] != "" else None,
-            tup[1] if tup[1] != "" else None
-        )
-        if case == (None, None):
-            case = (
-                int(tup[2]) if tup[2] != "" else None,
-                tup[3].replace(" ", "") if tup[3] != "" else None
-            )
-    return case
-
-
-def parse_query_data(a: str, s: str | None = None) -> AmountData:
-    q, u, qs = None, None, ""
-    if isinstance(s, str):
-        q, u = regex_get_quantity(s)
-        if q is not None and u is not None:
-            qs = str(q) + u
-
-    try:
-        amt = 1
-        if a is not None and a != "":
-            amt = abs(int(a))
-            if amt > 100:
-                amt = 100
-    except ValueError:
-        logger.exception(
-            "'amt' could not be converted to 'int'")
-        amt = 1
-    return AmountData(q, u, amt, qs)
-
-
 def extract_request_json(request) -> tuple[list, list, list]:
     logger.debug(
         "Extracting request JSON...")
@@ -77,22 +28,75 @@ def extract_request_json(request) -> tuple[list, list, list]:
     # TODO: Add some input validation
 
 
+def regex_findall(p: str, s: str) -> list[tuple[str, str]] | None:
+    result = re.findall(
+        pattern=p,
+        string=s,
+        flags=re.I | re.M)
+    logger.debug(f"Regex result: {result} ('{s}')")
+    if len(result) > 0:
+        return result
+    return None
+
+
+def regex_get_quantity(s: str) -> tuple[int, str] | tuple[None, None]:
+    r = regex_findall(r"(\d+)\s?(l|kg|g)", s)
+    empty = (None, None)
+    if r is not None:
+        v = r[0]
+        tup = (int(v[0]), v[1])
+        logger.debug(f"Quantity tuple: {tup}")
+        return tup
+    logger.debug(f"Quantity tuple: {empty}")
+    return empty
+
+
+def parse_query_data(a: str, s: str | None = None) -> AmountData:
+    quantity, unit, quantity_str = None, None, ""
+    if isinstance(s, str):
+        quantity, unit = regex_get_quantity(s)
+        if quantity is not None and unit is not None:
+            quantity_str = str(quantity) + unit
+
+    try:
+        multiplier = 1
+        if a is not None and a != "":
+            multiplier = abs(int(float(a)))
+            if multiplier > 100:
+                multiplier = 100
+    except ValueError:
+        logger.exception("Could not convert to 'int'")
+        multiplier = 1
+
+    data = AmountData(quantity=quantity,
+                      unit=unit,
+                      multiplier=multiplier,
+                      quantity_str=quantity_str)
+    logger.debug(f"AmountData: {data}")
+    return data
+
+
 def parse_input(data: tuple[list, list, list]) -> list[QueryItem]:
     logger.debug("Parsing request JSON...")
     product_queries = []
 
     for query, amt, cat in zip(
             data[0], data[1], data[2]):
-
         logger.debug(f"Parsing new query: '{query}'")
+
         if query is None or query == "":
             logger.debug("Parsed query was empty, skipping...")
             continue
-        amount_data = parse_query_data(a=amt, s=query)
+
         if cat == "":
             cat = None
+        amount_data = parse_query_data(a=amt, s=query)
+
         product_queries.append(
-            QueryItem(name=query, amount=amount_data, category=cat))
+            QueryItem(name=query,
+                      amount=amount_data,
+                      category=cat))
+
     logger.debug(f"Product queries len({len(product_queries)})\n")
     return product_queries
 
