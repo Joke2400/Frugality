@@ -13,7 +13,7 @@ function sendQuery() {
         },
         body: JSON.stringify({
             operation: document.getElementById("operation").value,
-            store_id: document.getElementById("store_id").value,
+            store: document.getElementById("store").value,
             queries: queries,
             amounts: amounts,
             categories: categories

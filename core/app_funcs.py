@@ -33,7 +33,7 @@ def regex_findall(p: str, s: str) -> list[tuple[str, str]] | None:
         pattern=p,
         string=s,
         flags=re.I | re.M)
-    logger.debug(f"Regex result: {result} ('{s}')")
+    logger.debug(f"Regex result: {result} (Original str: '{s}')")
     if len(result) > 0:
         return result
     return None
@@ -76,7 +76,8 @@ def parse_query_data(a: str, s: str | None = None) -> AmountData:
     return data
 
 
-def parse_input(data: tuple[list, list, list]) -> list[QueryItem]:
+def parse_input(data: tuple[list, list, list],
+                store: tuple[str | None, int | None]) -> list[QueryItem]:
     logger.debug("Parsing request JSON...")
     product_queries = []
 
@@ -94,6 +95,7 @@ def parse_input(data: tuple[list, list, list]) -> list[QueryItem]:
 
         product_queries.append(
             QueryItem(name=query,
+                      store=store,
                       amount=amount_data,
                       category=cat))
 
@@ -101,16 +103,27 @@ def parse_input(data: tuple[list, list, list]) -> list[QueryItem]:
     return product_queries
 
 
-def parse_response(response: Response, query_item: QueryItem,
-                   request_params: dict):
-    store_id = request_params["variables"]["StoreID"]
-    category = request_params["variables"]["slugs"]
-
+def create_product_list(response: Response, query_item: QueryItem):
     products = ProductList(
         response=response,
-        query=query_item,
-        store_id=store_id,
-        category=category)
+        query=query_item)
     logger.debug(f"Created ProductList from query string: '{query_item.name}'")
 
     return products
+
+
+def parse_store_info(store_str: str) -> tuple[str | None, int | None] | None:
+    regex_result = regex_findall(
+        r"\d+|^(?:\s*\b)\b[A-Za-z\s]+(?=\s?)", store_str)
+    if len(regex_result) == 0:
+        return None
+
+    store_name, store_id = None, None
+    if regex_result[0] is not None:
+        store_name = regex_result[0].strip()
+    if regex_result[1] is not None:
+        store_id = int(regex_result[1].strip())
+
+    if store_name is None and store_id is None:
+        return None
+    return (store_name, store_id)# add logging

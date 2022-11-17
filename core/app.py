@@ -1,7 +1,6 @@
 from flask import redirect, url_for, render_template, request
-from core import app, validate_post, parse_input, extract_request_json
+from core import app, validate_post, parse_input, extract_request_json, create_product_list, parse_store_info
 from api import get_products
-from core.app_funcs import parse_response
 from utils import timer, LoggerManager as lgm
 
 import asyncio
@@ -23,47 +22,43 @@ def base_url_redirect():
 @app.route("/query/", methods=["POST"])
 @timer
 def query():
+    logger.info("Received a new request!\n")
     if validate_post(request):
         operation = request.json.pop("operation")
-        store_id = request.json.pop("store_id")
-        data = extract_request_json(request)
+        store_str = request.json.pop("store")
 
-        product_queries = parse_input(data)
+        store_data = parse_store_info(store_str)
+        if store_data is None:
+            return {"data": "[ERROR]: Store name or id must be specified."}
+
+        request_data = extract_request_json(request)
+        query_data = parse_input(request_data, store_data)
 
         # Simple check, needs to be improved later
         if operation == "Groceries":
-            logger.info(f"\nCurrent operation: {operation}\n")
+            logger.info(f"Current operation: {operation}\n")
             responses = asyncio.run(get_products(
-                store_id=store_id,
-                product_queries=product_queries,
+                store_id=store_data[1],
+                product_queries=query_data,
                 limit=10))
 
             product_lists = []
-            with open("./tests/app_classes_tests/responses.json", "w") as f1:
-                with open(
-                        "./tests/app_classes_tests/queryitems.txt", "w") as f2:
-                    for r in responses:
-                        f1.write(json.dumps(r[0]))
-                        f2.write(repr(r[1]) + "\n")
-                        f2.write("\n")
-                        product_lists.append(parse_response(*r))
+            for r in responses:
+                product_lists.append(create_product_list(*r))
 
             for pl in product_lists:
-                p = len(pl.products)
-                pf = len(pl.filtered_products)
-                f = pl.query.amount.quantity
-                logger.info(f"Products found: {p}")
+                p_len = len(pl.products)
+                logger.info(f"Products found: {p_len}.")
+                f_str = pl.query.amount.quantity  # Maybe set filter to this value as default, then add a apply filter func
 
-                if f is not None or f != "":
+                if f_str not in (None, ""):
+                    pl.set_filter(f_str)
+                    f_len = len(pl.products)
                     logger.info(
-                        f"Excluding products that do not contain: '{f}'")
-                    logger.info(f"Filtered out {p - pf} products " +
-                                f"Remaining products: {pf}")
-                    logger.info(pl.get_products_overview(filtered=True))
-                    #for y in pl.filtered_products:
-                        #logger.info(f"\n{'-'*50}{y}{'-'*50}\n")
-                else:
-                    logger.info(pl.get_products_overview(filtered=False))
+                        f"Excluding products that do not contain: '{f_str}'.")
+                    logger.info(f"Filtered out {p_len - f_len} products. " +
+                                f"Remaining products: {f_len}.")
+                logger.info(pl)
 
             return {"data": ""}
         else:

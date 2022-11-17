@@ -34,7 +34,10 @@ class Paths:
 
     @classmethod
     def logs(cls):
-        return cls.project / "data" / "logs"
+        logs_path = cls.project / "data" / "logs"
+        if not logs_path.is_dir():
+            Path.mkdir(logs_path)
+        return logs_path
 
     @classmethod
     def settings(cls):

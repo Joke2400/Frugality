@@ -1,3 +1,4 @@
+# Actual responses from api
 response_1 = {
     "data": {
         "store": {
