@@ -1,16 +1,16 @@
-from utils import LoggerManager as lgm
+from utils import timer, LoggerManager as lgm
 from core import AmountData, QueryItem, ProductList
+from api import api_fetch_products, api_get_store
 from requests import Response
+
+import asyncio
 import re
 
 logger = lgm.get_logger(name=__name__)
 
-# Might want to create classes instead of a functional
-# approach for organizational purposes.
-# But then again, who likes making boilerplate?
-
 
 def validate_post(request) -> bool:
+    # https://flask.palletsprojects.com/en/2.2.x/security/
     if request.method == "POST":
         if request.json is not None:
             return True
@@ -19,6 +19,7 @@ def validate_post(request) -> bool:
 
 
 def extract_request_json(request) -> tuple[list, list, list]:
+    # https://flask.palletsprojects.com/en/2.2.x/security/
     logger.debug(
         "Extracting request JSON...")
     return (
@@ -28,7 +29,8 @@ def extract_request_json(request) -> tuple[list, list, list]:
     # TODO: Add some input validation
 
 
-def regex_findall(p: str, s: str) -> list[tuple[str, str]] | None:
+def regex_findall(p: str, s: str
+                  ) -> list[tuple[str, str]] | list[str] | None:
     result = re.findall(
         pattern=p,
         string=s,
@@ -112,18 +114,85 @@ def create_product_list(response: Response, query_item: QueryItem):
     return products
 
 
-def parse_store_info(store_str: str) -> tuple[str | None, int | None] | None:
-    regex_result = regex_findall(
+def parse_store_data(store_str: str) -> tuple[str | None, int | None] | None:
+    s_name, s_id = None, None
+    data = regex_findall(
         r"\d+|^(?:\s*\b)\b[A-Za-z\s]+(?=\s?)", store_str)
-    if len(regex_result) == 0:
-        return None
 
-    store_name, store_id = None, None
-    if regex_result[0] is not None:
-        store_name = regex_result[0].strip()
-    if regex_result[1] is not None:
-        store_id = int(regex_result[1].strip())
+    if data is not None and not isinstance(data[0], tuple):
+        if len(data) == 2:
+            s_name = str(data[0]).strip()
+            logger.debug(f"store_info: name = {s_name}")
+            try:
+                s_id = int(str(data[1]).strip())
+                logger.debug(f"store_info: name = {s_id}")
+            except ValueError:
+                logger.debug("Could not convert ID to int")
+        if len(data) == 1:
+            try:
+                s_id = int(str(data[0]).strip())
+            except ValueError:
+                s_name = str(data[0]).strip()
 
-    if store_name is None and store_id is None:
+    if s_name is None and s_id is None:
+        logger.debug("Regex returned no results.")
         return None
-    return (store_name, store_id)# add logging
+    logger.debug(f"Regex result: '{s_name}' '{s_id}'")
+    return (s_name, s_id)
+
+# TODO: ADD LOGGING
+@timer
+def execute_product_search(query_data: list[QueryItem],
+                           store_id: int,
+                           limit: int = 24) -> list[ProductList]:
+    responses = asyncio.run(api_fetch_products(
+        store_id=str(store_id),
+        product_queries=query_data,
+        limit=limit))
+
+    product_lists = []
+    for r in responses:
+        product_lists.append(create_product_list(*r))
+
+    return product_lists
+
+# TODO: IMPLEMENT, ADD LOGGING
+@timer
+def validate_store_data(store_data):
+    return store_data
+    '''
+    # PUT IN FUNCTION --------------------------
+    if store_data is None:
+        # No store data available
+        # TODO: Prompt user for store or address
+        return {
+            "data": "[ERROR]: Store name or id must be specified for now."
+            }
+    if store_data[0] is None:
+        pass
+    if store_data[1] is None:
+        # Store name available
+        api_get_store(store_data[0])
+
+    # ---------------------------
+    '''
+
+# TODO: IMPLEMENT, ADD LOGGING
+def save_product_data():
+    pass  # Database will be the responsibility of DataManager
+
+# TODO: ADD LOGGING
+def products_overview(product_lists: list[ProductList]):
+    for pl in product_lists:
+        p_len = len(pl.products)
+        logger.info(f"Products found: {p_len}.")
+        f_str = pl.query.amount.quantity  # Maybe set filter to this value as default, then add a apply filter func
+
+        if f_str not in (None, ""):
+            pl.set_filter(str(f_str))
+            f_len = len(pl.products)
+            logger.info(
+                f"Excluding products that do not contain: '{f_str}'.")
+            logger.info(f"Filtered out {p_len - f_len} products. " +
+                        f"Remaining products: {f_len}.")
+        logger.info(pl)

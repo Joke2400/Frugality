@@ -189,7 +189,7 @@ class ProductList:
             logger.debug("Filter empty, returning unfiltered product list.")
         return items
 
-    def set_filter(self, filter_str: str) -> None:
+    def set_filter(self, filter_str: str | int | float) -> None:
         try:
             self._filter = str(filter_str)
             logger.debug(f"Set filter to: '{self._filter}'.")

@@ -1,21 +1,19 @@
 <!DOCTYPE html>
 
-<html>
+    <html lang="en">
+        <head>
+            <title>{% block page_title %}{% endblock %}</title>
+            <meta name="viewport" content="width=device-width" initial-scale="1.0">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta charset="UTF-8">
+            {% block stylesheets %}
+            {% endblock %}
 
-<head>
-    <title>{% block page_title %}{% endblock %}</title>
-    <meta name="viewport" content="width=device-width" initial-scale="1.0">
-    <meta charset="utf-8">
-    {% block stylesheets %}
-    {% endblock %}
-
-    {% block scripts %}
-    {% endblock %}
-</head>
-
-<body>
-    {%block content %}
-    {% endblock %}
-</body>
-
-</html>
+            {% block scripts %}
+            {% endblock %}
+        </head>
+        <body>
+            {%block content %}
+            {% endblock %}
+        </body>
+    </html>

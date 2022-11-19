@@ -9,6 +9,6 @@ def timer(func):
         result = func(*args, **kwargs)
         end_time = time.perf_counter()
         elapsed = end_time - start_time
-        print(f"Function: {func.__name__} Took {elapsed:.4f} second(s)")
+        print(f"Function: {func.__name__}() Took {elapsed:.4f} second(s)")
         return result
     return wrapper

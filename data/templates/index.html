@@ -2,171 +2,21 @@
 {% block page_title %}Frugality{% endblock %}
 
 {% block stylesheets %}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/style.css')}}">
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style/style.css')}}">
 {% endblock %}
 
 {% block scripts %}
 <script defer src="{{url_for('static', filename='js/query.js')}}"></script>
+<script src="{{url_for('static', filename='js/load.js')}}"></script>
 {% endblock %}
 
 {%block content %}
 <div class="container">
     <div class="content-large">
-        <div class="overview">
-            <h2>Frugality</h2>
-            <p>This app is currently in very early development.</p>
-        </div>
-        <div class="main">
-            <form>
-                <div class="details">
-                    <div>
-                        <p>Operation</p>
-                        <input id="operation" type="text" value="Groceries" placeholder="Enter operation">
-                    </div>
-                    <div>
-                        <p>Store ID</p>
-                        <input id="store" type="text" value="542862479" placeholder="Enter store info">
-                    </div>
-                </div>
-                <div class="items">
-                    <div class="item">
-                        <div class="input">
-                            <input class="query" type="text" value="" placeholder="Enter query">
-                            <input class="amount" type="text" value="" placeholder="Enter amount">
-                        </div>
-                        <div class="item-dropdown">
-                            <select class="categories">
-                                <option value="">Select category</option>
-                                <option value="hedelmat-ja-vihannekset-1">Hedelmät ja vihannekset</option>
-                                <option value="leivat-keksit-ja-leivonnaiset-1">Leivät ja leivonnaiset</option>
-                                <option value="liha-ja-kasviproteiinit-1">Liha ja kasviproteiinit</option>
-                                <option value="kala-ja-merenelavat-1">Kala ja merenelävät</option>
-                                <option value="maito-munat-ja-rasvat-0">Maito, munat ja rasvat</option>
-                                <option value="juustot-0">Juustot</option>
-                            </select>
-                        </div>
-                        <div class="amt-container">
-                            <div class="amt-btn">
-                                <button class="sub-btn" onclick="">-</button>
-                            </div>
-                            <div class="amt-btn">
-                                <button class="add-btn" onclick="">+</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="input">
-                            <input class="query" type="text" value="" placeholder="Enter query">
-                            <input class="amount" type="text" value="" placeholder="Enter amount">
-                        </div>
-                        <div class="item-dropdown">
-                            <select class="categories">
-                                <option value="">Select category</option>
-                                <option value="hedelmat-ja-vihannekset-1">Hedelmät ja vihannekset</option>
-                                <option value="leivat-keksit-ja-leivonnaiset-1">Leivät ja leivonnaiset</option>
-                                <option value="liha-ja-kasviproteiinit-1">Liha ja kasviproteiinit</option>
-                                <option value="kala-ja-merenelavat-1">Kala ja merenelävät</option>
-                                <option value="maito-munat-ja-rasvat-0">Maito, munat ja rasvat</option>
-                                <option value="juustot-0">Juustot</option>
-                            </select>
-                        </div>
-                        <div class="amt-container">
-                            <div class="amt-btn">
-                                <button class="sub-btn" onclick="">-</button>
-                            </div>
-                            <div class="amt-btn">
-                                <button class="add-btn" onclick="">+</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="input">
-                            <input class="query" type="text" value="" placeholder="Enter query">
-                            <input class="amount" type="text" value="" placeholder="Enter amount">
-                        </div>
-                        <div class="item-dropdown">
-                            <select class="categories">
-                                <option value="">Select category</option>
-                                <option value="hedelmat-ja-vihannekset-1">Hedelmät ja vihannekset</option>
-                                <option value="leivat-keksit-ja-leivonnaiset-1">Leivät ja leivonnaiset</option>
-                                <option value="liha-ja-kasviproteiinit-1">Liha ja kasviproteiinit</option>
-                                <option value="kala-ja-merenelavat-1">Kala ja merenelävät</option>
-                                <option value="maito-munat-ja-rasvat-0">Maito, munat ja rasvat</option>
-                                <option value="juustot-0">Juustot</option>
-                            </select>
-                        </div>
-                        <div class="amt-container">
-                            <div class="amt-btn">
-                                <button class="sub-btn" onclick="">-</button>
-                            </div>
-                            <div class="amt-btn">
-                                <button class="add-btn" onclick="">+</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="input">
-                            <input class="query" type="text" value="" placeholder="Enter query">
-                            <input class="amount" type="text" value="" placeholder="Enter amount">
-                        </div>
-                        <div class="item-dropdown">
-                            <select class="categories">
-                                <option value="">Select category</option>
-                                <option value="hedelmat-ja-vihannekset-1">Hedelmät ja vihannekset</option>
-                                <option value="leivat-keksit-ja-leivonnaiset-1">Leivät ja leivonnaiset</option>
-                                <option value="liha-ja-kasviproteiinit-1">Liha ja kasviproteiinit</option>
-                                <option value="kala-ja-merenelavat-1">Kala ja merenelävät</option>
-                                <option value="maito-munat-ja-rasvat-0">Maito, munat ja rasvat</option>
-                                <option value="juustot-0">Juustot</option>
-                            </select>
-                        </div>
-                        <div class="amt-container">
-                            <div class="amt-btn">
-                                <button class="sub-btn" onclick="">-</button>
-                            </div>
-                            <div class="amt-btn">
-                                <button class="add-btn" onclick="">+</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="input">
-                            <input class="query" type="text" value="" placeholder="Enter query">
-                            <input class="amount" type="text" value="" placeholder="Enter amount">
-                        </div>
-                        <div class="item-dropdown">
-                            <select class="categories">
-                                <option value="">Select category</option>
-                                <option value="hedelmat-ja-vihannekset-1">Hedelmät ja vihannekset</option>
-                                <option value="leivat-keksit-ja-leivonnaiset-1">Leivät ja leivonnaiset</option>
-                                <option value="liha-ja-kasviproteiinit-1">Liha ja kasviproteiinit</option>
-                                <option value="kala-ja-merenelavat-1">Kala ja merenelävät</option>
-                                <option value="maito-munat-ja-rasvat-0">Maito, munat ja rasvat</option>
-                                <option value="juustot-0">Juustot</option>
-                            </select>
-                        </div>
-                        <div class="amt-container">
-                            <div class="amt-btn">
-                                <button class="sub-btn" onclick="">-</button>
-                            </div>
-                            <div class="amt-btn">
-                                <button class="add-btn" onclick="">+</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-            <div class="send-query">
-                <button class="query-btn" onclick="sendQuery()">Query</button>
-            </div>
-        </div>
     </div>
-    <div class="result-block">
-        <div class="result-container">
-            <div class="result-item">
-                
-            </div>
-        </div>
+    <div class="query-list">
+    </div>
+    <div class="result-data">
     </div>
 </div>
 {% endblock %}

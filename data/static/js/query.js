@@ -12,7 +12,6 @@ function sendQuery() {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            operation: document.getElementById("operation").value,
             store: document.getElementById("store").value,
             queries: queries,
             amounts: amounts,

@@ -37,9 +37,10 @@ async def async_send_post(query: str, variables: dict,
     return response, query_item
 
 
-async def get_products(store_id: str, product_queries: list[core.QueryItem],
-                       limit: int = 24
-                       ) -> list[tuple[Response, core.QueryItem]]:
+async def api_fetch_products(store_id: str,
+                             product_queries: list[core.QueryItem],
+                             limit: int = 24
+                             ) -> list[tuple[Response, core.QueryItem]]:
     operation = "GetProductByName"
     query = s_queries[operation]  # Get predefined GraphQL query
     tasks = []
@@ -65,5 +66,5 @@ async def get_products(store_id: str, product_queries: list[core.QueryItem],
     return await asyncio.gather(*tasks)
 
 
-def get_store():
+def api_get_store():
     pass
