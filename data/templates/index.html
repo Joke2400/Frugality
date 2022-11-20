@@ -12,11 +12,33 @@
 
 {%block content %}
 <div class="container">
-    <div class="content-large">
+    <div class="input-container">
+        <div class="card">
+            <div class="overview">
+                <h2>Frugality</h2>
+                <p>This app is in early development.</p>
+            </div>
+            <div class="input-field">
+                <p>Store</p>
+                <form>
+                    <input placeholder="eg. Store name or ID"></input>
+                    <button>+</button>
+                </form>
+            </div>
+            <div class="input-field">
+                <p>Product name</p>
+                <form>
+                    <input placeholder="eg. Product name"></input>
+                    <button>+</button>
+                </form>
+            </div>
+        </div>
     </div>
-    <div class="query-list">
+    <div class="query-container">
+        <div class="card"></div>
     </div>
-    <div class="result-data">
+    <div class="result-container">
+        <div class="card"></div>
     </div>
 </div>
 {% endblock %}
