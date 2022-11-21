@@ -16,5 +16,5 @@
 		"python.linting.pylamaEnabled": true,
 		"python.linting.pylintEnabled": false,
 		"python.linting.banditEnabled": true
-	}
+	},
 }

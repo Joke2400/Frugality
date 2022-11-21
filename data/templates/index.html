@@ -7,7 +7,7 @@
 
 {% block scripts %}
 <script defer src="{{url_for('static', filename='js/query.js')}}"></script>
-<script src="{{url_for('static', filename='js/load.js')}}"></script>
+<script defer src="{{url_for('static', filename='js/index.js')}}"></script>
 {% endblock %}
 
 {%block content %}
@@ -18,24 +18,38 @@
                 <h2>Frugality</h2>
                 <p>This app is in early development.</p>
             </div>
-            <div class="input-field">
-                <p>Store</p>
-                <form>
-                    <input placeholder="eg. Store name or ID"></input>
-                    <button>+</button>
-                </form>
-            </div>
-            <div class="input-field">
-                <p>Product name</p>
-                <form>
-                    <input placeholder="eg. Product name"></input>
-                    <button>+</button>
-                </form>
+            <div class="input-box">
+                <div class="input-field">
+                    <div>
+                        <p>Store</p>
+                        <form>
+                            <input class="store-input" value="" placeholder="ex. Prisma Olari"></input>
+                            <button class="store-add-btn" type="button" onclick="selectStore()">Select</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="input-field">
+                    <div>
+                        <p>Product</p>
+                        <form>
+                            <input class="query-input" value="" placeholder="ex. Maito 1L"></input>
+                            <button class="product-add-btn" type="button">+</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="confirm-selection input-field">
+                    <form>
+                        <button class="send-query-btn" type="button">Send Query</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
     <div class="query-container">
-        <div class="card"></div>
+        <div class="card">
+            <div class="query-items-list">
+            </div>
+        </div>
     </div>
     <div class="result-container">
         <div class="card"></div>
