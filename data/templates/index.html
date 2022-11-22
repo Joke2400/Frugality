@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block scripts %}
-<script defer src="{{url_for('static', filename='js/query.js')}}"></script>
 <script defer src="{{url_for('static', filename='js/index.js')}}"></script>
+<script src="{{url_for('static', filename='js/pageload.js')}}"></script>
 {% endblock %}
 
 {%block content %}
@@ -20,22 +20,27 @@
             </div>
             <div class="input-box">
                 <div class="input-field">
-                    <div>
+                    <div class="store-info">
                         <p>Store</p>
-                        <form>
+                        <p id="current-store"></p>
+                    </div>
+                    <form>
+                        <div class="input-data">
                             <input class="store-input" value="" placeholder="ex. Prisma Olari"></input>
                             <button class="store-add-btn" type="button" onclick="selectStore()">Select</button>
-                        </form>
-                    </div>
+                        </div>      
+                    </form>
                 </div>
                 <div class="input-field">
-                    <div>
-                        <p>Product</p>
-                        <form>
+                    <p>Product</p>
+                    <form>
+                        <select class="categories">
+                        </select>
+                        <div class="input-data">
                             <input class="query-input" value="" placeholder="ex. Maito 1L"></input>
                             <button class="product-add-btn" type="button">+</button>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
                 <div class="confirm-selection input-field">
                     <form>

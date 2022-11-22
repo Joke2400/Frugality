@@ -5,4 +5,4 @@ if __name__ == "__main__":
     # run()
     process.start(debug=True, reset=False)
 
-    # TODO: Fix bug in regex functions
+    # TODO: add more units to regex_get_quantity

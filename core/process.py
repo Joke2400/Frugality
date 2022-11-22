@@ -5,9 +5,12 @@ from utils import Paths, LoggerManager as lgm
 
 import asyncio
 
+# No settings file yet so this is temporary:
 TEST_MODE = True
 TRACK = True
 LIFETIME = timedelta(days=1)
+SECRET_KEY = "TEMPORARY" # This MUST be changed before hosting
+                            # TODO: get key from file so its not in the git repo
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 logger = lgm.get_logger(name=__name__)
 
@@ -18,7 +21,7 @@ class Process:
         self.app = Flask(import_name="Frugality",
                          template_folder=Paths.templates(),
                          static_folder=Paths.static())
-        self.app.secret_key = "TEMPORARY"
+        self.app.secret_key = SECRET_KEY
         if TEST_MODE:
             self.db_path = Paths.test_database()
         else:

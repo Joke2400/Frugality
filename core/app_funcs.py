@@ -58,6 +58,7 @@ def parse_query_data(a: str, s: str | None = None) -> AmountData:
     if isinstance(s, str):
         quantity, unit = regex_get_quantity(s)
         if quantity is not None and unit is not None:
+            quantity_str = str(quantity).strip("x")
             quantity_str = str(quantity) + unit
 
     try:

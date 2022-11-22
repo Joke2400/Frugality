@@ -56,9 +56,6 @@ function viewIngredients(recipeName) {
 
 
 
-
-
-
 function createRecipeDisplay() {
     var containerElement = document.getElementsByClassName("container")[0]
     var new_style = `

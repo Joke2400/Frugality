@@ -40,7 +40,7 @@ body {
     flex-direction: column;
     box-sizing: border-box;
     width: 100%;
-    height: max-content;
+    height: 100%;
     padding: 0.5rem;
 }
 
@@ -57,10 +57,23 @@ body {
     transform: translate(-50%);
 }
 
+.store-info {
+    display: flex;
+    flex-direction: row;
+}
+
+#current-store {
+    margin-left: 1rem;
+    font-weight: normal;
+}
+
 .input-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     box-sizing: border-box;
     position: relative;
-    width: max-content;
+    width: 100%;
     height: max-content;
     left: 50%;
     transform: translate(-50%);
@@ -69,53 +82,47 @@ body {
 /* Input field styling */
 .input-field {
     box-sizing: border-box;
-    display: flex;
     align-items: center;
     padding: 0.5rem;
-    margin-bottom: 5%;
-    width: 100%;
-    height: max-content;
+    margin-bottom: 1rem;
+    min-width: max-content;
+    min-height: max-content;
     font-weight: bold;
     background-color: #f0fffd;
     box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.3);
 }
 
-.input-field input, .input-field button, .item-data button {
+.input-data {
+    display: flex;
+    flex-flow: row wrap;
+    margin: 0;
+    padding-right: 0;
+}
+
+.input-field input, .input-field button, .item-data button, .categories, .remove-query-btn {
+    display: flex;
+    flex-flow: row wrap;
     border: 0;
     border-radius: 0;
     font-size: 1rem;
-    margin-right: 0.4rem;
-    padding: 0.5rem;
+    margin: 0.5rem;
+    padding: 0.7rem;
     color: #f0f0f0;
     background-color: rgb(0, 150, 176);
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
-    font-weight: bold;
 }
 
-.product-add-btn {
+.product-add-btn, .remove-query-btn {
     width: 2.5rem;
 }
 
-.store-add-btn {
-    width: max-content;
-}
-
-.confirm-selection {
-    display: flex;
-    position: relative;
-    width: max-content;
-    height: max-content;
-    margin: 0;
-    padding: 0.5rem;
-    left: 50%;
-    transform: translate(-50%);
+.remove-query-btn, .send-query-btn, .product-add-btn {
     justify-content: center;
+    font-weight: bold;
 }
 
-.send-query-btn {
+.store-add-btn, .confirm-selection {
     width: max-content;
-    height: fill;
-    margin-left: 0.4rem;
 }
 
 .input-field input:hover, .input-field button:hover, .item-data button:hover {
@@ -130,28 +137,30 @@ body {
     height: 100%;
     left: 50%;
     transform: translate(-50%);
-    overflow: auto;
 }
 
 .query-item {
     box-sizing: border-box;
     display: flex;
-    max-width: fit-content;
+    width: 100%;
+    height: min-content;
     padding: 0.5rem;
     font-weight: bold;
     margin-bottom: 0.5rem;
-    background-color: #f0fffd;
+    background-color: #effaff;
     box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.3);
 }
 
 .item-data {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
 }
 
-.item-data button {
-    position: relative;
-    width: 2.5rem;
+.remove-query-btn {
+    position: sticky;
+    left: 100%;
 }
 
 /* Container grid areas */
@@ -185,19 +194,34 @@ p {
 }
 
 .amt {
-    height:fit-content;
+    width: min-content;
+    height: 0;
     position: relative;
-    top: 15%;
+    top: 0.5rem;
     font-size: 1rem;
     margin: 0 0.5rem 0 0.5rem;
 }
 
 .name {
-    position:relative;
-    height:fit-content;
+    position: relative;
+    width: max-content;
+    height: min-content;
     font-size: 1.1rem;
-    top: 10%;
-    padding: 0.2rem;
-    margin: 0 0.5rem 0 0.5rem;
-    border-bottom: 0.2rem solid rgb(65, 65, 65);
+    top: 0.7rem;
+    left: 2rem;
+    padding: 0;
+    padding-bottom: 0.1rem;
+    margin: 0 0.5rem 0.5rem 0.5rem;
+    border-bottom: 0.2rem solid rgb(0, 150, 176, 0.5);
+}
+
+.category {
+    width: max-content;
+    position: relative;
+    height: 0;
+    font-style: italic;
+    padding: 0;
+    left: 3rem;
+    margin: 0.5rem 0 0.2rem 0;
+    font-size: 0.9rem;
 }

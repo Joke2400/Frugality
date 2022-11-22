@@ -1,4 +1,4 @@
-from flask import redirect, url_for, render_template, request
+from flask import redirect, url_for, render_template, request, session
 from core import (
     app,
     validate_post,
@@ -24,18 +24,28 @@ def base_url_redirect():
     return redirect(url_for("main"))
 
 
-@app.route("/set_store/")
+@app.route("/set_store/", methods=["POST"])
 def set_store():
-    pass
+    # NEEDS TO BE SANITIZED
+    store = request.json["store"]
+    if store != session.get("store"):
+        session["store"] = store
+        logger.info(f"Set '{session['store']}' as session store.\n")
+    return {"data": store}
 
 
 @app.route("/query/", methods=["POST"])
 @timer
 def query():
-    logger.info("Received a new request!\n")
+    logger.info("Received a new product query!\n")
     if validate_post(request):
         # Get store name/id
-        store_data = parse_store_data(store_str=request.json.pop("store"))
+        if session.get("store") is not None:
+            logger.debug(f"Store '{session['store']}' found in session.\n")
+            store_data = parse_store_data(store_str=session["store"])
+        else:
+            logger.info("No store was set for active session!\n")
+            return {"data": "Store must be set."}
         # Validate
         store_data = validate_store_data(store_data=store_data)
 
@@ -43,6 +53,7 @@ def query():
         request_data = extract_request_json(request=request)
         # Get list of QueryItems
         query_data = parse_input(data=request_data, store=store_data)
+        session["queries"] = query_data
 
         # Get a list containing ProductList(s)
         product_lists = execute_product_search(
@@ -52,6 +63,6 @@ def query():
         # Only printing for now ->
         products_overview(product_lists)
 
-        return {"data": ""}
+        return {"data": "Success!"}
     else:
         return {"data": "[ERROR]: Request validation failed."}
