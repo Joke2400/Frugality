@@ -3,7 +3,7 @@ import asyncio
 import json
 
 from data.urls import SKaupatURLs as s_urls
-from utils import LoggerManager as lgm
+from utils import LoggerManager as lgm, timer
 from api import s_queries
 import core
 
@@ -12,7 +12,7 @@ logger = lgm.get_logger(name=__name__)
 query_logger = lgm.get_logger(name="query", level=20)
 
 
-def send_post(query_string: str, params: dict) -> Response:
+def send_post(query_string: str | None, params: dict) -> Response:
     response = post(url=api_url, json=params, timeout=1)
     logger.debug(
         f"Queried: '{query_string}', got response [{response.status_code}]")
@@ -25,6 +25,7 @@ def send_post(query_string: str, params: dict) -> Response:
     return response
 
 
+@timer
 async def async_send_post(query: str, variables: dict,
                           operation: str, query_item: core.QueryItem
                           ) -> tuple[Response, core.QueryItem]:
@@ -66,5 +67,25 @@ async def api_fetch_products(store_id: str,
     return await asyncio.gather(*tasks)
 
 
-def api_get_store():
-    pass
+def api_get_store(store_name: str | None = None,
+                  store_id: str | None = None) -> Response:
+    if store_id is not None:
+        operation = "GetStoreInfo"
+        variables = {
+            "StoreID": store_id
+        }
+    else:
+        operation = "StoreSearch"
+        variables = {
+            "StoreBrand": "",
+            "cursor": "0",
+            "query": str(store_name)
+        }
+    query = s_queries[operation]
+    params = {
+        "query": query,
+        "variables": variables,
+        "operation_name": operation
+    }
+    response = send_post(store_name, params)
+    return response

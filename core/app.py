@@ -30,7 +30,7 @@ def set_store():
     store = request.json["store"]
     if store != session.get("store"):
         session["store"] = store
-        logger.info(f"Set '{session['store']}' as session store.\n")
+        logger.debug(f"Set '{session['store']}' as session store.\n")
     return {"data": store}
 
 
@@ -47,7 +47,8 @@ def query():
             logger.info("No store was set for active session!\n")
             return {"data": "Store must be set."}
         # Validate
-        store_data = validate_store_data(store_data=store_data)
+        store_data = validate_store_data(store_data=store_data,
+                                         requested=session["store"])
 
         # Get request field dicts in a tuple
         request_data = extract_request_json(request=request)

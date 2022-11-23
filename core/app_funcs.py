@@ -58,12 +58,12 @@ def parse_query_data(a: str, s: str | None = None) -> AmountData:
     if isinstance(s, str):
         quantity, unit = regex_get_quantity(s)
         if quantity is not None and unit is not None:
-            quantity_str = str(quantity).strip("x")
             quantity_str = str(quantity) + unit
 
     try:
         multiplier = 1
         if a is not None and a != "":
+            a = a.strip("x")
             multiplier = abs(int(float(a)))
             if multiplier > 100:
                 multiplier = 100
@@ -157,30 +157,27 @@ def execute_product_search(query_data: list[QueryItem],
 
     return product_lists
 
-# TODO: IMPLEMENT, ADD LOGGING
-@timer
-def validate_store_data(store_data):
-    return store_data
-    '''
-    # PUT IN FUNCTION --------------------------
-    if store_data is None:
-        # No store data available
-        # TODO: Prompt user for store or address
-        return {
-            "data": "[ERROR]: Store name or id must be specified for now."
-            }
-    if store_data[0] is None:
-        pass
-    if store_data[1] is None:
-        # Store name available
-        api_get_store(store_data[0])
 
-    # ---------------------------
-    '''
+def validate_store_data(store_data: tuple[str | None, int | None] | None,
+                        requested: str) -> bool:
+    if store_data is not None:
+        if store_data[1] is None:  # inx for store id
+            value = str(store_data[0])
+            logger.debug(f"Store ID not found, using store name '{value}'")
+            response = api_get_store(store_name=value)
+        else:
+            value = str(store_data[1])
+            logger.debug(f"Store ID found, using Store ID '{value}'")
+            response = api_get_store(store_id=value)
 
-# TODO: IMPLEMENT, ADD LOGGING
-def save_product_data():
-    pass  # Database will be the responsibility of DataManager
+        store_data = parse_get_store(response=response)
+
+        #validation code
+
+    return False
+
+def parse_get_store(response: Response):
+    print(response)
 
 # TODO: ADD LOGGING
 def products_overview(product_lists: list[ProductList]):
@@ -197,3 +194,8 @@ def products_overview(product_lists: list[ProductList]):
             logger.info(f"Filtered out {p_len - f_len} products. " +
                         f"Remaining products: {f_len}.")
         logger.info(pl)
+
+
+# TODO: IMPLEMENT, ADD LOGGING
+def save_product_data():
+    pass  # Database will be the responsibility of DataManager

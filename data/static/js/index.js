@@ -28,7 +28,7 @@ var categoryStrings = [
     "Select category",
     "Hedelmät ja vihannekset",
     "Leivät, keksit ja leivonnaiset",
-    "Liha ja kasviproteiinit",
+    "Liha- ja kasviproteiinit",
     "Kala ja merenelävät",
     "Maito, munat ja rasvat",
     "Juustot"
@@ -157,9 +157,16 @@ function sendQuery() {
     let queries = [];
     let amounts = [];
     let categories = [];
-    document.querySelectorAll(".name").forEach(r => queries.push(r.innerText));
-    document.querySelectorAll(".amt").forEach(r => amounts.push(r.innerText));
-    document.querySelectorAll(".category").forEach(r => categories.push(r.value));
+
+    document.querySelectorAll(".name").forEach(r => 
+        queries.push(r.innerText));
+
+    document.querySelectorAll(".amt").forEach(r => 
+        amounts.push(r.innerText));
+
+    document.querySelectorAll(".category").forEach(r => 
+        categories.push(r.dataset.category));
+
     let fetchData = {
         method: "post",
         headers: {
