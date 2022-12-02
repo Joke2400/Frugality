@@ -27,7 +27,7 @@ class AmountData:
 @dataclass
 class PriceData:
     unit_price: int | float  # Basic price
-    cmp_price: int | float  # Comparison price (value for price/unit)
+    cmp_price: int | float   # Comparison price (value for price per unit)
 
     def __repr__(self) -> str:
         return "PriceData(" +\
@@ -84,12 +84,16 @@ class ProductItem:
                f"{price:.2f}€"
 
     @property
+    def price_per_item(self) -> float:
+        return float(self.price.unit_price)
+
+    @property
     def price_per_unit(self) -> float:
         return float(self.price.cmp_price)
 
     @property
     def price_per_unit_str(self) -> str:
-        return f"{self.price_per_unit:.2f}€ for {self.quantity}"
+        return f"{self.price_per_item:.2f}€ for {self.quantity}"
 
     @property
     def price_per_unit_quantity_str(self) -> str:
@@ -107,7 +111,7 @@ class ProductItem:
         return f"\n[Name]: '{self.name}'\n" \
                f"[EAN]: {self.ean}\n" + \
                f"[Quantity]: {self.amount}\n" + \
-               f"[Price]: {self.price_per_unit}\n" + \
+               f"[Price]: {self.price_per_item}\n" + \
                f"[Price/unit]: {self.price_per_unit_quantity_str}\n" + \
                f"[Total price]: {self.total_price}\n"
 
@@ -234,6 +238,12 @@ class ProductList:
         return c
 
     def get_overview_str(self):
+        # Considering this is a print function, it's quite expensive
+        # However the thinking is that this shouldn't be called in
+        # practice because this responsibility should fall on the client side
+        # Client side could also have the responsibility of calculating
+        # max min and avg on it's own
+
         # min/max/avg results are dependent on whether
         # or not a filter string has been set by set_filter
         hi = self.highest_priced_cmp
@@ -261,13 +271,13 @@ class ProductList:
         d_str = f"Query: '{n}' Store: '{s[0]}' ID: '{s[1]}' Category: '{c}'\n"
 
         h_str = f"\nHighest price:{'': ^5}Total price: {h[0]} " + \
-                f"{'': ^2}Price: {h[1]} Price/Unit: {h[2]} {hi.name}"
+                f"{'': ^2}Price: {h[1]}{'': ^3}Price/unit: {h[2]} {hi.name}"
 
         l_str = f"\nLowest price:{'': ^6}Total price: {l[0]} " + \
-                f"{'': ^2}Price: {l[1]} Price/Unit: {l[2]} {lo.name}"
+                f"{'': ^2}Price: {l[1]}{'': ^3}Price/unit: {l[2]} {lo.name}"
 
         a_str = f"\nAverage price:{'': ^5}Total price: {a[0]} " + \
-                f"{'': ^2}Price: {a[1]} Price/Unit: {a[2]} {av.name}\n"
+                f"{'': ^2}Price: {a[1]}{'': ^3}Price/unit: {a[2]} {av.name}\n"
 
         s = d_str + h_str + l_str + a_str
         return s

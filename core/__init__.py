@@ -13,8 +13,9 @@ from .app_funcs import (
     extract_request_json,
     parse_input,
     regex_get_quantity,
-    parse_store_data,
+    parse_store_input,
     execute_product_search,
+    get_store_data,
     validate_store_data,
     save_product_data,
     products_overview

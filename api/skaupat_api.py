@@ -25,7 +25,6 @@ def send_post(query_string: str | None, params: dict) -> Response:
     return response
 
 
-@timer
 async def async_send_post(query: str, variables: dict,
                           operation: str, query_item: core.QueryItem
                           ) -> tuple[Response, core.QueryItem]:
@@ -77,8 +76,8 @@ def api_get_store(store_name: str | None = None,
     else:
         operation = "StoreSearch"
         variables = {
-            "StoreBrand": "",
-            "cursor": "0",
+            "StoreBrand": None,
+            "cursor": None,
             "query": str(store_name)
         }
     query = s_queries[operation]

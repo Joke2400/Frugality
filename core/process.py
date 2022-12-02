@@ -39,7 +39,8 @@ class Process:
 
     def start(self, debug=False, reset=False):
         from core.database_manager import DataManager
-        # Avoiding a circular import :)
+        # Avoiding a circular import :) honestly should probably change program structure,
+        # but i'm also lazy and this is not a priority because this works too
         self.data_manager = DataManager(db=self.db)
         self.data_manager.start_db(reset=reset)
         logger.info("Starting Flask app...\n")

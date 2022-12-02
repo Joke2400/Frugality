@@ -1,2 +1,0 @@
-QueryItem(name=Maito Laktoositon 1L amount=AmountData(quantity=1 unit=L multiplier=10 quantity_str='1L') category=None)
-

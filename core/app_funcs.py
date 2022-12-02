@@ -59,7 +59,6 @@ def parse_query_data(a: str, s: str | None = None) -> AmountData:
         quantity, unit = regex_get_quantity(s)
         if quantity is not None and unit is not None:
             quantity_str = str(quantity) + unit
-
     try:
         multiplier = 1
         if a is not None and a != "":
@@ -70,7 +69,6 @@ def parse_query_data(a: str, s: str | None = None) -> AmountData:
     except ValueError:
         logger.exception("Could not convert to 'int'")
         multiplier = 1
-
     data = AmountData(quantity=quantity,
                       unit=unit,
                       multiplier=multiplier,
@@ -87,15 +85,12 @@ def parse_input(data: tuple[list, list, list],
     for query, amt, cat in zip(
             data[0], data[1], data[2]):
         logger.debug(f"Parsing new query: '{query}'")
-
         if query is None or query == "":
             logger.debug("Parsed query was empty, skipping...")
             continue
-
         if cat == "":
             cat = None
         amount_data = parse_query_data(a=amt, s=query)
-
         product_queries.append(
             QueryItem(name=query,
                       store=store,
@@ -115,7 +110,8 @@ def create_product_list(response: Response, query_item: QueryItem):
     return products
 
 
-def parse_store_data(store_str: str) -> tuple[str | None, int | None] | None:
+def parse_store_input(store_str: str) -> tuple[str | None, int | None] | None:
+    # TODO: Change flow to match statement
     s_name, s_id = None, None
     data = regex_findall(
         r"\d+|^(?:\s*\b)\b[A-Za-z\s]+(?=\s?)", store_str)
@@ -141,45 +137,62 @@ def parse_store_data(store_str: str) -> tuple[str | None, int | None] | None:
     logger.debug(f"Regex result: '{s_name}' '{s_id}'")
     return (s_name, s_id)
 
-# TODO: ADD LOGGING
+
 @timer
 def execute_product_search(query_data: list[QueryItem],
                            store_id: int,
                            limit: int = 24) -> list[ProductList]:
+    # TODO: ADD LOGGING
     responses = asyncio.run(api_fetch_products(
         store_id=str(store_id),
         product_queries=query_data,
         limit=limit))
-
     product_lists = []
     for r in responses:
         product_lists.append(create_product_list(*r))
-
     return product_lists
 
 
-def validate_store_data(store_data: tuple[str | None, int | None] | None,
-                        requested: str) -> bool:
-    if store_data is not None:
-        if store_data[1] is None:  # inx for store id
-            value = str(store_data[0])
-            logger.debug(f"Store ID not found, using store name '{value}'")
-            response = api_get_store(store_name=value)
-        else:
-            value = str(store_data[1])
-            logger.debug(f"Store ID found, using Store ID '{value}'")
+def get_store_data(store_data: tuple[str | None, int | None] | None
+                   ) -> Response | None:
+    # TODO: ADD LOGGING
+    match store_data:
+        # Allowed cases are (None, str) or (str, None) or (str, str)
+        case (None, str()) | (str(), str()) as store_data:
+            value = store_data[1]
+            logger.debug(f"Store ID found, using Store ID: '{value}'")
             response = api_get_store(store_id=value)
+            return response
 
-        store_data = parse_get_store(response=response)
+        case (str(), None) as store_data:
+            value = store_data[0]
+            logger.debug(f"Store name found, using Store name: '{value}'")
+            response = api_get_store(store_name=value)
+            return response
 
-        #validation code
+        case _:
+            logger.debug("Provided tuple can not be empty.")
+            return None
 
-    return False
 
-def parse_get_store(response: Response):
-    print(response)
+def validate_store_data(response: Response,
+                        store_data: tuple[str | None, int | None] | None
+                        ) -> tuple[str, str] | None:
+    # TODO: ADD LOGGING
+    if response["data"]["searchStores"]["totalCount"] == 0:
+        return None
+    stores = response["data"]["searchStores"]["stores"]
+    store_name, store_id = store_data
+    store = None
+    for i in stores:
+        if i["id"] == store_id or i["name"] == store_name:
+            store = i
+            break
+    if i is None:
+        return None
+    return (store["name"], store["id"])
 
-# TODO: ADD LOGGING
+
 def products_overview(product_lists: list[ProductList]):
     for pl in product_lists:
         p_len = len(pl.products)
