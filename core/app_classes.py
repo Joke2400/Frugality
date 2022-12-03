@@ -7,113 +7,51 @@ logger = lgm.get_logger(name=__name__)
 
 
 @dataclass
-class AmountData:
-    quantity: int | None
-    unit: str | None
+class Item:
+    """
+    A basic item, may represent either
+    user queries or received and parsed results.
+
+    name: Non-optional, descriptor-validator to be added
+    ean: Product ean id, can be used in product searches, google it
+    category: Category as a string, this is not a pretty string to print
+
+    quantity: Quantity of product in a single packaging as an integer
+    unit: The unit that the quantity is given in
+    comparison_unit: The ???
+
+    store: Store data, name and id
+    unit_price: The price for a single product
+    comparison_price: The price for a product / unit
+
+    multiplier: Multiplier used for calculating the total cost, user-defined
+    """
+
+    # Identifying data
+    name: str
+    ean: str | None = None
+    category: str | None = None
+
+    # Product-specific data
+    quantity: int | None = None
+    unit: str | None = None
+    comparison_unit: str | None = None
+
+    # Store-specific data
+    store: tuple[str, int] | None = None
+    unit_price: int | float | None = None
+    comparison_price: int | float | None = None
+
+    # User-defined data
     multiplier: int = 1
-    quantity_str: str = ""
-
-    def __repr__(self) -> str:
-        return "AmountData(" +\
-               f"quantity={self.quantity} " +\
-               f"unit={self.unit} " +\
-               f"multiplier={self.multiplier} " +\
-               f"quantity_str='{self.quantity_str}')"
-
-    def __str__(self) -> str:
-        return f"{self.multiplier} x {self.quantity_str}"
-
-
-@dataclass
-class PriceData:
-    unit_price: int | float  # Basic price
-    cmp_price: int | float   # Comparison price (value for price per unit)
-
-    def __repr__(self) -> str:
-        return "PriceData(" +\
-               f"unit_price={self.unit_price} " +\
-               f"cmp_price={self.cmp_price})"
-
-    def __str__(self) -> str:
-        return f"Price: {self.unit_price} " + \
-               f"Comparison Price: {self.cmp_price}"
-
-
-@dataclass
-class QueryItem:
-    name: str
-    store: tuple[str | None, int | None]
-    category: str | None
-    amount: AmountData
-
-    def __repr__(self) -> str:
-        return "QueryItem(" +\
-               f"name={self.name} " +\
-               f"amount={repr(self.amount)} " + \
-               f"category={self.category})"
-
-    def __str__(self) -> str:
-        return f"[Name]: '{self.name}'\n" \
-               f"[Quantity]: {self.amount}"
-
-
-@dataclass
-class ProductItem:
-    name: str
-    amount: AmountData
-    category: str | None
-    ean: str
-    price: PriceData
 
     @property
-    def quantity(self) -> str:
-        return self.amount.quantity_str
+    def quantity_string(self) -> str:
+        return f"{self.quantity}/{self.unit}"
 
     @property
-    def unit(self) -> str | None:
-        return self.amount.unit
-
-    @property
-    def total_price(self) -> float:
-        return float(self.amount.multiplier * self.price.unit_price)
-
-    @property
-    def total_price_str(self) -> str:
-        price = self.amount.multiplier * self.price.unit_price
-        return f"{self.amount.multiplier}x for " + \
-               f"{price:.2f}€"
-
-    @property
-    def price_per_item(self) -> float:
-        return float(self.price.unit_price)
-
-    @property
-    def price_per_unit(self) -> float:
-        return float(self.price.cmp_price)
-
-    @property
-    def price_per_unit_str(self) -> str:
-        return f"{self.price_per_item:.2f}€ for {self.quantity}"
-
-    @property
-    def price_per_unit_quantity_str(self) -> str:
-        return f"{self.price_per_unit:.2f}€/{self.unit}"
-
-    def __repr__(self) -> str:
-        return "ProductItem(" +\
-               f"name={self.name} " +\
-               f"amount={self.amount} " +\
-               f"category={self.category} " +\
-               f"ean={self.ean} " + \
-               f"price={self.price})"
-
-    def __str__(self) -> str:
-        return f"\n[Name]: '{self.name}'\n" \
-               f"[EAN]: {self.ean}\n" + \
-               f"[Quantity]: {self.amount}\n" + \
-               f"[Price]: {self.price_per_item}\n" + \
-               f"[Price/unit]: {self.price_per_unit_quantity_str}\n" + \
-               f"[Total price]: {self.total_price}\n"
+    def total_price(self) -> int | float:
+        return self.multiplier * self.unit_price
 
 
 @dataclass

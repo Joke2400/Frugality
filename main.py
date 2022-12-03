@@ -20,3 +20,4 @@ if __name__ == "__main__":
     # also unable to display them on the page
     # TODO: Basic response embed on frontend for debugging
     # TODO: OPTIMIZE
+    # TODO: Rework app classes again........ because i made way too many separate classes and it's hard to read and probably not very performant
