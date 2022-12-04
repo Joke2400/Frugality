@@ -1,12 +1,13 @@
 from utils import LoggerManager as lgm
 from dataclasses import dataclass, field
+from typing import Optional
 from requests import Response
 import core
 
 logger = lgm.get_logger(name=__name__)
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Item:
     """
     A basic item, may represent either
@@ -35,14 +36,13 @@ class Item:
     # Product-specific data
     quantity: int | None = None
     unit: str | None = None
-    comparison_unit: str | None = None
 
     # Store-specific data
-    store: tuple[str, int] | None = None
-    unit_price: int | float | None = None
-    comparison_price: int | float | None = None
+    store: Optional[tuple[str, int]] = None
+    unit_price: Optional[int | float] = None
+    comparison_price: Optional[int | float] = None
 
-    # User-defined data
+    # <User-defined data
     multiplier: int = 1
 
     @property
@@ -50,15 +50,17 @@ class Item:
         return f"{self.quantity}/{self.unit}"
 
     @property
-    def total_price(self) -> int | float:
+    def total_price(self) -> int | float | None:
+        if self.unit_price is None:
+            return None
         return self.multiplier * self.unit_price
 
 
 @dataclass
 class ProductList:
     response: Response
-    query: QueryItem
-    _items: list[ProductItem] = field(default_factory=list)
+    query: Item
+    _items: list[Item] = field(default_factory=list)
 
     def __post_init__(self):
         self.store = self.query.store
