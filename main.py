@@ -19,6 +19,8 @@ if __name__ == "__main__":
     # TODO: IMPORTANT, frontend currently doesnt receive products and is 
     # also unable to display them on the page
     # TODO: Basic response embed on frontend for debugging
-    # TODO: OPTIMIZE
+    # TODO: OPTIMIZE, program flow could be simplified.
     # TODO: Rework app classes again........ because i made way too many separate classes and it's hard to read and probably not very performant
     # TODO: The first GraphQL response was very slow after i hadn't sent a request for a month, start using persisted queries when appropriate
+    # TODO: Tests are broken again...
+    # TODO: app.py "query()" function is too long and needs to be split
