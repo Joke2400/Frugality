@@ -36,6 +36,7 @@ class Item:
     # Product-specific data
     quantity: int | None = None
     unit: str | None = None
+    comparison_unit: str | None = None
 
     # Store-specific data
     store: Optional[tuple[str, int]] = None
@@ -47,7 +48,7 @@ class Item:
 
     @property
     def quantity_string(self) -> str:
-        return f"{self.quantity}/{self.unit}"
+        return f"{self.quantity}{self.unit}"
 
     @property
     def total_price(self) -> int | float | None:
@@ -60,7 +61,7 @@ class Item:
 class ProductList:
     response: Response
     query: Item
-    _items: list[Item] = field(default_factory=list)
+    items: list[Item] = field(default_factory=list)
 
     def __post_init__(self):
         self.store = self.query.store
@@ -68,34 +69,9 @@ class ProductList:
         self._filter = None
         self._fitems = []
 
-    def parse(self) -> None:
-        self._items = []
-        logger.debug(f"Parsing response for query '{self.query.name}'")
-        for i in self.response["data"]["store"]["products"]["items"]:
-            q, u = core.regex_get_quantity(i["name"])
-            s = ""
-            if q is not None and u is not None:
-                s = str(q) + u
-            a = AmountData(
-                quantity=q,
-                unit=i["comparisonUnit"],
-                multiplier=self.query.amount.multiplier,
-                quantity_str=s)
 
-            p = PriceData(
-                float(i["price"]),
-                float(i["comparisonPrice"]))
 
-            item = ProductItem(
-                name=i["name"],
-                ean=i["ean"],
-                category=self.category,
-                amount=a,
-                price=p)
-
-            self._items.append(item)
-        logger.debug(f"Parsed {len(self._items)} items from response")
-
+'''
     @property
     def products(self) -> list[ProductItem]:
         logger.debug("Property 'ProductList.products' was called.")
@@ -225,3 +201,4 @@ class ProductList:
     def __str__(self) -> str:
         s = self.get_overview_str()
         return s
+'''

@@ -21,3 +21,4 @@ if __name__ == "__main__":
     # TODO: Basic response embed on frontend for debugging
     # TODO: OPTIMIZE
     # TODO: Rework app classes again........ because i made way too many separate classes and it's hard to read and probably not very performant
+    # TODO: The first GraphQL response was very slow after i hadn't sent a request for a month, start using persisted queries when appropriate

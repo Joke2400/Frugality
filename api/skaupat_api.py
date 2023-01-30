@@ -13,7 +13,7 @@ query_logger = lgm.get_logger(name="query", level=20)
 
 
 def send_post(query_string: str | None, params: dict) -> Response:
-    response = post(url=api_url, json=params, timeout=1)
+    response = post(url=api_url, json=params, timeout=10)
     logger.debug(
         f"Queried: '{query_string}', got response [{response.status_code}]")
     status = response.status_code
@@ -26,8 +26,8 @@ def send_post(query_string: str | None, params: dict) -> Response:
 
 
 async def async_send_post(query: str, variables: dict,
-                          operation: str, query_item: core.QueryItem
-                          ) -> tuple[Response, core.QueryItem]:
+                          operation: str, query_item: core.Item
+                          ) -> tuple[Response, core.Item]:
     params = {
         "query": query,
         "variables": variables,
@@ -38,9 +38,9 @@ async def async_send_post(query: str, variables: dict,
 
 
 async def api_fetch_products(store_id: str,
-                             product_queries: list[core.QueryItem],
+                             product_queries: list[core.Item],
                              limit: int = 24
-                             ) -> list[tuple[Response, core.QueryItem]]:
+                             ) -> list[tuple[Response, core.Item]]:
     operation = "GetProductByName"
     query = s_queries[operation]  # Get predefined GraphQL query
     tasks = []

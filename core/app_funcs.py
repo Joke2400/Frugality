@@ -1,7 +1,8 @@
 from utils import timer, LoggerManager as lgm
-from core import AmountData, QueryItem, ProductList
+from core import Item, ProductList
 from api import api_fetch_products, api_get_store
 from requests import Response
+from typing import Optional
 
 import asyncio
 import re
@@ -53,15 +54,14 @@ def regex_get_quantity(s: str) -> tuple[int, str] | tuple[None, None]:
     return empty
 
 
-def parse_query_data(a: str, s: str | None = None) -> AmountData:
-    quantity, unit, quantity_str = None, None, ""
+def parse_query_data(a: str, s: str | None = None
+                     ) -> tuple[int | None, str | None, int]:
+    quantity, unit = None, None
     if isinstance(s, str):
         quantity, unit = regex_get_quantity(s)
-        if quantity is not None and unit is not None:
-            quantity_str = str(quantity) + unit
     try:
         multiplier = 1
-        if a is not None and a != "":
+        if a not in ("", None):
             a = a.strip("x")
             multiplier = abs(int(float(a)))
             if multiplier > 100:
@@ -69,16 +69,13 @@ def parse_query_data(a: str, s: str | None = None) -> AmountData:
     except ValueError:
         logger.exception("Could not convert to 'int'")
         multiplier = 1
-    data = AmountData(quantity=quantity,
-                      unit=unit,
-                      multiplier=multiplier,
-                      quantity_str=quantity_str)
+    data = (quantity, unit, multiplier)
     logger.debug(f"AmountData: {data}")
     return data
 
 
 def parse_input(data: tuple[list, list, list],
-                store: tuple[str | None, int | None]) -> list[QueryItem]:
+                store: Optional[tuple[str, int]]) -> list[Item]:
     logger.debug("Parsing request JSON...")
     product_queries = []
 
@@ -92,25 +89,47 @@ def parse_input(data: tuple[list, list, list],
             cat = None
         amount_data = parse_query_data(a=amt, s=query)
         product_queries.append(
-            QueryItem(name=query,
-                      store=store,
-                      amount=amount_data,
-                      category=cat))
+            Item(name=query,
+                 store=store,
+                 quantity=amount_data[0],
+                 unit=amount_data[1],
+                 multiplier=amount_data[2],
+                 category=cat))
 
     logger.debug(f"Product queries len({len(product_queries)})\n")
     return product_queries
 
 
-def create_product_list(response: Response, query_item: QueryItem):
+def create_product_list(response: Response,
+                        query_item: Item) -> ProductList:
+    logger.debug(f"Parsing response for query '{query_item.name}'")
+    items = []
+    for i in response["data"]["store"]["products"]["items"]:
+        q, u = regex_get_quantity(i["name"])  # 'quantity' 'unit'
+        item = Item(
+            name=i["name"],
+            ean=i["ean"],
+            category=query_item.category,
+            quantity=q,
+            unit=u,
+            comparison_unit=i["comparisonUnit"],
+            store=query_item.store,
+            unit_price=i["price"],
+            comparison_price=i["comparisonPrice"],
+            multiplier=query_item.multiplier,
+        )
+        items.append(item)
+    logger.debug(f"Parsed {len(items)} items from response")
     products = ProductList(
         response=response,
-        query=query_item)
+        query=query_item,
+        items=items)
     logger.debug(f"Created ProductList from query string: '{query_item.name}'")
 
     return products
 
 
-def parse_store_input(store_str: str) -> tuple[str | None, int | None] | None:
+def parse_store_input(store_str: str) -> tuple[str | None, str | None] | None:
     # TODO: Change flow to match statement
     s_name, s_id = None, None
     data = regex_findall(
@@ -121,13 +140,13 @@ def parse_store_input(store_str: str) -> tuple[str | None, int | None] | None:
             s_name = str(data[0]).strip()
             logger.debug(f"store_info: name = {s_name}")
             try:
-                s_id = int(str(data[1]).strip())
+                s_id = str(data[1]).strip()
                 logger.debug(f"store_info: name = {s_id}")
             except ValueError:
                 logger.debug("Could not convert ID to int")
         if len(data) == 1:
             try:
-                s_id = int(str(data[0]).strip())
+                s_id = str(int(data[0].strip()))
             except ValueError:
                 s_name = str(data[0]).strip()
 
@@ -139,7 +158,7 @@ def parse_store_input(store_str: str) -> tuple[str | None, int | None] | None:
 
 
 @timer
-def execute_product_search(query_data: list[QueryItem],
+def execute_product_search(query_data: list[Item],
                            store_id: int,
                            limit: int = 24) -> list[ProductList]:
     # TODO: ADD LOGGING
@@ -179,18 +198,25 @@ def validate_store_data(response: Response,
                         store_data: tuple[str | None, int | None] | None
                         ) -> tuple[str, str] | None:
     # TODO: ADD LOGGING
-    if response["data"]["searchStores"]["totalCount"] == 0:
-        return None
-    stores = response["data"]["searchStores"]["stores"]
     store_name, store_id = store_data
-    store = None
-    for i in stores:
-        if i["id"] == store_id or i["name"] == store_name:
-            store = i
-            break
-    if i is None:
+
+    if store_id in ("", None):
+        if response["data"]["searchStores"]["totalCount"] == 0:
+            return None
+        stores = response["data"]["searchStores"]["stores"]
+        store = None
+        for i in stores:
+            if i["id"] == store_id or i["name"] == store_name:
+                store = i
+                break
+        if i is None:
+            return None
+    else:
+        store = response["data"]["store"]
+    store_data = (store.get("name"), store.get("id"))
+    if store_data[0] is None and store_data[1] is None:
         return None
-    return (store["name"], store["id"])
+    return store_data
 
 
 def products_overview(product_lists: list[ProductList]):

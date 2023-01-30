@@ -3,8 +3,7 @@ from utils import LoggerManager as lgm
 logger = lgm.get_logger(name=__name__, level=20, stream=True)
 
 from .app_classes import (
-    QueryItem,
-    AmountData,
+    Item,
     ProductList
 )
 from .app_funcs import (
