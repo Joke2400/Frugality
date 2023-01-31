@@ -80,7 +80,7 @@ class LoggerManager:
         """
         if isinstance(name, str):
             module_name = name.split(".")[0]  # Get name of top-level module
-            if (module_name == "root" or module_name == ""):
+            if module_name == "root" or module_name == "":
                 raise ValueError(
                     "Top-level module name cannot be 'root' or ''")
         else:

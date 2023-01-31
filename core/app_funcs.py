@@ -2,7 +2,7 @@ from utils import timer, LoggerManager as lgm
 from core import Item, ProductList
 from api import api_fetch_products, api_get_store
 from requests import Response
-from typing import Optional
+from typing import Optional, Any
 
 import asyncio
 import re
@@ -102,58 +102,47 @@ def parse_input(data: tuple[list, list, list],
 
 def create_product_list(response: Response,
                         query_item: Item) -> ProductList:
-    logger.debug(f"Parsing response for query '{query_item.name}'")
-    items = []
-    for i in response["data"]["store"]["products"]["items"]:
-        q, u = regex_get_quantity(i["name"])  # 'quantity' 'unit'
-        item = Item(
-            name=i["name"],
-            ean=i["ean"],
-            category=query_item.category,
-            quantity=q,
-            unit=u,
-            comparison_unit=i["comparisonUnit"],
-            store=query_item.store,
-            unit_price=i["price"],
-            comparison_price=i["comparisonPrice"],
-            multiplier=query_item.multiplier,
-        )
-        items.append(item)
-    logger.debug(f"Parsed {len(items)} items from response")
     products = ProductList(
         response=response,
-        query=query_item,
-        items=items)
+        query=query_item)
     logger.debug(f"Created ProductList from query string: '{query_item.name}'")
 
     return products
 
 
-def parse_store_input(store_str: str) -> tuple[str | None, str | None] | None:
-    # TODO: Change flow to match statement
-    s_name, s_id = None, None
+def parse_store_input(store_str: str) -> tuple[str | None, str | None]:
     data = regex_findall(
         r"\d+|^(?:\s*\b)\b[A-Za-z\s]+(?=\s?)", store_str)
 
-    if data is not None and not isinstance(data[0], tuple):
-        if len(data) == 2:
-            s_name = str(data[0]).strip()
-            logger.debug(f"store_info: name = {s_name}")
-            try:
-                s_id = str(data[1]).strip()
-                logger.debug(f"store_info: name = {s_id}")
-            except ValueError:
-                logger.debug("Could not convert ID to int")
-        if len(data) == 1:
-            try:
-                s_id = str(int(data[0].strip()))
-            except ValueError:
-                s_name = str(data[0]).strip()
+    def is_digits(string: Any) -> bool:
+        try:
+            int(str(string).strip())
+        except ValueError:
+            return False
+        return True
 
-    if s_name is None and s_id is None:
-        logger.debug("Regex returned no results.")
-        return None
-    logger.debug(f"Regex result: '{s_name}' '{s_id}'")
+    s_name, s_id = None, None
+    match data:
+        # Case where both values are given
+        case [str(), str()] as data:
+            s_name = str(data[0]).strip()
+            # Ensuring that the ID actually consists of digits
+            if is_digits(data[1]):
+                s_id = str(data[1]).strip()
+
+        # In other cases we try to convert the single string into an int
+        # If that fails it's presumed that a name was given instead of an id
+        case [str()] as data:
+            if is_digits(data[1]):
+                s_id = str(data[1]).strip()
+            else:
+                s_name = str(data[0]).strip()
+        # All other cases
+        case _:
+            logger.debug("Regex returned no results.")
+            return None, None
+
+    logger.debug(f"parse_store_input: '{s_name}' '{s_id}'")
     return (s_name, s_id)
 
 
@@ -174,7 +163,6 @@ def execute_product_search(query_data: list[Item],
 
 def get_store_data(store_data: tuple[str | None, int | None] | None
                    ) -> Response | None:
-    # TODO: ADD LOGGING
     match store_data:
         # Allowed cases are (None, str) or (str, None) or (str, str)
         case (None, str()) | (str(), str()) as store_data:
@@ -190,7 +178,7 @@ def get_store_data(store_data: tuple[str | None, int | None] | None
             return response
 
         case _:
-            logger.debug("Provided tuple can not be empty.")
+            logger.debug("Store tuple can not be empty.")
             return None
 
 

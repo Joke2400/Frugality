@@ -24,3 +24,4 @@ if __name__ == "__main__":
     # TODO: The first GraphQL response was very slow after i hadn't sent a request for a month, start using persisted queries when appropriate
     # TODO: Tests are broken again...
     # TODO: app.py "query()" function is too long and needs to be split
+    # TODO: Add docstrings to functions which are most likely to be finalized
