@@ -1,0 +1,227 @@
+/* Core page styling */
+body {
+    display: flex;
+    box-sizing: border-box;
+    justify-content: center;
+    justify-items: center;
+    margin: 0 2em 0 2em;
+    width: fill;
+    height: 100vh;
+    font-size: 1rem;
+    border-left: 3px solid rgb(215, 215, 215);
+    border-right: 3px solid rgb(215, 215, 215);
+    box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Page content container styling */
+.container {
+    box-sizing: content-box;
+    display: grid;
+    grid-template-areas: 
+    "input-container result-container result-container"
+    "query-container result-container result-container"
+    "query-container result-container result-container";
+    grid-template-columns: minmax(fit-content, 15%) 40% 40%;
+    grid-template-rows: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin: 2rem;
+    width: 100%;
+    height: fill;
+}
+
+.input-container, .query-container, .result-container {
+    box-sizing: border-box;
+    box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Basic grid card styling */
+.card {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 0.5rem;
+}
+
+/* Input container styling */
+.overview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: min-content;
+    height: fill;
+    overflow: hidden;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+.store-info {
+    display: flex;
+    flex-direction: row;
+}
+
+#current-store {
+    margin-left: 1rem;
+    font-weight: normal;
+}
+
+.input-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    position: relative;
+    width: 100%;
+    height: max-content;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+/* Input field styling */
+.input-field {
+    box-sizing: border-box;
+    align-items: center;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    min-width: max-content;
+    min-height: max-content;
+    font-weight: bold;
+    background-color: #f0fffd;
+    box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.3);
+}
+
+.input-data {
+    display: flex;
+    flex-flow: row wrap;
+    margin: 0;
+    padding-right: 0;
+}
+
+.input-field input, .input-field button, .item-data button, .categories, .remove-query-btn {
+    display: flex;
+    flex-flow: row wrap;
+    border: 0;
+    border-radius: 0;
+    font-size: 1rem;
+    margin: 0.5rem;
+    padding: 0.7rem;
+    color: #f0f0f0;
+    background-color: rgb(0, 150, 176);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
+}
+
+.product-add-btn, .remove-query-btn {
+    width: 2.5rem;
+}
+
+.remove-query-btn, .send-query-btn, .product-add-btn {
+    justify-content: center;
+    font-weight: bold;
+}
+
+.store-add-btn, .confirm-selection {
+    width: max-content;
+}
+
+.input-field input:hover, .input-field button:hover, .item-data button:hover {
+    background-color: rgb(0, 166, 195)
+}
+
+/* Query container styling */
+.query-items-list {
+    box-sizing: border-box;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+.query-item {
+    box-sizing: border-box;
+    display: flex;
+    width: 100%;
+    height: min-content;
+    padding: 0.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    background-color: #effaff;
+    box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.3);
+}
+
+.item-data {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+.remove-query-btn {
+    position: sticky;
+    left: 100%;
+}
+
+/* Container grid areas */
+.input-container{
+    grid-area: input-container;
+}
+
+.query-container {
+    grid-area: query-container;
+}
+
+.result-container {
+    grid-area: result-container;
+}
+
+/* Paragraphs/Headers */
+p, h2 {
+    color:rgb(65, 65, 65);
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    margin: 0 0 0.2em 0;
+}
+
+p {
+    font-size: 0.9rem;
+}
+
+.input-field p {
+    font-size: 1rem;
+    margin: 0;
+    padding-bottom: 0.2rem;
+}
+
+.amt {
+    width: min-content;
+    height: 0;
+    position: relative;
+    top: 0.5rem;
+    font-size: 1rem;
+    margin: 0 0.5rem 0 0.5rem;
+}
+
+.name {
+    position: relative;
+    width: max-content;
+    height: min-content;
+    font-size: 1.1rem;
+    top: 0.7rem;
+    left: 2rem;
+    padding: 0;
+    padding-bottom: 0.1rem;
+    margin: 0 0.5rem 0.5rem 0.5rem;
+    border-bottom: 0.2rem solid rgb(0, 150, 176, 0.5);
+}
+
+.category {
+    width: max-content;
+    position: relative;
+    height: 0;
+    font-style: italic;
+    padding: 0;
+    left: 3rem;
+    margin: 0.5rem 0 0.2rem 0;
+    font-size: 0.9rem;
+}

@@ -10,11 +10,11 @@
 		},
 		"python.linting.flake8Enabled": true,
 		"python.linting.mypyEnabled": true,
-		"python.linting.prospectorEnabled": false,
+		"python.linting.prospectorEnabled": true,
 		"python.linting.pycodestyleEnabled": true,
-		"python.linting.pydocstyleEnabled": false,
+		"python.linting.pydocstyleEnabled": true,
 		"python.linting.pylamaEnabled": true,
-		"python.linting.pylintEnabled": false,
+		"python.linting.pylintEnabled": true,
 		"python.linting.banditEnabled": true
 	},
 }

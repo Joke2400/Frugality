@@ -10,33 +10,52 @@ import re
 logger = lgm.get_logger(name=__name__)
 
 
-def validate_post(request) -> bool:
-    # https://flask.palletsprojects.com/en/2.2.x/security/
-    if request.method == "POST":
-        if request.json is not None:
-            return True
-    return False
-    # TODO: Add some input validation
-
-
 def extract_request_json(request) -> tuple[list, list, list]:
-    # https://flask.palletsprojects.com/en/2.2.x/security/
+    """_summary_
+
+    Args:
+        request (_type_): _description_
+
+    Returns:
+        tuple[list, list, list]: _description_
+    """    
     logger.debug(
         "Extracting request JSON...")
     return (
         request.json["queries"],
         request.json["amounts"],
         request.json["categories"])
-    # TODO: Add some input validation
 
 
-def regex_findall(p: str, s: str
-                  ) -> list[tuple[str, str]] | list[str] | None:
-    result = re.findall(
-        pattern=p,
-        string=s,
+def regex_search(pattern: str, string: str
+                 ) -> re.Match[str] | None:
+    """
+    Scan through a string and return a single match
+    to the given pattern. Returns a Match object if a
+    match is found, returns None otherwise.
+
+    Args:
+        pattern (str): RegEx pattern as a raw string.
+        string (str): String to be matched against
+
+    Returns:
+        re.Match[str] | None: Returns either a Match object or None
+    """
+    result = re.search(
+        pattern=pattern,
+        string=string,
         flags=re.I | re.M)
-    logger.debug(f"Regex result: {result} (Original str: '{s}')")
+    logger.debug(f"regex_search: {result} (str: '{string}')")
+    return result
+
+
+def regex_findall(pattern: str, string: str
+                  ) -> list | None:
+    result = re.findall(
+        pattern=pattern,
+        string=string,
+        flags=re.I | re.M)
+    logger.debug(f"regex_findall: {result} (str: '{string}')")
     if len(result) > 0:
         return result
     return None
@@ -110,42 +129,6 @@ def create_product_list(response: Response,
     return products
 
 
-def parse_store_input(store_str: str) -> tuple[str | None, str | None]:
-    data = regex_findall(
-        r"\d+|^(?:\s*\b)\b[A-Za-z\s]+(?=\s?)", store_str)
-
-    def is_digits(string: Any) -> bool:
-        try:
-            int(str(string).strip())
-        except ValueError:
-            return False
-        return True
-
-    s_name, s_id = None, None
-    match data:
-        # Case where both values are given
-        case [str(), str()] as data:
-            s_name = str(data[0]).strip()
-            # Ensuring that the ID actually consists of digits
-            if is_digits(data[1]):
-                s_id = str(data[1]).strip()
-
-        # In other cases we try to convert the single string into an int
-        # If that fails it's presumed that a name was given instead of an id
-        case [str()] as data:
-            if is_digits(data[1]):
-                s_id = str(data[1]).strip()
-            else:
-                s_name = str(data[0]).strip()
-        # All other cases
-        case _:
-            logger.debug("Regex returned no results.")
-            return None, None
-
-    logger.debug(f"parse_store_input: '{s_name}' '{s_id}'")
-    return (s_name, s_id)
-
-
 @timer
 def execute_product_search(query_data: list[Item],
                            store_id: int,
@@ -161,68 +144,118 @@ def execute_product_search(query_data: list[Item],
     return product_lists
 
 
-def get_store_data(store_data: tuple[str | None, int | None] | None
-                   ) -> Response | None:
-    match store_data:
+def parse_store_from_string(string: str) -> tuple[str | None, str | None]:
+    """Find a store name and/or ID from a string using a RegEx pattern.
+
+    Return results as a tuple.
+
+    Args:
+        string (str): String to parse.
+
+    Returns:
+        tuple[str | None, str | None]: Name and ID of store as strings.
+    """
+    data = regex_findall(
+        r"\d+|^(?:\s*\b)\b[A-Za-z\s]+(?=\s?)", string)
+
+    def is_digits(string: Any) -> str | None:
+        try:
+            i = str(int(string.strip()))
+        except ValueError:
+            return None
+        return i
+
+    s_name, s_id = None, None
+    match data:
+
+        case [str(), str()] as data:
+            try:
+                s_name = str(data[0]).strip()
+            except ValueError as err:
+                logger.debug(err)
+            if i := is_digits(data[1]):
+                s_id = i
+
+        case [str()] as data:
+            if i := is_digits(data[0]):
+                s_id = i
+            else:
+                try:
+                    s_name = str(data[0]).strip()
+                except ValueError as err:
+                    logger.debug(err)
+        case _:
+            pass
+
+    logger.debug("parse_store_from_string() result: '%s' '%s'", s_name, s_id)
+    return (s_name, s_id)
+
+
+def api_store_query(query_data: tuple[str | None, str | None]) -> dict:
+    match query_data:
         # Allowed cases are (None, str) or (str, None) or (str, str)
-        case (None, str()) | (str(), str()) as store_data:
-            value = store_data[1]
-            logger.debug(f"Store ID found, using Store ID: '{value}'")
+        case (None, str()) | (str(), str()) as query_data:
+            value = query_data[1]
+            logger.debug("Store ID found, using Store ID: '%s'", value)
             response = api_get_store(store_id=value)
             return response
 
-        case (str(), None) as store_data:
-            value = store_data[0]
-            logger.debug(f"Store name found, using Store name: '{value}'")
+        case (str(), None) as query_data:
+            value = query_data[0]
+            logger.debug("Store name found, using Store name: '%s'", value)
             response = api_get_store(store_name=value)
             return response
 
         case _:
-            logger.debug("Store tuple can not be empty.")
-            return None
+            raise ValueError(
+                f"api_store_query() was given an invalid value: {query_data}")
 
 
-def validate_store_data(response: Response,
-                        store_data: tuple[str | None, int | None] | None
-                        ) -> tuple[str, str] | None:
-    # TODO: ADD LOGGING
-    store_name, store_id = store_data
+def parse_and_validate_store(query_data: tuple[str | None, str | None],
+                             response: dict) -> tuple[str, str] | None:
+    """Parse store from API response.
 
-    if store_id in ("", None):
-        if response["data"]["searchStores"]["totalCount"] == 0:
-            return None
-        stores = response["data"]["searchStores"]["stores"]
-        store = None
-        for i in stores:
-            if i["id"] == store_id or i["name"] == store_name:
-                store = i
-                break
-        if i is None:
-            return None
-    else:
+    Args:
+        query_data tuple[str | None, str | None]: Queried store name and ID.
+        response (dict): Response body as python dict.
+
+    Returns:
+        tuple[str, str] | None: Store name and ID as a tuple
+    """
+    store = None
+    try:
         store = response["data"]["store"]
-    store_data = (store.get("name"), store.get("id"))
-    if store_data[0] is None and store_data[1] is None:
+    except KeyError:
+        try:
+            stores = response["data"]["searchStores"]["stores"]
+        except KeyError as err:
+            logger.debug(err)
+            return None
+        logger.debug("Matching store using queried store name.")
+        for i in stores:
+            if i["name"].strip().lower() == str(query_data[0]).lower():
+                logger.debug("Parsed store %s from response", store)
+                return (i.get("name"), i.get("id"))
+        logger.debug("Could not parse a store from response.")
         return None
-    return store_data
+
+    logger.debug("Matching store using queried store ID.")
+    try:
+        if store["id"].strip() == query_data[1]:
+            logger.debug("Parsed store %s from response", store)
+            return (store.get("name"), store.get("id"))
+    except (KeyError, ValueError) as err:
+        logger.debug(err)
+        return None
+
+    logger.debug("Could not parse a store from response.")
+    return None
 
 
-def products_overview(product_lists: list[ProductList]):
-    for pl in product_lists:
-        p_len = len(pl.products)
-        logger.info(f"Products found: {p_len}.")
-        f_str = pl.query.amount.quantity  # Maybe set filter to this value as default, then add a apply filter func
-
-        if f_str not in (None, ""):
-            pl.set_filter(str(f_str))
-            f_len = len(pl.products)
-            logger.info(
-                f"Excluding products that do not contain: '{f_str}'.")
-            logger.info(f"Filtered out {p_len - f_len} products. " +
-                        f"Remaining products: {f_len}.")
-        logger.info(pl)
-
-
-# TODO: IMPLEMENT, ADD LOGGING
-def save_product_data():
-    pass  # Database will be the responsibility of DataManager
+def execute_store_search(string: str) -> tuple[str, str] | None:
+    parsed_data = parse_store_from_string(string=string)
+    if not any(parsed_data):
+        return None
+    response = api_store_query(query_data=parsed_data)
+    return parse_and_validate_store(query_data=parsed_data,
+                                    response=response)

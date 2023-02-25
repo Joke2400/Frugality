@@ -7,17 +7,10 @@ from .app_classes import (
     ProductList
 )
 from .app_funcs import (
-    parse_query_data,
-    validate_post,
-    extract_request_json,
-    parse_input,
-    regex_get_quantity,
-    parse_store_input,
     execute_product_search,
-    get_store_data,
-    validate_store_data,
-    save_product_data,
-    products_overview
+    execute_store_search,
+    parse_input,
+    extract_request_json
 )
 from .process import Process
 
@@ -27,6 +20,5 @@ db = process.db
 
 from core.app import (
     main,
-    base_url_redirect,
     query
 )

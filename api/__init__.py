@@ -5,4 +5,4 @@ from .skaupat_api import (
     api_get_store
 )
 
-logger = lgm.get_logger(name=__name__, level=30, stream=True)
+logger = lgm.get_logger(name=__name__, level=20, stream=True)

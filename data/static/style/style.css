@@ -1,227 +1,208 @@
-/* Core page styling */
 body {
     display: flex;
     box-sizing: border-box;
-    justify-content: center;
-    justify-items: center;
-    margin: 0 2em 0 2em;
-    width: fill;
+    padding: 2%;
+    margin: 0;
+    width: 100vw;
     height: 100vh;
-    font-size: 1rem;
-    border-left: 3px solid rgb(215, 215, 215);
-    border-right: 3px solid rgb(215, 215, 215);
-    box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.2);
 }
 
-/* Page content container styling */
-.container {
-    box-sizing: content-box;
+p {
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 1rem;
+    padding: 0;
+    margin: 0;
+}
+
+.page {
     display: grid;
     grid-template-areas: 
-    "input-container result-container result-container"
-    "query-container result-container result-container"
-    "query-container result-container result-container";
-    grid-template-columns: minmax(fit-content, 15%) 40% 40%;
-    grid-template-rows: repeat(3, 1fr);
-    gap: 0.5rem;
-    margin: 2rem;
-    width: 100%;
-    height: fill;
-}
-
-.input-container, .query-container, .result-container {
-    box-sizing: border-box;
-    box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.2);
-}
-
-/* Basic grid card styling */
-.card {
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
+    "input_container results_container"
+    "items_container results_container"
+    "items_container results_container";
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 0.6fr repeat(2, 1fr);
     width: 100%;
     height: 100%;
-    padding: 0.5rem;
+    gap: 1.5rem;
 }
 
-/* Input container styling */
-.overview {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: min-content;
-    height: fill;
-    overflow: hidden;
-    position: relative;
-    left: 50%;
-    transform: translate(-50%);
-}
-
-.store-info {
-    display: flex;
-    flex-direction: row;
-}
-
-#current-store {
-    margin-left: 1rem;
-    font-weight: normal;
-}
-
-.input-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+/* Generic styling */
+.container {
     box-sizing: border-box;
-    position: relative;
-    width: 100%;
-    height: max-content;
-    left: 50%;
-    transform: translate(-50%);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
-/* Input field styling */
-.input-field {
-    box-sizing: border-box;
-    align-items: center;
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    min-width: max-content;
-    min-height: max-content;
-    font-weight: bold;
-    background-color: #f0fffd;
-    box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.3);
-}
 
-.input-data {
-    display: flex;
-    flex-flow: row wrap;
-    margin: 0;
-    padding-right: 0;
-}
-
-.input-field input, .input-field button, .item-data button, .categories, .remove-query-btn {
-    display: flex;
-    flex-flow: row wrap;
+.input_field {
     border: 0;
-    border-radius: 0;
-    font-size: 1rem;
     margin: 0.5rem;
-    padding: 0.7rem;
-    color: #f0f0f0;
-    background-color: rgb(0, 150, 176);
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
-}
-
-.product-add-btn, .remove-query-btn {
-    width: 2.5rem;
-}
-
-.remove-query-btn, .send-query-btn, .product-add-btn {
-    justify-content: center;
+    padding: 0.4rem 0.6rem 0.4rem 0.6rem;
+    font-size: 1.2rem;
+    min-width: fit-content;
+    min-height: fit-content;
     font-weight: bold;
-}
-
-.store-add-btn, .confirm-selection {
-    width: max-content;
-}
-
-.input-field input:hover, .input-field button:hover, .item-data button:hover {
-    background-color: rgb(0, 166, 195)
-}
-
-/* Query container styling */
-.query-items-list {
-    box-sizing: border-box;
-    position: relative;
-    width: 100%;
-    height: 100%;
-    left: 50%;
-    transform: translate(-50%);
-}
-
-.query-item {
-    box-sizing: border-box;
-    display: flex;
-    width: 100%;
-    height: min-content;
-    padding: 0.5rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
+    color: rgb(65, 65, 65);
     background-color: #effaff;
     box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.3);
 }
 
-.item-data {
-    display: flex;
-    flex-direction: column;
+.wide_field {
     width: 100%;
-    height: 100%;
 }
 
-.remove-query-btn {
-    position: sticky;
-    left: 100%;
+.input_field:hover {
+    background-color: #e2f4ff;
 }
 
-/* Container grid areas */
-.input-container{
-    grid-area: input-container;
-}
-
-.query-container {
-    grid-area: query-container;
-}
-
-.result-container {
-    grid-area: result-container;
-}
-
-/* Paragraphs/Headers */
-p, h2 {
-    color:rgb(65, 65, 65);
-    font-family:Verdana, Geneva, Tahoma, sans-serif;
-    margin: 0 0 0.2em 0;
-}
-
-p {
-    font-size: 0.9rem;
-}
-
-.input-field p {
-    font-size: 1rem;
-    margin: 0;
-    padding-bottom: 0.2rem;
-}
-
-.amt {
-    width: min-content;
-    height: 0;
-    position: relative;
-    top: 0.5rem;
-    font-size: 1rem;
-    margin: 0 0.5rem 0 0.5rem;
-}
-
-.name {
-    position: relative;
-    width: max-content;
-    height: min-content;
+.input_button {
+    border: 0;
+    margin: 0.5rem;
+    padding: 0.4rem 0.6rem 0.4rem 0.6rem;
     font-size: 1.1rem;
-    top: 0.7rem;
-    left: 2rem;
-    padding: 0;
-    padding-bottom: 0.1rem;
-    margin: 0 0.5rem 0.5rem 0.5rem;
+    font-weight: bold;
+    min-width: fit-content;
+    min-height: fit-content;
+    color: #effaff;
+    background-color: rgb(0, 150, 176);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
+}
+
+.input_button:hover {
+    background-color: rgb(0, 166, 195)
+}
+
+
+/* Input container styling */
+.input_container {
+    grid-area: input_container;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.store_search_container {
+    display: flex;
+    align-items: center;
+    flex-flow: column;
+}
+
+.query_container {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+}
+
+.selected_store_container {
+    display: flex;
+    align-items: center;
+}
+
+.store_string {
+    margin: 0.5rem;
+    padding: 0 0.4rem 0.1rem 0.4rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: rgb(73, 79, 90);
     border-bottom: 0.2rem solid rgb(0, 150, 176, 0.5);
 }
 
-.category {
-    width: max-content;
-    position: relative;
-    height: 0;
+
+/* Items container styling */
+.items_container {
+    grid-area: items_container;
+    min-width: 0;
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding: 0.5rem;
+}
+
+.query_item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    margin: 0.5rem;
+    background-color: #effaff;
+}
+
+.query_item:hover {
+    background-color: #e2f4ff;
+}
+
+.query_item_data {
+    display: flex;
+    flex-direction: column;
+    margin: 0.5rem;
+    width: 100%;
+    max-width: calc(100% - 3.5rem);
+}
+
+.query_item_data div {
+    display: flex;
+    width: fit-content;
+    max-width: calc(100% - 3.5rem);
+}
+
+.item_amount {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 0.2rem 0.5rem 0.2rem 0.2rem;
+    color:rgb(65, 65, 65);
+}
+
+.item_name {
+    margin-top: 0.2rem;
+    padding-bottom: 0.1rem;
+    max-width: 100%;
+    height: fit-content;
+    word-wrap: break-word;
+    font-size: 1em;
+    font-weight: bold;
+    color:rgb(65, 65, 65);
+    border-bottom: 0.2rem solid rgb(0, 150, 176, 0.5);
+}
+
+.item_category {
+    margin-top: 0.1rem;
+    margin-left: 2.5rem;
+    height: fit-content;
+    word-wrap: break-word;
+    font-size: 0.8em;
     font-style: italic;
+    color:rgb(65, 65, 65);
+}
+
+.query_item button {
+    margin: 0.6rem 0.5rem 0.5rem 0.2rem;
+    padding: 0.5rem 0.7rem 0.5rem 0.7rem;
+    font-size: 1.3rem;
+    height: fit-content
+}
+
+.product_input_container {
+    display: flex;
+    box-sizing: border-box;
+    margin: 0.5rem 1.5rem 0.4rem 1.5rem;
+    padding: 0.5rem 0 0.4rem 0;
+    width: 80%;
+    border-bottom: 0.2rem solid rgba(65, 65, 65, 0.2);
+}
+
+/* Results container styling */
+.results_container {
+    grid-area: results_container;
+    margin: 0;
     padding: 0;
-    left: 3rem;
-    margin: 0.5rem 0 0.2rem 0;
-    font-size: 0.9rem;
+    min-width: 0;
+    max-width: 100%;
+    background-color: rgba(47, 0, 255, 0.1);
 }
