@@ -7,7 +7,6 @@
 
 {% block scripts %}
 <script defer src="{{url_for('static', filename='js/index.js')}}"></script>
-<script src="{{url_for('static', filename='js/pageload.js')}}"></script>
 {% endblock %}
 
 {%block content %}
@@ -48,7 +47,7 @@
                 <button class="input_button">-</button>
             </div>
         {% endfor %}
-        <button class="input_button">Search Products</button>
+        <button class="input_button", onclick="sendQuery()">Search Products</button>
     </div>
 
     <div class="results_container container">

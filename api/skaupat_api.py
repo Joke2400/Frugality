@@ -14,6 +14,17 @@ query_logger = lgm.get_logger(name="query", level=20)
 
 def post_request(url: str, params: dict, timeout: int = 10
                  ) -> Response | None:
+    """Send a post request with JSON body to a given URL.
+
+    Args:
+        url (str): URL to send request to.
+        params (dict): JSON parameters.
+        timeout (int, optional): Timeout in seconds Defaults to 10.
+
+    Returns:
+        Response | None: Default returns a requests.response object.
+        If an exception is raised, return None.
+    """
     query_logger.debug("POST REQUEST; URL: %s; PARAMS: %s", url, params)
     try:
         response = post(url=url, json=params, timeout=timeout)
