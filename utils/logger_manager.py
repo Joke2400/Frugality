@@ -46,8 +46,7 @@ class LoggerManager:
             try:
                 os.mkdir(cls.logs_path)
             except PermissionError:
-                raise PermissionError(
-                    "Could not create logs folder in current directory")
+                raise PermissionError
             except FileExistsError:
                 pass
 

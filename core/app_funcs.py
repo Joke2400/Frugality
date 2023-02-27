@@ -1,6 +1,6 @@
 from utils import timer, LoggerManager as lgm
 from core import Item, ProductList
-from api import api_fetch_products, api_get_store
+from api import api_fetch_products, api_fetch_store
 from requests import Response
 from typing import Optional, Any
 
@@ -55,7 +55,7 @@ def regex_findall(pattern: str, string: str
         pattern=pattern,
         string=string,
         flags=re.I | re.M)
-    logger.debug(f"regex_findall: {result} (str: '{string}')")
+    logger.debug(f"regex_findall: {result} original_str: '{string}'")
     if len(result) > 0:
         return result
     return None
@@ -187,28 +187,8 @@ def parse_store_from_string(string: str) -> tuple[str | None, str | None]:
         case _:
             pass
 
-    logger.debug("parse_store_from_string() result: '%s' '%s'", s_name, s_id)
+    logger.debug("parse_store_from_string() -> ('%s', %s)", s_name, s_id)
     return (s_name, s_id)
-
-
-def api_store_query(query_data: tuple[str | None, str | None]) -> dict:
-    match query_data:
-        # Allowed cases are (None, str) or (str, None) or (str, str)
-        case (None, str()) | (str(), str()) as query_data:
-            value = query_data[1]
-            logger.debug("Store ID found, using Store ID: '%s'", value)
-            response = api_get_store(store_id=value)
-            return response
-
-        case (str(), None) as query_data:
-            value = query_data[0]
-            logger.debug("Store name found, using Store name: '%s'", value)
-            response = api_get_store(store_name=value)
-            return response
-
-        case _:
-            raise ValueError(
-                f"api_store_query() was given an invalid value: {query_data}")
 
 
 def parse_and_validate_store(query_data: tuple[str | None, str | None],
@@ -231,18 +211,17 @@ def parse_and_validate_store(query_data: tuple[str | None, str | None],
         except KeyError as err:
             logger.debug(err)
             return None
-        logger.debug("Matching store using queried store name.")
         for i in stores:
             if i["name"].strip().lower() == str(query_data[0]).lower():
-                logger.debug("Parsed store %s from response", store)
+                logger.debug("Parsed store ('%s', '%s') from response",
+                             i["name"], i["id"])
                 return (i.get("name"), i.get("id"))
         logger.debug("Could not parse a store from response.")
         return None
-
-    logger.debug("Matching store using queried store ID.")
     try:
         if store["id"].strip() == query_data[1]:
-            logger.debug("Parsed store %s from response", store)
+            logger.debug("Parsed store ('%s', '%s') from response",
+                         store["name"], store["id"])
             return (store.get("name"), store.get("id"))
     except (KeyError, ValueError) as err:
         logger.debug(err)
@@ -253,9 +232,19 @@ def parse_and_validate_store(query_data: tuple[str | None, str | None],
 
 
 def execute_store_search(string: str) -> tuple[str, str] | None:
+    """Parse, execute and validate a store search using a given string.
+
+    Returns:
+        tuple[str, str] | None: Store name and ID, None if not found.
+    """
+    logger.debug("Parsing store from string: '%s'", string)
     parsed_data = parse_store_from_string(string=string)
     if not any(parsed_data):
         return None
-    response = api_store_query(query_data=parsed_data)
+    logger.debug("Fetching store from api: %s", parsed_data)
+    response = api_fetch_store(query_data=parsed_data)
+    if not response:
+        return None
+    logger.debug("Parsing response from api: %s", response)
     return parse_and_validate_store(query_data=parsed_data,
                                     response=response)
