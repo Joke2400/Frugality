@@ -81,10 +81,6 @@ def get_store():
 @app.route("/query/", methods=["POST"])
 @timer
 def query():
-    
-    
-    
-    
     logger.info("Received a new product query!\n")
     # Get request field dicts in a tuple
     request_data = extract_request_json(request=request)

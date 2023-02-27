@@ -7,18 +7,9 @@ if __name__ == "__main__":
 
     # TODO: Put these todos in my notebook...
     # TODO: add more units to regex_get_quantity
-    # TODO: Product filtering functionality should be a lot more robust
-    # TODO: HTTP errorcodes handling
-    # TODO: Refactor old code to use match case syntax where appropriate
-    # TODO: Use firefox debugger extens. so that debugging js in firefox works correctly
-    # TODO: Database, store data, product data storage
-    # TODO: Security considerations, private key
-    # https://flask.palletsprojects.com/en/2.2.x/security/
-    # TODO: If store not found, request user for re-input <- This flow is missing
-    # TODO: IMPORTANT, frontend currently doesnt receive products and is 
-    # also unable to display them on the page
-    # TODO: Basic response embed on frontend for debugging
-    # TODO: OPTIMIZE, program flow could be simplified.
-    # TODO: Tests are broken again...
-    # TODO: app.py "query()" function is too long and needs to be split
-    # TODO: Add docstrings to functions which are most likely to be finalized
+    # TODO: Product filtering functionality (not present)
+    # TODO: Database for caching purposes
+    # TODO: Security considerations, private key, potential gmaps key etc etc
+    # TODO: Tests are in an even more worthless state than before...
+    # TODO: Rest of the docstrings for finalized funcs
+    # TODO: Product query flow is currently borked so, thats pretty important
