@@ -30,7 +30,7 @@ def post_request(url: str, params: dict, timeout: int = 10
         response = post(url=url, json=params, timeout=timeout)
         response.raise_for_status()
     except exceptions.RequestException as err:
-        logger.debug(err)
+        logger.exception(err)
         return None
     logger.debug("Status code: %s", response.status_code)
     return response
@@ -95,7 +95,7 @@ def get_store_by_id(query_data: tuple[None, str] | tuple[str, str]
         }
     except ValueError as err:
         if query_data[0] is None:
-            logger.debug(err)
+            logger.exception(err)
             return None
         return get_store_by_name(query_data)
     operation = "GetStoreInfo"
@@ -122,7 +122,7 @@ def get_store_by_name(query_data: tuple[str, None] | tuple[str, str]
             "query": str(query_data[0])
         }
     except ValueError as err:
-        logger.debug(err)
+        logger.exception(err)
         return None
     operation = "StoreSearch"
     logger.debug("Request: %s, %s", operation, variables)

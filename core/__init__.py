@@ -9,8 +9,7 @@ from .app_classes import (
 from .app_funcs import (
     execute_product_search,
     execute_store_search,
-    parse_input,
-    extract_request_json
+    process_queries
 )
 from .process import Process
 

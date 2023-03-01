@@ -39,7 +39,7 @@ class Item:
     comparison_unit: str | None = None
 
     # Store-specific data
-    store: Optional[tuple[str, int]] = None
+    store: Optional[tuple[str, str]] = None
     unit_price: Optional[int | float] = None
     comparison_price: Optional[int | float] = None
 

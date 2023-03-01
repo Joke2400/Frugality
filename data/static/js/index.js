@@ -3,9 +3,9 @@ function sendQuery() {
     let queries = [];
     let amounts = [];
     let categories = [];
-    document.querySelectorAll(".item_name").forEach(r => queries.push(r.value));
-    document.querySelectorAll(".item_amount").forEach(r => amounts.push(r.value));
-    document.querySelectorAll(".item_category").forEach(r => categories.push(r.value));
+    document.querySelectorAll(".item_name").forEach(r => queries.push(r.innerText));
+    document.querySelectorAll(".item_amount").forEach(r => amounts.push(r.innerText));
+    document.querySelectorAll(".item_category").forEach(r => categories.push(r.innerText));
     let fetchData = {
         method: "post",
         headers: {
