@@ -54,20 +54,22 @@ def get_store():
         Response: Returns a redirect main page url.
     """
     logger.debug("Store query received!")
-    store_query = re.search(pattern=r"[a-zA-Z]+|\d+|\s+",
-                            string=str(request.args["query"]),
-                            flags=re.I | re.M)
+    store_query = re.sub(pattern=r"[^a-zA-Z0-9\s]",
+                         repl="",
+                         string=str(request.args["query"]),
+                         flags=re.I | re.M)
     if store_query in (None, ""):
         logger.debug("Store query was empty, aborting query...")
         return redirect(url_for(message="Store name cannot be empty.",
                                 endpoint="main"))
+    store_query = store_query.strip()
     if store := session.get("store"):
-        if store[0].lower() == store_query.expand().lower():
+        if store[0].lower() == store_query:
             logger.debug(
                 "Store query was equal to session store, aborting query...")
             return redirect(url_for(endpoint="main"))
 
-    store_data = execute_store_search(string=store_query[0])
+    store_data = execute_store_search(string=store_query)
     if not store_data:
         logger.debug("Returned store data was empty, returning 'not found'.")
         return redirect(url_for(message="Store not found.",
