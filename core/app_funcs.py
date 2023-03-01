@@ -161,8 +161,9 @@ def parse_store_from_string(string: str) -> tuple[str | None, str | None]:
     Returns:
         tuple[str | None, str | None]: Name and ID of store as strings.
     """
+    logger.debug("Parsing store from string: '%s'", string)
     data = regex_findall(
-        r"\d+|^(?:\s*\b)\b[A-Za-z\s]+(?=\s?)", string)
+        r"\d+|^(?:\s*\b)\b[A-Za-z\s]+(?=\s?)", string.strip())
 
     def is_digits(string: Any) -> str | None:
         try:
@@ -237,16 +238,13 @@ def parse_and_validate_store(query_data: tuple[str | None, str | None],
     return None
 
 
-def execute_store_search(string: str) -> tuple[str, str] | None:
+def execute_store_search(parsed_data: tuple[str | None, str | None]
+                         ) -> tuple[str, str] | None:
     """Parse, execute and validate a store search using a given string.
 
     Returns:
         tuple[str, str] | None: Store name and ID, None if not found.
     """
-    logger.debug("Parsing store from string: '%s'", string)
-    parsed_data = parse_store_from_string(string=string)
-    if not any(parsed_data):
-        return None
     logger.debug("Fetching store from api: %s", parsed_data)
     response = api_fetch_store(query_data=parsed_data)
     if not response:

@@ -3,6 +3,7 @@ from core import (
     app,
     process_queries,
     execute_product_search,
+    parse_store_from_string,
     execute_store_search
 )
 from utils import timer, LoggerManager as lgm
@@ -62,14 +63,16 @@ def get_store():
         logger.debug("Store query was empty, aborting query...")
         return redirect(url_for(message="Store name cannot be empty.",
                                 endpoint="main"))
-    store_query = store_query.strip()
-    if store := session.get("store"):
-        if store[0].lower() == store_query:
+    parsed_data = parse_store_from_string(string=store_query)
+    if not any(parsed_data):
+        return redirect(url_for(message="ERROR when parsing store.",
+                                endpoint="main"))
+    if store := session.get("store") and parsed_data[0] is not None:
+        if store[0].lower() == parsed_data[0].lower():
             logger.debug(
                 "Store query was equal to session store, aborting query...")
             return redirect(url_for(endpoint="main"))
-
-    store_data = execute_store_search(string=store_query)
+    store_data = execute_store_search(parsed_data=parsed_data)
     if not store_data:
         logger.debug("Returned store data was empty, returning 'not found'.")
         return redirect(url_for(message="Store not found.",
