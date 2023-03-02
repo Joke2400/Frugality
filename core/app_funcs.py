@@ -74,7 +74,7 @@ def get_quantity_from_string(string: str) -> tuple[int, str] | None:
     if result is not None:
         if result not in (None, ""):
             try:
-                values = (result, result)
+                values = (int(result.group(1)), result.group(2))
                 logger.debug(
                     "Retrieved values %s from string: %s", values, string)
                 return values
@@ -131,23 +131,22 @@ def create_product_list(response: Response,
         query=query_item)
     logger.debug(
         "Created ProductList from query string: '%s'", query_item.name)
-
     return products
 
 
 @timer
 def execute_product_search(query_data: list[Item],
-                           store_id: int,
+                           store: tuple[str, str],
                            limit: int = 24) -> list[ProductList]:
-    # TODO: ADD LOGGING
+    logger.debug("Running product search...")
     responses = asyncio.run(api_fetch_products(
-        store_id=str(store_id),
-        product_queries=query_data,
+        store_id=store[1],
+        queries=query_data,
         limit=limit))
-    product_lists = []
-    for r in responses:
-        product_lists.append(create_product_list(*r))
-    return product_lists
+    #product_lists = []
+    #for response in responses:
+        #product_lists.append(create_product_list(*response))
+    return None
 
 
 def parse_store_from_string(string: str) -> tuple[str | None, str | None]:
@@ -238,17 +237,17 @@ def parse_and_validate_store(query_data: tuple[str | None, str | None],
     return None
 
 
-def execute_store_search(parsed_data: tuple[str | None, str | None]
+def execute_store_search(query_data: tuple[str | None, str | None]
                          ) -> tuple[str, str] | None:
     """Parse, execute and validate a store search using a given string.
 
     Returns:
         tuple[str, str] | None: Store name and ID, None if not found.
     """
-    logger.debug("Fetching store from api: %s", parsed_data)
-    response = api_fetch_store(query_data=parsed_data)
+    logger.debug("Fetching store from api: %s", query_data)
+    response = api_fetch_store(query_data=query_data)
     if not response:
         return None
     logger.debug("Parsing response from api: %s", response)
-    return parse_and_validate_store(query_data=parsed_data,
+    return parse_and_validate_store(query_data=query_data,
                                     response=response)

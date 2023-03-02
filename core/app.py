@@ -67,12 +67,12 @@ def get_store():
     if not any(parsed_data):
         return redirect(url_for(message="ERROR when parsing store.",
                                 endpoint="main"))
-    if store := session.get("store") and parsed_data[0] is not None:
+    if (store := session.get("store")) and parsed_data[0] is not None:
         if store[0].lower() == parsed_data[0].lower():
             logger.debug(
                 "Store query was equal to session store, aborting query...")
             return redirect(url_for(endpoint="main"))
-    store_data = execute_store_search(parsed_data=parsed_data)
+    store_data = execute_store_search(query_data=parsed_data)
     if not store_data:
         logger.debug("Returned store data was empty, returning 'not found'.")
         return redirect(url_for(message="Store not found.",
@@ -83,22 +83,18 @@ def get_store():
 
 
 @app.route("/query/", methods=["POST"])
-@timer
 def query():
     logger.info("Received a new product query!\n")
-    if store := (not session.get("store")):
+    if not (store := session.get("store")):
         return redirect(url_for(endpoint="main"))
 
-    query_data = process_queries(json=request.json, store=store)
+    if not (query_data := process_queries(json=request.json, store=store)):
+        return redirect(url_for(endpoint="main"))
     session["queries"] = query_data
-    # Get a list containing ProductList(s)
     product_lists = execute_product_search(
         query_data=query_data,
-        store_id=store_data[1],
+        store=store,
         limit=20)
-    
-    for x in product_lists:
-        pass
-    
+    print(product_lists)
     return render_template("index.html")
 

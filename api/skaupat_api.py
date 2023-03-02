@@ -1,4 +1,4 @@
-from requests import Response, exceptions, Session, post
+from requests import Response, exceptions, Session
 import asyncio
 import json
 
@@ -10,6 +10,8 @@ import core
 api_url = s_urls.api_url
 logger = lgm.get_logger(name=__name__)
 query_logger = lgm.get_logger(name="query", level=20)
+
+session = Session()
 
 
 def post_request(url: str, params: dict, timeout: int = 10
@@ -27,7 +29,7 @@ def post_request(url: str, params: dict, timeout: int = 10
     """
     query_logger.debug("POST REQUEST; URL: %s; PARAMS: %s", url, params)
     try:
-        response = post(url=url, json=params, timeout=timeout)
+        response = session.post(url=url, json=params, timeout=timeout)
         response.raise_for_status()
     except exceptions.RequestException as err:
         logger.exception(err)
@@ -129,43 +131,40 @@ def get_store_by_name(query_data: tuple[str, None] | tuple[str, str]
     return (operation, variables)
 
 
-async def async_send_post(query: str, variables: dict,
-                          operation: str, query_item: core.Item
-                          ) -> tuple[Response, core.Item]:
+async def async_post_request(operation_name: str,
+                             variables: dict,
+                             query: str,
+                             item: core.Item) -> tuple[Response, core.Item]:
     params = {
-        "query": query,
+        "operation_name": operation_name,
         "variables": variables,
-        "operation_name": operation}
-    query_string = variables["query"]
-    response = await asyncio.to_thread(send_post, params, query_string)
-    return response, query_item
+        "query": query}
+    response = await asyncio.to_thread(post_request,
+                                       url=api_url, params=params)
+    return response, item
 
 
-async def api_fetch_products(store_id: str,
-                             product_queries: list[core.Item],
-                             limit: int = 24
+async def api_fetch_products(queries: list[core.Item],
+                             store_id: str, limit: int = 24
                              ) -> list[tuple[Response, core.Item]]:
-    operation = "GetProductByName"
-    query = s_queries[operation]  # Get predefined GraphQL query
     tasks = []
-
-    for count, p in enumerate(product_queries):
+    operation = "GetProductByName"
+    query = s_queries[operation]
+    for inx, item in enumerate(queries):
+        logger.debug(
+            "Query: '%s' Category: '%s' @ list index: %s",
+            item.name, item.category, inx)
         variables = {
             "StoreID": store_id,
             "limit": limit,
-            "query": p.name,
-            "slugs": p.category,
+            "query": item.name,
+            "slugs": item.category,
         }
-        logger.debug(
-            f"Appending query @ index: {count} " +
-            f"[Query: '{p.name}' Category: '{p.category}']")
         tasks.append(
-            async_send_post(
-                query=query,
+            async_post_request(
+                operation_name=operation,
                 variables=variables,
-                operation=operation,
-                query_item=p))
-    logger.debug(
-        f"Async tasks len(): {len(tasks)}\n")
+                query=query,
+                item=item))
+    logger.debug("Final length of tasks: %s", len(tasks))
     return await asyncio.gather(*tasks)
-
