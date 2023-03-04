@@ -1,9 +1,9 @@
 from utils import timer, LoggerManager as lgm
-from core import Item, ProductList
+from core import QueryItem, ProductList
 from api import api_fetch_products, api_fetch_store
-from requests import Response
 from typing import Any
 
+import json
 import asyncio
 import re
 
@@ -84,7 +84,20 @@ def get_quantity_from_string(string: str) -> tuple[int, str] | None:
     return None
 
 
-def parse_query_data(query: str, count: str, category: str) -> tuple:
+def parse_query_data(query: str, count: str, category: str
+                     ) -> tuple[int, int | None, str | None, str | None]:
+    """Parse query quantity, multiplier and category into valid values.
+
+    Args:
+        query (str): Query string to parse quantity and unit from.
+        count (str): Count to parse multiplier value from.
+        category (str): TO BE DETERMINED
+
+    Returns:
+        tuple: Returns a tuple containing parsed values in order:
+        multiplier, quantity, unit, category. All but multiplier are
+        optional values.
+    """
     try:
         multiplier = 1
         if (count := count.strip("x")) == "":
@@ -100,7 +113,17 @@ def parse_query_data(query: str, count: str, category: str) -> tuple:
     return (multiplier, quantity, unit, category)
 
 
-def process_queries(json: dict, store: tuple[str, str]) -> list[Item]:
+def process_queries(json: dict) -> list[QueryItem]:
+    """Process a dict containing product queries into QueryItem instances.
+
+    Args:
+        json (dict): A dict containing keys: "queries", "amounts", "categories"
+        with values consisting of lists of string values.
+        store (tuple[str, str]): Store Name and ID
+
+    Returns:
+        list[Item]: Returns a list of QueryItem instances.
+    """
     logger.debug("Parsing queries request JSON.")
     product_queries = []
     for query, count, category in zip(
@@ -111,10 +134,9 @@ def process_queries(json: dict, store: tuple[str, str]) -> list[Item]:
             continue
         query_data = parse_query_data(query=query, count=count,
                                       category=category)
-        item = Item(
+        item = QueryItem(
             name=query,
-            store=store,
-            multiplier=query_data[0],
+            count=query_data[0],
             quantity=query_data[1],
             unit=query_data[2],
             category=query_data[3])
@@ -124,29 +146,35 @@ def process_queries(json: dict, store: tuple[str, str]) -> list[Item]:
     return product_queries
 
 
-def create_product_list(response: Response,
-                        query_item: Item) -> ProductList:
+def create_product_list(response: dict,
+                        query_item: QueryItem,
+                        store: tuple[str, str]) -> ProductList:
     products = ProductList(
         response=response,
-        query=query_item)
+        query_item=query_item,
+        store=store)
     logger.debug(
         "Created ProductList from query string: '%s'", query_item.name)
     return products
 
 
 @timer
-def execute_product_search(query_data: list[Item],
+def execute_product_search(query_data: list[QueryItem],
                            store: tuple[str, str],
                            limit: int = 24) -> list[ProductList]:
     logger.debug("Running product search...")
-    responses = asyncio.run(api_fetch_products(
+    data = asyncio.run(api_fetch_products(
         store_id=store[1],
         queries=query_data,
         limit=limit))
-    #product_lists = []
-    #for response in responses:
-        #product_lists.append(create_product_list(*response))
-    return None
+    product_lists = []
+    for i in data:
+        products = create_product_list(
+            response=json.loads(i[0].text),
+            query_item=i[1],
+            store=store)
+        product_lists.append(products)
+    return product_lists
 
 
 def parse_store_from_string(string: str) -> tuple[str | None, str | None]:

@@ -1,95 +1,97 @@
 from utils import LoggerManager as lgm
 from dataclasses import dataclass, field
-from typing import Optional
-from requests import Response
 import core
 
 logger = lgm.get_logger(name=__name__)
 
 
 @dataclass(frozen=True, slots=True)
-class Item:
-    """
-    A basic item, may represent either
-    user queries or received and parsed results.
-
-    name: Non-optional, descriptor-validator to be added
-    ean: Product ean id, can be used in product searches, google it
-    category: Category as a string, this is not a pretty string to print
-
-    quantity: Quantity of product in a single packaging as an integer
-    unit: The unit that the quantity is given in
-    comparison_unit: The ???
-
-    store: Store data, name and id
-    unit_price: The price for a single product
-    comparison_price: The price for a product / unit
-
-    multiplier: Multiplier used for calculating the total cost, user-defined
-    """
-
-    # Identifying data
+class QueryItem:
     name: str
-    ean: str | None = None
-    category: str | None = None
+    count: int
+    quantity: int | None
+    unit: str | None
+    category: str | None
 
-    # Product-specific data
-    quantity: int | None = None
-    unit: str | None = None
-    comparison_unit: str | None = None
 
-    # Store-specific data
-    store: Optional[tuple[str, str]] = None
-    unit_price: Optional[int | float] = None
-    comparison_price: Optional[int | float] = None
-
-    # <User-defined data
-    multiplier: int = 1
+@dataclass(frozen=True, slots=True)
+class ProductItem:
+    name: str
+    count: int
+    quantity: int
+    unit: str
+    category: str
+    ean: str
+    store: tuple[str, str]
+    unit_price: int | float
+    comparison_price: int | float
 
     @property
-    def quantity_string(self) -> str:
+    def get_quantity(self) -> str:
         return f"{self.quantity}{self.unit}"
 
     @property
-    def total_price(self) -> int | float | None:
-        if self.unit_price is None:
-            return None
-        return self.multiplier * self.unit_price
-
-
-@dataclass
-class ProductList:
-    response: Response
-    query: Item
-    items: list[Item] = field(default_factory=list)
-
-    def __post_init__(self):
-        self.store = self.query.store
-        self.category = self.query.category
+    def get_price(self) -> int | float:
+        return self.unit_price
 
     @property
-    def products(self) -> list[Item]:
+    def get_cmp_price(self) -> int | float:
+        return self.comparison_price
+
+    @property
+    def get_total_price(self) -> int | float:
+        return self.unit_price * self.count
+
+
+@dataclass(slots=True)
+class ProductList:
+    response: dict
+    query_item: QueryItem
+    store: tuple[str, str]
+    items: list[ProductItem] = field(default_factory=list)
+
+    @property
+    def products(self) -> list[ProductItem]:
         if len(self.items) == 0:
-            logger.debug("Product list empty, parsing response...")
+            logger.debug("Parsing products for query: %s.",
+                         self.query_item.name)
             self.items = self._parse()
-        logger.debug(f"Returning {len(self.items)} products.")
+            logger.debug("Parsed %s products from response.",
+                         len(self.items))
         return self.items
 
-    def _parse(self) -> list[Item]:
-        logger.debug(f"Parsing response for query '{self.query.name}'")
-        items = []
-        for i in self.response["data"]["store"]["products"]["items"]:
-            q, u = core.regex_get_quantity(i["name"])  # 'quantity' 'unit'
-            item = Item(
-                name=i["name"],
-                ean=i["ean"],
-                category=self.category,
-                quantity=q,
-                unit=u,
-                comparison_unit=i["comparisonUnit"],
-                store=self.store,
-                unit_price=i["price"],
-                comparison_price=i["comparisonPrice"],
-                multiplier=self.query.multiplier)
-            items.append(item)
-        return items
+    @property
+    def cheapest_item(self) -> ProductItem:
+        pass
+
+    def _parse(self) -> list[ProductItem]:
+        product_items = []
+        if (response_items := self._get_response_items()) is not None:
+            for i in response_items:
+                try:
+                    item = ProductItem(
+                        name=i["name"],
+                        count=self.query_item.count,
+                        quantity=None,
+                        unit=None,
+                        category=self.query_item.category,
+                        ean=i["ean"],
+                        store=self.store,
+                        unit_price=i["price"],
+                        comparison_price=i["comparison_price"])
+                    product_items.append(item)
+                except KeyError as err:
+                    logger.exception(err)
+                    continue
+        return product_items
+
+    def _get_response_items(self) -> dict | None:
+        try:
+            items = self.response["data"]["store"]["products"]["items"]
+            return items
+        except KeyError as err:
+            logger.exception(err)
+            return None
+
+    def __str__(self):
+        return f"<ProductList query='{self.query_item.name}'>"

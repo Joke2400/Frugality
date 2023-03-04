@@ -26,7 +26,7 @@ def main():
         session_queries = [{
             "name": "Maito Laktoositon 1L",
             "amount": 2,
-            "category": "Maito, munat ja rasvat"
+            "category": ""
         },
         {
             "name": "Naudan Jauheliha 400g",
@@ -36,7 +36,7 @@ def main():
         {
             "name": "Chiquita Banaani",
             "amount": 3,
-            "category": "Hedelmät ja Vihannekset"
+            "category": ""
         }]
     return render_template("index.html", message=message,
                            session_store=session_store,
@@ -88,13 +88,15 @@ def query():
     if not (store := session.get("store")):
         return redirect(url_for(endpoint="main"))
 
-    if not (query_data := process_queries(json=request.json, store=store)):
+    if not (query_data := process_queries(json=request.json)):
         return redirect(url_for(endpoint="main"))
     session["queries"] = query_data
     product_lists = execute_product_search(
         query_data=query_data,
         store=store,
         limit=20)
-    print(product_lists)
+    for i in product_lists:
+        print(i)
+        print(i.products)
     return render_template("index.html")
 

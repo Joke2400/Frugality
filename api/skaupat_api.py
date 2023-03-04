@@ -131,10 +131,23 @@ def get_store_by_name(query_data: tuple[str, None] | tuple[str, str]
     return (operation, variables)
 
 
-async def async_post_request(operation_name: str,
-                             variables: dict,
-                             query: str,
-                             item: core.Item) -> tuple[Response, core.Item]:
+async def async_post_request(operation_name: str, variables: dict,
+                             query: str, item: core.QueryItem
+                             ) -> tuple[Response, core.QueryItem]:
+    """Run post_request() in a separate thread using to_thread().
+
+    Takes in params for the post request function.
+
+    Args:
+        operation_name (str): Name of the operation to be passed on.
+        variables (dict): Query variables to passed on.
+        query (str): Query string to be passed on.
+        item (core.QueryItem): QueryItem to be returned with response.
+
+    Returns:
+        tuple[Response, core.QueryItem]: Returns a coroutine object and
+        the corresponding QueryItem that was passed into the func.
+    """
     params = {
         "operation_name": operation_name,
         "variables": variables,
@@ -144,9 +157,21 @@ async def async_post_request(operation_name: str,
     return response, item
 
 
-async def api_fetch_products(queries: list[core.Item],
+async def api_fetch_products(queries: list[core.QueryItem],
                              store_id: str, limit: int = 24
-                             ) -> list[tuple[Response, core.Item]]:
+                             ) -> list[tuple[Response, core.QueryItem]]:
+    """Asynchronously send api requests to fetch a list of product queries.
+
+    Args:
+        queries (list[core.QueryItem]): Product queries as QueryItem instances.
+        store_id (str): ID of store to query.
+        limit (int, optional): Passed into query to limit result length.
+        Defaults to 24.
+
+    Returns:
+        list[tuple[Response, core.QueryItem]]: Returns a future that gathers
+        the results of the queries as a list of responses and query items.
+    """
     tasks = []
     operation = "GetProductByName"
     query = s_queries[operation]
