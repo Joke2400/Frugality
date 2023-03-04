@@ -14,12 +14,11 @@
     <div class="input_container container">
         <div class="query_container">
             <div class="selected_store_container">
-                {% if session_store in ("", None) %}
+                {% if session_store is none %}
                     <p class="store_string">No store selected</p>
                 {% else %}
                     <p class="store_string">{{session_store}}</p>
                 {% endif %}
-                <p>{{message}}</p>
             </div>
         </div>
         <div class="store_search_container">
@@ -52,8 +51,8 @@
 
     <div class="results_container container">
         <div>
-            <p>This is a paragraph that is most definitely going to be removed later</p>
-            <p>Prisma Olari 542862479</p>
+            <p>Example store: Prisma Olari 542862479</p>
+            <p>Current message: {{message}}</p>
         </div>
     </div>
 

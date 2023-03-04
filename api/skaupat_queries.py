@@ -80,6 +80,13 @@ queries["GetProductByName"] = """query GetProductByName($StoreID: ID!, $query: S
                     basicQuantityUnit
                     comparisonPrice
                     comparisonUnit
+                    brandName
+                    slug
+                    hierarchyPath {
+                        id
+                        name
+                        slug
+                    }
                 }
             }
         }

@@ -18,28 +18,17 @@ class QueryItem:
 class ProductItem:
     name: str
     count: int
-    quantity: int
-    unit: str
     category: str
     ean: str
     store: tuple[str, str]
-    unit_price: int | float
+    comparison_unit: str
     comparison_price: int | float
+    unit_price: int | float
+    label_quantity: int | None
+    label_unit: str | None
 
     @property
-    def get_quantity(self) -> str:
-        return f"{self.quantity}{self.unit}"
-
-    @property
-    def get_price(self) -> int | float:
-        return self.unit_price
-
-    @property
-    def get_cmp_price(self) -> int | float:
-        return self.comparison_price
-
-    @property
-    def get_total_price(self) -> int | float:
+    def total_price(self) -> int | float:
         return self.unit_price * self.count
 
 
@@ -61,24 +50,29 @@ class ProductList:
         return self.items
 
     @property
-    def cheapest_item(self) -> ProductItem:
+    def cheapest_item(self) -> ProductItem | None:
         pass
 
     def _parse(self) -> list[ProductItem]:
         product_items = []
         if (response_items := self._get_response_items()) is not None:
             for i in response_items:
+                quantity, unit = None, None
+                if (data := core.get_quantity_from_string(
+                        string=i["name"])) is not None:
+                    quantity, unit = data
                 try:
                     item = ProductItem(
                         name=i["name"],
                         count=self.query_item.count,
-                        quantity=None,
-                        unit=None,
                         category=self.query_item.category,
                         ean=i["ean"],
                         store=self.store,
+                        comparison_unit=i["comparisonUnit"],
+                        comparison_price=i["comparisonPrice"],
                         unit_price=i["price"],
-                        comparison_price=i["comparison_price"])
+                        label_quantity=quantity,
+                        label_unit=unit)
                     product_items.append(item)
                 except KeyError as err:
                     logger.exception(err)

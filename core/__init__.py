@@ -9,6 +9,7 @@ from .app_classes import (
 from .app_funcs import (
     execute_product_search,
     execute_store_search,
+    get_quantity_from_string,
     parse_store_from_string,
     process_queries
 )

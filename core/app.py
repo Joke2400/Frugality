@@ -14,6 +14,10 @@ logger = lgm.get_logger(name=__name__)
 
 @app.route("/", methods=["GET"])
 def main():
+    # Temporary
+    products = request.args.get("products")
+    if not products:
+        products = []
     session_store = session.get("store")
     if session_store:
         session_store = session_store[0]
@@ -22,7 +26,6 @@ def main():
         message = ""
     session_queries = session.get("queries")
     if not session_queries:
-        # Temporary
         session_queries = [{
             "name": "Maito Laktoositon 1L",
             "amount": 2,
@@ -38,7 +41,9 @@ def main():
             "amount": 3,
             "category": ""
         }]
-    return render_template("index.html", message=message,
+    return render_template("index.html",
+                           products=products,
+                           message=message,
                            session_store=session_store,
                            session_queries=session_queries)
 
@@ -88,7 +93,7 @@ def query():
     if not (store := session.get("store")):
         return redirect(url_for(endpoint="main"))
 
-    if not (query_data := process_queries(json=request.json)):
+    if not (query_data := process_queries(data=request.json)):
         return redirect(url_for(endpoint="main"))
     session["queries"] = query_data
     product_lists = execute_product_search(
@@ -96,7 +101,5 @@ def query():
         store=store,
         limit=20)
     for i in product_lists:
-        print(i)
         print(i.products)
-    return render_template("index.html")
-
+    return redirect(url_for(endpoint="main"))

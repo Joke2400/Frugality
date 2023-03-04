@@ -84,8 +84,8 @@ def get_quantity_from_string(string: str) -> tuple[int, str] | None:
     return None
 
 
-def parse_query_data(query: str, count: str, category: str
-                     ) -> tuple[int, int | None, str | None, str | None]:
+def parse_query_data(query: str, count: str
+                     ) -> tuple[int, int | None, str | None]:
     """Parse query quantity, multiplier and category into valid values.
 
     Args:
@@ -108,12 +108,10 @@ def parse_query_data(query: str, count: str, category: str
     quantity, unit = None, None
     if (data := get_quantity_from_string(query)) is not None:
         quantity, unit = data
-    if category == "":  # Future checks here
-        category = None
-    return (multiplier, quantity, unit, category)
+    return (multiplier, quantity, unit)
 
 
-def process_queries(json: dict) -> list[QueryItem]:
+def process_queries(data: dict) -> list[QueryItem]:
     """Process a dict containing product queries into QueryItem instances.
 
     Args:
@@ -127,19 +125,19 @@ def process_queries(json: dict) -> list[QueryItem]:
     logger.debug("Parsing queries request JSON.")
     product_queries = []
     for query, count, category in zip(
-            json["queries"], json["amounts"], json["categories"]):
+            data["queries"], data["amounts"], data["categories"]):
         logger.debug("Parsing query: '%s'", query)
         if query in (None, ""):
             logger.debug("Parsed query was empty, skipping...")
             continue
-        query_data = parse_query_data(query=query, count=count,
-                                      category=category)
+        query_data = parse_query_data(query=query, count=count)
+        # Category should also be processed here. <--
         item = QueryItem(
             name=query,
             count=query_data[0],
             quantity=query_data[1],
             unit=query_data[2],
-            category=query_data[3])
+            category=category)
         product_queries.append(item)
 
     logger.debug("Product queries len(%s)", len(product_queries))
