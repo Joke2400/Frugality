@@ -14,19 +14,13 @@
     <div class="input_container container">
         <div class="query_container">
             <div class="selected_store_container">
-                {% if session_store is none %}
-                    <p class="store_string">No store selected</p>
-                {% else %}
-                    <p class="store_string">{{session_store}}</p>
-                {% endif %}
+                <p class="store_string">{{store_state}}</p>
             </div>
         </div>
-        <div class="store_search_container">
-            <form action="{{url_for('get_store')}}">
-                <input class="input_field" type="text" placeholder="Store Name" name="query"></input>
-                <input class="input_button" type="submit" value="Search Store"></input>
-            </form>
-        </div>
+        <form id="store-form"action="{{url_for('get_store')}}">
+            <input class="input_field" type="text" placeholder="Store Name" name="query"></input>
+            <input class="input_button" type="submit" value="Search Store"></input>
+        </form>
     </div>
 
     <div class="items_container container">
@@ -52,7 +46,9 @@
     <div class="results_container container">
         <div>
             <p>Example store: Prisma Olari 542862479</p>
-            <p>Current message: {{message}}</p>
+            <p>{{message_state}}</p>
+            <p>{{queries_state}}</p>
+            <p>{{products_state}}</p>
         </div>
     </div>
 
