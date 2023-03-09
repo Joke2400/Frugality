@@ -1,5 +1,5 @@
 from utils import timer, LoggerManager as lgm
-from core import QueryItem, ProductList
+from core import ProductList
 from api import api_fetch_products, api_fetch_store
 from typing import Any
 
@@ -87,6 +87,8 @@ def get_quantity_from_string(string: str) -> tuple[int, str] | None:
 def parse_query_data(data: dict) -> dict | None:
     try:
         query = str(data["query"]).strip()
+        if query == "":
+            return None
     except (ValueError, KeyError) as err:
         logger.exception(err)
         return None
@@ -112,53 +114,8 @@ def parse_query_data(data: dict) -> dict | None:
     }
 
 
-def process_queries(data: dict) -> list[QueryItem]:
-    """Process a dict containing product queries into QueryItem instances.
-
-    Args:
-        json (dict): A dict containing keys: "queries", "amounts", "categories"
-        with values consisting of lists of string values.
-        store (tuple[str, str]): Store Name and ID
-
-    Returns:
-        list[Item]: Returns a list of QueryItem instances.
-    """
-    logger.debug("Parsing queries request JSON.")
-    product_queries = []
-    for query, count, category in zip(
-            data["queries"], data["amounts"], data["categories"]):
-        logger.debug("Parsing query: '%s'", query)
-        if query in (None, ""):
-            logger.debug("Parsed query was empty, skipping...")
-            continue
-        query_data = parse_query_data(query=query, count=count)
-        # Category should also be processed here. <--
-        item = QueryItem(
-            name=query,
-            count=query_data[0],
-            quantity=query_data[1],
-            unit=query_data[2],
-            category=category)
-        product_queries.append(item)
-
-    logger.debug("Product queries len(%s)", len(product_queries))
-    return product_queries
-
-
-def create_product_list(response: dict,
-                        query_item: QueryItem,
-                        store: tuple[str, str]) -> ProductList:
-    products = ProductList(
-        response=response,
-        query_item=query_item,
-        store=store)
-    logger.debug(
-        "Created ProductList from query string: '%s'", query_item.name)
-    return products
-
-
 @timer
-def execute_product_search(query_data: list[QueryItem],
+def execute_product_search(query_data: list[dict],
                            store: tuple[str, str],
                            limit: int = 24) -> list[ProductList]:
     logger.debug("Running product search...")
@@ -168,7 +125,7 @@ def execute_product_search(query_data: list[QueryItem],
         limit=limit))
     product_lists = []
     for i in data:
-        products = create_product_list(
+        products = ProductList(
             response=json.loads(i[0].text),
             query_item=i[1],
             store=store)

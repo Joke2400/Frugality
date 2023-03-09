@@ -132,8 +132,8 @@ def get_store_by_name(query_data: tuple[str, None] | tuple[str, str]
 
 
 async def async_post_request(operation_name: str, variables: dict,
-                             query: str, item: core.QueryItem
-                             ) -> tuple[Response, core.QueryItem]:
+                             query: str, item: dict
+                             ) -> tuple[Response, dict]:
     """Run post_request() in a separate thread using to_thread().
 
     Takes in params for the post request function.
@@ -142,11 +142,11 @@ async def async_post_request(operation_name: str, variables: dict,
         operation_name (str): Name of the operation to be passed on.
         variables (dict): Query variables to passed on.
         query (str): Query string to be passed on.
-        item (core.QueryItem): QueryItem to be returned with response.
+        item (dict): Query to be returned with response.
 
     Returns:
-        tuple[Response, core.QueryItem]: Returns a coroutine object and
-        the corresponding QueryItem that was passed into the func.
+        tuple[Response, dict]: Returns a coroutine object and
+        the corresponding query that was passed into the func.
     """
     params = {
         "operation_name": operation_name,
@@ -157,20 +157,20 @@ async def async_post_request(operation_name: str, variables: dict,
     return response, item
 
 
-async def api_fetch_products(queries: list[core.QueryItem],
+async def api_fetch_products(queries: list[dict],
                              store_id: str, limit: int = 24
-                             ) -> list[tuple[Response, core.QueryItem]]:
+                             ) -> list[tuple[Response, dict]]:
     """Asynchronously send api requests to fetch a list of product queries.
 
     Args:
-        queries (list[core.QueryItem]): Product queries as QueryItem instances.
+        queries (list[dict]): Product queries as list of dictionaries.
         store_id (str): ID of store to query.
         limit (int, optional): Passed into query to limit result length.
         Defaults to 24.
 
     Returns:
-        list[tuple[Response, core.QueryItem]]: Returns a future that gathers
-        the results of the queries as a list of responses and query items.
+        list[tuple[Response, dict]]: Returns a future that gathers
+        the results of the queries as a list of responses and query dicts.
     """
     tasks = []
     operation = "GetProductByName"
@@ -178,12 +178,12 @@ async def api_fetch_products(queries: list[core.QueryItem],
     for inx, item in enumerate(queries):
         logger.debug(
             "Query: '%s' Category: '%s' @ list index: %s",
-            item.name, item.category, inx)
+            item["query"], item["category"], inx)
         variables = {
             "StoreID": store_id,
             "limit": limit,
-            "query": item.name,
-            "slugs": item.category,
+            "query": item["query"],
+            "slugs": item["category"]
         }
         tasks.append(
             async_post_request(

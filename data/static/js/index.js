@@ -18,7 +18,10 @@ function sendQuery() {
             categories: categories
         })
     }
-    fetch("/query/", fetchData);
+    fetch("/query/", fetchData).then(response => response.json())
+    .then(function() {
+        location.reload();
+    });
 }
 
 function addQuery() {

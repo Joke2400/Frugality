@@ -7,15 +7,6 @@ logger = lgm.get_logger(name=__name__)
 
 
 @dataclass(frozen=True, slots=True)
-class QueryItem:
-    name: str
-    count: int
-    quantity: int | None
-    unit: str | None
-    category: str | None
-
-
-@dataclass(frozen=True, slots=True)
 class ProductItem:
     name: str
     count: int
@@ -32,11 +23,24 @@ class ProductItem:
     def total_price(self) -> int | float:
         return self.unit_price * self.count
 
+    def dictify(self) -> dict:
+        return {
+            "name": self.name,
+            "count": self.count,
+            "category": self.category,
+            "ean": self.ean,
+            "store": self.store,
+            "comparison_unit": self.comparison_unit,
+            "comparison_price": self.comparison_price,
+            "unit_price": self.unit_price,
+            "label_quantity": self.label_quantity,
+            "label_unit": self.label_unit
+        }
 
 @dataclass(slots=True)
 class ProductList:
     response: dict
-    query_item: QueryItem
+    query_item: dict
     store: tuple[str, str]
     items: list[ProductItem] = field(default_factory=list)
 
@@ -44,7 +48,7 @@ class ProductList:
     def products(self) -> list[ProductItem]:
         if len(self.items) == 0:
             logger.debug("Parsing products for query: %s.",
-                         self.query_item.name)
+                         self.query_item["query"])
             for i in self._parse():
                 self.items.append(i)
             logger.debug("Parsed %s products from response.",
@@ -81,7 +85,7 @@ class ProductList:
                 quantity, unit = data
             product_item = ProductItem(
                 name=item["name"],
-                count=self.query_item.count,
+                count=self.query_item["count"],
                 category=item["hierarchyPath"][0]["slug"],
                 ean=item["ean"],
                 store=self.store,
@@ -104,4 +108,4 @@ class ProductList:
             return None
 
     def __str__(self):
-        return f"<ProductList query='{self.query_item.name}'>"
+        return f"<ProductList query='{self.query_item['query']}'>"

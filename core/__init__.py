@@ -3,7 +3,6 @@ from utils import LoggerManager as lgm
 logger = lgm.get_logger(name=__name__, level=20, stream=True)
 
 from .app_classes import (
-    QueryItem,
     ProductList
 )
 from .app_funcs import (
@@ -12,7 +11,6 @@ from .app_funcs import (
     get_quantity_from_string,
     parse_store_from_string,
     parse_query_data,
-    process_queries
 )
 from .process import Process
 

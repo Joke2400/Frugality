@@ -1,7 +1,6 @@
 from flask import redirect, url_for, render_template, request, session
 from core import (
     app,
-    process_queries,
     execute_product_search,
     parse_store_from_string,
     parse_query_data,
@@ -68,12 +67,16 @@ def get_store():
 @app.route("/query/", methods=["POST"])
 def query():
     if (store := session.get("store")):
-        if (query_data := process_queries(data=request.json)):
+        if queries := session.get("queries"):
             product_lists = execute_product_search(
-                query_data=query_data,
+                query_data=queries,
                 store=store,
                 limit=20)
-            session["products"] = product_lists
+            session["products"] = []
+            for i in product_lists:
+                if (cheapest := i.cheapest_item) is not None:
+                    session["products"].append(cheapest.dictify())
+            return {"products": session["products"]}
     return redirect(url_for("main"))
 
 
