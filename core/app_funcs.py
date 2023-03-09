@@ -84,31 +84,32 @@ def get_quantity_from_string(string: str) -> tuple[int, str] | None:
     return None
 
 
-def parse_query_data(query: str, count: str
-                     ) -> tuple[int, int | None, str | None]:
-    """Parse query quantity, multiplier and category into valid values.
-
-    Args:
-        query (str): Query string to parse quantity and unit from.
-        count (str): Count to parse multiplier value from.
-        category (str): TO BE DETERMINED
-
-    Returns:
-        tuple: Returns a tuple containing parsed values in order:
-        multiplier, quantity, unit, category. All but multiplier are
-        optional values.
-    """
+def parse_query_data(data: dict) -> dict | None:
     try:
-        multiplier = 1
-        if (count := count.strip("x")) == "":
-            multiplier = abs(int(count))
-    except ValueError:
-        logger.exception("Could not convert multiplier to int")
-        multiplier = 1
+        query = str(data["query"]).strip()
+    except (ValueError, KeyError) as err:
+        logger.exception(err)
+        return None
     quantity, unit = None, None
-    if (data := get_quantity_from_string(query)) is not None:
-        quantity, unit = data
-    return (multiplier, quantity, unit)
+    if (result := get_quantity_from_string(query)) is not None:
+        quantity, unit = result
+    slug = "-".join(query.lower().split())
+    try:
+        count = abs(int(data["count"]))
+        category = str(data["category"])
+    except (ValueError, KeyError):
+        if not isinstance(count, int):
+            count = 1
+        if not isinstance(category, str):
+            category = ""
+    return {
+        "query": query,
+        "count": count,
+        "category": category,
+        "quantity": quantity,
+        "unit": unit,
+        "slug": slug
+    }
 
 
 def process_queries(data: dict) -> list[QueryItem]:

@@ -4,9 +4,10 @@ from core import (
     process_queries,
     execute_product_search,
     parse_store_from_string,
+    parse_query_data,
     execute_store_search
 )
-from utils import timer, LoggerManager as lgm
+from utils import LoggerManager as lgm
 import re
 
 logger = lgm.get_logger(name=__name__)
@@ -14,47 +15,17 @@ logger = lgm.get_logger(name=__name__)
 
 @app.route("/", methods=["GET"])
 def main():
-    if len(session_queries := session.get("queries", default=[])) != 0:
-        queries = []
-        for i in session_queries:
-            queries.append({
-                "name": i.name,
-                "count": i.count,
-                "quantity": i.quantity,
-                "unit": i.unit,
-                "category": i.category
-            })
-        session_queries = queries
-    if len(session_products := session.get("products", default=[])) != 0:
-        products = []
-        for i in session_products:
-            products.append({
-                "name": i.name,
-                "count": i.count,
-                "category": i.category,
-                "ean": i.ean,
-                "comparison_unit": i.comparison_unit,
-                "comparison_price": i.comparison_price,
-                "unit_price": i.unit_price,
-                "label_quantity": i.label_quantity,
-                "label_unit": i.label_unit
-            })
-        session_products = products
-    if not (message_state := session.get("message_state")):
-        message_state = "No current message."
-    if (session_store := session.get("store")):
-        store_state = session_store[0]
+    queries = session.get("queries", default=[])
+    products = session.get("products", default=[])
+    if (store := session.get("store")):
+        store = store[0]
     else:
-        store_state = "No store selected"
+        store = "No store selected"
     return render_template(
         "index.html",
-        message_state=message_state,
-        store_state=store_state,
-        session_store=session_store,
-        session_products=session_products,
-        session_queries=session_queries,
-        queries_state=f"Queries length: {len(session_queries)}",
-        products_state=f"Products length: {len(session_products)}"
+        queries=queries,
+        products=products,
+        store=store
     )
 
 
@@ -76,11 +47,9 @@ def get_store():
                          flags=re.I | re.M)
     if store_query in (None, ""):
         logger.debug("Store query was empty, aborting query...")
-        session["message_state"] = "Store name cannot be empty."
         return redirect(url_for("main"))
     parsed_data = parse_store_from_string(string=store_query)
     if not any(parsed_data):
-        session["message_state"] = "Error parsing store."
         return redirect(url_for("main"))
     if (store := session.get("store")) and parsed_data[0] is not None:
         if store[0].lower() == parsed_data[0].lower():
@@ -90,27 +59,39 @@ def get_store():
     store_data = execute_store_search(query_data=parsed_data)
     if not store_data:
         logger.debug("Returned store data was empty, returning 'not found'.")
-        session["message_state"] = "Store was not found."
         return redirect(url_for("main"))
     session["store"] = store_data
     logger.debug("Set %s as session store.", store_data)
-    session["message_state"] = "Set new session store."
     return redirect(url_for("main"))
 
 
 @app.route("/query/", methods=["POST"])
 def query():
-    logger.info("Received a new product query!\n")
-    if not (store := session.get("store")):
-        return redirect(url_for("main"))
-
-    if not (query_data := process_queries(data=request.json)):
-        return redirect(url_for("main"))
-    session["queries"] = query_data
-    product_lists = execute_product_search(
-        query_data=query_data,
-        store=store,
-        limit=20)
-    session["products"] = product_lists
-    session["message_state"] = "Product search successful."
+    if (store := session.get("store")):
+        if (query_data := process_queries(data=request.json)):
+            product_lists = execute_product_search(
+                query_data=query_data,
+                store=store,
+                limit=20)
+            session["products"] = product_lists
     return redirect(url_for("main"))
+
+
+@app.route("/add_query/", methods=["POST"])
+def add_query():
+    queries = session.get("queries", default=[])
+    if (query_dict := parse_query_data(request.json)):
+        in_list = False
+        for i in queries:
+            if query_dict["slug"] == i["slug"]:
+                in_list = True
+                i["count"] += query_dict["count"]
+                logger.debug("Added '%s' to count of: '%s'.",
+                             query_dict["count"], i["query"])
+                break
+        if not in_list:
+            queries.append(query_dict)
+            logger.debug("Added new query: '%s' to list.",
+                         query_dict["query"])
+    session["queries"] = queries
+    return {"queries": queries}

@@ -11,6 +11,7 @@ from .app_funcs import (
     execute_store_search,
     get_quantity_from_string,
     parse_store_from_string,
+    parse_query_data,
     process_queries
 )
 from .process import Process
