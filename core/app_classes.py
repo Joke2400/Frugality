@@ -43,28 +43,38 @@ class ProductList:
     query_item: dict
     store: tuple[str, str]
     items: list[ProductItem] = field(default_factory=list)
+    is_parsed: bool = False
 
     @property
     def products(self) -> list[ProductItem]:
-        if len(self.items) == 0:
+        if not self.is_parsed:
             logger.debug("Parsing products for query: %s.",
                          self.query_item["query"])
             for i in self._parse():
                 self.items.append(i)
+            self.is_parsed = True
             logger.debug("Parsed %s products from response.",
                          len(self.items))
         return self.items
 
     @property
     def cheapest_item(self) -> ProductItem | None:
-        if (response_items := self._get_response_items()) is not None:
-            values = (0, response_items[0])
-            for inx, item in enumerate(response_items[1:], start=1):
-                if item["comparisonPrice"] < values[1]["comparisonPrice"]:
+        if not self.is_parsed:
+            if (response_items := self._get_response_items()) is not None:
+                values = (0, response_items[0])
+                for inx, item in enumerate(response_items[1:], start=1):
+                    if item["comparisonPrice"] < values[1]["comparisonPrice"]:
+                        values = (inx, item)
+                item = self._create_product_item(item=values[1])
+                response_items.pop(values[0])
+                self.items.append(item)
+                return item
+        else:
+            values = (0, self.items[0])  # <- Not dry, refactor later
+            for inx, item in enumerate(self.items, start=1):
+                if item.comparison_price < values[1].comparison_price:
                     values = (inx, item)
-            item = self._create_product_item(item=values[1])
-            response_items.pop(values[0])
-            return item
+            return values[1]
         return None
 
     def _parse(self) -> Generator[ProductItem, None, None]:
@@ -103,7 +113,7 @@ class ProductList:
         try:
             items = self.response["data"]["store"]["products"]["items"]
             return items
-        except KeyError as err:
+        except (KeyError, TypeError) as err:
             logger.exception(err)
             return None
 

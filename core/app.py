@@ -40,27 +40,27 @@ def get_store():
         Response: Returns a redirect main page url.
     """
     logger.debug("Store query received!")
-    store_query = re.sub(pattern=r"[^a-zA-Z0-9\s]",
-                         repl="",
-                         string=str(request.args["query"]),
-                         flags=re.I | re.M)
-    if store_query in (None, ""):
-        logger.debug("Store query was empty, aborting query...")
+    try:
+        store_query = re.sub(pattern=r"[^a-zA-Z0-9\såäö-]",
+                             repl="",
+                             string=str(request.args["query"]),
+                             flags=re.I | re.M)
+    except TypeError as err:
+        logger.exception(err)
         return redirect(url_for("main"))
-    parsed_data = parse_store_from_string(string=store_query)
-    if not any(parsed_data):
-        return redirect(url_for("main"))
-    if (store := session.get("store")) and parsed_data[0] is not None:
-        if store[0].lower() == parsed_data[0].lower():
-            logger.debug(
-                "Store query was equal to session store, aborting query...")
-            return redirect(url_for("main"))
-    store_data = execute_store_search(query_data=parsed_data)
-    if not store_data:
-        logger.debug("Returned store data was empty, returning 'not found'.")
-        return redirect(url_for("main"))
-    session["store"] = store_data
-    logger.debug("Set %s as session store.", store_data)
+    if store_query not in ("", None):
+        parsed_data = parse_store_from_string(string=store_query)
+        if any(parsed_data):
+            if (store := session.get("store")) and parsed_data[0] is not None:
+                if store[0].lower() == parsed_data[0].lower():
+                    logger.debug("Store already in session, aborting query.")
+                    return redirect(url_for("main"))    
+            store_data = execute_store_search(query_data=parsed_data)
+            if not store_data:
+                logger.debug("Could not find the queried store.")
+                return redirect(url_for("main"))
+            session["store"] = store_data
+            logger.debug("Set %s as session store.", store_data)
     return redirect(url_for("main"))
 
 
@@ -72,11 +72,12 @@ def query():
                 query_data=queries,
                 store=store,
                 limit=20)
-            session["products"] = []
+            products = []
             for i in product_lists:
                 if (cheapest := i.cheapest_item) is not None:
-                    session["products"].append(cheapest.dictify())
-            return {"products": session["products"]}
+                    products.append(cheapest.dictify())
+            session["products"] = products
+            return {"products": products}
     return redirect(url_for("main"))
 
 

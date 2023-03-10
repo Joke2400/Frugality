@@ -146,7 +146,7 @@ def parse_store_from_string(string: str) -> tuple[str | None, str | None]:
     """
     logger.debug("Parsing store from string: '%s'", string)
     data = regex_findall(
-        r"\d+|^(?:\s*\b)\b[A-Za-z\s]+(?=\s?)", string.strip())
+        r"\d+|^(?:\s*\b)\b[A-Za-zåäö\s-]+(?=\s?)", string.strip())
 
     def is_digits(string: Any) -> str | None:
         try:
@@ -177,7 +177,7 @@ def parse_store_from_string(string: str) -> tuple[str | None, str | None]:
         case _:
             pass
 
-    logger.debug("parse_store_from_string() -> ('%s', %s)", s_name, s_id)
+    logger.debug("Parsed store data from string -> ('%s', %s)", s_name, s_id)
     return (s_name, s_id)
 
 
@@ -201,8 +201,9 @@ def parse_and_validate_store(query_data: tuple[str | None, str | None],
         except KeyError as err:
             logger.exception(err)
             return None
+        query_slug = "-".join(str(query_data[0]).lower().split())
         for i in stores:
-            if i["name"].strip().lower() == str(query_data[0]).lower():
+            if "-".join(i["name"].lower().split()) == query_slug:
                 logger.debug("Parsed store ('%s', '%s') from response",
                              i["name"], i["id"])
                 return (i.get("name"), i.get("id"))

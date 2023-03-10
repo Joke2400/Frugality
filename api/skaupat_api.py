@@ -14,8 +14,8 @@ query_logger = lgm.get_logger(name="query", level=20)
 session = Session()
 
 
-def post_request(url: str, params: dict, timeout: int = 10
-                 ) -> Response | None:
+def post_request(url: str, params: dict, timeout: int = 10,
+                 log_str: str | None = None) -> Response | None:
     """Send a post request with JSON body to a given URL.
 
     Args:
@@ -34,7 +34,9 @@ def post_request(url: str, params: dict, timeout: int = 10
     except exceptions.RequestException as err:
         logger.exception(err)
         return None
-    logger.debug("Status code: %s", response.status_code)
+    if log_str is None:
+        log_str = ""
+    logger.debug("Status: %s | %s", response.status_code, log_str)
     return response
 
 
@@ -71,10 +73,13 @@ def api_fetch_store(query_data: tuple[str | None, str | None]
         "variables": variables,
         "operation_name": operation
     }
-    response = post_request(url=api_url, params=params)
+    log_str = f"Operation: '{operation}' Query: '{variables['query']}'"
+    response = post_request(url=api_url, params=params, log_str=log_str)
     if not response:
         return None
-    return json.loads(response.text)
+    content = json.loads(response.text)
+    query_logger.debug("Response JSON: %s", json.dumps(content, indent=4))
+    return content
 
 
 def get_store_by_id(query_data: tuple[None, str] | tuple[str, str]
@@ -101,7 +106,6 @@ def get_store_by_id(query_data: tuple[None, str] | tuple[str, str]
             return None
         return get_store_by_name(query_data)
     operation = "GetStoreInfo"
-    logger.debug("Request: %s, %s", operation, variables)
     return (operation, variables)
 
 
@@ -127,7 +131,6 @@ def get_store_by_name(query_data: tuple[str, None] | tuple[str, str]
         logger.exception(err)
         return None
     operation = "StoreSearch"
-    logger.debug("Request: %s, %s", operation, variables)
     return (operation, variables)
 
 
