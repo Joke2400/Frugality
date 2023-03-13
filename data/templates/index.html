@@ -11,39 +11,39 @@
 
 {%block content %}
 <div class="page">
-    <div class="input_container container">
-        <div class="query_container">
-            <div class="selected_store_container">
-                <p class="store_string">{{store}}</p>
-            </div>
+    <div class="store-container container">
+        <div class="store-msg-box">
+            <p class="store-msg">{{store}}</p>
         </div>
         <form id="store-form" action="{{url_for('get_store')}}">
-            <input class="input_field" type="text" placeholder="Store Name" name="query"></input>
-            <input class="input_button" type="submit" value="Search Store"></input>
+            <input class="field" type="text" placeholder="Store Name" name="query"></input>
+            <input class="btn" type="submit" value="Select store"></input>
         </form>
     </div>
 
-    <div class="items_container container">
-        <div class="product_input_container">
-            <input id="query_input" class="input_field wide_field" type="text" placeholder="ex. Maito Laktoositon 1L"></input>
-            <button class="input_button" onclick="addQuery()">Search</button>
+    <div class="queries-container container">
+        <div class="query-input-box">
+            <input id="query-input" class="field wide_field" type="text" placeholder="ex. Maito Laktoositon 1L"></input>
+            <button class="btn" onclick="addQuery()">+</button>
         </div>
-        {% for item in queries %}
-        <div class="query_item container">
-            <div class="query_item_data">
-                <div>
-                    <p class="item_amount">{{item["count"]}}x</p>
-                    <p class="item_name">{{item["query"]}}</p>
+        <ul class="query-list">
+            {% for item in queries %}
+            <li class="query-item container">
+                <div class="query-data">
+                    <p class="query-count">{{item["count"]}}x</p>
+                    <div class="query-text">
+                        <p class="query-name">{{item["query"]}}</p>
+                        <p class="query-category">{{item["category"]}}</p>
+                    </div>
+                    <button class="btn" onclick="removeQuery({{loop.index0}})">-</button>
                 </div>
-                <p class="item_category">{{item["category"]}}</p>
-            </div>
-            <button class="input_button">-</button>
-        </div>
-        {% endfor %}
-        <button class="input_button" onclick="sendQuery()">Search Products</button>
+            </li>
+            {% endfor %}
+        </ul>
+        <button class="btn" onclick="sendQuery()">Query Search</button>
     </div>
 
-    <div class="results_container container">
+    <div class="products-container container">
         <div>
             <p>Example store: Prisma Olari 542862479</p>
         </div>
@@ -54,6 +54,5 @@
         <p>Item comparison_price: {{item["comparison_price"]}}</p>
         {% endfor %}
     </div>
-
 </div>
 {% endblock %}

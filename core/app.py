@@ -30,22 +30,13 @@ def main():
 
 @app.route("/get_store/", methods=["GET"])
 def get_store():
-    """Endpoint to fetch a store from the API using a query string.
-
-    If a store is found, save it in the user session. Otherwise relay a
-    feedback message to the end user via the 'message' argument to url_for
-    when redirecting back to the main page.
-
-    Returns:
-        Response: Returns a redirect main page url.
-    """
     logger.debug("Store query received!")
     try:
         store_query = re.sub(pattern=r"[^a-zA-Z0-9\såäö-]",
                              repl="",
                              string=str(request.args["query"]),
                              flags=re.I | re.M)
-    except TypeError as err:
+    except (TypeError, ValueError) as err:
         logger.exception(err)
         return redirect(url_for("main"))
     if store_query not in ("", None):
@@ -64,7 +55,7 @@ def get_store():
     return redirect(url_for("main"))
 
 
-@app.route("/query/", methods=["POST"])
+@app.route("/query/", methods=["GET"])
 def query():
     if (store := session.get("store")):
         if queries := session.get("queries"):
@@ -97,5 +88,22 @@ def add_query():
             queries.append(query_dict)
             logger.debug("Added new query: '%s' to list.",
                          query_dict["query"])
+    session["queries"] = queries
+    return {"queries": queries}
+
+
+@app.route("/remove_query/", methods=["POST"])
+def remove_query():
+    try:
+        index = int(request.json["index"])
+    except (KeyError, ValueError) as err:
+        logger.exception(err)
+        return redirect(url_for)
+    queries = session.get("queries", default=[])
+    item = queries[index]
+    if item["count"] > 1:
+        item["count"] -= 1
+    else:
+        queries.remove(item)
     session["queries"] = queries
     return {"queries": queries}

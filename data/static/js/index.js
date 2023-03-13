@@ -1,22 +1,10 @@
 
 function sendQuery() {
-    let queries = [];
-    let amounts = [];
-    let categories = [];
-    document.querySelectorAll(".item_name").forEach(r => queries.push(r.innerText));
-    document.querySelectorAll(".item_amount").forEach(r => amounts.push(r.innerText));
-    document.querySelectorAll(".item_category").forEach(r => categories.push(r.innerText));
     let fetchData = {
-        method: "post",
+        method: "GET",
         headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            queries: queries,
-            amounts: amounts,
-            categories: categories
-        })
+            "Accept": "application/json"
+        }
     }
     fetch("/query/", fetchData).then(response => response.json())
     .then(function() {
@@ -25,7 +13,7 @@ function sendQuery() {
 }
 
 function addQuery() {
-    let query = document.getElementById("query_input").value;
+    let query = document.getElementById("query-input").value;
     let count = 1;
     let category = "";
     let fetchData = {
@@ -47,46 +35,67 @@ function addQuery() {
 }
 
 function refreshQueries(queries) {
-    const elements = document.getElementsByClassName("query_item container")
+    const elements = document.getElementsByClassName("query-item container")
     while(elements.length > 0) {
         elements[0].parentNode.removeChild(elements[0]);
     }
-    let queryList = document.querySelector(".items_container");
+    let queryList = document.querySelector(".query-list");
     for (let i = 0; i < queries.length; i++) {
-        item = createQueryItem(queries[i])
-        queryList.insertBefore(item, queryList.children[queryList.children.length - 1])
+        item = createQueryItem(queries[i], i);
+        queryList.appendChild(item);
     }
 
 }
 
-function createQueryItem(dict) {
+function createQueryItem(dict, inx) {
     let amount = document.createElement("p");
-    amount.classList.add("item_amount")
+    amount.classList.add("query-count")
     amount.innerText = dict["count"] + "x";
     let name = document.createElement("p");
-    name.classList.add("item_name");
+    name.classList.add("query-name");
     name.innerText = dict["query"];
-
-    let dataDiv = document.createElement("div")
-    dataDiv.appendChild(amount);
-    dataDiv.appendChild(name);
-
     let category = document.createElement("p");
-    category.classList.add("item_category");
+    category.classList.add("query-category");
     category.innerText = dict["category"];
 
-    let queryItemData = document.createElement("div");
-    queryItemData.classList.add("query_item_data");
-    queryItemData.appendChild(dataDiv);
-    queryItemData.appendChild(category);
+    let textDiv = document.createElement("div")
+    textDiv.classList.add("query-text")
+    textDiv.appendChild(name);
+    textDiv.appendChild(category);
 
     let btn = document.createElement("button");
-    btn.classList.add("input_button");
+    btn.classList.add("btn");
     btn.innerText = "-";
+    btn.onclick = function() {
+        removeQuery(inx);
+    }
+
+    let queryItemData = document.createElement("div");
+    queryItemData.classList.add("query-data");
+    queryItemData.appendChild(amount);
+    queryItemData.appendChild(textDiv)
+    queryItemData.appendChild(btn);
+
     let queryItem = document.createElement("div");
-    queryItem.classList.add("query_item", "container");
+    queryItem.classList.add("query-item", "container");
     queryItem.appendChild(queryItemData);
-    queryItem.appendChild(btn);
 
     return queryItem;
+}
+
+function removeQuery(inx) {
+    let fetchData = {
+        method: "post",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            index: inx
+        })
+    }
+    fetch("/remove_query/", fetchData).then(response => response.json())
+    .then(function(data) {
+        refreshQueries(data["queries"]);
+    });
 }
