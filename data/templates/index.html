@@ -19,6 +19,7 @@
             <input class="field" type="text" placeholder="Store Name" name="query"></input>
             <input class="btn" type="submit" value="Select store"></input>
         </form>
+        <p>Example store: Prisma Olari 542862479</p>
     </div>
 
     <div class="queries-container container">
@@ -26,14 +27,14 @@
             <input id="query-input" class="field wide_field" type="text" placeholder="ex. Maito Laktoositon 1L"></input>
             <button class="btn" onclick="addQuery()">+</button>
         </div>
-        <ul class="query-list">
+        <ul class="list">
             {% for item in queries %}
             <li class="query-item container">
                 <div class="query-data">
-                    <p class="query-count">{{item["count"]}}x</p>
-                    <div class="query-text">
-                        <p class="query-name">{{item["query"]}}</p>
-                        <p class="query-category">{{item["category"]}}</p>
+                    <p class="count">{{item["count"]}}x</p>
+                    <div class="item-text">
+                        <p class="name">{{item["query"]}}</p>
+                        <p class="category">{{item["category"]}}</p>
                     </div>
                     <button class="btn" onclick="removeQuery({{loop.index0}})">-</button>
                 </div>
@@ -44,15 +45,24 @@
     </div>
 
     <div class="products-container container">
-        <div>
-            <p>Example store: Prisma Olari 542862479</p>
-        </div>
-        {% for item in products %}
-        <p>Item name: {{item["name"]}}</p>
-        <p>Item count: {{item["count"]}}</p>
-        <p>Item price: {{item["unit_price"]}}</p>
-        <p>Item comparison_price: {{item["comparison_price"]}}</p>
-        {% endfor %}
+        <ul class="list">
+            {% for item in products %}
+            <li class="product-item container">
+                <div class="product-data">
+                    <p class="count">{{item["count"]}}x</p>
+                    <div class="item-text">
+                        <p class="name">{{item["name"]}}</p>
+                        <p class="category">{{item["category"]}}</p>
+                    </div>
+                    <div class="product-price-data">
+                        <p class="unit_price">{{item["unit_price"]}}€/kpl</p>
+                        <p class="comparison_price">{{item["comparison_price"]}}€/{{item["comparison_unit"]}}</p>
+                    </div>
+                    <button class="btn"></button>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
     </div>
 </div>
 {% endblock %}

@@ -99,7 +99,7 @@ class ProductList:
                 category=item["hierarchyPath"][0]["slug"],
                 ean=item["ean"],
                 store=self.store,
-                comparison_unit=item["comparisonUnit"],
+                comparison_unit=self._parse_unit(item["comparisonUnit"]),
                 comparison_price=item["comparisonPrice"],
                 unit_price=item["price"],
                 label_quantity=quantity,
@@ -109,9 +109,20 @@ class ProductList:
             return None
         return product_item
 
+    def _parse_unit(self, unit: str) -> str:
+        match unit:
+            case "LTR":
+                return "L"
+            case "KGM":
+                return "kg"
+            case _:
+                return unit
+
     def _get_response_items(self) -> dict | None:
         try:
             items = self.response["data"]["store"]["products"]["items"]
+            if len(items) == 0:
+                return None
             return items
         except (KeyError, TypeError) as err:
             logger.exception(err)

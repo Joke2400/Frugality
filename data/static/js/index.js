@@ -39,7 +39,7 @@ function refreshQueries(queries) {
     while(elements.length > 0) {
         elements[0].parentNode.removeChild(elements[0]);
     }
-    let queryList = document.querySelector(".query-list");
+    let queryList = document.querySelector(".list");
     for (let i = 0; i < queries.length; i++) {
         item = createQueryItem(queries[i], i);
         queryList.appendChild(item);
@@ -49,17 +49,17 @@ function refreshQueries(queries) {
 
 function createQueryItem(dict, inx) {
     let amount = document.createElement("p");
-    amount.classList.add("query-count")
+    amount.classList.add("count")
     amount.innerText = dict["count"] + "x";
     let name = document.createElement("p");
-    name.classList.add("query-name");
+    name.classList.add("name");
     name.innerText = dict["query"];
     let category = document.createElement("p");
-    category.classList.add("query-category");
+    category.classList.add("category");
     category.innerText = dict["category"];
 
     let textDiv = document.createElement("div")
-    textDiv.classList.add("query-text")
+    textDiv.classList.add("item-text")
     textDiv.appendChild(name);
     textDiv.appendChild(category);
 

@@ -21,7 +21,7 @@ def main():
     else:
         store = "No store selected"
     return render_template(
-        "index.html",
+        "search.html",
         queries=queries,
         products=products,
         store=store

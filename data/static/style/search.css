@@ -1,0 +1,117 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    --clr-text-basic: hsl(0, 0%, 25%);
+    --clr-button-default: hsl(189, 100%, 35%);
+    --clr-button-hover: hsl(189, 100%, 40%);
+    --clr-field-default: hsl(200, 100%, 100%);
+    --clr-field-hover: hsl(200, 100%, 95%);
+}
+
+/* Semantic START */
+body {
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    height: 200svh;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+}
+
+nav {
+    position: fixed;
+    width: 100%;
+    background-color: var(--clr-button-default);
+    height: 2.5rem;
+}
+
+header {
+    margin-top: 2.5rem;
+}
+
+main {
+    height: 100%;
+    width: 80%;
+    display: grid;
+}
+
+section {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    border: 2px black dashed;
+}
+
+footer {
+    height: 10rem;
+    width: 80%;
+    background-color: var(--clr-button-default);
+}
+
+h1 {
+    font-size: 3rem;
+}
+/* Semantic END */
+
+/* Generics START */
+.shadow {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.field {
+    border: 0;
+    margin: 0.5rem;
+    padding: 0.4rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: rgb(65, 65, 65);
+    background-color: var(--clr-field-default);
+    box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.3);
+}
+
+.field:hover {
+    background-color: var(--clr-field-hover);
+}
+
+.btn {
+    font-weight: bold;
+    color: #effaff;
+    background-color: var(--clr-button-default);
+    font-size: 1.1rem;
+    border: 0;
+    margin: 0.4rem;
+    padding: 0.4rem 0.6rem 0.4rem 0.6rem;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
+}
+
+.btn:hover {
+    background-color: var(--clr-button-hover);
+}
+
+.list {
+    display: flex;
+    flex-flow: column;
+    justify-content: left;
+    align-items: center;
+    list-style: none;
+    overflow: scroll;
+    overflow-x: hidden;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0;
+    padding: 0;
+}
+/* Generics END */
+
+
+.store-msg {
+    margin: 0.5rem;
+    padding: 0 0.4rem 0.1rem 0.4rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: rgb(73, 79, 90);
+    border-bottom: 0.2rem solid rgb(0, 150, 176, 0.5);
+}
