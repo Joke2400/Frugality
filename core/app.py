@@ -16,43 +16,16 @@ logger = lgm.get_logger(name=__name__)
 def main():
     queries = session.get("queries", default=[])
     products = session.get("products", default=[])
-    if (store := session.get("store")):
-        store = store[0]
-    else:
-        store = "No store selected"
+    stores = session.get("stores", default=[])
+    store_names = []
+    if len(stores) > 0:
+        for i in stores:
+            store_names.append(i[0])
     return render_template(
         "search.html",
         queries=queries,
         products=products,
-        store=store
-    )
-
-
-@app.route("/get_store/", methods=["GET"])
-def get_store():
-    logger.debug("Store query received!")
-    try:
-        store_query = re.sub(pattern=r"[^a-zA-Z0-9\såäö-]",
-                             repl="",
-                             string=str(request.args["query"]),
-                             flags=re.I | re.M)
-    except (TypeError, ValueError) as err:
-        logger.exception(err)
-        return redirect(url_for("main"))
-    if store_query not in ("", None):
-        parsed_data = parse_store_from_string(string=store_query)
-        if any(parsed_data):
-            if (store := session.get("store")) and parsed_data[0] is not None:
-                if store[0].lower() == parsed_data[0].lower():
-                    logger.debug("Store already in session, aborting query.")
-                    return redirect(url_for("main"))    
-            store_data = execute_store_search(query_data=parsed_data)
-            if not store_data:
-                logger.debug("Could not find the queried store.")
-                return redirect(url_for("main"))
-            session["store"] = store_data
-            logger.debug("Set %s as session store.", store_data)
-    return redirect(url_for("main"))
+        store_names=store_names)
 
 
 @app.route("/query/", methods=["GET"])
@@ -70,6 +43,48 @@ def query():
             session["products"] = products
             return {"products": products}
     return redirect(url_for("main"))
+
+
+@app.route("/add_store/", methods=["POST"])
+def add_store():
+    try:
+        store_query = re.sub(
+            pattern=r"[^a-zA-Z0-9\såäö-]",
+            repl="",
+            string=str(request.json["store"]),
+            flags=re.I | re.M)
+    except (TypeError, ValueError) as err:
+        logger.exception(err)
+        return redirect(url_for("main"))
+
+    if store_query not in ("", None):
+        parsed_data = parse_store_from_string(string=store_query)
+        if any(parsed_data):
+            store_data = execute_store_search(query_data=parsed_data)
+            if not store_data:
+                logger.debug("Could not find the queried store.")
+                return redirect(url_for("main"))
+
+            stores = session.get("stores", default=[])
+            if store_data not in stores:
+                stores.append(store_data)
+                logger.debug("Added %s into stores", store_data)
+            session["stores"] = stores
+    return {"stores": stores}
+
+
+@app.route("/remove_store/", methods=["POST"])
+def remove_store():
+    try:
+        index = int(request.json["index"])
+    except (KeyError, ValueError) as err:
+        logger.exception(err)
+        return redirect(url_for)
+    stores = session.get("stores", default=[])
+    item = stores[index]
+    stores.remove(item)
+    session["stores"] = stores
+    return {"stores": stores}
 
 
 @app.route("/add_query/", methods=["POST"])
