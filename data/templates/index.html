@@ -10,59 +10,49 @@
 {% endblock %}
 
 {%block content %}
-<div class="page">
-    <div class="store-container container">
-        <div class="store-msg-box">
-            <p class="store-msg">{{store}}</p>
-        </div>
-        <form id="store-form" action="{{url_for('get_store')}}">
-            <input class="field" type="text" placeholder="Store Name" name="query"></input>
-            <input class="btn" type="submit" value="Select store"></input>
-        </form>
-        <p>Example store: Prisma Olari 542862479</p>
+<nav>
+    <p>Navigation</p>
+</nav>
+<header>
+    <h1>Frugality</h1>
+    <div class="input-box">
+        <input id="store-input" class="field rounded" type="text" placeholder="Enter store name"></input>
+        <button class="btn rounded shadow" onclick="addStore()">+</button>
     </div>
-
-    <div class="queries-container container">
-        <div class="query-input-box">
-            <input id="query-input" class="field wide_field" type="text" placeholder="ex. Maito Laktoositon 1L"></input>
-            <button class="btn" onclick="addQuery()">+</button>
+    <ul class="horizontal-list stores-list">
+        {% for store in store_names %}
+        <li class="store-item">
+            <p class="store-msg rounded shadow">{{store}}</p>
+            <button onclick="removeStore({{loop.index0}})">-</button>
+        </li>
+        {% endfor %}
+    </ul>
+</header>
+<main>
+    <section class="section-1">
+        <h2>Product Search</h2>
+        <div class="input-box">
+            <input id="query-input" class="field rounded" type="text" placeholder="Enter product name"></input>
+            <button class="btn rounded" onclick="addQuery()">+</button>
         </div>
-        <ul class="list">
+        <ul class="vertical-list queries-list">
             {% for item in queries %}
-            <li class="query-item container">
+            <li class="query-item shadow rounded-more">
                 <div class="query-data">
                     <p class="count">{{item["count"]}}x</p>
                     <div class="item-text">
                         <p class="name">{{item["query"]}}</p>
                         <p class="category">{{item["category"]}}</p>
                     </div>
-                    <button class="btn" onclick="removeQuery({{loop.index0}})">-</button>
+                    <button class="btn rounded" onclick="removeQuery({{loop.index0}})">-</button>
                 </div>
             </li>
             {% endfor %}
         </ul>
-        <button class="btn" onclick="sendQuery()">Query Search</button>
-    </div>
-
-    <div class="products-container container">
-        <ul class="list">
-            {% for item in products %}
-            <li class="product-item container">
-                <div class="product-data">
-                    <p class="count">{{item["count"]}}x</p>
-                    <div class="item-text">
-                        <p class="name">{{item["name"]}}</p>
-                        <p class="category">{{item["category"]}}</p>
-                    </div>
-                    <div class="product-price-data">
-                        <p class="unit_price">{{item["unit_price"]}}€/kpl</p>
-                        <p class="comparison_price">{{item["comparison_price"]}}€/{{item["comparison_unit"]}}</p>
-                    </div>
-                    <button class="btn"></button>
-                </div>
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
-</div>
+        <button class="btn rounded" onclick="sendQuery()">Query Search</button>
+    </section>
+</main>
+<footer>
+    <p>Footer</p>
+</footer>
 {% endblock %}

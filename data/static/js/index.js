@@ -12,6 +12,24 @@ function sendQuery() {
     });
 }
 
+function addStore() {
+    let store = document.getElementById("store-input").value;
+    let fetchData = {
+        method: "post",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            store: store
+        })
+    }
+    fetch("/add_store/", fetchData).then(response => response.json())
+    .then(function(data) {
+        refreshStores(data["stores"]);
+    });
+}
+
 function addQuery() {
     let query = document.getElementById("query-input").value;
     let count = 1;
@@ -35,17 +53,48 @@ function addQuery() {
 }
 
 function refreshQueries(queries) {
-    const elements = document.getElementsByClassName("query-item container")
+    const elements = document.getElementsByClassName("query-item")
     while(elements.length > 0) {
         elements[0].parentNode.removeChild(elements[0]);
     }
-    let queryList = document.querySelector(".list");
+    let queryList = document.querySelector(".queries-list");
     for (let i = 0; i < queries.length; i++) {
         item = createQueryItem(queries[i], i);
         queryList.appendChild(item);
     }
 
 }
+
+function refreshStores(stores) {
+    const elements = document.getElementsByClassName("store-item");
+    while(elements.length > 0) {
+        elements[0].parentNode.removeChild(elements[0]);
+    }
+    let storesList = document.querySelector(".stores-list");
+    for (let i = 0; i < stores.length; i++) {
+        item = createStoreItem(stores[i], i);
+        storesList.appendChild(item);
+    }
+
+}
+
+function createStoreItem(tup, inx) {
+    let name = document.createElement("p");
+    name.classList.add("store-msg", "rounded", "shadow");
+    name.innerText = tup[0];
+    let btn = document.createElement("button");
+    btn.innerText = "-";
+    btn.onclick = function() {
+        removeStore(inx)
+    };
+    let li = document.createElement("li");
+    li.classList.add("store-item");
+    li.appendChild(name);
+    li.appendChild(btn);
+
+    return li
+}
+
 
 function createQueryItem(dict, inx) {
     let amount = document.createElement("p");
@@ -64,7 +113,7 @@ function createQueryItem(dict, inx) {
     textDiv.appendChild(category);
 
     let btn = document.createElement("button");
-    btn.classList.add("btn");
+    btn.classList.add("btn", "rounded-more");
     btn.innerText = "-";
     btn.onclick = function() {
         removeQuery(inx);
@@ -77,7 +126,7 @@ function createQueryItem(dict, inx) {
     queryItemData.appendChild(btn);
 
     let queryItem = document.createElement("div");
-    queryItem.classList.add("query-item", "container");
+    queryItem.classList.add("query-item", "rounded-more", "shadow");
     queryItem.appendChild(queryItemData);
 
     return queryItem;
@@ -97,5 +146,22 @@ function removeQuery(inx) {
     fetch("/remove_query/", fetchData).then(response => response.json())
     .then(function(data) {
         refreshQueries(data["queries"]);
+    });
+}
+
+function removeStore(inx) {
+    let fetchData = {
+        method: "post",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            index: inx
+        })
+    }
+    fetch("/remove_store/", fetchData).then(response => response.json())
+    .then(function(data) {
+        refreshStores(data["stores"]);
     });
 }
