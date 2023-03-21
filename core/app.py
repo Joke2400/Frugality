@@ -2,8 +2,8 @@ import asyncio
 import re
 
 from flask import redirect, url_for, render_template, request, session
-from utils import LoggerManager, timer
-from core import app  # Program structure needs to be slightly changed
+from utils import LoggerManager
+from core import flask_app as app  # Program structure needs to be slightly changed
 from .app_funcs import (
     execute_store_search,
     execute_store_product_search,
@@ -30,7 +30,6 @@ def main():
         store_names=store_names)
 
 
-@timer
 @app.route("/query/", methods=["GET"])
 async def query():
     if len(stores := session.get("stores", default=[])) == 0:
@@ -45,6 +44,7 @@ async def query():
                 store=store,
                 limit=20)))
     results = await asyncio.gather(*tasks)
+    print(results)
     return {"NOT_IMPLEMENTED": "NOT_IMPLEMENTED"}
 
 

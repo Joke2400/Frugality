@@ -1,8 +1,7 @@
-import asyncio
 import json
 from typing import Any
 
-from utils import timer, regex_search, regex_findall, LoggerManager
+from utils import regex_search, regex_findall, LoggerManager
 from api import api_fetch_products, api_fetch_store
 from .app_classes import ProductList
 
@@ -78,7 +77,6 @@ def parse_query_data(data: dict) -> dict | None:
     }
 
 
-@timer
 async def execute_store_product_search(
         query_data: list[dict],
         store: tuple[str, str],
@@ -90,10 +88,14 @@ async def execute_store_product_search(
         limit=limit)
     product_lists = []
     logger.debug("Creating ProductList(s) for %s items.", len(data))
-    for i in data:
+    for response, query_item in data:
+        if response is None:
+            logger.error(
+                "Cannot create ProductList, response was 'None'. Query: %s",
+                query_item["query"])
         products = ProductList(
-            response=json.loads(i[0].text),
-            query_item=i[1],
+            response=json.loads(response.text),
+            query_item=query_item,
             store=store)
         product_lists.append(products)
     return {store[0]: product_lists}
