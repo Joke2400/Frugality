@@ -15,7 +15,9 @@ asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 logger = lgm.get_logger(name=__name__)
 
 
+
 class Process:
+    '''THIS WHOLE THING IS SHODDY IGNORE IT'''
 
     def __init__(self):
         self.app = Flask(import_name="Frugality",

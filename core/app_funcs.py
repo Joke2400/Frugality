@@ -1,59 +1,13 @@
-from utils import timer, LoggerManager as lgm
-from core import ProductList
-from api import api_fetch_products, api_fetch_store
+import asyncio
+import json
 from typing import Any
 
-import json
-import asyncio
-import re
-
-logger = lgm.get_logger(name=__name__)
+from utils import timer, regex_search, regex_findall, LoggerManager
+from api import api_fetch_products, api_fetch_store
+from .app_classes import ProductList
 
 
-def regex_search(pattern: str, string: str
-                 ) -> re.Match[str] | None:
-    """Scan through a string and return a single RegEx match.
-
-    Returns a Match object if a match is found,
-    returns None in other cases.
-
-    Args:
-        pattern (str): RegEx pattern as a raw string.
-        string (str): String to be matched against
-
-    Returns:
-        re.Match[str] | None: Returns either a Match object or None
-    """
-    result = re.search(
-        pattern=pattern,
-        string=string,
-        flags=re.I | re.M)
-    logger.debug(
-        "regex_search(): %s original: '%s'", result, string)
-    return result
-
-
-def regex_findall(pattern: str, string: str
-                  ) -> list | None:
-    """Scan through a string and return multiple RegEx matches.
-
-    Args:
-        pattern (str): RegEx pattern as a raw string.
-        string (str): String to be matched against
-
-    Returns:
-        list | None: Returns either a list, or None if there
-        were no matches to pattern.
-    """
-    result = re.findall(
-        pattern=pattern,
-        string=string,
-        flags=re.I | re.M)
-    logger.debug(
-        "regex_findall(): %s original: '%s'", result, string)
-    if len(result) > 0:
-        return result
-    return None
+logger = LoggerManager.get_logger(name=__name__)
 
 
 def get_quantity_from_string(string: str) -> tuple[int, str] | None:
@@ -85,6 +39,16 @@ def get_quantity_from_string(string: str) -> tuple[int, str] | None:
 
 
 def parse_query_data(data: dict) -> dict | None:
+    """Take in a dict, parse and format query data from it.
+
+    Args:
+        data (dict): Dict containing 'query', 'count' and
+        'category' keys (str, int, str).
+
+    Returns:
+        dict | None: If query can be parsed, returns dict
+        fields. Otherwise it returns 'None'.
+    """
     try:
         query = str(data["query"]).strip()
         if query == "":
@@ -115,22 +79,24 @@ def parse_query_data(data: dict) -> dict | None:
 
 
 @timer
-def execute_product_search(query_data: list[dict],
-                           store: tuple[str, str],
-                           limit: int = 24) -> list[ProductList]:
-    logger.debug("Running product search...")
-    data = asyncio.run(api_fetch_products(
+async def execute_store_product_search(
+        query_data: list[dict],
+        store: tuple[str, str],
+        limit: int = 24) -> dict[str, list[ProductList]]:
+    logger.debug("Running product search for store '%s'.", store[0])
+    data = await api_fetch_products(
         store_id=store[1],
         queries=query_data,
-        limit=limit))
+        limit=limit)
     product_lists = []
+    logger.debug("Creating ProductList(s) for %s items.", len(data))
     for i in data:
         products = ProductList(
             response=json.loads(i[0].text),
             query_item=i[1],
             store=store)
         product_lists.append(products)
-    return product_lists
+    return {store[0]: product_lists}
 
 
 def parse_store_from_string(string: str) -> tuple[str | None, str | None]:

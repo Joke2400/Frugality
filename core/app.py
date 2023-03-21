@@ -1,15 +1,17 @@
-from flask import redirect, url_for, render_template, request, session
-from core import (
-    app,
-    execute_product_search,
-    parse_store_from_string,
-    parse_query_data,
-    execute_store_search
-)
-from utils import LoggerManager as lgm
+import asyncio
 import re
 
-logger = lgm.get_logger(name=__name__)
+from flask import redirect, url_for, render_template, request, session
+from utils import LoggerManager, timer
+from core import app  # Program structure needs to be slightly changed
+from .app_funcs import (
+    execute_store_search,
+    execute_store_product_search,
+    parse_store_from_string,
+    parse_query_data
+)
+
+logger = LoggerManager.get_logger(name=__name__)
 
 
 @app.route("/", methods=["GET"])
@@ -22,27 +24,28 @@ def main():
         for i in stores:
             store_names.append(i[0])
     return render_template(
-        "search.html",
+        "index.html",
         queries=queries,
         products=products,
         store_names=store_names)
 
 
+@timer
 @app.route("/query/", methods=["GET"])
-def query():
-    if (store := session.get("store")):
-        if queries := session.get("queries"):
-            product_lists = execute_product_search(
+async def query():
+    if len(stores := session.get("stores", default=[])) == 0:
+        return redirect(url_for("main"))
+    if len(queries := session.get("queries", default=[])) == 0:
+        return redirect(url_for("main"))
+    tasks = []
+    for store in stores:
+        tasks.append(asyncio.create_task(
+            execute_store_product_search(
                 query_data=queries,
                 store=store,
-                limit=20)
-            products = []
-            for i in product_lists:
-                if (cheapest := i.cheapest_item) is not None:
-                    products.append(cheapest.dictify())
-            session["products"] = products
-            return {"products": products}
-    return redirect(url_for("main"))
+                limit=20)))
+    results = await asyncio.gather(*tasks)
+    return {"NOT_IMPLEMENTED": "NOT_IMPLEMENTED"}
 
 
 @app.route("/add_store/", methods=["POST"])
