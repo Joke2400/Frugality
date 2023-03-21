@@ -1,9 +1,8 @@
 import asyncio
 import re
 
-from flask import redirect, url_for, render_template, request, session
-from utils import LoggerManager
-from core import flask_app as app  # Program structure needs to be slightly changed
+from flask import redirect, url_for, render_template, request, session, Blueprint
+from utils import LoggerManager, Paths
 from .app_funcs import (
     execute_store_search,
     execute_store_product_search,
@@ -12,7 +11,9 @@ from .app_funcs import (
 )
 
 logger = LoggerManager.get_logger(name=__name__)
-
+app = Blueprint(
+    name="Frugality",
+    import_name=__name__)
 
 @app.route("/", methods=["GET"])
 def main():

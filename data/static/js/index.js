@@ -116,7 +116,7 @@ function createQueryItem(dict, inx) {
     btn.classList.add("btn", "rounded-more");
     btn.innerText = "-";
     btn.onclick = function() {
-        removeQuery(inx);
+        removeProductQuery(inx);
     }
 
     let queryItemData = document.createElement("div");

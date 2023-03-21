@@ -1,12 +1,14 @@
-from core import process
+from core import flask_app as app
 
 if __name__ == "__main__":
-    process.start(debug=False, reset=False)
+    # VERY IMPORTANT: APP SECRET KEY IS SET TO HARDCODED DEFAULT
+    # IMPORT KEY FROM .TXT FILE BEFORE HOSTING
+    app.run(debug=True)
 
     # TODO: Put these todos in my notebook...
     # TODO: Product filtering functionality (not present)
     # TODO: Database for caching purposes
-    # TODO: Security considerations, private key, potential gmaps key etc etc
+    # TODO: Security con<siderations, private key, potential gmaps key etc etc
     # TODO: Tests are in an even more worthless state than before...
     # TODO: Change the logic of LoggerManager so that __init__.py doesn't
     # need it's own call to LoggerManager before the module loggers

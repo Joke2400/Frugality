@@ -4,7 +4,7 @@ from httpx import Client, AsyncClient, Response, HTTPError, RequestError
 
 from data.urls import SKaupatURLs as S_urls
 from utils import LoggerManager
-from api import s_queries
+from .graphql_queries import queries as graphql_queries
 
 logger = LoggerManager.get_logger(name=__name__)
 query_logger = LoggerManager.get_logger(name="query", level=20)
@@ -94,7 +94,7 @@ def api_fetch_store(query_data: tuple[str | None, str | None]
                 f"api_store_query() was given an invalid value: {query_data}")
 
     operation, variables = data
-    query = s_queries[operation]
+    query = graphql_queries[operation]
     params = {
         "query": query,
         "variables": variables,
@@ -185,7 +185,7 @@ async def api_fetch_products(queries: list[dict],
     """
     tasks = []
     operation = "GetProductByName"
-    query_string = s_queries[operation]
+    query_string = graphql_queries[operation]
     logger.debug("Creating tasks for StoreID: '%s'", store_id)
     for inx, item in enumerate(queries):
         logger.debug(
