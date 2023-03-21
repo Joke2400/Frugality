@@ -33,6 +33,10 @@ def main():
 
 @app.route("/product_query/", methods=["GET"])
 async def product_query():
+    """Query stores list with stored product queries.
+
+    TODO: rest of this docstring
+    """
     if len(stores := session.get("stores", default=[])) == 0:
         return redirect(url_for("main"))
     if len(queries := session.get("queries", default=[])) == 0:
