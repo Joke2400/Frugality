@@ -51,6 +51,16 @@ async def product_query():
 
 @app.route("/add_store/", methods=["POST"])
 def add_store():
+    """Add a store to the (session) store list.
+
+    Takes in a string as a JSON key.
+    Given string gets parsed, queried and then validated
+    before being added to stores list if not already present.
+
+    Returns:
+        Dict with a single key-value pair. Value of returned
+        dict key is a list of stores in user session.
+    """
     try:
         store_query = re.sub(
             pattern=r"[^a-zA-Z0-9\såäö-]",
@@ -79,6 +89,15 @@ def add_store():
 
 @app.route("/remove_store/", methods=["POST"])
 def remove_store():
+    """Remove a store from the (session) store list.
+
+    Takes in an index (int) as a JSON key.
+    The index is used to remove the store from the list.
+
+    Returns:
+        Dict with a single key-value pair. Value of returned
+        dict key is a list of stores in user session.
+    """
     try:
         index = int(request.json["index"])
     except (KeyError, ValueError) as err:
@@ -93,6 +112,18 @@ def remove_store():
 
 @app.route("/add_query/", methods=["POST"])
 def add_query():
+    """Add a query to the (session) query list.
+
+    Takes in a JSON dict.
+    Given dict gets parsed and added to queries if an
+    identical query does not already exist in list.
+    If this is the case, the 'count' variables of both
+    queries get added together.
+
+    Returns:
+        Dict with a single key-value pair. Value of returned
+        dict key is a list of queries in user session.
+    """
     queries = session.get("queries", default=[])
     if (query_dict := parse_query_data(request.json)):
         in_list = False
@@ -113,6 +144,15 @@ def add_query():
 
 @app.route("/remove_query/", methods=["POST"])
 def remove_query():
+    """Remove a query from the (session) query list.
+
+    Takes in an index (int) as a JSON key.
+    The index is used to remove the query from the list.
+
+    Returns:
+        Dict with a single key-value pair. Value of returned
+        dict key is a list of queries in user session.
+    """
     try:
         index = int(request.json["index"])
     except (KeyError, ValueError) as err:
