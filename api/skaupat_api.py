@@ -161,6 +161,12 @@ def get_store_by_name(query_data: tuple[str, None] | tuple[str, str]
     return (operation, variables)
 
 
+async def async_product_search(item: dict, **kwargs):
+    """Return query item with Response when calling async_post_request."""
+    result = await async_post_request(**kwargs)
+    return result, item
+
+
 async def api_fetch_products(queries: list[dict],
                              store_id: str,
                              limit: int = 24
@@ -180,6 +186,7 @@ async def api_fetch_products(queries: list[dict],
     tasks = []
     operation = "GetProductByName"
     query_string = s_queries[operation]
+    logger.debug("Creating tasks for StoreID: '%s'", store_id)
     for inx, item in enumerate(queries):
         logger.debug(
             "Query: '%s' Category: '%s' @ list index: %s",
@@ -196,6 +203,8 @@ async def api_fetch_products(queries: list[dict],
         }
         log_str = f"Operation: '{operation}' Product query: '{item['query']}'"
         tasks.append(asyncio.ensure_future(
-            async_post_request(url=API_URL, params=params, log_str=log_str)))
-    logger.debug("Final length of tasks: %s", len(tasks))
+            async_product_search(item, url=API_URL, params=params,
+                                 log_str=log_str)))
+
+    logger.debug("Length of tasks: %s", len(tasks))
     return await asyncio.gather(*tasks)
