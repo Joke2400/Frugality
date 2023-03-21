@@ -33,7 +33,7 @@
         <h2>Product Search</h2>
         <div class="input-box">
             <input id="query-input" class="field rounded" type="text" placeholder="Enter product name"></input>
-            <button class="btn rounded" onclick="addQuery()">+</button>
+            <button class="btn rounded" onclick="addProductQuery()">+</button>
         </div>
         <ul class="vertical-list queries-list">
             {% for item in queries %}
@@ -44,12 +44,12 @@
                         <p class="name">{{item["query"]}}</p>
                         <p class="category">{{item["category"]}}</p>
                     </div>
-                    <button class="btn rounded" onclick="removeQuery({{loop.index0}})">-</button>
+                    <button class="btn rounded" onclick="removeProductQuery({{loop.index0}})">-</button>
                 </div>
             </li>
             {% endfor %}
         </ul>
-        <button class="btn rounded" onclick="sendQuery()">Query Search</button>
+        <button class="btn rounded" onclick="sendProductQuery()">Query Search</button>
     </section>
 </main>
 <footer>

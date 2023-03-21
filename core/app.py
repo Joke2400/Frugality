@@ -16,6 +16,7 @@ logger = LoggerManager.get_logger(name=__name__)
 
 @app.route("/", methods=["GET"])
 def main():
+    """Return a WSGI template for the main page."""
     queries = session.get("queries", default=[])
     products = session.get("products", default=[])
     stores = session.get("stores", default=[])
@@ -30,8 +31,8 @@ def main():
         store_names=store_names)
 
 
-@app.route("/query/", methods=["GET"])
-async def query():
+@app.route("/product_query/", methods=["GET"])
+async def product_query():
     if len(stores := session.get("stores", default=[])) == 0:
         return redirect(url_for("main"))
     if len(queries := session.get("queries", default=[])) == 0:

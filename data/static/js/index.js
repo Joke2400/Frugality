@@ -1,12 +1,12 @@
 
-function sendQuery() {
+function sendProductQuery() {
     let fetchData = {
         method: "GET",
         headers: {
             "Accept": "application/json"
         }
     }
-    fetch("/query/", fetchData).then(response => response.json())
+    fetch("/product_query/", fetchData).then(response => response.json())
     .then(function() {
         location.reload();
     });
@@ -30,7 +30,7 @@ function addStore() {
     });
 }
 
-function addQuery() {
+function addProductQuery() {
     let query = document.getElementById("query-input").value;
     let count = 1;
     let category = "";
@@ -132,7 +132,7 @@ function createQueryItem(dict, inx) {
     return queryItem;
 }
 
-function removeQuery(inx) {
+function removeProductQuery(inx) {
     let fetchData = {
         method: "post",
         headers: {
