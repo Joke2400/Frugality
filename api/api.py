@@ -1,9 +1,14 @@
+"""Contains functions for interfacing with api."""
+
 import asyncio
 import json
-from httpx import Client, AsyncClient, Response, HTTPError, RequestError
 
-from data.urls import SKaupatURLs as S_urls
+from httpx import Client, AsyncClient
+from httpx import HTTPError, RequestError
+from httpx import Response
+
 from utils import LoggerManager
+from data.urls import SKaupatURLs as S_urls
 from .graphql_queries import queries as graphql_queries
 
 logger = LoggerManager.get_logger(name=__name__)

@@ -1,19 +1,20 @@
+"""Main file for Flask app, contains all the app routes."""
+
 import asyncio
 import re
+from flask import redirect, url_for, render_template
+from flask import request, session, Blueprint
 
-from flask import redirect, url_for, render_template, request, session, Blueprint
-from utils import LoggerManager, Paths
-from .app_funcs import (
-    execute_store_search,
-    execute_store_product_search,
-    parse_store_from_string,
-    parse_query_data
-)
+from utils import LoggerManager
+from .app_funcs import execute_store_search
+from .app_funcs import execute_store_product_search
+from .app_funcs import parse_store_from_string
+from .app_funcs import parse_query_data
+
 
 logger = LoggerManager.get_logger(name=__name__)
-app = Blueprint(
-    name="Frugality",
-    import_name=__name__)
+app = Blueprint(name="Frugality", import_name=__name__)
+
 
 @app.route("/", methods=["GET"])
 def main():
@@ -46,7 +47,7 @@ async def product_query():
     for store in stores:
         tasks.append(asyncio.create_task(
             execute_store_product_search(
-                query_data=queries,
+                queries=queries,
                 store=store,
                 limit=20)))
     results = await asyncio.gather(*tasks)

@@ -1,8 +1,13 @@
+"""Contains functions for core app functionality."""
+
 import json
 from typing import Any
 
-from utils import regex_search, regex_findall, LoggerManager
-from api import api_fetch_products, api_fetch_store
+from utils import regex_search
+from utils import regex_findall
+from utils import LoggerManager
+from api import api_fetch_products
+from api import api_fetch_store
 from .app_classes import ProductList
 
 
@@ -78,13 +83,26 @@ def parse_query_data(data: dict) -> dict | None:
 
 
 async def execute_store_product_search(
-        query_data: list[dict],
+        queries: list[dict],
         store: tuple[str, str],
         limit: int = 24) -> dict[str, list[ProductList]]:
+    """Run product search for a given store.
+
+    Args:
+        queries (list[dict]): List of queries to query.
+        store (tuple[str, str]): Store name and ID as a tuple.
+        limit (int, optional): Limit for amount of products to retrieve.
+        Defaults to 24.
+
+    Returns:
+        dict[str, list[ProductList]]: Returns a dict with a single key-value
+        pair. Key is the name of the store queried. Value for the key is a
+        list of ProductList(s).
+    """
     logger.debug("Running product search for store '%s'.", store[0])
     data = await api_fetch_products(
         store_id=store[1],
-        queries=query_data,
+        queries=queries,
         limit=limit)
     product_lists = []
     logger.debug("Creating ProductList(s) for %s items.", len(data))

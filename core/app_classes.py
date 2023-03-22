@@ -1,7 +1,12 @@
-from dataclasses import dataclass, field
+"""Contains classes for storing retrieved data."""
+
+from dataclasses import dataclass
+from dataclasses import field
 from typing import Generator
 from utils import LoggerManager
-import core
+
+from .app_funcs import get_quantity_from_string
+
 
 logger = LoggerManager.get_logger(name=__name__)
 
@@ -136,7 +141,7 @@ class ProductList:
         """
         try:
             quantity, unit = None, None
-            if (data := core.get_quantity_from_string(
+            if (data := get_quantity_from_string(
                     string=item["name"])) is not None:
                 quantity, unit = data
             product_item = ProductItem(
