@@ -7,10 +7,11 @@ from flask_sqlalchemy import SQLAlchemy
 from utils import LoggerManager
 from utils import Paths
 
-from .app import app as app_blueprint
-
+# Cant be moved lower yet because LoggerManager needs a logic change
 logger = LoggerManager.get_logger(name=__name__, stream=True)
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
+from .app import app as app_blueprint
 
 flask_app = Flask(import_name="Frugality",
                   template_folder=Paths.templates(),

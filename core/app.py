@@ -48,10 +48,13 @@ async def product_query():
         tasks.append(asyncio.create_task(
             execute_store_product_search(
                 queries=queries,
-                store=store,
-                limit=20)))
+                store=store)))
     results = await asyncio.gather(*tasks)
-    print(results)
+    for item in results:
+        for key, value in item.items():
+            print(key)
+            for product in value:
+                print(product.cheapest_item)
     return {"NOT_IMPLEMENTED": "NOT_IMPLEMENTED"}
 
 

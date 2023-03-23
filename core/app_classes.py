@@ -3,9 +3,9 @@
 from dataclasses import dataclass
 from dataclasses import field
 from typing import Generator
-from utils import LoggerManager
 
-from .app_funcs import get_quantity_from_string
+import core
+from utils import LoggerManager
 
 
 logger = LoggerManager.get_logger(name=__name__)
@@ -39,8 +39,6 @@ class ProductItem:
     comparison_unit: str
     comparison_price: int | float
     unit_price: int | float
-    label_quantity: int | None
-    label_unit: str | None
 
     @property
     def total_price(self) -> int | float:
@@ -57,10 +55,12 @@ class ProductItem:
             "store": self.store,
             "comparison_unit": self.comparison_unit,
             "comparison_price": self.comparison_price,
-            "unit_price": self.unit_price,
-            "label_quantity": self.label_quantity,
-            "label_unit": self.label_unit
+            "unit_price": self.unit_price
         }
+
+    def __str__(self) -> str:
+        """Return name and price/unit of item."""
+        return f"{self.name} {self.comparison_price}€{self.comparison_unit}"
 
 
 @dataclass(slots=True)
@@ -140,10 +140,6 @@ class ProductList:
             ProductItem | None: Returns None if a KeyError is raised.
         """
         try:
-            quantity, unit = None, None
-            if (data := get_quantity_from_string(
-                    string=item["name"])) is not None:
-                quantity, unit = data
             product_item = ProductItem(
                 name=item["name"],
                 count=self.query_item["count"],
@@ -152,9 +148,7 @@ class ProductList:
                 store=self.store,
                 comparison_unit=convert_unit(item["comparisonUnit"]),
                 comparison_price=item["comparisonPrice"],
-                unit_price=item["price"],
-                label_quantity=quantity,
-                label_unit=unit)
+                unit_price=item["price"])
         except KeyError as err:
             logger.exception(err)
             return None

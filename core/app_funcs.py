@@ -3,8 +3,8 @@
 import json
 from typing import Any
 
-from utils import regex_search
 from utils import regex_findall
+from utils import get_quantity_from_string
 from utils import LoggerManager
 from api import api_fetch_products
 from api import api_fetch_store
@@ -12,34 +12,6 @@ from .app_classes import ProductList
 
 
 logger = LoggerManager.get_logger(name=__name__)
-
-
-def get_quantity_from_string(string: str) -> tuple[int, str] | None:
-    """Get a quantity from a given string.
-
-    Returns a tuple containing the quantity as an integer.
-    And the unit of the extracted quantity as a string.
-    Units are ex: l, dl, cl, ml, kg, g, mg
-
-    Args:
-        string (str): String to be matched against.
-
-    Returns:
-        tuple[int, str] | None: Only returns a tuple if both
-        matches are found and are valid. Otherwise returns None.
-    """
-    result = regex_search(r"(\d+)\s?(l|dl|cl|ml|kg|g|mg)", string)
-    if result is not None:
-        if result not in (None, ""):
-            try:
-                values = (int(result.group(1)), result.group(2))
-                logger.debug(
-                    "Retrieved values %s from string: %s", values, string)
-                return values
-            except ValueError:
-                logger.exception("Could not convert to int: %s", result[0])
-    logger.debug("Could not extract quantity from string: %s", string)
-    return None
 
 
 def parse_query_data(data: dict) -> dict | None:
