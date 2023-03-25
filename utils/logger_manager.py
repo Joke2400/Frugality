@@ -1,7 +1,8 @@
-from typing import Dict
-from pathlib import Path
-import logging
 import os
+import logging
+from pathlib import Path
+
+from .project_paths import ProjectPaths
 
 
 class LoggerManager:
@@ -13,177 +14,191 @@ class LoggerManager:
     'configure' classmethod. If this is not done, LoggerManager will
     create a new 'logs' directory in the current working directory.
     """
-    directory_loggers: Dict[str, logging.Logger] = {}
-    logs_path: Path | str = Path.cwd() / "logs"
-    root_log_path: Path = Path.cwd() / "logs" / "root.log"
+    directory_loggers: dict[str, logging.Logger] = {}
+    logs_dir_path: Path = ProjectPaths.logs()
+    root_log_path: Path = ProjectPaths.logs() / "root.log"
     keep_logs: bool = False
-    basic_formatter = logging.Formatter(
+    configured: bool = False
+    default_format = logging.Formatter(
         fmt="(%(asctime)s) [%(levelname)s] ['%(name)s']: %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S")
 
     @classmethod
-    def configure(cls, logs_path: Path | str, keep_logs: bool = False):
-        """
-        Configure the LoggerManager with a logs folder path
-        and optionally with whether or not you want to keep logs
-        from previous runs.
-
-        Creates a new 'logs' directory in the current working directory
-        if the given path is of an invalid type.
-
-        Logs are not kept by default.
-        """
-
-        if isinstance(keep_logs, bool):
-            cls.keep_logs = keep_logs
-        else:
-            raise TypeError(
-                "keep_logs needs to be of type: bool")
+    def configure_defaults(
+            cls,
+            logs_path: Path | str | None = None,
+            keep_logs: bool = True):
         try:
-            cls.logs_path = Path(logs_path)
-        except TypeError:
-            cls.logs_path = Path.cwd() / "logs"
+            cls.keep_logs = bool(keep_logs)
+        except ValueError:
+            cls.keep_logs = True
+
+        if logs_path:
             try:
-                os.mkdir(cls.logs_path)
-            except PermissionError:
-                raise PermissionError
-            except FileExistsError:
-                pass
-
-        cls.root_log_path = cls._get_log_path(log_name="root.log")
-        sh = logging.StreamHandler()
-        sh.setLevel(logging.INFO)
-        sh.setFormatter(cls.basic_formatter)
-
-        logging.basicConfig(
-            level=logging.DEBUG,
-            handlers=[sh])
+                cls.logs_dir_path = Path(logs_path)
+            except TypeError:
+                cls.logs_dir_path = Path.cwd() / "logs"
+        if not cls.logs_dir_path.exists():
+            try:
+                os.mkdir(cls.logs_dir_path)
+            except PermissionError as err:
+                logging.exception(err)
 
         if not cls.keep_logs:
             cls._remove_log_file(path=cls.root_log_path)
 
-        fh = logging.FileHandler(cls.root_log_path)
-        fh.setLevel(logging.DEBUG)
-        fh.setFormatter(cls.basic_formatter)
-        logging.getLogger().addHandler(fh)
+        root_logger = logging.getLogger()
+        root_logger.setLevel(logging.DEBUG)
+        for handler in root_logger.handlers:
+            root_logger.removeHandler(handler)
+
+        # create StreamHandler object for console output
+        stream_h = logging.StreamHandler()
+        stream_h.setLevel(logging.INFO)
+        stream_h.setFormatter(cls.default_format)
+
+        # create FileHandler object for file output
+        file_h = logging.FileHandler(cls.root_log_path)
+        file_h.setLevel(logging.DEBUG)
+        file_h.setFormatter(cls.default_format)
+
+        # add new handlers to root logger
+        root_logger.addHandler(stream_h)
+        root_logger.addHandler(file_h)
+        cls.configured = True
+        logging.debug("Configured root logger.")
 
     @classmethod
-    def get_logger(cls, name: str, level: int = logging.INFO,
-                   fmt: str = None, datefmt: str = None,
-                   stream: bool = False, file: bool = True) -> logging.Logger:
-        """
-        Returns a top-level-directory logger, or creates it if it does
-        not exist. Passing in the result of a __name__ call returns
-        the corresponding child logger if a top-level-directory logger
-        already exists.
-        """
-        if isinstance(name, str):
-            module_name = name.split(".")[0]  # Get name of top-level module
-            if module_name == "root" or module_name == "":
+    def get_logger(cls, name: str,
+                   formatter: logging.Formatter | None = None,
+                   path: Path | str | None = None,
+                   level: int = logging.INFO,
+                   keep_logs: bool = False) -> logging.Logger:
+        if formatter is None:
+            formatter = cls.default_format
+        if path is None:
+            path = cls.logs_dir_path
+        if not cls.configured:
+            cls.configure_defaults(logs_path=path, keep_logs=keep_logs)
+        try:
+            dir_name = name.split(".")[0]  # Get name of top-level module
+            if dir_name in (""):
                 raise ValueError(
-                    "Top-level module name cannot be 'root' or ''")
-        else:
-            raise TypeError("'name' attr must be of type: (str)")
-        formatter = None
-        if fmt is not None and datefmt is not None:
-            formatter = logging.Formatter(fmt=fmt, datefmt=datefmt)
+                    f"Top-Level module name was invalid. {dir_name}")
+        except (ValueError, TypeError) as err:
+            logging.debug(err)
+            dir_name = "root"
 
         try:
-            # Get directory logger,
-            logging.debug(
-                f"Directory loggers: {cls.directory_loggers}")
-            dir_logger = cls.directory_loggers[module_name]
-            logging.debug(
-                f"Searched for and found logger '{module_name}' " +
-                "in loggers dict.")
-            name = name.replace(f"{module_name}.", "")
-            logging.debug(
-                f"Creating new child of logger '{module_name}', " +
-                f"with name: '{name}'")
-            logger = dir_logger.getChild(name)
-            logger.setLevel(logging.DEBUG)  # Base level is always debug.
-            logging.debug(
-                f"Created logger: '{logger.name}'\n")
-            return logger
-
+            dir_logger = cls.directory_loggers[dir_name]
+            logging.debug("Found directory logger: '%s'", dir_logger.name)
+            return cls.create_child_logger(dir_logger=dir_logger,
+                                           child_name=name)
         except KeyError:
-            logging.debug(
-                f"Directory logger '{module_name}' " +
-                "was not found in loggers dict.")
-            logger = logging.getLogger(module_name)
-            logger.setLevel(logging.DEBUG)  # Base level is always debug.
-            logger.propagate = False
-            cls._configure_logger(logger=logger, name=logger.name,
-                                  level=level, formatter=formatter,
-                                  stream=stream, file=file)
-            cls.directory_loggers[logger.name] = logger
-            logging.debug(
-                f"Created directory logger: '{logger.name}'\n")
+            logging.debug("Directory logger '%s' not found.", dir_name)
+            dir_logger = cls.create_dir_logger(
+                dir_name=dir_name,
+                formatter=formatter,
+                level=level,
+                stream=True)
+            if len(name.split(".")) > 1:
+                logging.debug(
+                    "Creating child for newly created directory logger")
+                return cls.create_child_logger(dir_logger=dir_logger,
+                                               child_name=name)
+            return dir_logger
+
+    @classmethod
+    def create_child_logger(cls, dir_logger: logging.Logger,
+                            child_name: str) -> logging.Logger:
+        """Create a child logger for the given directory logger."""
+        name = child_name.replace(f"{dir_logger.name}.", "")
+        child_logger = dir_logger.getChild(name)
+        child_logger.setLevel(logging.DEBUG)
+        logging.debug("Created logger: '%s'", child_logger.name)
+        return child_logger
+
+    @classmethod
+    def create_dir_logger(cls, dir_name: str,
+                          level: int = logging.INFO,
+                          stream: bool = False,
+                          formatter: logging.Formatter = None
+                          ) -> logging.Logger:
+        """Create a directory-level logger that logs to a file.
+
+        Level and stream attributes only apply to logger streamhandler.
+        If no formatter is provided, uses default formatting.
+        """
+        logger = logging.getLogger(dir_name)
+        logger.setLevel(logging.DEBUG)
+        logger.propagate = False
+        cls._configure_logger(logger=logger, formatter=formatter,
+                              level=level, stream=stream)
+        cls.directory_loggers[logger.name] = logger
+        logging.debug("Created new directory logger: '%s'", logger.name)
         return logger
 
     @classmethod
-    def _configure_logger(cls, logger: logging.Logger, name: str,
+    def _configure_logger(cls, logger: logging.Logger,
+                          formatter: logging.Formatter | None,
                           level: int = logging.INFO,
-                          formatter: logging.Formatter = None,
-                          stream: bool = False, file: bool = True) -> None:
-        """
-        Configures the directory logger with stream and filehandlers
-        based on given boolean values.
+                          stream: bool = False) -> None:
+        """Configure logger handlers based on given parameters.
+
+        Streamhandler is added if 'stream' is set to True. 'level' attribute
+        only applies to streamhandler. Filehandler is always set to debug.
         """
         if formatter is None:
-            formatter = cls.basic_formatter
-            logging.debug(
-                f"Adding basic formatter to '{name}'.")
-        else:
-            logging.debug(
-                f"Adding custom formatter to '{name}'.")
+            formatter = cls.default_format
 
         if stream:
-            sh = logging.StreamHandler()
-            sh.setFormatter(formatter)
-            sh.setLevel(level)  # Stream log level is always self.level
-            logger.addHandler(sh)
-            logging.debug(
-                f"Added streamhandler to '{name}'.")
+            s_handler = logging.StreamHandler()
+            s_handler.setFormatter(formatter)
+            s_handler.setLevel(level)
+            logger.addHandler(s_handler)
+            logging.debug("Streamhandler added to: '%s'", logger.name)
 
-        if file:
-            log_path = cls._get_log_path(log_name=f"{name}.log")
+        log_path = cls._get_log_path(name=f"{logger.name}.log")
+        if log_path:
             if not cls.keep_logs:
                 cls._remove_log_file(path=log_path)
 
-            fh = logging.FileHandler(log_path)
-            fh.setFormatter(formatter)
-            fh.setLevel(logging.DEBUG)  # File log level is always debug
-            logger.addHandler(fh)
-            logging.debug(
-                f"Added filehandler to '{name}'.")
+            f_handler = logging.FileHandler(filename=log_path)
+            f_handler.setFormatter(formatter)
+            f_handler.setLevel(logging.DEBUG)
+            logger.addHandler(f_handler)
+        logging.debug("Configured logger: '%s'", logger.name)
 
     @classmethod
-    def _get_log_path(cls, log_name: str):
-        """
-        Returns complete path to the log file for a given log name.
-        """
-        if isinstance(cls.logs_path, Path):
-            log_path = cls.logs_path / log_name
-        else:
-            raise TypeError(
-                "logs_path is not of instance: pathlib.Path")
+    def _get_log_path(cls, name: str) -> Path | None:
+        """Create a complete path to log file in logs directory."""
+        try:
+            log_path = cls.logs_dir_path / name
+        except (ValueError, TypeError) as err:
+            logging.exception(err)
+            return None
         return log_path
 
     @classmethod
-    def _remove_log_file(cls, path: Path, root=False):
-        """
-        Attempts to remove a log file at the given path,
-        logs the result into the root logger
+    def _remove_log_file(cls, path: Path) -> bool:
+        """Try to remove a log file at the given Path.
+
+        If file was removed, or if file was not found, return True
+        Return False if file could not be deleted due to an error.
         """
         try:
-            os.remove(path)
-            logging.debug(
-                f"Deleted log file at: '{path}'.")
+            path.unlink()
         except FileNotFoundError:
             logging.debug(
-                f"Log file was not found at: '{path}'.")
+                "Could not find log file to remove: '%s'", path)
+            return True
         except PermissionError:
             logging.debug(
-                f"Permission denied for log file at: '{path}' " +
-                " Unable to delete.")
+                "(Permission denied) Could not remove log file: '%s'", path)
+            return False
+        except OSError as err:
+            logging.exception(err)
+            return False
+        logging.debug(
+            "Removed log file at: '%s'", path)
+        return True

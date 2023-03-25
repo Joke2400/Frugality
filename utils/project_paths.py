@@ -2,7 +2,7 @@ from pathlib import Path
 from os import getlogin
 
 
-class Paths:
+class ProjectPaths:
 
     project = Path(f"C:\\Users\\{getlogin()}\\Desktop\\Frugality")
     google_key = Path(f"C:\\Users\\{getlogin()}\\Documents\\g_cloud_api.txt")

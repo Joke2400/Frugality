@@ -5,23 +5,21 @@ from datetime import timedelta
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from utils import LoggerManager
-from utils import Paths
-
-# Cant be moved lower yet because LoggerManager needs a logic change
-logger = LoggerManager.get_logger(name=__name__, stream=True)
-asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-
+from utils import ProjectPaths
 from .app import app as app_blueprint
 
+asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+logger = LoggerManager.get_logger(name=__name__)
+
 flask_app = Flask(import_name="Frugality",
-                  template_folder=Paths.templates(),
-                  static_folder=Paths.static())
+                  template_folder=ProjectPaths.templates(),
+                  static_folder=ProjectPaths.static())
 flask_app.register_blueprint(app_blueprint)
 
 # Temporary settings as it's not a priority
 SECRET_KEY = "TEMPORARY"
 LIFETIME = timedelta(days=1)
-DB_PATH = Paths.test_database()
+DB_PATH = ProjectPaths.test_database()
 KEEP_TRACK = True
 
 flask_app.secret_key = SECRET_KEY
