@@ -8,6 +8,7 @@ from flask import request, session, Blueprint
 from utils import LoggerManager
 
 from .orm import DataManager as Manager
+from .orm import Store
 from .app_funcs import execute_store_search
 from .app_funcs import execute_store_product_search
 from .app_funcs import parse_store_from_string
@@ -61,7 +62,7 @@ async def product_query():
 
 
 @app.route("/add_store/", methods=["POST"])
-def add_store():
+def add_store_record():
     """Add a store to the (session) store list.
 
     Takes in a string as a JSON key.
@@ -73,33 +74,41 @@ def add_store():
         dict key is a list of stores in user session.
     """
     try:
-        store_query = re.sub(
+        s_query = re.sub(
             pattern=r"[^a-zA-Z0-9\såäö-]",
             repl="",
             string=str(request.json["store"]),
             flags=re.I | re.M)
+        if s_query == "":
+            raise ValueError("Query cannot be empty.")
     except (TypeError, ValueError) as err:
         logger.exception(err)
-        return redirect(url_for("main"))
+        return {"stores": session.get("stores", default=[])}
+    parsed_data = parse_store_from_string(s_query)
+    if not any(parsed_data):
+        logger.debug("Could not parse store from string.")
+        return {"stores": session.get("stores", default=[])}
+    value = {
+        "store_id": parsed_data[1]} if parsed_data[1] else {
+        "slug": parsed_data[2]}
+    results = Manager.basic_query(Store, **value).all()
 
-    if store_query not in ("", None):
-        parsed_data = parse_store_from_string(string=store_query)
-        if any(parsed_data):
-            results = Manager.store_query(data=parsed_data)
-            if len(results.all()) == 0:
-                store_data = execute_store_search(query_data=parsed_data)
-                if not store_data:
-                    logger.debug("Could not find the queried store.")
-                    return redirect(url_for("main"))
-                Manager.add_store(data=store_data)
-            else:
-                store_data = results.all()[0]
+    if len(results) == 0:
+        store_data = execute_store_search(parsed_data=parsed_data)
+        if not store_data:
+            logger.debug("Could not find the queried store.")
+            return {"stores": session.get("stores", default=[])}
+        Manager.add_store_record(data=store_data)
+    else:
+        store_data = (results[0].name,
+                      results[0].store_id,
+                      results[0].slug)
 
-            stores = session.get("stores", default=[])
-            if store_data not in stores:
-                stores.append(store_data)
-                logger.debug("Added %s into stores", store_data)
-            session["stores"] = stores
+    stores = session.get("stores", default=[])
+    if store_data not in stores:
+        stores.append(store_data)
+        logger.debug("Added %s into stores", store_data)
+    session["stores"] = stores
     return {"stores": stores}
 
 

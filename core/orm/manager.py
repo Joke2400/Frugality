@@ -3,8 +3,8 @@ from flask import Flask
 
 from utils import LoggerManager
 
-from .orm_classes import Store
-from typing import Iterable
+from .orm_classes import Store, Base as Model
+from typing import Any
 
 
 logger = LoggerManager.get_logger(name=__name__)
@@ -34,18 +34,16 @@ class DataManager:
         logger.debug("Initialized database tables.")
 
     @classmethod
-    def store_query(cls, data: tuple[str | None, str | None]) -> Iterable:
-        if data[1]:
-            return cls.db.session.execute(
-                cls.db.select(Store).filter_by(store_id=data[1]))
-        if data[0]:
-            slug = "-".join(data[0].lower().split())
-            return cls.db.session.execute(
-                cls.db.select(Store).filter_by(slug=slug))
-        return []
+    def basic_query(cls, table: Model, **kwargs):
+        if len(kwargs) > 1:
+            # Getting first key-value pair in kwargs
+            items = next(iter(kwargs.items()))
+            kwargs = {items[0]: items[1]}
+        return cls.db.session.execute(
+            cls.db.select(table).filter_by(**kwargs)).scalars()
 
     @classmethod
-    def add_store(cls, data: tuple[str, str]):
+    def add_store_record(cls, data: tuple[str, str]):
         store = Store(
             store_id=data[1],
             name=data[0],

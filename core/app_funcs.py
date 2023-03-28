@@ -91,7 +91,8 @@ async def execute_store_product_search(
     return {store[0]: product_lists}
 
 
-def parse_store_from_string(string: str) -> tuple[str | None, str | None]:
+def parse_store_from_string(string: str
+                            ) -> tuple[str | None, str | None, str | None]:
     """Find a store name and/or ID from a string using a RegEx pattern.
 
     Return results as a tuple.
@@ -100,7 +101,8 @@ def parse_store_from_string(string: str) -> tuple[str | None, str | None]:
         string (str): String to parse.
 
     Returns:
-        tuple[str | None, str | None]: Name and ID of store as strings.
+        tuple: Name and ID of store as strings (in order).
+        If a Name is parsed, also returns a slug as the third argument.
     """
     logger.debug("Parsing store from string: '%s'", string)
     data = regex_findall(
@@ -113,12 +115,13 @@ def parse_store_from_string(string: str) -> tuple[str | None, str | None]:
             return None
         return i
 
-    s_name, s_id = None, None
+    s_name, s_id, slug = None, None, None
     match data:
 
         case [str(), str()] as data:
             try:
                 s_name = str(data[0]).strip()
+                slug = "-".join(s_name.lower().split())
             except ValueError as err:
                 logger.exception(err)
             if i := is_digits(data[1]):
@@ -130,17 +133,20 @@ def parse_store_from_string(string: str) -> tuple[str | None, str | None]:
             else:
                 try:
                     s_name = str(data[0]).strip()
+                    slug = "-".join(s_name.lower().split())
                 except ValueError as err:
                     logger.exception(err)
         case _:
             pass
 
-    logger.debug("Parsed store data from string -> ('%s', %s)", s_name, s_id)
-    return (s_name, s_id)
+    logger.debug(
+        "Parsed store data from string -> (%s, %s, %s)", s_name, s_id, slug)
+    return (s_name, s_id, slug)
 
 
-def parse_and_validate_store(query_data: tuple[str | None, str | None],
-                             response: dict) -> tuple[str, str] | None:
+def parse_and_validate_store(
+        parsed_data: tuple[str | None, str | None, str | None],
+        response: dict) -> tuple[str, str, str] | None:
     """Parse store from API response.
 
     Args:
@@ -159,19 +165,20 @@ def parse_and_validate_store(query_data: tuple[str | None, str | None],
         except KeyError as err:
             logger.exception(err)
             return None
-        query_slug = "-".join(str(query_data[0]).lower().split())
         for i in stores:
-            if "-".join(i["name"].lower().split()) == query_slug:
+            slug = parsed_data[2]
+            if "-".join(i["name"].lower().split()) == slug:
                 logger.debug("Parsed store ('%s', '%s') from response",
                              i["name"], i["id"])
-                return (i.get("name"), i.get("id"))
+                return (i.get("name"), i.get("id"), slug)
         logger.debug("Could not parse a store from response.")
         return None
     try:
-        if store["id"].strip() == query_data[1]:
+        if store["id"].strip() == parsed_data[1]:
             logger.debug("Parsed store ('%s', '%s') from response",
                          store["name"], store["id"])
-            return (store.get("name"), store.get("id"))
+            slug = "-".join(store.get("name").lower().split())
+            return (store.get("name"), store.get("id"), slug)
     except (KeyError, ValueError) as err:
         logger.exception(err)
         return None
@@ -180,17 +187,20 @@ def parse_and_validate_store(query_data: tuple[str | None, str | None],
     return None
 
 
-def execute_store_search(query_data: tuple[str | None, str | None]
-                         ) -> tuple[str, str] | None:
+def execute_store_search(
+        parsed_data: tuple[str | None,
+                           str | None,
+                           str | None]) -> tuple[str, str, str] | None:
     """Parse, execute and validate a store search using a given string.
 
     Returns:
         tuple[str, str] | None: Store name and ID, None if not found.
     """
+    query_data = (parsed_data[0], parsed_data[1])
     logger.debug("Fetching store from api: %s", query_data)
     response = api_fetch_store(query_data=query_data)
     if not response:
         return None
     logger.debug("Parsing response from api: %s", response)
-    return parse_and_validate_store(query_data=query_data,
+    return parse_and_validate_store(parsed_data=parsed_data,
                                     response=response)
