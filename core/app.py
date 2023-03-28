@@ -6,6 +6,8 @@ from flask import redirect, url_for, render_template
 from flask import request, session, Blueprint
 
 from utils import LoggerManager
+
+from .orm import DataManager as Manager
 from .app_funcs import execute_store_search
 from .app_funcs import execute_store_product_search
 from .app_funcs import parse_store_from_string
@@ -83,10 +85,15 @@ def add_store():
     if store_query not in ("", None):
         parsed_data = parse_store_from_string(string=store_query)
         if any(parsed_data):
-            store_data = execute_store_search(query_data=parsed_data)
-            if not store_data:
-                logger.debug("Could not find the queried store.")
-                return redirect(url_for("main"))
+            results = Manager.store_query(data=parsed_data)
+            if len(results.all()) == 0:
+                store_data = execute_store_search(query_data=parsed_data)
+                if not store_data:
+                    logger.debug("Could not find the queried store.")
+                    return redirect(url_for("main"))
+                Manager.add_store(data=store_data)
+            else:
+                store_data = results.all()[0]
 
             stores = session.get("stores", default=[])
             if store_data not in stores:

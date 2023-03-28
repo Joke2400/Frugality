@@ -3,12 +3,15 @@
 import asyncio
 from datetime import timedelta
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from utils import LoggerManager
 from utils import ProjectPaths
 from .app import app as app_blueprint
 from .orm import DataManager
 from .orm import db
+
+
+# This segment will be moved into the (currently non-existent) 'Process' class
+# ----------------------------------------------------------------
 
 # Temporary settings as it's not a priority
 SECRET_KEY = "TEMPORARY"
@@ -38,3 +41,6 @@ db.init_app(flask_app)
 manager = DataManager()
 manager.set_configuration(database=db, app=flask_app)
 manager.initialize_db_tables()
+
+
+# ----------------------------------------------------------------
