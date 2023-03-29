@@ -2,6 +2,7 @@
 
 import re
 import json
+import asyncio
 from typing import Any
 
 from utils import regex_findall
@@ -57,7 +58,7 @@ def parse_query_data(data: dict) -> dict | None:
 
 async def execute_store_product_search(
         queries: list[dict],
-        store: tuple[str, str],
+        stores: list[tuple[str, str]],
         limit: int = 24) -> dict[str, list[ProductList]]:
     """Run product search for a given store.
 
@@ -72,11 +73,16 @@ async def execute_store_product_search(
         pair. Key is the name of the store queried. Value for the key is a
         list of ProductList(s).
     """
-    logger.debug("Running product search for store '%s'.", store[0])
-    data = await api_fetch_products(
-        store_id=store[1],
-        queries=queries,
-        limit=limit)
+    tasks = []
+    for store in stores:
+        tasks.append(asyncio.create_task(
+            api_fetch_products(
+                store_id=store[1],
+                queries=queries,
+                limit=limit)))
+    data = await asyncio.gather(*tasks)
+    print(data)
+    '''
     product_lists = []
     logger.debug("Creating ProductList(s) for %s items.", len(data))
     for response, query_item in data:
@@ -90,7 +96,8 @@ async def execute_store_product_search(
             store=store)
         product_lists.append(products)
     return {store[0]: product_lists}
-
+    '''
+    return {}
 
 def validate_store_query(string: str) -> str | None:
     try:

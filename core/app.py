@@ -109,23 +109,23 @@ async def product_query():
 
     TODO: rest of this docstring
     """
+    if asyncio.get_event_loop().is_closed():
+        asyncio.get_event_loop()
     if len(stores := session.get("stores", default=[])) == 0:
         return redirect(url_for("main"))
     if len(queries := session.get("queries", default=[])) == 0:
         return redirect(url_for("main"))
-    tasks = []
-    for store in stores:
-        tasks.append(asyncio.create_task(
-            execute_store_product_search(
-                queries=queries,
-                store=store)))
-    store_results = await asyncio.gather(*tasks)
-    for store in store_results:
+    results = await execute_store_product_search(
+        queries=queries,
+        stores=stores)
+    """
+    for store in results:
         for store, product_queries in store.items():
             logger.info("Store: %s", store)
             for product_list in product_queries:
                 logger.info(
                     "Cheapest item: %s", product_list.cheapest_item)
+    """
     return {"NOT_IMPLEMENTED": "NOT_IMPLEMENTED"}
 
 
