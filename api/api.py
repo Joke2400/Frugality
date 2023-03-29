@@ -14,13 +14,40 @@ from .graphql_queries import queries as graphql_queries
 logger = LoggerManager.get_logger(name=__name__)
 query_logger = LoggerManager.get_logger(name="query", level=20)
 
-client = Client()
-async_client = AsyncClient()
+
+def log_request(request):
+    query_logger.debug(
+        "Request event hook: %s %s - Waiting for response",
+        request.method, request.url)
+
+
+def log_response(response):
+    request = response.request
+    query_logger.debug(
+        "Response event hook: %s %s - Status %s",
+        request.method, request.url, response.status_code)
+
+
+async def async_log_request(request):
+    log_request(request)
+
+
+async def async_log_response(response):
+    log_response(response)
+
+
 API_URL = S_urls.api_url
+client = Client(
+    event_hooks={'response': [log_response],
+                 'request': [log_request]})
+
+async_client = AsyncClient(
+    event_hooks={'response': [async_log_response],
+                 'request': [async_log_request]})
 
 
-def post_request(url: str, params: dict, timeout: int = 10,
-                 log_str: str | None = None) -> Response | None:
+def post_request(url: str, params: dict,
+                 timeout: int = 10) -> Response | None:
     """Send a post request with JSON body to a given URL.
 
     Args:
@@ -32,21 +59,20 @@ def post_request(url: str, params: dict, timeout: int = 10,
         Response | None: Default returns a httpx.Response object.
         If an exception is raised, return None.
     """
-    query_logger.debug("POST REQUEST; URL: %s; PARAMS: %s", url, params)
     try:
         response = client.post(url=url, json=params, timeout=timeout)
         response.raise_for_status()
     except (HTTPError, RequestError) as err:
         logger.exception(err)
         return None
-    if log_str is None:
-        log_str = ""
-    logger.debug("Status: %s | %s", response.status_code, log_str)
+    content = json.loads(response.text)
+    query_logger.debug("%s", json.dumps(
+        content, indent=4))
     return response
 
 
-async def async_post_request(url: str, params: dict, timeout: int = 10,
-                             log_str: str | None = None) -> Response | None:
+async def async_post_request(url: str, params: dict,
+                             timeout: int = 15) -> Response | None:
     """Asynchronously send a post request with JSON body to a given URL.
 
     Args:
@@ -58,7 +84,6 @@ async def async_post_request(url: str, params: dict, timeout: int = 10,
         Response | None: Default returns a httpx.Response object.
         If an exception is raised, return None.
     """
-    query_logger.debug("POST REQUEST; URL: %s; PARAMS: %s", url, params)
     try:
         response = await async_client.post(
             url=url, json=params, timeout=timeout)
@@ -66,9 +91,9 @@ async def async_post_request(url: str, params: dict, timeout: int = 10,
     except (HTTPError, RequestError) as err:
         logger.exception(err)
         return None
-    if log_str is None:
-        log_str = ""
-    logger.debug("Status: %s | %s", response.status_code, log_str)
+    content = json.loads(response.text)
+    query_logger.debug("%s", json.dumps(
+        content, indent=4))
     return response
 
 
@@ -103,14 +128,11 @@ def api_fetch_store(query_data: tuple[str | None, str | None]
     params = {
         "query": query,
         "variables": variables,
-        "operation_name": operation
-    }
-    log_str = f"Operation: '{operation}' Query: '{variables['query']}'"
-    response = post_request(url=API_URL, params=params, log_str=log_str)
+        "operation_name": operation}
+    response = post_request(url=API_URL, params=params)
     if not response:
         return None
     content = json.loads(response.text)
-    query_logger.debug("Response JSON: %s", json.dumps(content, indent=4))
     return content
 
 
@@ -130,8 +152,7 @@ def get_store_by_id(query_data: tuple[None, str] | tuple[str, str]
     """
     try:
         variables = {
-            "StoreID": str(int(query_data[1]))
-        }
+            "StoreID": str(int(query_data[1]))}
     except ValueError as err:
         if query_data[0] is None:
             logger.exception(err)
@@ -157,8 +178,7 @@ def get_store_by_name(query_data: tuple[str, None] | tuple[str, str]
         variables = {
             "StoreBrand": None,
             "cursor": None,
-            "query": str(query_data[0])
-        }
+            "query": str(query_data[0])}
     except ValueError as err:
         logger.exception(err)
         return None
@@ -203,13 +223,10 @@ async def api_fetch_products(queries: list[dict],
                 "StoreID": store_id,
                 "limit": limit,
                 "query": item["query"],
-                "slugs": item["category"]
-            }
-        }
-        log_str = f"Operation: '{operation}' Product query: '{item['query']}'"
+                "slugs": item["category"]}}
         tasks.append(asyncio.ensure_future(
-            async_product_search(item, url=API_URL, params=params,
-                                 log_str=log_str)))
+            async_product_search(item, url=API_URL, params=params)))
 
     logger.debug("Length of tasks: %s", len(tasks))
-    return await asyncio.gather(*tasks)
+    results = await asyncio.gather(*tasks)
+    return results

@@ -36,3 +36,4 @@ data/logs/query.log
 data/logs/root.log
 .coverage
 data/test_database.db
+data/logs/utils.log

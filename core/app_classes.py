@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from dataclasses import field
 from typing import Generator
 
-import core
 from utils import LoggerManager
 
 
@@ -166,7 +165,7 @@ class ProductList:
                 return None
             return _items
         except (KeyError, TypeError) as err:
-            logger.exception(err)
+            logger.debug(err)
             return None
 
     def __str__(self):

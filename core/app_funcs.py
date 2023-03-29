@@ -1,5 +1,6 @@
 """Contains functions for core app functionality."""
 
+import re
 import json
 from typing import Any
 
@@ -89,6 +90,21 @@ async def execute_store_product_search(
             store=store)
         product_lists.append(products)
     return {store[0]: product_lists}
+
+
+def validate_store_query(string: str) -> str | None:
+    try:
+        s_query = re.sub(
+            pattern=r"[^a-zA-Z0-9\såäö-]",
+            repl="",
+            string=str(string),
+            flags=re.I | re.M)
+        if s_query == "":
+            raise ValueError("Query cannot be empty.")
+        return s_query
+    except (TypeError, ValueError) as err:
+        logger.exception(err)
+        return None
 
 
 def parse_store_from_string(string: str

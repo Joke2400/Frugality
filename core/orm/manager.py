@@ -34,23 +34,29 @@ class DataManager:
         logger.debug("Initialized database tables.")
 
     @classmethod
-    def basic_query(cls, table: Model, **kwargs):
+    def filtered_query(cls, table: Model, **kwargs):
         if len(kwargs) > 1:
-            # Getting first key-value pair in kwargs
+            # Get first key-value pair in kwargs
             items = next(iter(kwargs.items()))
             kwargs = {items[0]: items[1]}
+        logger.debug("Querying table '%s' with filter '%s'",
+                     table, kwargs)
         return cls.db.session.execute(
             cls.db.select(table).filter_by(**kwargs)).scalars()
 
     @classmethod
-    def add_store_record(cls, data: tuple[str, str]):
-        store = Store(
-            store_id=data[1],
-            name=data[0],
-            slug="-".join(data[0].lower().split())
-        )
-        cls.db.session.add(store)
+    def add_store_record(cls, data: tuple[str, str]) -> None:
+        logger.debug(
+            "Attempting to add store '%s', '%s' to db",
+            data[0], data[1])
         try:
+            store = Store(
+                store_id=data[1],
+                name=data[0],
+                slug="-".join(data[0].lower().split()))
+            cls.db.session.add(store)
             cls.db.session.commit()
+            logger.debug("DB Commit successful!")
         except Exception as err:  # Temporary
             logger.debug(err)
+            logger.debug("DB Commit failed!")

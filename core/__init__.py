@@ -9,6 +9,7 @@ from .app import app as app_blueprint
 from .orm import DataManager
 from .orm import db
 
+asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 # This segment will be moved into the (currently non-existent) 'Process' class
 # ----------------------------------------------------------------
@@ -19,7 +20,6 @@ LIFETIME = timedelta(days=1)
 DB_PATH = ProjectPaths.test_database()
 KEEP_TRACK = True
 
-asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 logger = LoggerManager.get_logger(name=__name__)
 
 flask_app = Flask(import_name="Frugality",

@@ -4,7 +4,10 @@ from sqlalchemy.orm import Mapped, mapped_column
 db = SQLAlchemy()
 Base = db.Model
 
+
 class Store(Base):
+
+    __tablename__ = "Stores"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     store_id: Mapped[str] = mapped_column(unique=True)

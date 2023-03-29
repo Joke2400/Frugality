@@ -1,7 +1,6 @@
 """Main file for Flask app, contains all the app routes."""
 
 import asyncio
-import re
 from flask import redirect, url_for, render_template
 from flask import request, session, Blueprint
 
@@ -11,6 +10,7 @@ from .orm import DataManager as Manager
 from .orm import Store
 from .app_funcs import execute_store_search
 from .app_funcs import execute_store_product_search
+from .app_funcs import validate_store_query
 from .app_funcs import parse_store_from_string
 from .app_funcs import parse_query_data
 
@@ -36,62 +36,31 @@ def main():
         store_names=store_names)
 
 
-@app.route("/product_query/", methods=["GET"])
-async def product_query():
-    """Query stores list with stored product queries.
-
-    TODO: rest of this docstring
-    """
-    if len(stores := session.get("stores", default=[])) == 0:
-        return redirect(url_for("main"))
-    if len(queries := session.get("queries", default=[])) == 0:
-        return redirect(url_for("main"))
-    tasks = []
-    for store in stores:
-        tasks.append(asyncio.create_task(
-            execute_store_product_search(
-                queries=queries,
-                store=store)))
-    results = await asyncio.gather(*tasks)
-    for item in results:
-        for key, value in item.items():
-            print(key)
-            for product in value:
-                print(product.cheapest_item)
-    return {"NOT_IMPLEMENTED": "NOT_IMPLEMENTED"}
-
-
 @app.route("/add_store/", methods=["POST"])
-def add_store_record():
+def add_store():
     """Add a store to the (session) store list.
 
     Takes in a string as a JSON key.
     Given string gets parsed, queried and then validated
     before being added to stores list if not already present.
+    If store does not exist in database, add it.
 
     Returns:
         Dict with a single key-value pair. Value of returned
         dict key is a list of stores in user session.
     """
-    try:
-        s_query = re.sub(
-            pattern=r"[^a-zA-Z0-9\såäö-]",
-            repl="",
-            string=str(request.json["store"]),
-            flags=re.I | re.M)
-        if s_query == "":
-            raise ValueError("Query cannot be empty.")
-    except (TypeError, ValueError) as err:
-        logger.exception(err)
+    if (store_query := validate_store_query(
+            request.json["store"])) is None:
         return {"stores": session.get("stores", default=[])}
-    parsed_data = parse_store_from_string(s_query)
+
+    parsed_data = parse_store_from_string(store_query)
     if not any(parsed_data):
         logger.debug("Could not parse store from string.")
         return {"stores": session.get("stores", default=[])}
     value = {
         "store_id": parsed_data[1]} if parsed_data[1] else {
         "slug": parsed_data[2]}
-    results = Manager.basic_query(Store, **value).all()
+    results = Manager.filtered_query(Store, **value).all()
 
     if len(results) == 0:
         store_data = execute_store_search(parsed_data=parsed_data)
@@ -103,7 +72,6 @@ def add_store_record():
         store_data = (results[0].name,
                       results[0].store_id,
                       results[0].slug)
-
     stores = session.get("stores", default=[])
     if store_data not in stores:
         stores.append(store_data)
@@ -127,12 +95,38 @@ def remove_store():
         index = int(request.json["index"])
     except (KeyError, ValueError) as err:
         logger.exception(err)
-        return redirect(url_for)
+        return {"stores": session.get("stores", default=[])}
     stores = session.get("stores", default=[])
     item = stores[index]
     stores.remove(item)
     session["stores"] = stores
     return {"stores": stores}
+
+
+@app.route("/product_query/", methods=["GET"])
+async def product_query():
+    """Query stores list with stored product queries.
+
+    TODO: rest of this docstring
+    """
+    if len(stores := session.get("stores", default=[])) == 0:
+        return redirect(url_for("main"))
+    if len(queries := session.get("queries", default=[])) == 0:
+        return redirect(url_for("main"))
+    tasks = []
+    for store in stores:
+        tasks.append(asyncio.create_task(
+            execute_store_product_search(
+                queries=queries,
+                store=store)))
+    store_results = await asyncio.gather(*tasks)
+    for store in store_results:
+        for store, product_queries in store.items():
+            logger.info("Store: %s", store)
+            for product_list in product_queries:
+                logger.info(
+                    "Cheapest item: %s", product_list.cheapest_item)
+    return {"NOT_IMPLEMENTED": "NOT_IMPLEMENTED"}
 
 
 @app.route("/add_query/", methods=["POST"])
