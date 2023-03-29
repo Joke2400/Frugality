@@ -99,6 +99,7 @@ async def execute_store_product_search(
     '''
     return {}
 
+
 def validate_store_query(string: str) -> str | None:
     try:
         s_query = re.sub(

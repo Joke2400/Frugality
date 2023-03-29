@@ -21,7 +21,7 @@ app = Blueprint(name="Frugality", import_name=__name__)
 
 @app.route("/", methods=["GET"])
 def main():
-    """Return a WSGI template for the main page."""
+    """Return a template for the main page."""
     queries = session.get("queries", default=[])
     products = session.get("products", default=[])
     stores = session.get("stores", default=[])
@@ -109,8 +109,6 @@ async def product_query():
 
     TODO: rest of this docstring
     """
-    if asyncio.get_event_loop().is_closed():
-        asyncio.get_event_loop()
     if len(stores := session.get("stores", default=[])) == 0:
         return redirect(url_for("main"))
     if len(queries := session.get("queries", default=[])) == 0:

@@ -45,7 +45,7 @@ class DataManager:
             cls.db.select(table).filter_by(**kwargs)).scalars()
 
     @classmethod
-    def add_store_record(cls, data: tuple[str, str]) -> None:
+    def add_store_record(cls, data: tuple[str, str, str]) -> None:
         logger.debug(
             "Attempting to add store '%s', '%s' to db",
             data[0], data[1])
@@ -53,7 +53,7 @@ class DataManager:
             store = Store(
                 store_id=data[1],
                 name=data[0],
-                slug="-".join(data[0].lower().split()))
+                slug=data[2])
             cls.db.session.add(store)
             cls.db.session.commit()
             logger.debug("DB Commit successful!")
