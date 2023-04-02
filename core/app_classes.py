@@ -34,7 +34,7 @@ class ProductItem:
     count: int
     category: str
     ean: str
-    store: tuple[str, str]
+    store: tuple[str, str, str]
     comparison_unit: str
     comparison_price: int | float
     unit_price: int | float
@@ -74,8 +74,9 @@ class ProductList:
 
     response: dict
     query_item: dict
-    store: tuple[str, str]
+    store: tuple[str, str, str]
     is_parsed: bool = False
+    _cheapest: ProductItem | None = None
     _items: list[ProductItem] = field(default_factory=list)
 
     @property
@@ -98,21 +99,17 @@ class ProductList:
     @property
     def cheapest_item(self) -> ProductItem | None:
         """Return item from product list with lowest price/unit."""
+        if self._cheapest:
+            return self._cheapest
         if len(self.products) == 0:
             return None
         values = (0, self.products[0])
         for inx, item in enumerate(self.products, start=1):
             if item.comparison_price < values[1].comparison_price:
                 values = (inx, item)
+
+        self._cheapest = values[1]
         return values[1]
-
-    def items_is_quantity(self, quantity: tuple[int | float, str]):
-        """Todo: will return items with matching label_quantity."""
-        pass
-
-    def items_contains_string(self, string: str):
-        """Todo: will return items with matching."""
-        pass
 
     def _parse(self) -> Generator[ProductItem, None, None]:
         """Iterate through response data to create ProductItem instances.
@@ -170,4 +167,4 @@ class ProductList:
 
     def __str__(self):
         """Identify ProductList easily by it's query string."""
-        return f"<ProductList query='{self.query_item['query']}'>"
+        return f"<ProductList'{self.query_item['query']}'>"

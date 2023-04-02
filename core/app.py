@@ -17,6 +17,7 @@ from .app_funcs import parse_query_data
 
 logger = LoggerManager.get_logger(name=__name__)
 app = Blueprint(name="Frugality", import_name=__name__)
+loop = asyncio.get_event_loop()
 
 
 @app.route("/", methods=["GET"])
@@ -104,7 +105,7 @@ def remove_store():
 
 
 @app.route("/product_query/", methods=["GET"])
-async def product_query():
+def product_query():
     """Query stores list with stored product queries.
 
     TODO: rest of this docstring
@@ -113,17 +114,10 @@ async def product_query():
         return redirect(url_for("main"))
     if len(queries := session.get("queries", default=[])) == 0:
         return redirect(url_for("main"))
-    results = await execute_store_product_search(
-        queries=queries,
-        stores=stores)
-    """
-    for store in results:
-        for store, product_queries in store.items():
-            logger.info("Store: %s", store)
-            for product_list in product_queries:
-                logger.info(
-                    "Cheapest item: %s", product_list.cheapest_item)
-    """
+    data = loop.run_until_complete(
+        execute_store_product_search(
+            queries=queries,
+            stores=stores))
     return {"NOT_IMPLEMENTED": "NOT_IMPLEMENTED"}
 
 

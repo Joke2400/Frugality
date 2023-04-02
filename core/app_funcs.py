@@ -4,6 +4,7 @@ import re
 import json
 import asyncio
 from typing import Any
+from httpx import Response
 
 from utils import regex_findall
 from utils import get_quantity_from_string
@@ -58,8 +59,8 @@ def parse_query_data(data: dict) -> dict | None:
 
 async def execute_store_product_search(
         queries: list[dict],
-        stores: list[tuple[str, str]],
-        limit: int = 24) -> dict[str, list[ProductList]]:
+        stores: list[tuple[str, str, str]],
+        limit: int = 24):
     """Run product search for a given store.
 
     Args:
@@ -77,27 +78,23 @@ async def execute_store_product_search(
     for store in stores:
         tasks.append(asyncio.create_task(
             api_fetch_products(
-                store_id=store[1],
+                store=store,
                 queries=queries,
                 limit=limit)))
     data = await asyncio.gather(*tasks)
-    print(data)
-    '''
+
     product_lists = []
-    logger.debug("Creating ProductList(s) for %s items.", len(data))
-    for response, query_item in data:
-        if response is None:
-            logger.error(
-                "Cannot create ProductList, response was 'None'. Query: %s",
-                query_item["query"])
-        products = ProductList(
-            response=json.loads(response.text),
-            query_item=query_item,
-            store=store)
-        product_lists.append(products)
-    return {store[0]: product_lists}
-    '''
-    return {}
+    for inx, item in enumerate(data, start=0):
+        store = stores[inx]
+        products_list = []
+        for query in item.values():
+            products = ProductList(
+                query_item=query[0],
+                response=query[1],
+                store=store)
+            products_list.append(products)
+        product_lists.append({store[0]: products_list})
+    return product_lists
 
 
 def validate_store_query(string: str) -> str | None:
