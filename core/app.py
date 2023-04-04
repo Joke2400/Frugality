@@ -118,6 +118,11 @@ def product_query():
         execute_store_product_search(
             queries=queries,
             stores=stores))
+    for x in data:
+        for store, product_lists in x.items():
+            for i in product_lists:
+                print(i.dictify())
+        
     return {"NOT_IMPLEMENTED": "NOT_IMPLEMENTED"}
 
 

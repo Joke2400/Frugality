@@ -84,13 +84,13 @@ async def execute_store_product_search(
     data = await asyncio.gather(*tasks)
 
     product_lists = []
-    for inx, item in enumerate(data, start=0):
+    for inx, list_item in enumerate(data, start=0):
         store = stores[inx]
         products_list = []
-        for query in item.values():
+        for query in list_item:
             products = ProductList(
                 query_item=query[0],
-                response=query[1],
+                response=json.loads(query[1].text),
                 store=store)
             products_list.append(products)
         product_lists.append({store[0]: products_list})

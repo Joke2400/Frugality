@@ -228,4 +228,4 @@ async def api_fetch_products(queries: list[dict],
 
     logger.debug("Length of tasks: %s", len(tasks))
     results = await asyncio.gather(*tasks)
-    return {store[2]: results}
+    return results

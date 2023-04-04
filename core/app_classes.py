@@ -165,6 +165,15 @@ class ProductList:
             logger.debug(err)
             return None
 
+    def dictify(self) -> dict:
+        list_dict = {
+            "query_item": self.query_item,
+            "store": self.store,
+            "products": []}
+        for i in self.products:
+            list_dict["products"].append(i.dictify())
+        return list_dict
+
     def __str__(self):
         """Identify ProductList easily by it's query string."""
         return f"<ProductList'{self.query_item['query']}'>"
