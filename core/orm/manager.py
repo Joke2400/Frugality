@@ -4,7 +4,7 @@ from flask import Flask
 from utils import LoggerManager
 
 from .orm_classes import Store, Base as Model
-from typing import Any
+from ..store_class import Store as StoreDataclass
 
 
 logger = LoggerManager.get_logger(name=__name__)
@@ -45,18 +45,17 @@ class DataManager:
             cls.db.select(table).filter_by(**kwargs)).scalars()
 
     @classmethod
-    def add_store_record(cls, data: tuple[str, str, str]) -> None:
-        logger.debug(
-            "Attempting to add store '%s', '%s' to db",
-            data[0], data[1])
+    def add_store_record(cls, store: StoreDataclass) -> None:
         try:
-            store = Store(
-                store_id=data[1],
-                name=data[0],
-                slug=data[2])
+            db_store = Store(
+                store_id=store.store_id,
+                name=store.name,
+                slug=store.slug)
+            logger.debug(
+                "Attempting to add store '%s', '%s' to db",
+                db_store.store_id, db_store.name)
             cls.db.session.add(store)
             cls.db.session.commit()
-            logger.debug("DB Commit successful!")
+            logger.debug("Commit successful!")
         except Exception as err:  # Temporary
-            logger.debug(err)
-            logger.debug("DB Commit failed!")
+            logger.exception("Commit Failed! %s", err)

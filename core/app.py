@@ -6,13 +6,10 @@ from flask import request, session, Blueprint
 
 from utils import LoggerManager
 
-from .orm import DataManager as Manager
-from .orm import Store
-from .app_funcs import execute_store_search
-from .app_funcs import execute_store_product_search
-from .app_funcs import validate_store_query
-from .app_funcs import parse_store_from_string
-from .app_funcs import parse_query_data
+from .store_flow import execute_store_search
+from .store_class import Store, Found, NotFound, ParseFailed
+from .product_flow import execute_product_search
+from .product_flow import parse_query_data
 
 
 logger = LoggerManager.get_logger(name=__name__)
@@ -39,46 +36,43 @@ def main():
 
 @app.route("/add_store/", methods=["POST"])
 def add_store():
-    """Add a store to the (session) store list.
+    """Append a store to the user session stores list.
 
-    Takes in a string as a JSON key.
-    Given string gets parsed, queried and then validated
-    before being added to stores list if not already present.
-    If store does not exist in database, add it.
+    Execute search on string provided in request JSON.
+    Query results are then interpreted and the store is
+    added to session if query was successful.
 
     Returns:
-        Dict with a single key-value pair. Value of returned
-        dict key is a list of stores in user session.
+        dict: Returns a dict with a key 'stores' containing
+            current stores in user session. Dict also contains
+            a 'message' key which gives results feedback to the end-user.
     """
-    if (store_query := validate_store_query(
-            request.json["store"])) is None:
-        return {"stores": session.get("stores", default=[])}
+    store: Store = execute_store_search(string=request.json["store"])
+    match store.state:
 
-    parsed_data = parse_store_from_string(store_query)
-    if not any(parsed_data):
-        logger.debug("Could not parse store from string.")
-        return {"stores": session.get("stores", default=[])}
-    value = {
-        "store_id": parsed_data[1]} if parsed_data[1] else {
-        "slug": parsed_data[2]}
-    results = Manager.filtered_query(Store, **value).all()
+        case Found():
+            stores = session.get("stores", default=[])
+            if (data := store.data) not in stores:
+                stores.append(data)
+                logger.debug("Added %s into session stores.", data)
+            session["stores"] = stores
+            return {"stores": stores,
+                    "message": "SUCCESS!"}
 
-    if len(results) == 0:
-        store_data = execute_store_search(parsed_data=parsed_data)
-        if not store_data:
-            logger.debug("Could not find the queried store.")
-            return {"stores": session.get("stores", default=[])}
-        Manager.add_store_record(data=store_data)
-    else:
-        store_data = (results[0].name,
-                      results[0].store_id,
-                      results[0].slug)
-    stores = session.get("stores", default=[])
-    if store_data not in stores:
-        stores.append(store_data)
-        logger.debug("Added %s into stores", store_data)
-    session["stores"] = stores
-    return {"stores": stores}
+        case NotFound():
+            return {
+                "stores": session.get("stores", default=[]),
+                "message": "STORE NOT FOUND"}
+
+        case ParseFailed():
+            return {
+                "stores": session.get("stores", default=[]),
+                "message": "PARSE ERROR"}
+
+        case _:
+            return {
+                "stores": session.get("stores", default=[]),
+                "message": "UNKNOWN SERVER ERROR"}
 
 
 @app.route("/remove_store/", methods=["POST"])
@@ -115,14 +109,15 @@ def product_query():
     if len(queries := session.get("queries", default=[])) == 0:
         return redirect(url_for("main"))
     data = loop.run_until_complete(
-        execute_store_product_search(
+        execute_product_search(
             queries=queries,
             stores=stores))
     for x in data:
         for store, product_lists in x.items():
+            print(store)
             for i in product_lists:
                 print(i.dictify())
-        
+
     return {"NOT_IMPLEMENTED": "NOT_IMPLEMENTED"}
 
 
