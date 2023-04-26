@@ -5,7 +5,7 @@ import asyncio
 from utils import get_quantity_from_string
 from utils import LoggerManager
 from api import api_fetch_products
-from .app_classes import ProductList
+from .product_classes import ProductList
 
 logger = LoggerManager.get_logger(name=__name__)
 
@@ -77,13 +77,13 @@ async def execute_product_search(
     data = await asyncio.gather(*tasks)
 
     product_lists = []
-    for inx, list_item in enumerate(data, start=0):
-        store = stores[inx]
+    for index, item in enumerate(data, start=0):
+        store = stores[index]
         products_list = []
-        for query in list_item:
+        for query_item, response in item:
             products = ProductList(
-                query_item=query[0],
-                response=json.loads(query[1].text),
+                query_item=query_item,
+                response=json.loads(response.text),
                 store=store)
             products_list.append(products)
         product_lists.append({store[0]: products_list})

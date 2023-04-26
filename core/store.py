@@ -61,7 +61,7 @@ class Store:
         return (self.name, self.store_id, self.slug)
 
     def set_fields(self, name: str, sid: str, slug: str) -> None:
-        """Take in an orm.orm_classes.Store and set fields to it's values."""
+        """Set fields to given values."""
         self.name = name
         self.store_id = sid
         self.slug = slug

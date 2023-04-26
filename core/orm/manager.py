@@ -1,10 +1,12 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 from utils import LoggerManager
 
-from .orm_classes import Store, Base as Model
-from ..store_class import Store as StoreDataclass
+from .orm_classes import Store as StoreModel, Base as Model
+from ..store import Store
+from ..product_classes import ProductItem
 
 
 logger = LoggerManager.get_logger(name=__name__)
@@ -14,48 +16,63 @@ class DataManager:
 
     db: SQLAlchemy
     app: Flask
-    __instance = None
+    _instance = None
 
     def __new__(cls):
-        if cls.__instance is None:
-            cls.__instance = super().__new__(cls)
-        return cls.__instance
+        """
+        Return singleton-instance stored in cls._instance.
 
-    @classmethod
-    def set_configuration(cls, database: SQLAlchemy, app: Flask):
-        logger.debug("Setting database configuration...")
-        cls.db = database
-        cls.app = app
+        Create one if it doesn't already exist.
+        """
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
 
-    @classmethod
-    def initialize_db_tables(cls):
-        with cls.app.app_context():
-            cls.db.create_all()
-        logger.debug("Initialized database tables.")
+    def __init__(self, database: SQLAlchemy, app: Flask):
+        """Initialize instance with database and app."""
+        self.db = database
+        self.app = app
 
-    @classmethod
-    def filtered_query(cls, table: Model, **kwargs):
+    def reset_db(self):
+        """Drop all database tables and re-initialize them."""
+        try:
+            with self.app.app_context():
+                self.db.drop_all()
+                self.app.create_all()
+        except SQLAlchemyError as err:
+            logger.exception(err)
+
+    def add_store_record(self, store: Store) -> bool:
+        """
+        Take in a core.store.Store and add it to database.
+
+        Returns True if adding is successful, False if not.
+        """
+        record = StoreModel(
+            store_id=store.store_id,
+            name=store.name,
+            slug=store.slug)
+        logger.debug("Adding store (%s, %s, %s) to database.",
+                     record.store_id, record.name, record.slug)
+        self.db.session.add(record)
+        try:
+            self.db.session.commit()
+        except IntegrityError as err:
+            logger.exception(err.orig)
+            logger.error(err.statement)
+            self.db.session.rollback()
+            return False
+        return True
+
+    def add_product_record(self, product: ProductItem) -> bool:
+        self.
+        
+        
+    def filtered_query(self, table: Model, key_value: dict):
+        """Query a table and filter by a given field name and value."""
         if len(kwargs) > 1:
-            # Get first key-value pair in kwargs
-            items = next(iter(kwargs.items()))
-            kwargs = {items[0]: items[1]}
+            raise ValueError("Length of key_value")
         logger.debug("Querying table '%s' with filter '%s'",
                      table, kwargs)
-        return cls.db.session.execute(
-            cls.db.select(table).filter_by(**kwargs)).scalars()
-
-    @classmethod
-    def add_store_record(cls, store: StoreDataclass) -> None:
-        try:
-            db_store = Store(
-                store_id=store.store_id,
-                name=store.name,
-                slug=store.slug)
-            logger.debug(
-                "Attempting to add store '%s', '%s' to db",
-                db_store.store_id, db_store.name)
-            cls.db.session.add(store)
-            cls.db.session.commit()
-            logger.debug("Commit successful!")
-        except Exception as err:  # Temporary
-            logger.exception("Commit Failed! %s", err)
+        return self.db.session.execute(
+            self.db.select(table).filter_by(**kwargs)).scalars()

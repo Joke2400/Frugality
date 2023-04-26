@@ -7,7 +7,7 @@ from flask import request, session, Blueprint
 from utils import LoggerManager
 
 from .store_flow import execute_store_search
-from .store_class import Store, Found, NotFound, ParseFailed
+from .store import Store, Found, NotFound, ParseFailed
 from .product_flow import execute_product_search
 from .product_flow import parse_query_data
 
@@ -108,15 +108,8 @@ def product_query():
         return redirect(url_for("main"))
     if len(queries := session.get("queries", default=[])) == 0:
         return redirect(url_for("main"))
-    data = loop.run_until_complete(
-        execute_product_search(
-            queries=queries,
-            stores=stores))
-    for x in data:
-        for store, product_lists in x.items():
-            print(store)
-            for i in product_lists:
-                print(i.dictify())
+    results = execute_product_search(queries=queries, stores=stores)
+    
 
     return {"NOT_IMPLEMENTED": "NOT_IMPLEMENTED"}
 

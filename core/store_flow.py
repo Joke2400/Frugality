@@ -12,7 +12,7 @@ from utils import ParseFailed
 from utils import regex_findall
 from utils import LoggerManager
 
-from .store_class import Store
+from .store import Store
 from .orm import DataManager
 from .orm import Store as db_Store
 

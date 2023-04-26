@@ -168,10 +168,11 @@ class ProductList:
     def dictify(self) -> dict:
         list_dict = {
             "query_item": self.query_item,
-            "store": self.store,
-            "products": []}
+            "store": self.store}
+        products = []
         for i in self.products:
-            list_dict["products"].append(i.dictify())
+            products.append(i.dictify())
+        list_dict["products"] = products
         return list_dict
 
     def __str__(self):
