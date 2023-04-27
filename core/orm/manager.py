@@ -4,7 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 from utils import LoggerManager
 
-from .orm_classes import Store as StoreModel, Base as Model
+from .orm_classes import Store as StoreModel, Product as ProductModel, Base as Model
 from ..store import Store
 from ..product_classes import ProductItem
 
@@ -58,21 +58,25 @@ class DataManager:
         try:
             self.db.session.commit()
         except IntegrityError as err:
-            logger.exception(err.orig)
-            logger.error(err.statement)
+            logger.exception(err)
             self.db.session.rollback()
             return False
         return True
 
     def add_product_record(self, product: ProductItem) -> bool:
-        self.
-        
-        
-    def filtered_query(self, table: Model, key_value: dict):
-        """Query a table and filter by a given field name and value."""
-        if len(kwargs) > 1:
-            raise ValueError("Length of key_value")
-        logger.debug("Querying table '%s' with filter '%s'",
-                     table, kwargs)
+        product = self.filter_query_all(ProductModel, {"store_id": product.store[1]})
+        pass
+
+    def filter_query_one(self, table: Model, key_value: dict):
+        """Get one item in a table, filter results by the value provided."""
+        if len(key_value) > 1:
+            raise ValueError("More than one key was found in dict.")
         return self.db.session.execute(
-            self.db.select(table).filter_by(**kwargs)).scalars()
+            self.db.select(table).filter_by(**key_value)).scalar()
+
+    def filter_query_all(self, table: Model, key_value: dict):
+        """Get all items in a table, filter results by the value provided."""
+        if len(key_value) > 1:
+            raise ValueError("More than one key was found in dict.")
+        return self.db.session.execute(
+            self.db.select(table).filter_by(**key_value)).scalars()

@@ -170,7 +170,7 @@ def get_store_from_db(store: Store) -> Store:
         db_query = {"store_id": store.store_id}
     else:  # Otherwise query by using slug
         db_query = {"slug": str(store.slug)}
-    results = DataManager.filtered_query(db_Store, **db_query).all()
+    results = DataManager.filter_query_all(db_Store, **db_query).all()
     if len(results) > 0:
         store.set_fields(results[0].name, results[0].id,
                          results[0].slug)
