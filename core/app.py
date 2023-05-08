@@ -109,6 +109,8 @@ def product_query():
     if len(queries := session.get("queries", default=[])) == 0:
         return redirect(url_for("main"))
     results = execute_product_search(queries=queries, stores=stores)
+    for item in results:
+        print(item.values()[0].products)
     
 
     return {"NOT_IMPLEMENTED": "NOT_IMPLEMENTED"}

@@ -193,14 +193,14 @@ async def async_product_search(query: dict, **kwargs):
 
 
 async def api_fetch_products(queries: list[dict],
-                             store: tuple[str, str, str],
+                             store_id: str,
                              limit: int = 24):
     """Asynchronously send api requests to fetch a list of product queries.
 
     Args:
         queries (list[dict]): Product queries as list of dictionaries.
-        store_id (list[(str, str)]): Stores to query.
-        limit (int, optional): Passed into query to limit result length.
+        store_id (list[(str, str, str)]): Stores to query.
+        limit (int): Passed into query to limit result length.
         Defaults to 24.
 
     Returns:
@@ -210,7 +210,7 @@ async def api_fetch_products(queries: list[dict],
     tasks = []
     operation = "GetProductByName"
     query_string = graphql_queries[operation]
-    logger.debug("Creating tasks for store: '%s'", store[0])
+    logger.debug("Creating tasks for store: '%s'", store_id)
     for inx, item in enumerate(queries):
         logger.debug(
             "Query: '%s' Category: '%s' @ list index: %s",
@@ -219,7 +219,7 @@ async def api_fetch_products(queries: list[dict],
             "operation_name": operation,
             "query": query_string,
             "variables": {
-                "StoreID": store[1],
+                "StoreID": store_id,
                 "limit": limit,
                 "query": item["query"],
                 "slugs": item["category"]}}

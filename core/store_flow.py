@@ -2,6 +2,7 @@
 
 import re
 from typing import Any
+from sqlalchemy.exc import NoResultFound
 
 from api import api_fetch_store
 
@@ -12,8 +13,8 @@ from utils import ParseFailed
 from utils import regex_findall
 from utils import LoggerManager
 
+import core
 from .store import Store
-from .orm import DataManager
 from .orm import Store as db_Store
 
 logger = LoggerManager.get_logger(name=__name__)
@@ -170,8 +171,11 @@ def get_store_from_db(store: Store) -> Store:
         db_query = {"store_id": store.store_id}
     else:  # Otherwise query by using slug
         db_query = {"slug": str(store.slug)}
-    results = DataManager.filter_query_all(db_Store, **db_query).all()
-    if len(results) > 0:
+    try:
+        results = core.manager.filter_query(db_Store, db_query).one()
+    except NoResultFound:
+        logger.debug("Could not find store %s in db.", store)
+    else:
         store.set_fields(results[0].name, results[0].id,
                          results[0].slug)
         store.state = Found()
@@ -200,5 +204,9 @@ def execute_store_search(string: str) -> Store:
 
     store = get_store_from_api(store=store)
     if store.state is Found():
-        DataManager.add_store_record(store=store)
+        result = core.manager.add_store(store=store)
+        if not result:
+            logger.debug(
+                "Unable to add store: (%s, %s, %s)",
+                result[1].store_id, result[1].name, result[1].slug)
     return store

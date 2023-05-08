@@ -1,4 +1,5 @@
-from .orm_classes import db, Store, Product
+from .orm_classes import database, Store, ProductBase
 from .manager import DataManager
 
-__all__ = ["DataManager", "db"]
+__all__ = ["DataManager", "database",
+           "Store", "ProductBase"]

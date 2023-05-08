@@ -45,3 +45,19 @@ class OneOfType(Validator):
         if not is_valid_type:
             raise ValueError(
                 f'Expected {value!r} to be one of {self.options!r}')
+
+
+class SingletonMeta(type):
+    """Metaclass that implements a singleton pattern by overriding __call__."""
+
+    _instances: dict = {}
+
+    def __call__(cls, *args, **kwargs):
+        """Return the same instance of a class upon subsequent calls.
+
+        Instances are stored as a class dict '_instances'.
+        """
+        if cls not in cls._instances:
+            instance = super().__call__(*args, **kwargs)
+            cls._instances[cls] = instance
+        return cls._instances[cls]

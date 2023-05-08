@@ -42,6 +42,8 @@ class Store:
     For greater performance, the descriptor validator could be dropped, as it's
     not strictly necessary for the class to work. It's been implemented to
     require that the coder (me) models possible states more rigidly/clearly.
+
+    (Ignore the essay above, this class was mostly made for fun and practice)
     """
 
     name: Optional[str] = None

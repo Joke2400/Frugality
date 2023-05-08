@@ -6,6 +6,7 @@ from utils import get_quantity_from_string
 from utils import LoggerManager
 from api import api_fetch_products
 from .product_classes import ProductList
+from .store import Store
 
 logger = LoggerManager.get_logger(name=__name__)
 
@@ -50,32 +51,36 @@ def parse_query_data(data: dict) -> dict | None:
     }
 
 
-async def execute_product_search(
-        queries: list[dict],
-        stores: list[tuple[str, str, str]],
-        limit: int = 24):
-    """Run product search for a given store.
+def get_products_from_db(queries: list[dict]):
+    pass
 
-    Args:
-        queries (list[dict]): List of queries to query.
-        store (tuple[str, str]): Store name and ID as a tuple.
-        limit (int, optional): Limit for amount of products to retrieve.
-        Defaults to 24.
 
-    Returns:
-        dict[str, list[ProductList]]: Returns a dict with a single key-value
-        pair. Key is the name of the store queried. Value for the key is a
-        list of ProductList(s).
-    """
+async def get_products_from_api(queries: list[dict],
+                                stores: list[tuple[str, str, str]],
+                                limit: int = 24):
     tasks = []
     for store in stores:
         tasks.append(asyncio.create_task(
             api_fetch_products(
-                store=store,
                 queries=queries,
+                store_id=store[1],
                 limit=limit)))
-    data = await asyncio.gather(*tasks)
+    return await asyncio.gather(*tasks)
 
+
+def execute_product_search(queries: list[dict],
+                           stores: list[tuple[str, str, str]]):
+    # Get products from db
+    
+    
+
+
+
+async def execute_product_search(
+        queries: list[dict],
+        stores: list[tuple[str, str, str]],
+        limit: int = 24):
+    print(queries)
     product_lists = []
     for index, item in enumerate(data, start=0):
         store = stores[index]
@@ -85,6 +90,7 @@ async def execute_product_search(
                 query_item=query_item,
                 response=json.loads(response.text),
                 store=store)
+            print(products.products)
             products_list.append(products)
         product_lists.append({store[0]: products_list})
     return product_lists
