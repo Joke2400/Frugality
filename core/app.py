@@ -9,7 +9,7 @@ from utils import LoggerManager
 from .store_flow import execute_store_search
 from .store import Store, Found, NotFound, ParseFailed
 from .product_flow import execute_product_search
-from .product_flow import parse_query_data
+from .product_flow import parse_user_query
 
 
 logger = LoggerManager.get_logger(name=__name__)
@@ -108,12 +108,19 @@ def product_query():
         return redirect(url_for("main"))
     if len(queries := session.get("queries", default=[])) == 0:
         return redirect(url_for("main"))
-    results = execute_product_search(queries=queries, stores=stores)
-    for item in results:
-        print(item.values()[0].products)
-    
 
-    return {"NOT_IMPLEMENTED": "NOT_IMPLEMENTED"}
+    # Expensive operation, Store class will be reworked later
+    stores: list[Store] = [Store(x, y, z, Found()) for x, y, z in stores]
+
+    results = loop.run_until_complete(
+        execute_product_search(queries=queries, stores=stores))
+    return {"TEST": "TEST"}
+    for store in results:
+        for i in store[1]:
+            print(i.products)
+    return render_template(
+        "products.html",
+        results=results)
 
 
 @app.route("/add_query/", methods=["POST"])
@@ -131,7 +138,7 @@ def add_query():
         dict key is a list of queries in user session.
     """
     queries = session.get("queries", default=[])
-    if (query_dict := parse_query_data(request.json)):
+    if (query_dict := parse_user_query(request.json)):
         in_list = False
         for i in queries:
             if query_dict["slug"] == i["slug"]:
@@ -165,7 +172,14 @@ def remove_query():
         logger.exception(err)
         return redirect(url_for)
     queries = session.get("queries", default=[])
-    item = queries[index]
+    if len(queries) == 0:
+        return {"queries": queries}
+    try:
+        item = queries[index]
+    except IndexError:
+        logger.debug(
+            "Could not manipulate item @ index: %s", index)
+        return {"queries": queries}
     if item["count"] > 1:
         item["count"] -= 1
     else:

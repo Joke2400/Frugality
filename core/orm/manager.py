@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.exc import NoResultFound, DBAPIError
+from sqlalchemy.exc import NoResultFound
 
 from utils import LoggerManager
 from utils import SingletonMeta
@@ -12,7 +12,7 @@ from .orm_classes import Base as Model
 from .orm_classes import Store as StoreModel
 from .orm_classes import ProductBase as ProductBaseModel
 from .orm_classes import ProductData as ProductDataModel
-from ..product_classes import ProductItem
+from ..product import Product as ProductItem
 from ..store import Store as StoreItem
 
 
@@ -52,7 +52,7 @@ class DataManager(metaclass=SingletonMeta):
 
         Returns True if adding is successful, False if not.
         """
-        logger.debug("Adding store %s to database.", store.data)
+        logger.debug("Adding %s to database.", store)
         item = StoreModel(
             store_id=store.store_id,
             name=store.name,

@@ -5,6 +5,7 @@ from datetime import timedelta
 from flask import Flask
 from utils import LoggerManager
 from utils import ProjectPaths
+from .store import Store
 from .app import app as app_blueprint
 from .orm import DataManager
 from .orm import database
@@ -41,27 +42,4 @@ database.init_app(flask_app)
 manager = DataManager(database=database, app=flask_app)
 manager.reset_db()
 
-"""
-from .orm.orm_classes import Store as db_Store
-from .store import Store
-from .product_classes import ProductItem
-from utils import Found
-store = Store("Prisma Olari", 542862479, "prisma-olari", Found())
-with flask_app.app_context():
-    result = manager.add_store(store)
-    store = manager.filter_query(db_Store, {"store_id": 542862479}).one()
-    
-    product = ProductItem(
-        name="Test Item",
-        count=2,
-        category="test-category-string",
-        ean="0618429381242",
-        store=("Prisma Olari", "542862479", "prisma-olari"),
-        comparison_unit="dl",
-        comparison_price=1.59,
-        unit_price=6.2)
-    manager.add_product_data(product, store)
-    store = manager.filter_query(db_Store, {"store_id": 542862479}).one()
-    print(store.products)
-    print(store.products[0].cmp_price_int)
-"""
+__all__ = ["Store"]

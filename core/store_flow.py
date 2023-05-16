@@ -51,7 +51,7 @@ def parse_store_from_string(
         tuple[str | None]: Returns name, id and slug as optional values.
     """
     string = convert_to_alphanumeric(string)
-    logger.debug("Parsing store from string: '%s'", string)
+    logger.debug("Parsing store from query string: '%s'", string)
     data = regex_findall(
         r"\d+|^(?:\s*\b)\b[A-Za-zåäö\s-]+(?=\s?)", string)
 
@@ -86,7 +86,7 @@ def parse_store_from_string(
         case _:
             logger.debug("String was empty.")
 
-    logger.debug("Data parsed from string -> (%s, %s, %s)",
+    logger.debug("Data parsed from string: ('%s', '%s', '%s')",
                  s_name, s_id, slug)
     return (s_name, s_id, slug)
 
@@ -101,7 +101,7 @@ def parse_store_from_response(store: Store, response: dict) -> Store:
     Returns:
         Store: Return Store with new data or with updated state.
     """
-    logger.debug("Parsing response from api: %s", response)
+    logger.debug("Parsing response from API...")
     key = None
     try:  # Find correct keys in response dict.
         key = response["data"]["searchStores"]["stores"]
@@ -146,10 +146,10 @@ def get_store_from_api(store: Store) -> Store:
     Returns:
         Store: Store state is either Found() or NotFound().
     """
-    logger.debug("Fetching %s from api...", store)
+    logger.debug("Fetching %s from API...", store)
     response = api_fetch_store(query_data=(store.name, store.store_id))
     if not response:
-        logger.debug("Received no response to parse.")
+        logger.debug("Received no response from API.")
         store.state = NotFound()
         return store
     return parse_store_from_response(store=store, response=response)
@@ -167,6 +167,7 @@ def get_store_from_db(store: Store) -> Store:
         Store: State is set to Found() if store is in database.
             If it's not found, state will remain unmodified.
     """
+    logger.debug("Fetching %s from DB...", store)
     if store.store_id:  # If ID exists do this
         db_query = {"store_id": store.store_id}
     else:  # Otherwise query by using slug
@@ -174,7 +175,7 @@ def get_store_from_db(store: Store) -> Store:
     try:
         results = core.manager.filter_query(db_Store, db_query).one()
     except NoResultFound:
-        logger.debug("Could not find store %s in db.", store)
+        logger.debug("Could not find %s in DB.", store)
     else:
         store.set_fields(results[0].name, results[0].id,
                          results[0].slug)
@@ -193,6 +194,7 @@ def execute_store_search(string: str) -> Store:
     Returns a Store() instance with a state field indicating
     what to do with the returned store data.
     """
+    logger.info("\n[Initiated store search]")
     parsed_data = parse_store_from_string(string=string)
     if not any(parsed_data):
         return Store(state=ParseFailed())

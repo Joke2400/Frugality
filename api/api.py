@@ -4,9 +4,10 @@ import asyncio
 import json
 
 from httpx import Client, AsyncClient
-from httpx import HTTPError, RequestError
-from httpx import Response
+from httpx import HTTPError, RequestError, ConnectError, ConnectTimeout
+from httpx import Response, Request
 
+from core import Store
 from utils import LoggerManager
 from data.urls import SKaupatURLs as S_urls
 from .graphql_queries import queries as graphql_queries
@@ -15,24 +16,28 @@ logger = LoggerManager.get_logger(name=__name__)
 query_logger = LoggerManager.get_logger(name="query", level=20)
 
 
-def log_request(request):
+def log_request(request: Request) -> None:
+    """Log a request."""
     query_logger.debug(
         "Request event hook: %s %s - Waiting for response",
         request.method, request.url)
 
 
-def log_response(response):
+def log_response(response: Response) -> None:
+    """Log a response."""
     request = response.request
     query_logger.debug(
         "Response event hook: %s %s - Status %s",
         request.method, request.url, response.status_code)
 
 
-async def async_log_request(request):
+async def async_log_request(request: Request) -> None:
+    """Log a request."""
     log_request(request)
 
 
-async def async_log_response(response):
+async def async_log_response(response: Response) -> None:
+    """Log a response."""
     log_response(response)
 
 
@@ -46,8 +51,7 @@ async_client = AsyncClient(
                  'request': [async_log_request]})
 
 
-def post_request(url: str, params: dict,
-                 timeout: int = 10) -> Response | None:
+def post_request(url: str, params: dict, timeout: int = 10) -> Response | None:
     """Send a post request with JSON body to a given URL.
 
     Args:
@@ -60,19 +64,31 @@ def post_request(url: str, params: dict,
         If an exception is raised, return None.
     """
     try:
-        response = client.post(url=url, json=params, timeout=timeout)
+        response = client.post(
+            url=url, json=params, timeout=timeout)
         response.raise_for_status()
+
+    except ConnectTimeout as err:
+        query_logger.error(err)
+        query_logger.info(
+            "Connection timed out: %s %s",
+            err.request.method, err.request.url)
+
+    except ConnectError as err:
+        query_logger.error(err)
+        query_logger.info(
+            "Could not establish connection to: %s %s",
+            err.request.method, err.request.url)
+
     except (HTTPError, RequestError) as err:
-        logger.exception(err)
-        return None
-    content = json.loads(response.text)
-    query_logger.debug("%s", json.dumps(
-        content, indent=4))
-    return response
+        query_logger.exception(err)
+    else:
+        return response
+    return None
 
 
-async def async_post_request(url: str, params: dict,
-                             timeout: int = 15) -> Response | None:
+async def async_post_request(url: str, params: dict, timeout: int = 10,
+                             ) -> Response | None:
     """Asynchronously send a post request with JSON body to a given URL.
 
     Args:
@@ -88,13 +104,24 @@ async def async_post_request(url: str, params: dict,
         response = await async_client.post(
             url=url, json=params, timeout=timeout)
         response.raise_for_status()
+
+    except ConnectTimeout as err:
+        query_logger.error(err)
+        query_logger.info(
+            "Connection timed out: %s %s",
+            err.request.method, err.request.url)
+
+    except ConnectError as err:
+        query_logger.error(err)
+        query_logger.info(
+            "Could not establish connection to: %s %s",
+            err.request.method, err.request.url)
+
     except (HTTPError, RequestError) as err:
-        logger.exception(err)
-        return None
-    content = json.loads(response.text)
-    query_logger.debug("%s", json.dumps(
-        content, indent=4))
-    return response
+        query_logger.exception(err)
+    else:
+        return response
+    return None
 
 
 def api_fetch_store(query_data: tuple[str | None, str | None]
@@ -186,46 +213,65 @@ def get_store_by_name(query_data: tuple[str, None] | tuple[str, str]
     return (operation, variables)
 
 
-async def async_product_search(query: dict, **kwargs):
+async def async_product_search(query: dict, log_response_body: bool = False,
+                               **kwargs) -> tuple[dict, dict | None]:
     """Return query item with Response when calling async_post_request."""
-    result = await async_post_request(**kwargs)
-    return query, result
+    logger.debug("[ASYNCIO] Awaiting post request: Query: '%s', %s",
+                 query["query"], query["store"])
+    response = await async_post_request(**kwargs)
+    if response is not None:
+        content = json.loads(response.text)
+        slug = "-".join(content["data"]["store"]["name"].lower().split())
+        if slug == query["store"].slug:
+            logger.debug("Response store: '%s' == Query store: '%s'.",
+                         slug, query["store"].slug)
+        if log_response_body:
+            query_logger.debug("%s", json.dumps(
+                content, indent=4))
+        return query, content
+    query_logger.debug("Returning response as 'None'.")
+    return query, None
 
 
-async def api_fetch_products(queries: list[dict],
-                             store_id: str,
-                             limit: int = 24):
-    """Asynchronously send api requests to fetch a list of product queries.
+async def api_fetch_products(
+        queries: list[dict],
+        store: Store,
+        limit: int = 24) -> list[tuple[dict, dict | None]]:
+    """Asynchronously send api requests to fetch a bunch of queries.
 
     Args:
         queries (list[dict]): Product queries as list of dictionaries.
-        store_id (list[(str, str, str)]): Stores to query.
+        store (list[Store]): List of stores to query.
         limit (int): Passed into query to limit result length.
         Defaults to 24.
 
     Returns:
-        list[tuple[Response, dict]]: Returns a future that gathers
-        the results of the queries as a list of responses and query dicts.
+        list[tuple[dict Response | None]]: Returns a future that gathers
+        the results of the queries as a list of tuples containing
+        queries and responses.
     """
     tasks = []
     operation = "GetProductByName"
-    query_string = graphql_queries[operation]
-    logger.debug("Creating tasks for store: '%s'", store_id)
-    for inx, item in enumerate(queries):
+    graphql_query = graphql_queries[operation]
+    logger.debug("Creating tasks for store: '%s', '%s'", store.store_id,
+                 store.name)
+    for inx, query in enumerate(queries):
         logger.debug(
-            "Query: '%s' Category: '%s' @ list index: %s",
-            item["query"], item["category"], inx)
+            "Adding task: query='%s' category='%s' @ inx=%s",
+            query["query"], query["category"], inx)
         params = {
             "operation_name": operation,
-            "query": query_string,
+            "query": graphql_query,
             "variables": {
-                "StoreID": store_id,
+                "StoreID": store.store_id,
                 "limit": limit,
-                "query": item["query"],
-                "slugs": item["category"]}}
+                "query": query["query"],
+                "slugs": query["category"]}}
+        query_dict = query.copy()
+        query_dict["store"] = store
         tasks.append(asyncio.ensure_future(
-            async_product_search(query=item, url=API_URL, params=params)))
+            async_product_search(query=query_dict, log_response_body=True,
+                                 url=API_URL, params=params, timeout=20)))
 
-    logger.debug("Length of tasks: %s", len(tasks))
-    results = await asyncio.gather(*tasks)
-    return results
+    logger.debug("[ASYNCIO] Calling asyncio.gather() - Tasks: %s", len(tasks))
+    return await asyncio.gather(*tasks)
