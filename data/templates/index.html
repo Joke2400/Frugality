@@ -2,7 +2,8 @@
 {% block page_title %}Frugality{% endblock %}
 
 {% block stylesheets %}
-<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style/style.css')}}">
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style/base.css')}}">
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style/index.css')}}">
 {% endblock %}
 
 {% block scripts %}
@@ -49,7 +50,7 @@
             </li>
             {% endfor %}
         </ul>
-        <button class="btn rounded" onclick="sendProductQuery()">Query Search</button>
+        <button id="send-query-btn" class="btn rounded" onclick="sendProductQuery()">Query Search</button>
     </section>
 </main>
 <footer>

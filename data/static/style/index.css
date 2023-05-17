@@ -1,33 +1,12 @@
-* {
-    box-sizing: border-box;
-}
-
-html {
-    --clr-text-basic: hsl(0, 0%, 25%);
-    --clr-blue-default: hsl(189, 100%, 35%);
-    --clr-blue-hover: hsl(189, 100%, 40%);
-    --clr-white-default: hsl(200, 100%, 100%);
-    --clr-white-hover: hsl(201, 100%, 95%);
-
-    --clr-primary-100: hsl(200, 60%, 80%);
-    --clr-primary-150: hsl(200, 60%, 75%);
-    --clr-primary-200: hsl(200, 60%, 70%);
-    --clr-primary-250: hsl(200, 60%, 65%);
-    --clr-primary-300: hsl(200, 60%, 60%);
-    --clr-primary-400: hsl(200, 60%, 50%);
-    --clr-primary-500: hsl(200, 60%, 40%);
-}
-
 /* Semantic START */
 body {
     display: flex;
     flex-flow: column;
-    justify-content: left;
     align-items: center;
     margin: 0;
-    height: 240svh;
+    height: 150svh;
+    max-height: 150svh;
     font-family: Verdana, sans-serif;
-    border: 2px dashed black;
 }
 
 nav {
@@ -35,25 +14,25 @@ nav {
     width: 100%;
     background-color: var(--clr-primary-300);
     height: 2rem;
-    border: 2px dashed black
 }
 
 header {
     display: flex;
     flex-direction: column;
     margin-top: 2rem;
-    margin-bottom: 15svh;
+    margin-bottom: 5svh;
     align-items: center;
     justify-content: flex-end;
     width: 80%;
-    height: 60svh;
+    height: 80svh;
     border: 2px dashed black
 }
 
 main {
-    height: 120svh;
     width: 80%;
+    height: 100%;
     display: grid;
+    overflow: hidden;
     background-color: var(--clr-white-default);
     border: 2px dashed black
 }
@@ -67,10 +46,9 @@ section {
 }
 
 footer {
-    height: 30svh;
     width: 80%;
+    height: 10svh;
     background-color: var(--clr-primary-100);
-    border: 2px dashed black
 }
 
 p, h1, h2 {
@@ -85,87 +63,9 @@ h1 {
 h2 {
     margin: 1rem;
 }
-
 /* Semantic END */
 
-/* Generics START */
-.shadow {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-}
-
-.field {
-    border: 0;
-    margin: 0.5rem;
-    padding: 0.4rem 0.8rem;
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: rgb(65, 65, 65);
-    background-color: var(--clr-white-default);
-    box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.3);
-}
-
-.field:hover {
-    background-color: var(--clr-white-hover);
-}
-
-.btn {
-    font-weight: bold;
-    color: var(--clr-white-default);
-    background-color: var(--clr-primary-300);
-    font-size: 1.1rem;
-    border: 0;
-    margin: 0.5rem;
-    padding: 0.4rem 0.6rem;
-}
-
-.btn:hover {
-    background-color: var(--clr-primary-400);
-}
-
-.rounded {
-    border-radius: 1rem;
-}
-
-.rounded-more {
-    border-radius: 2rem;
-}
-
-.vertical-list {
-    display: flex;
-    flex-flow: column;
-    justify-content: left;
-    align-items: center;
-    list-style: none;
-    overflow-y: auto;
-    overflow-x: hidden;
-    max-width: 100%;
-    max-height: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-.horizontal-list {
-    display: flex;
-    flex-flow: row;
-    justify-content: left;
-    align-items: left;
-    list-style: none;
-    max-width: 100%;
-    max-height: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-.input-box {
-    display: flex;
-    flex-flow: row;
-    justify-content: center;
-    padding-bottom: 0.5rem;
-    width: 45%;
-}
-/* Generics END */
-
-/* Elements inside header START */
+/* Header elements BEGIN */
 .stores-list {
     margin: 0.5rem;
     height: fit-content;
@@ -213,17 +113,19 @@ h2 {
 .store-item button:hover {
     background-color: var(--clr-primary-400);
 }
-/* Elements inside header END */
+/* Header elements END */
 
-/* Elements inside section-1 START */
+/* Section 1 elements BEGIN */
 .queries-list {
-    height: 15rem;
-    width: 60%;;
+    width: 60%;
+    max-height: 15rem;
+    overflow-y: scroll;
 }
 .query-item {
     display: flex;
     flex-flow: row;
     width: 95%;
+    height: min-content;
     max-width: 100%;
     margin: 0.5rem;
     box-sizing: border-box;
@@ -281,18 +183,4 @@ h2 {
     word-wrap: break-word;
     font-style: italic;
 }
-/* Elements inside section-1 END */
-
-/* Media START */
-@media only screen and (min-width: 1500px) {
-    html {
-        font-size: 22px;
-    }
-}
-
-@media only screen and (min-width: 2000px) {
-    html {
-        font-size: 28px;
-    }
-}
-/* Media END */ 
+/* Section 1 elements END */

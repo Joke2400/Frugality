@@ -1,6 +1,5 @@
 """Contains functions for managing product query flow."""
 
-import httpx
 import asyncio
 
 from api import api_fetch_products
@@ -53,8 +52,39 @@ def parse_user_query(data: dict) -> dict | None:
     }
 
 
-def get_products_from_db(queries: list[dict]):
-    pass
+def add_product_query(queries: list[dict], request_json: dict) -> list[dict]:
+    """Add a product query to the provided queries list."""
+    if (query_dict := parse_user_query(request_json)):
+        in_list = False
+        for i in queries:
+            if query_dict["slug"] == i["slug"]:
+                in_list = True
+                i["count"] += query_dict["count"]
+                logger.debug("Added '%s' to count of: '%s'.",
+                             query_dict["count"], i["query"])
+                break
+        if not in_list:
+            queries.append(query_dict)
+            logger.debug("Added new query: '%s' to list.",
+                         query_dict["query"])
+    return queries
+
+
+def remove_product_query(queries: list[dict],
+                         request_json: dict) -> list[dict]:
+    """Remove a product query from the provided queries list."""
+    if len(queries) > 0:
+        try:
+            index = int(request_json["index"])
+            item = queries[index]
+        except (KeyError, ValueError, IndexError) as err:
+            logger.exception(err)
+        else:
+            if item["count"] > 1:
+                item["count"] -= 1
+            else:
+                queries.remove(item)
+    return queries
 
 
 async def get_products_from_api(
@@ -73,9 +103,10 @@ async def get_products_from_api(
 
 async def execute_product_search(
         queries: list[dict],
-        stores: list[Store]) -> list[tuple[str, list[ProductQueryParser]]]:
+        stores: list[Store]) -> list[tuple[str, list[dict]]]:
     data = await get_products_from_api(queries=queries, stores=stores)
 
+    parsers = []
     store_results = []
     for inx, item in enumerate(data, start=0):
         store = stores[inx]
@@ -85,7 +116,11 @@ async def execute_product_search(
                 parser = ProductQueryParser(
                     response=response,
                     query=query,
-                    store=query["store"])
-                query_results.append(parser)
+                    store=query.pop("store"))
+                query_results.append(parser.dictify())
+                parsers.append(parser)
         store_results.append((str(store.slug), query_results))
     return store_results
+
+def get_products_from_db(queries: list[dict]):
+    pass

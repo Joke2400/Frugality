@@ -1,11 +1,9 @@
 """Contains classes for storing retrieved data."""
 
-import json
 from typing import Generator
 from dataclasses import dataclass
 from dataclasses import field
 
-import httpx
 from utils import LoggerManager
 
 from .store import Store

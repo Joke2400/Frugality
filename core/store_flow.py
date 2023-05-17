@@ -51,7 +51,7 @@ def parse_store_from_string(
         tuple[str | None]: Returns name, id and slug as optional values.
     """
     string = convert_to_alphanumeric(string)
-    logger.debug("Parsing store from query string: '%s'", string)
+    logger.debug("Parsing store from string: '%s'", string)
     data = regex_findall(
         r"\d+|^(?:\s*\b)\b[A-Za-zåäö\s-]+(?=\s?)", string)
 
@@ -194,7 +194,7 @@ def execute_store_search(string: str) -> Store:
     Returns a Store() instance with a state field indicating
     what to do with the returned store data.
     """
-    logger.info("\n[Initiated store search]")
+    logger.info("[Initiated a new store search]\n")
     parsed_data = parse_store_from_string(string=string)
     if not any(parsed_data):
         return Store(state=ParseFailed())
@@ -212,3 +212,16 @@ def execute_store_search(string: str) -> Store:
                 "Unable to add store: (%s, %s, %s)",
                 result[1].store_id, result[1].name, result[1].slug)
     return store
+
+
+def remove_store_query(stores: list[tuple], request_json: dict) -> list[tuple]:
+    """Remove a store from the provided stores list."""
+    if len(stores) > 0:
+        try:
+            index = int(request_json["index"])
+            item = stores[index]
+        except (KeyError, ValueError, IndexError) as err:
+            logger.exception(err)
+        else:
+            stores.remove(item)
+    return stores

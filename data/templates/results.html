@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block page_title %}Frugality{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style/base.css')}}">
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style/results.css')}}">
+{% endblock %}
+
+{% block scripts %}
+<script defer src="{{url_for('static', filename='js/index.js')}}"></script>
+{% endblock %}
+
+{%block content %}
+<nav>
+
+</nav>
+<header>
+
+</header>
+<main>
+    {% for item in results %}
+    <section>
+        <h2>{{item[0]}}</h2>
+    </section>
+    {% endfor %}
+</main>
+<footer>
+
+</footer>
+{% endblock %}

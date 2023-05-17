@@ -6,7 +6,7 @@ function sendProductQuery() {
             "Accept": "application/json"
         }
     }
-    fetch("/product_query/", fetchData).then(response => response.json())
+    fetch("/send_query/", fetchData).then(response => response.json())
     .then(function() {
         location.reload();
     });
@@ -27,6 +27,7 @@ function addStore() {
     fetch("/add_store/", fetchData).then(response => response.json())
     .then(function(data) {
         refreshStores(data["stores"]);
+        console.log(data["message"]);
     });
 }
 
@@ -49,6 +50,7 @@ function addProductQuery() {
     fetch("/add_query/", fetchData).then(response => response.json())
     .then(function(data) {
         refreshQueries(data["queries"]);
+        console.log(data["message"]);
     });
 }
 
@@ -61,6 +63,16 @@ function refreshQueries(queries) {
     for (let i = 0; i < queries.length; i++) {
         item = createQueryItem(queries[i], i);
         queryList.appendChild(item);
+    }
+    let sendQueryBtn = document.getElementById("send-query-btn");
+    if (queries.length > 0) {
+        if (sendQueryBtn.classList.contains("hidden")) {
+            sendQueryBtn.classList.remove("hidden");
+        }
+    } else {
+        if (!sendQueryBtn.classList.contains("hidden")) {
+            sendQueryBtn.classList.add("hidden");
+        }
     }
 
 }
