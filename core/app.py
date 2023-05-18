@@ -20,7 +20,7 @@ loop = asyncio.get_event_loop()
 
 
 @app.route("/", methods=["GET"])
-def main():
+def main_page():
     """Return a template for the main page."""
     queries = session.get("queries", default=[])
     stores = session.get("stores", default=[])
@@ -34,6 +34,15 @@ def main():
         store_names=store_names)
 
 
+@app.route("/results/", methods=["GET"])
+def results_page():
+    """Return a template for the results page."""
+    results = session.get("results", default=[])
+    return render_template(
+        "results.html",
+        results=results)
+
+
 @app.route("/add_store/", methods=["POST"])
 def add_store():
     """Append a store to the user session stores list.
@@ -41,11 +50,6 @@ def add_store():
     Execute search on string provided in request JSON.
     Query results are then interpreted and the store is
     added to session if query was successful.
-
-    Returns:
-        dict: Returns a dict with a key 'stores' containing
-            current stores in user session. Dict also contains
-            a 'message' key which gives results feedback to the end-user.
     """
     store: Store = execute_store_search(string=request.json["store"])
     match store.state:
@@ -102,22 +106,21 @@ def remove_query():
     return {"queries": queries}
 
 
-@app.route("/send_query/", methods=["GET"])
-def send_query():
+@app.route("/product_search/", methods=["GET"])
+def product_search():
     """Query stores list with stored product queries.
 
     TODO: rest of this docstring
     """
     if len(stores := session.get("stores", default=[])) == 0:
-        return redirect(url_for("main"))
+        return redirect(url_for(".main_page"))
     if len(queries := session.get("queries", default=[])) == 0:
-        return redirect(url_for("main"))
+        return redirect(url_for(".main_page"))
 
     # Expensive operation, Store class will be reworked later
     stores: list[Store] = [Store(x, y, z, Found()) for x, y, z in stores]
 
     results = loop.run_until_complete(
         execute_product_search(queries=queries, stores=stores))
-    return render_template(
-        "results.html",
-        results=results)
+    session["results"] = results
+    return redirect(url_for(".results_page"))

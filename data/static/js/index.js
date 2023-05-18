@@ -6,7 +6,7 @@ function sendProductQuery() {
             "Accept": "application/json"
         }
     }
-    fetch("/send_query/", fetchData).then(response => response.json())
+    fetch("/product_search/", fetchData).then(response => response.json())
     .then(function() {
         location.reload();
     });
