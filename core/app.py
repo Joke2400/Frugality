@@ -43,6 +43,12 @@ def results_page():
         results=results)
 
 
+@app.route("/store/query/", methods=["GET"])
+def query():
+    return {
+        "result": ("Prisma Olari", "542862479", "prisma-olari")}
+
+
 @app.route("/add_store/", methods=["POST"])
 def add_store():
     """Append a store to the user session stores list.
@@ -123,4 +129,4 @@ def product_search():
     results = loop.run_until_complete(
         execute_product_search(queries=queries, stores=stores))
     session["results"] = results
-    return redirect(url_for(".results_page"))
+    return {"url": url_for(".results_page")}

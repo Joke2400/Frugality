@@ -7,7 +7,8 @@
 {% endblock %}
 
 {% block scripts %}
-<script defer src="{{url_for('static', filename='js/index.js')}}"></script>
+<script defer type="module" src="{{url_for('static', filename='js/utils.js')}}"></script>
+<script defer type="module" src="{{url_for('static', filename='js/index.js')}}"></script>
 {% endblock %}
 
 {%block content %}
@@ -18,7 +19,7 @@
     <h1>Frugality</h1>
     <div class="input-box">
         <input id="store-input" class="field rounded" type="text" placeholder="Enter store name"></input>
-        <button class="btn rounded shadow" onclick="addStore()">+</button>
+        <button id="store_add_btn" class="btn rounded shadow">+</button>
     </div>
     <ul class="horizontal-list stores-list">
         {% for store in store_names %}
@@ -34,7 +35,7 @@
         <h2>Product Search</h2>
         <div class="input-box">
             <input id="query-input" class="field rounded" type="text" placeholder="Enter product name"></input>
-            <button class="btn rounded" onclick="addProductQuery()">+</button>
+            <button id="query_add_btn"class="btn rounded">+</button>
         </div>
         <ul class="vertical-list queries-list">
             {% for item in queries %}

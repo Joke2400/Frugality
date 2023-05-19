@@ -2,7 +2,7 @@
 
 import re
 from typing import Any
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy.exc import NoResultFound, MultipleResultsFound
 
 from api import api_fetch_store
 
@@ -174,8 +174,8 @@ def get_store_from_db(store: Store) -> Store:
         db_query = {"slug": str(store.slug)}
     try:
         results = core.manager.filter_query(db_Store, db_query).one()
-    except NoResultFound:
-        logger.debug("Could not find %s in DB.", store)
+    except (NoResultFound, MultipleResultsFound):
+        logger.debug("Could not fetch %s from DB.", store)
     else:
         store.set_fields(results[0].name, results[0].id,
                          results[0].slug)
