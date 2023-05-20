@@ -5,9 +5,15 @@ const request = (url, params, method) => {
         method
     };
     if (method === "GET") {
+        options.headers = {
+            "Accept": "application/json"
+        }
         url += '?' + (new URLSearchParams(params)).toString();
     } else {
         options.body = JSON.stringify(params);
+        options.headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json"}
     }
     return fetch(url, options).then(response => response.json());
 };

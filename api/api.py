@@ -160,6 +160,8 @@ def api_fetch_store(query_data: tuple[str | None, str | None]
     if not response:
         return None
     content = json.loads(response.text)
+    query_logger.debug("%s", json.dumps(
+        content, indent=4))
     return content
 
 

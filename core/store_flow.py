@@ -1,14 +1,13 @@
 """Contains functions for initiating, managing and parsing a store search."""
 
 import re
-from typing import Any
+from typing import Any, Callable
 from sqlalchemy.exc import NoResultFound, MultipleResultsFound
 
 from api import api_fetch_store
 
 from utils import Found
 from utils import NotFound
-from utils import QueryPending
 from utils import ParseFailed
 from utils import regex_findall
 from utils import LoggerManager
@@ -137,7 +136,7 @@ def parse_store_from_response(store: Store, response: dict) -> Store:
     return store
 
 
-def get_store_from_api(store: Store) -> Store:
+def store_api_search(store: Store) -> Store | dict:
     """Get store from api and parse the results.
 
     Args:
@@ -152,10 +151,10 @@ def get_store_from_api(store: Store) -> Store:
         logger.debug("Received no response from API.")
         store.state = NotFound()
         return store
-    return parse_store_from_response(store=store, response=response)
+    return response
 
 
-def get_store_from_db(store: Store) -> Store:
+def store_db_search(store: Store) -> Store:
     """Get store from database and return the result.
 
     Passed in store object gets modified if store is found.
@@ -183,6 +182,16 @@ def get_store_from_db(store: Store) -> Store:
     return store
 
 
+def store_search(store: str | Store, func: Callable) -> Any:
+    """Call the search func with the given store as a parameter."""
+    if isinstance(store, str):
+        parsed_data = parse_store_from_string(string=store)
+        if not any(parsed_data):
+            return Store(state=ParseFailed())
+        store = Store(*parsed_data, NotFound())
+    return func(store=store)
+
+
 def execute_store_search(string: str) -> Store:
     """Search for store in database and api.
 
@@ -195,16 +204,11 @@ def execute_store_search(string: str) -> Store:
     what to do with the returned store data.
     """
     logger.info("[Initiated a new store search]\n")
-    parsed_data = parse_store_from_string(string=string)
-    if not any(parsed_data):
-        return Store(state=ParseFailed())
-
-    store = Store(*parsed_data, QueryPending())
-    store = get_store_from_db(store=store)
+    store = store_search(store=string, func=store_db_search)
     if store.state is Found():
         return store
-
-    store = get_store_from_api(store=store)
+    response = store_search(store=store, func=store_api_search)
+    store = parse_store_from_response(store=store, response=response)
     if store.state is Found():
         result = core.manager.add_store(store=store)
         if not result:
@@ -214,14 +218,27 @@ def execute_store_search(string: str) -> Store:
     return store
 
 
-def remove_store_query(stores: list[tuple], request_json: dict) -> list[tuple]:
+def add_store_query(request_json: dict, stores: list[tuple[str, str, str]]
+                    ) -> list[tuple[str, str, str]]:
+    """Append a store query to the provided stores list."""
+    key: Any = request_json.get("store", None)
+    if not isinstance(key, list):
+        return stores
+    key = tuple(map(str, key))
+    store: tuple[str, str, str] = key[:3]
+    if store not in stores:
+        stores.append(store)
+    return stores
+
+
+def remove_store_query(request_args: dict, stores: list[tuple[str, str, str]]
+                       ) -> list[tuple[str, str, str]]:
     """Remove a store from the provided stores list."""
-    if len(stores) > 0:
-        try:
-            index = int(request_json["index"])
-            item = stores[index]
-        except (KeyError, ValueError, IndexError) as err:
-            logger.exception(err)
-        else:
-            stores.remove(item)
+    store_id: Any = request_args.get("id", None)
+    if not isinstance(store_id, str):
+        return stores
+    results = list(filter(lambda i: i[1] == store_id, stores))
+    if len(results) > 0:
+        if store_id in results[0]:
+            stores.remove(results[0])
     return stores

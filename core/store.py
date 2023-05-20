@@ -7,7 +7,6 @@ from utils import OneOfType
 from utils import Found
 from utils import NotFound
 from utils import ParseFailed
-from utils import QueryPending
 
 
 @dataclass
@@ -53,7 +52,6 @@ class Store:
         default=OneOfType(
             Found,
             NotFound,
-            QueryPending,
             ParseFailed),
         repr=False)
 

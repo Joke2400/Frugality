@@ -43,14 +43,6 @@ class NotFound(State):
         return "State: <NotFound>"
 
 
-class QueryPending(State):
-    """State singleton for representing 'QueryPending' state."""
-
-    def __repr__(self) -> str:
-        """Return state representation as a string."""
-        return "State: <QueryPending>"
-
-
 class ParseFailed(State):
     """State singleton for representing 'ParseFailed' state."""
 
