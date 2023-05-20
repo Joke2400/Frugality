@@ -9,13 +9,16 @@ from .util_funcs import get_quantity_from_string
 from .patterns import OneOfType
 from .patterns import SingletonMeta
 from .state import State
-from .state import Found
-from .state import NotFound
+from .state import Pending
+from .state import Success
+from .state import NoResults
 from .state import ParseFailed
+from .state import NoResponse
 
 
 __all__ = ["ProjectPaths", "LoggerManager", "timer",
            "regex_search", "regex_findall",
            "get_quantity_from_string", "OneOfType",
-           "State", "Found", "NotFound",
-           "ParseFailed", "SingletonMeta"]
+           "SingletonMeta", "State", "Pending",
+           "Success", "NoResults", "ParseFailed",
+           "NoResponse"]

@@ -40,6 +40,5 @@ logger.debug("Set Flask session lifetime to: %s.", LIFETIME)
 logger.debug("Initializing database...")
 database.init_app(flask_app)
 manager = DataManager(database=database, app=flask_app)
-manager.reset_db()
 
 __all__ = ["Store"]

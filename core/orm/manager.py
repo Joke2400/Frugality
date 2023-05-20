@@ -97,8 +97,7 @@ class DataManager(metaclass=SingletonMeta):
         self.database.session.add(item)
         try:
             self.database.session.commit()
-        except IntegrityError as err:
-            logger.exception(err)
+        except IntegrityError:
             self.database.session.rollback()
             return False
         return True

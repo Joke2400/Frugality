@@ -6,15 +6,18 @@ from sqlalchemy.exc import NoResultFound, MultipleResultsFound
 
 from api import api_fetch_store
 
-from utils import Found
-from utils import NotFound
+from utils import Pending
+from utils import Success
+from utils import NoResults
 from utils import ParseFailed
+from utils import NoResponse
 from utils import regex_findall
 from utils import LoggerManager
 
 import core
 from .store import Store
-from .orm import Store as db_Store
+from .search import Search
+from .orm import Store as StoreModel
 
 logger = LoggerManager.get_logger(name=__name__)
 
@@ -90,132 +93,149 @@ def parse_store_from_string(
     return (s_name, s_id, slug)
 
 
-def parse_store_from_response(store: Store, response: dict) -> Store:
-    """Parse store from response and return result as a Store object.
+def parse_response(search: Search, response: dict) -> Search:
+    """Parse stores from response dict.
 
-    Args:
-        store (Store): Store query object.
-        response (dict): Response dict received through api.
-
-    Returns:
-        Store: Return Store with new data or with updated state.
+    Returned value is the same Search instance passed in.
+    Parsed stores are placed in the result field of the instance.
     """
     logger.debug("Parsing response from API...")
     key = None
-    try:  # Find correct keys in response dict.
+    try:
         key = response["data"]["searchStores"]["stores"]
+        logger.debug("Total store count: %s.",
+                     response["data"]["searchStores"]["totalCount"])
     except KeyError:
         logger.debug("Response did not contain multiple stores.")
         try:
             key = response["data"]["store"]
         except KeyError:
             logger.debug("Response contained no stores.")
-            store.state = NotFound()
+            search.state = NoResults()
+            return search
 
+    stores = []
     match key:
 
         case list():
             for i in key:
-                if "-".join(i["name"].lower().split()) == store.slug:
-                    return Store(i.get("name"), i.get("id"),
-                                 store.slug, Found())
-            logger.debug("Could not find store in response items.")
-            store.state = NotFound()
+                name, s_id = i.get("name"), i.get("id")
+                if name is None or s_id is None:
+                    continue
+                slug = "-".join(name.lower().split())
+                stores.append(Store(name, s_id, slug))
 
         case dict():
-            if key["id"].strip() == store.store_id:
-                slug = "-".join(str(key.get("name")).lower().split())
-                return Store(key.get("name"), key.get("id"),
-                             slug, Found())
-            logger.debug("Could not match found store slug.")
-            store.state = NotFound()
+            name, s_id = key.get("name"), key.get("id")
+            if name is not None or s_id is not None:
+                slug = "-".join(name.lower().split())
+                stores.append(Store(name, s_id, slug))
 
         case _:
-            store.state = ParseFailed()
+            search.state = ParseFailed()
 
-    return store
-
-
-def store_api_search(store: Store) -> Store | dict:
-    """Get store from api and parse the results.
-
-    Args:
-        store (Store): Store to query.
-
-    Returns:
-        Store: Store state is either Found() or NotFound().
-    """
-    logger.debug("Fetching %s from API...", store)
-    response = api_fetch_store(query_data=(store.name, store.store_id))
-    if not response:
-        logger.debug("Received no response from API.")
-        store.state = NotFound()
-        return store
-    return response
+    if len(stores) == 0:
+        search.state = NoResults()
+    else:
+        search.set_result(stores, Success())
+    return search
 
 
-def store_db_search(store: Store) -> Store:
-    """Get store from database and return the result.
+def store_api_search(search: Search) -> Search:
+    """Query api for a store and return the response."""
+    logger.debug("Fetching %s from API...", search.query.name)
+    response = api_fetch_store(
+        query_data=(search.query.name, search.query.store_id))
+    if response:
+        search.set_result(response, Success())
+    else:
+        search.state = NoResponse()
+    return search
 
-    Passed in store object gets modified if store is found.
 
-    Args:
-        store (Store): Store to query.
-
-    Returns:
-        Store: State is set to Found() if store is in database.
-            If it's not found, state will remain unmodified.
-    """
-    logger.debug("Fetching %s from DB...", store)
+def store_db_search(search: Search) -> Search:
+    """Get store from database and return the result."""
+    logger.debug("Fetching %s from DB...", search.query)
+    store = search.query
     if store.store_id:  # If ID exists do this
-        db_query = {"store_id": store.store_id}
+        query = {"store_id": store.store_id}
     else:  # Otherwise query by using slug
-        db_query = {"slug": str(store.slug)}
+        query = {"slug": str(store.slug)}
     try:
-        results = core.manager.filter_query(db_Store, db_query).one()
+        resp = core.manager.filter_query(StoreModel, query).one()
     except (NoResultFound, MultipleResultsFound):
         logger.debug("Could not fetch %s from DB.", store)
     else:
-        store.set_fields(results[0].name, results[0].id,
-                         results[0].slug)
-        store.state = Found()
-    return store
+        store.set_fields(resp.name, resp.id, resp.slug)
+        search.set_result([store], Success())
+    return search
 
 
-def store_search(store: str | Store, func: Callable) -> Any:
+def store_search(search: Search, func: Callable) -> Any:
     """Call the search func with the given store as a parameter."""
-    if isinstance(store, str):
-        parsed_data = parse_store_from_string(string=store)
+    if isinstance(search.query, str):
+        parsed_data = parse_store_from_string(string=search.query)
         if not any(parsed_data):
-            return Store(state=ParseFailed())
-        store = Store(*parsed_data, NotFound())
-    return func(store=store)
+            search.state = ParseFailed()
+            return search
+        search.set_query(Store(*parsed_data), Pending())
+    return func(search=search)
 
 
-def execute_store_search(string: str) -> Store:
-    """Search for store in database and api.
+def execute_store_search(value: Any) -> Search:
+    search = Search(query=str(value), state=Pending())
+    logger.info("[Initiated a new store search]")
+    search = store_search(search=search, func=store_db_search)
+    logger.debug("Search (%s)", search.state)
+    match search.state:
 
-    Takes in a string.
-    Given string gets parsed, queried and then validated
-    before being added to stores list if not already present.
-    If store does not exist in database, adds it.
-
-    Returns a Store() instance with a state field indicating
-    what to do with the returned store data.
-    """
-    logger.info("[Initiated a new store search]\n")
-    store = store_search(store=string, func=store_db_search)
-    if store.state is Found():
-        return store
-    response = store_search(store=store, func=store_api_search)
-    store = parse_store_from_response(store=store, response=response)
-    if store.state is Found():
-        result = core.manager.add_store(store=store)
-        if not result:
+        case Success():
             logger.debug(
-                "Unable to add store: (%s, %s, %s)",
-                result[1].store_id, result[1].name, result[1].slug)
-    return store
+                "Database search for query %s, was successful!",
+                search.query)
+            return search
+
+        case ParseFailed():
+            logger.debug(
+                "Parsing of store failed for query: %s",
+                search.query)
+            search.result = "Error parsing string."
+            return search
+    # If program reaches here, search.state = Pending()
+    search = store_search(search=search, func=store_api_search)
+    if search.state == NoResponse():
+        logger.debug("Received no response from API.")
+        return search
+    search = parse_response(search=search, response=search.result)
+    logger.debug("Search (%s)", search.state)
+    match search.state:
+
+        case Success():
+            logger.debug(
+                "Success! Parsed %s stores, from query %s.",
+                len(search.result), search.query)
+
+            # THIS WILL BE MOVED TO FLASK AFTER_REQUEST
+            count = 0
+            for store in search.result:
+                result = core.manager.add_store(
+                    store=store)
+                if result:
+                    count += 1
+            logger.debug("Added %s out of %s stores to db.",
+                         count, len(search.result))
+            return search
+
+        case ParseFailed():
+            logger.debug(
+                "Failed to parse response:  %s",
+                search.result)
+            search.result = "Error parsing response."
+
+        case _:
+            logger.debug(
+                "Parsed no stores from response.")
+            return search
 
 
 def add_store_query(request_json: dict, stores: list[tuple[str, str, str]]

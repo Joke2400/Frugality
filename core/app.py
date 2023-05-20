@@ -5,14 +5,14 @@ from flask import redirect, url_for, render_template
 from flask import request, session, Blueprint
 
 from utils import LoggerManager
+from utils import Success, NoResults, ParseFailed, NoResponse
 
 from .store_flow import execute_store_search
 from .store_flow import add_store_query
 from .store_flow import remove_store_query
 
 from .product_flow import execute_product_search
-from .product_flow import add_product_query
-from .product_flow import remove_product_query
+from .search import Search
 
 
 logger = LoggerManager.get_logger(name=__name__)
@@ -54,31 +54,34 @@ def results_page():
 
 @app.route("/store/query/", methods=["GET"])
 def store_query():
-    pass
-    string = request.args.get("value", default=None)
-    if string is None:
-        return {"message": "Query string missing."}
-    string = str(string)
-    search: Search = execute_store_search(string=string)
+    search: Search = execute_store_search(
+        value=request.args.get("value", default=None))
     match search.state:
 
-        case GotResults():
+        case Success():
             return {
-                "message": "Success!",
+                "message":
+                    f"Success! Found: {len(search.result)} stores.",
                 "stores": search.result
-                }
+            }
 
         case NoResults():
             return {
-                "message": "No results."}
+                "message":
+                    f"No results received: {search.query}."}
 
         case ParseFailed():
             return {
-                "message": "Error parsing string."}
+                "message": search.result}
 
+        case NoResponse():
+            return {
+                "message":
+                    "API response was empty or invalid."
+            }
         case _:
             return {
-                "message": "UNKNOWN SERVER ERROR"}
+                "message": "Unknown server error."}
 
 
 @app.route("/store/query/select/", methods=["GET", "POST"])

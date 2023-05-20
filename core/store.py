@@ -1,59 +1,16 @@
 """Contains a store class that keeps track of a state as well as store data."""
 
-from dataclasses import dataclass, field
-from typing import Any, Optional
-
-from utils import OneOfType
-from utils import Found
-from utils import NotFound
-from utils import ParseFailed
+from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass
 class Store:
-    """Class that stores a name, id and slug for a store.
-
-    The class also stores a state that is managed by a type-validator
-    descriptor. State is intended to be used for match/if statements
-    as a clean way to do control flow through type-checking.
-
-    The core idea is to enable structural pattern matching to be used on a
-    class in a way where the type of a single field determines what should
-    be done with the data stored in other fields in that instance.
-
-    For example:
-
-    match store.state:
-
-        case Found():
-            # Do something
-
-        case NotFound()
-            # Do something else
-
-    Is the syntax i wanted to enable with this class. Since store name and id
-    values can either be the name and id of a Store() that was Found(), or
-    the name and id of a query(Store) that was NotFound(), keeping track
-    of state in this way enables a cleaner syntax whilst enabling a
-    more varied sort of control flow throughout the program. It's also
-    more clear what's going on than it is when you're just using tuples.
-
-    For greater performance, the descriptor validator could be dropped, as it's
-    not strictly necessary for the class to work. It's been implemented to
-    require that the coder (me) models possible states more rigidly/clearly.
-
-    (Ignore the essay above, this class was mostly made for fun and practice)
-    """
+    """Dataclass for storing store data."""
 
     name: Optional[str] = None
     store_id: Optional[str] = None
     slug: Optional[str] = None
-    state: Any = field(
-        default=OneOfType(
-            Found,
-            NotFound,
-            ParseFailed),
-        repr=False)
 
     @property
     def data(self) -> tuple[str | None, str | None, str | None]:

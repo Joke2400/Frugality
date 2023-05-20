@@ -11,12 +11,7 @@ class State(ABC):
     """
 
     def __new__(cls):
-        """Implement singleton-pattern for class.
-
-        If an instance of state does not exist, create a new instance.
-        If it already exists, return that one. Only one instance of
-        the class may exist at a time.
-        """
+        """State singleton for representing a state."""
         if not hasattr(cls, "_state"):
             state = super(State, cls).__new__(cls)
             cls._state = state
@@ -27,20 +22,28 @@ class State(ABC):
         """__repr__ must be implemented."""
 
 
-class Found(State):
-    """State singleton for representing 'Found' state."""
+class Pending(State):
+    """State singleton for representing 'Pending' state."""
 
     def __repr__(self) -> str:
         """Return state representation as a string."""
-        return "State: <Found>"
+        return "State: <Pending>"
 
 
-class NotFound(State):
-    """State singleton for representing 'NotFound' state."""
+class Success(State):
+    """State singleton for representing 'Success' state."""
 
     def __repr__(self) -> str:
         """Return state representation as a string."""
-        return "State: <NotFound>"
+        return "State: <Success>"
+
+
+class NoResults(State):
+    """State singleton for representing 'NoResults' state."""
+
+    def __repr__(self) -> str:
+        """Return state representation as a string."""
+        return "State: <NoResults>"
 
 
 class ParseFailed(State):
@@ -48,4 +51,12 @@ class ParseFailed(State):
 
     def __repr__(self) -> str:
         """Return state representation as a string."""
-        return "State: <ParseError>"
+        return "State: <ParseFailed>"
+
+
+class NoResponse(State):
+    """State singleton for representing 'NoResponse' state."""
+
+    def __repr__(self) -> str:
+        """Return state representation as a string."""
+        return "State: <NoResponse>"
