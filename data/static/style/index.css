@@ -65,8 +65,6 @@ h1 {
 .store-box {
     width: 15rem;
     position: relative;
-    margin-bottom: 3rem;
-    background-color: rgba(255, 0, 0, 0.2);
 }
 
 .store-box input {
@@ -83,6 +81,7 @@ h1 {
     overflow-y: scroll;
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
+    background-color: var(--clr-white-default);
 }
 
 .store-result-container::-webkit-scrollbar {
@@ -97,21 +96,27 @@ h1 {
 }
 
 .store-result-item {
+    height: 1.5rem;
+}
+
+.store-result-btn {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    padding-left: 1.5rem;
+    font-weight: bold;
+    font-size: 0.5rem;
+    text-align: left;
+    color: var(--clr-text-grey);
     background-color: var(--clr-white-default);
 }
 
-.store-result-item:hover {
+.store-result-item button:hover {
     background-color: var(--clr-white-hover);
 }
 
-.store-result-txt {
-    margin: 0;
-    padding: 0.4rem 0 0.6rem 1.5rem;
-    font-size: 0.5rem;
-    font-weight: bold;
-    color: var(--clr-text-grey);
-}
-
+/* STORE QUERY ITEM CSS*/
 .stores-list {
     margin: 0.5rem;
     height: fit-content;
@@ -128,8 +133,8 @@ h1 {
 
 .store-item-txt {
     margin: 0;
-    padding: 0.5rem;
-    font-size: 0.7rem;
+    padding: 0.4rem;
+    font-size: 0.6rem;
     font-weight: bold;
     color: var(--clr-white-default);
     background-color: var(--clr-primary-300);
@@ -138,22 +143,22 @@ h1 {
 
 .store-item button {
     border: 0;
-    padding: 0.5rem;
+    padding: 0.4rem;
     margin-left: 0.1rem;
     padding-right: 0.7rem;
-    font-size: 0.7rem;
+    font-size: 0.6rem;
     font-weight: bold;
     color: var(--clr-white-default);
     background-color: var(--clr-primary-300);
     border-radius: 0 1rem 1rem 0;
 }
 
-.store-item:hover .store-msg {
-    background-color: var(--clr-primary-250);
+.store-item:hover .store-item-txt {
+    background-color: var(--clr-primary-350);
 }
 
 .store-item:hover button {
-    background-color: var(--clr-primary-250);
+    background-color: var(--clr-primary-350);
 }
 
 .store-item button:hover {

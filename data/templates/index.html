@@ -19,41 +19,8 @@
     <h1>Frugality</h1>
     <div class="store-box">
         <input id="store-input" class="field rounded shadow" type="text" placeholder="Search for a store"></input>
-        <div class="store-result-container bottom-shadow rounded-bottom">
-            <ul>
-                <li class="store-result-item border-bottom-light">
-                    <p class="store-result-txt">Test Store 1</p>
-                </li>
-                <li class="store-result-item border-bottom-light">
-                    <p class="store-result-txt">Test Store 2</p>
-                </li>
-                <li class="store-result-item border-bottom-light">
-                    <p class="store-result-txt">Test Store 3</p>
-                </li>
-                <li class="store-result-item border-bottom-light">
-                    <p class="store-result-txt">Test Store 4</p>
-                </li>
-                <li class="store-result-item border-bottom-light">
-                    <p class="store-result-txt">Test Store 5</p>
-                </li>
-                <li class="store-result-item border-bottom-light">
-                    <p class="store-result-txt">Test Store 6</p>
-                </li>
-                <li class="store-result-item">
-                    <p class="store-result-txt">Test Store 7</p>
-                </li>
-            </ul>
-        </div>
-        <p class="arrow down-arrow"></p>
     </div>
-    <ul class="horizontal-list stores-list">
-        {% for store in store_names %}
-        <li class="store-item">
-            <p class="store-item-txt rounded shadow">{{store}}</p>
-            <button onclick="removeStore({{loop.index0}})">-</button>
-        </li>
-        {% endfor %}
-    </ul>
+    <ul class="horizontal-list stores-list"></ul>
 </header>
 <main>
     <section class="section-1 shadow">

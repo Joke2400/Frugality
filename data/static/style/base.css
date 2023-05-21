@@ -16,13 +16,14 @@ html {
     --clr-primary-200: hsl(200, 60%, 70%);
     --clr-primary-250: hsl(200, 60%, 65%);
     --clr-primary-300: hsl(200, 60%, 60%);
+    --clr-primary-350: hsl(200, 60%, 55%);
     --clr-primary-400: hsl(200, 60%, 50%);
     --clr-primary-500: hsl(200, 60%, 40%);
 }
 
 /* Generic styles BEGIN */
 .shadow {
-    box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 5px 0px rgba(0, 0, 0, 0.3);
 }
 
 .bottom-shadow {
@@ -30,6 +31,7 @@ html {
 }
 
 .border-bottom-light {
+    border: 0;
     border-bottom: 0.075rem solid var(--clr-text-light-grey);
 }
 
@@ -76,7 +78,6 @@ html {
     color: var(--clr-white-default);
     background-color: var(--clr-primary-300);
     font-size: 1.1rem;
-    border: 0;
     margin: 0.5rem;
     padding: 0.4rem 0.6rem;
 }

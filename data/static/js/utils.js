@@ -1,14 +1,16 @@
-export {delay, refreshList, get, post};
+export { delay, refreshList, get, post, getCookie };
 
 const request = (url, params, method) => {
     let options = {
-        method
+        method,
     };
     if (method === "GET") {
         options.headers = {
             "Accept": "application/json"
         }
-        url += '?' + (new URLSearchParams(params)).toString();
+        if (params !== undefined) {
+            url += '?' + (new URLSearchParams(params)).toString();
+        }
     } else {
         options.body = JSON.stringify(params);
         options.headers = {
@@ -21,6 +23,10 @@ const request = (url, params, method) => {
 const get = (url, params) => request(url, params, "GET");
 const post = (url, params) => request(url, params, "POST");
 
+function getCookie() {
+    document.cookie
+    console.log(document.cookie)
+}
 
 function delay(fn, ms) {
     let timer = 0;

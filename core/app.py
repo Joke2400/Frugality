@@ -52,6 +52,12 @@ def results_page():
         results=results)
 
 
+@app.route("/stores/", methods=["GET"])
+def get_stores():
+    stores = session.get("stores", default=[])
+    return {"stores": stores}
+
+
 @app.route("/store/query/", methods=["GET"])
 def store_query():
     search: Search = execute_store_search(
@@ -99,15 +105,17 @@ def modify_store_queries():
     """
     stores = session.get("stores", default=[])
     if request.method == "POST":
-        stores = add_store_query(
+        logger.debug("Adding a store query to stores...")
+        result, stores = add_store_query(
             request_json=request.json,
             stores=stores)
     else:
-        stores = remove_store_query(
+        logger.debug("Removing a store query from stores...")
+        result, stores = remove_store_query(
             request_args=request.args,
             stores=stores)
     session["stores"] = stores
-    return {"stores": stores}
+    return {"result": result}
 
 
 @app.route("/product/query/", methods=["GET"])

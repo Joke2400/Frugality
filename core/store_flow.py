@@ -166,7 +166,7 @@ def store_db_search(search: Search) -> Search:
     except (NoResultFound, MultipleResultsFound):
         logger.debug("Could not fetch %s from DB.", store)
     else:
-        store.set_fields(resp.name, resp.id, resp.slug)
+        store.set_fields(resp.name, resp.store_id, resp.slug)
         search.set_result([store], Success())
     return search
 
@@ -183,6 +183,7 @@ def store_search(search: Search, func: Callable) -> Any:
 
 
 def execute_store_search(value: Any) -> Search:
+    """Execute a store search."""
     search = Search(query=str(value), state=Pending())
     logger.info("[Initiated a new store search]")
     search = store_search(search=search, func=store_db_search)
@@ -214,7 +215,6 @@ def execute_store_search(value: Any) -> Search:
             logger.debug(
                 "Success! Parsed %s stores, from query %s.",
                 len(search.result), search.query)
-
             # THIS WILL BE MOVED TO FLASK AFTER_REQUEST
             count = 0
             for store in search.result:
@@ -235,30 +235,36 @@ def execute_store_search(value: Any) -> Search:
         case _:
             logger.debug(
                 "Parsed no stores from response.")
-            return search
+    return search
 
 
 def add_store_query(request_json: dict, stores: list[tuple[str, str, str]]
-                    ) -> list[tuple[str, str, str]]:
+                    ) -> tuple[bool, list[tuple[str, str, str]]]:
     """Append a store query to the provided stores list."""
+    result = False
     key: Any = request_json.get("store", None)
     if not isinstance(key, list):
-        return stores
+        return result, stores
     key = tuple(map(str, key))
     store: tuple[str, str, str] = key[:3]
     if store not in stores:
         stores.append(store)
-    return stores
+        result = True
+        logger.debug("Added store %s, to store queries.", store)
+    return result, stores
 
 
 def remove_store_query(request_args: dict, stores: list[tuple[str, str, str]]
-                       ) -> list[tuple[str, str, str]]:
+                       ) -> tuple[bool, list[tuple[str, str, str]]]:
     """Remove a store from the provided stores list."""
     store_id: Any = request_args.get("id", None)
+    result = False
     if not isinstance(store_id, str):
-        return stores
+        return result, stores
     results = list(filter(lambda i: i[1] == store_id, stores))
     if len(results) > 0:
         if store_id in results[0]:
             stores.remove(results[0])
-    return stores
+            result = True
+            logger.debug("Removed store %s, from store queries.", results[0])
+    return result, stores

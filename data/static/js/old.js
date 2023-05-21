@@ -18,11 +18,6 @@ function addStoreQuery() {
     });
 }
 
-
-
-
-
-
 function sendProductQuery() {
     let fetchData = {
         method: "GET",
@@ -81,36 +76,6 @@ function refreshQueries(queries) {
     }
 
 }
-function refreshStores(stores) {
-    const elements = document.getElementsByClassName("store-item");
-    while(elements.length > 0) {
-        elements[0].parentNode.removeChild(elements[0]);
-    }
-    let storesList = document.querySelector(".stores-list");
-    for (let i = 0; i < stores.length; i++) {
-        item = createStoreItem(stores[i], i);
-        storesList.appendChild(item);
-    }
-
-}
-
-function createStoreItem(tup, inx) {
-    let name = document.createElement("p");
-    name.classList.add("store-msg", "rounded", "shadow");
-    name.innerText = tup[0];
-    let btn = document.createElement("button");
-    btn.innerText = "-";
-    btn.onclick = function() {
-        removeStore(inx)
-    };
-    let li = document.createElement("li");
-    li.classList.add("store-item");
-    li.appendChild(name);
-    li.appendChild(btn);
-
-    return li
-}
-
 
 function createQueryItem(dict, inx) {
     let amount = document.createElement("p");
