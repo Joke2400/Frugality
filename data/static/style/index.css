@@ -10,7 +10,7 @@ body {
 }
 
 nav {
-    position: fixed;
+    position: sticky;
     width: 100%;
     background-color: var(--clr-primary-300);
     height: 2rem;
@@ -18,14 +18,13 @@ nav {
 
 header {
     display: flex;
-    flex-direction: column;
-    margin-top: 2rem;
+    flex-direction: column;;
     margin-bottom: 5svh;
     align-items: center;
     justify-content: flex-end;
     width: 80%;
     height: 80svh;
-    border: 2px dashed black
+    border: 2px dashed black;
 }
 
 main {
@@ -33,39 +32,86 @@ main {
     height: 100%;
     display: grid;
     overflow: hidden;
-    background-color: var(--clr-white-default);
-    border: 2px dashed black
 }
 
 section {
     display: flex;
     flex-flow: column;
     align-items: center;
-    border: 2px dashed black;
     padding: 1rem;
+    background-color: var(--clr-primary-150);
 }
 
 footer {
     width: 80%;
     height: 10svh;
-    background-color: var(--clr-primary-100);
+    background-color: var(--clr-primary-300);
 }
 
 p, h1, h2 {
     color: var(--clr-text-basic);
 }
 
-h1 {
-    font-size: 3rem;
+h1, h2 {
     margin: 1rem;
 }
 
-h2 {
-    margin: 1rem;
+h1 {
+    font-size: 3rem;
 }
 /* Semantic END */
 
 /* Header elements BEGIN */
+.store-box {
+    width: 15rem;
+    position: relative;
+    margin-bottom: 3rem;
+    background-color: rgba(255, 0, 0, 0.2);
+}
+
+.store-box input {
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.store-result-container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    max-height: 8.25rem;
+    overflow-y: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.store-result-container::-webkit-scrollbar {
+    display: none; /* Chrome Safari Opera */
+}
+
+.store-result-container ul {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.store-result-item {
+    background-color: var(--clr-white-default);
+}
+
+.store-result-item:hover {
+    background-color: var(--clr-white-hover);
+}
+
+.store-result-txt {
+    margin: 0;
+    padding: 0.4rem 0 0.6rem 1.5rem;
+    font-size: 0.5rem;
+    font-weight: bold;
+    color: var(--clr-text-grey);
+}
+
 .stores-list {
     margin: 0.5rem;
     height: fit-content;
@@ -80,7 +126,7 @@ h2 {
     margin: 0.5rem 0.5rem;
 }
 
-.store-msg {
+.store-item-txt {
     margin: 0;
     padding: 0.5rem;
     font-size: 0.7rem;

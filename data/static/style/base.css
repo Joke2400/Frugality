@@ -4,6 +4,8 @@
 
 html {
     --clr-text-basic: hsl(0, 0%, 25%);
+    --clr-text-grey: hsl(0, 0%, 40%);
+    --clr-text-light-grey: hsl(0, 0%, 85%);
     --clr-blue-default: hsl(189, 100%, 35%);
     --clr-blue-hover: hsl(189, 100%, 40%);
     --clr-white-default: hsl(200, 100%, 100%);
@@ -20,19 +22,50 @@ html {
 
 /* Generic styles BEGIN */
 .shadow {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.3);
 }
+
+.bottom-shadow {
+    box-shadow: 0px 5px 5px 0px rgba(0, 0, 0, 0.2);
+}
+
+.border-bottom-light {
+    border-bottom: 0.075rem solid var(--clr-text-light-grey);
+}
+
+.arrow {
+    border: solid var(--clr-text-grey);
+    border-width: 0 0.125rem 0.125rem 0;
+    display: inline-block;
+    position: absolute;
+    top: 8.75rem;
+    left: 7.5rem;
+    padding: 0.1rem;
+  }
+
+.down-arrow {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+}
+
+.up-arrow {
+    transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+  }
 
 .field {
     border: 0;
-    margin: 0.5rem;
     padding: 0.4rem 0.8rem;
     font-size: 1.1rem;
     font-weight: bold;
-    color: rgb(65, 65, 65);
+    text-align: center;
+    color: var(--clr-text-basic);
     background-color: var(--clr-white-default);
-    box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.3);
 }
+.field:focus::placeholder {
+    color: transparent;
+}
+
 
 .field:hover {
     background-color: var(--clr-white-hover);
@@ -58,6 +91,10 @@ html {
 
 .rounded-more {
     border-radius: 2rem;
+}
+
+.rounded-bottom {
+    border-radius: 0 0 1rem 1rem;
 }
 
 .hidden {
@@ -87,14 +124,6 @@ html {
     max-height: 100%;
     margin: 0;
     padding: 0;
-}
-
-.input-box {
-    display: flex;
-    flex-flow: row;
-    justify-content: center;
-    padding-bottom: 0.5rem;
-    width: 45%;
 }
 /* Generic styles END */
 

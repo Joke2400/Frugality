@@ -6,6 +6,7 @@ var productQueries = [];
 const addStoreBtn = document.getElementById("store_add_btn");
 const addQueryBtn = document.getElementById("query_add_btn");
 
+const storeBox = document.getElementById("store-box");
 const storeInput = document.getElementById("store-input");
 const storesList = document.querySelector(".stores-list");
 
@@ -18,11 +19,15 @@ function queryStore() {
     let value = storeInput.value
     if (value.length !== 0) {
         get("/store/query/", {value: value}).then(response => {
-            console.log(JSON.stringify(response));
+            console.log(response);
         })
     }
 };
 
+
+function displayStoreResults(response) {
+    let resultList = document.createElement("div")
+}
 
 function addStoreQuery(store) {
     if (!storeQueries.includes(store)) {
