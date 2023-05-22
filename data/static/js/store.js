@@ -1,4 +1,4 @@
-export { storeQuery, displayStoreResults };
+export { storeQuery, displayStoreResults, hideStoreResults };
 import { get, post, refreshList } from "./utils.js"
 
 window.onload = e => {
@@ -17,27 +17,54 @@ var previousQuery = ["", []]
 function storeQuery() {
     let element = storeBox.querySelector(".store-result-container");
     let value = storeInput.value
-    if (element !== null) {
-        storeBox.removeChild(element);
-    }
     if (value.length !== 0) {
         if (value !== previousQuery[0]) {
+            if (element !== null) {
+                storeBox.removeChild(element);
+            }
             get("/store/query/", {value: value}).then(response => {
-                displayStoreResults(response);
+                createStoreResultsDialog(response);
                 previousQuery = [value, response]
+                storeInput.style = "outline: none;"
+                storeInput.classList.add("rounded-top", "border-bottom-light")
             })
         } else {
-            displayStoreResults(previousQuery[1])
+            createStoreResultsDialog(previousQuery[1])
+            storeInput.style = "outline: none;"
+            storeInput.classList.add("rounded-top", "border-bottom-light")
         }
+    } else {
+        hideStoreResults()
     }
 };
 
 
-function displayStoreResults(response) {
+
+function displayStoreResults() {
+    let resultBox = document.querySelector(".store-result-container");
+    if (resultBox !== null) {
+        resultBox.style = "display: flex;"
+        storeInput.style = "outline: none;"
+        storeInput.classList.add("rounded-top", "border-bottom-light")
+    }
+}
+
+
+function hideStoreResults() {
+    let resultBox = document.querySelector(".store-result-container");
+    if (resultBox !== null) {
+        resultBox.style = "display: none;"
+        storeInput.classList.remove("rounded-top", "border-bottom-light")
+    }
+}
+
+
+function createStoreResultsDialog(response) {
     if ("stores" in response) {
-        var resultBox = createStoreResultDialog();
+        var resultBox = createStoreContainer();
         var resultList = resultBox.firstChild
-        for (let i = 0; i < response["stores"].length; i++) {
+        let length = response["stores"].length;
+        for (let i = 0; i < length; i++) {
             resultList.appendChild(
                 createStoreResultItem(response["stores"][i]));
         }
@@ -46,7 +73,7 @@ function displayStoreResults(response) {
 }
 
 
-function createStoreResultDialog() {
+function createStoreContainer() {
     let resultBox = document.createElement("div");;
     resultBox.classList.add(
         "store-result-container",
@@ -57,14 +84,12 @@ function createStoreResultDialog() {
 }
 
 
-function createStoreResultItem(item, is_last) {
+function createStoreResultItem(item) {
     let listItem = document.createElement("li");
     listItem.classList.add("store-result-item");
     let btn = document.createElement("button");
     btn.classList.add("store-result-btn");
-    if (is_last !== true) {
-        btn.classList.add("border-bottom-light");
-    }
+    btn.classList.add("border-bottom-light");
     btn.innerText = item["name"]
     btn.addEventListener("click", e => {
         addStoreQuery(

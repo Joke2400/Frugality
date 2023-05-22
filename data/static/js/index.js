@@ -1,5 +1,5 @@
-import { storeQuery } from "./store.js";
-import { delay, get} from "./utils.js";
+import { storeQuery, displayStoreResults, hideStoreResults } from "./store.js";
+import { delay } from "./utils.js";
 
 var productQueries = [];
 
@@ -11,4 +11,21 @@ const storesList = document.querySelector(".stores-list");
 
 //addStoreBtn.addEventListener("click", testFunc2);
 //addQueryBtn.addEventListener("click", addProductQuery);
-storeInput.addEventListener("input", delay(storeQuery, 1250))
+storeInput.addEventListener("input", event => {
+    event.target.style = "color: '';";
+})
+
+storeInput.addEventListener("input", delay(storeQuery, 600));
+
+storeInput.addEventListener("focusin", event => {
+    if (storeInput.value.length === 0) {
+        event.target.style = "color: transparent;";
+    } else {
+        displayStoreResults()
+    }
+});
+
+storeInput.addEventListener("focusout", event => {
+    event.target.style = "color: '';";
+    hideStoreResults()
+});

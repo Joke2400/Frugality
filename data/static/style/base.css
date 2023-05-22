@@ -30,11 +30,6 @@ html {
     box-shadow: 0px 5px 5px 0px rgba(0, 0, 0, 0.2);
 }
 
-.border-bottom-light {
-    border: 0;
-    border-bottom: 0.075rem solid var(--clr-text-light-grey);
-}
-
 .arrow {
     border: solid var(--clr-text-grey);
     border-width: 0 0.125rem 0.125rem 0;
@@ -64,6 +59,11 @@ html {
     color: var(--clr-text-basic);
     background-color: var(--clr-white-default);
 }
+
+.field:focus {
+    outline: 0.05rem solid var(--clr-text-grey);
+}
+
 .field:focus::placeholder {
     color: transparent;
 }
@@ -94,12 +94,23 @@ html {
     border-radius: 2rem;
 }
 
+.rounded-top {
+    border-radius: 1rem 1rem 0 0;
+}
+
 .rounded-bottom {
     border-radius: 0 0 1rem 1rem;
 }
 
-.hidden {
-    display: none;
+
+.border-top-light {
+    border: 0;
+    border-top: 0.075rem solid var(--clr-text-light-grey);
+}
+
+.border-bottom-light {
+    border: 0;
+    border-bottom: 0.075rem solid var(--clr-text-light-grey);
 }
 
 .vertical-list {
