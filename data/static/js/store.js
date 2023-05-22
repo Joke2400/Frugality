@@ -1,6 +1,25 @@
 export { storeQuery, displayStoreResults, hideStoreResults };
 import { get, post, refreshList } from "./utils.js"
 
+var dom = {
+    storeBox: "store-box",
+    storeInput: "store-input",
+    storesList: "stores-list",
+    storeContainer: "store-result-container",
+    storeResult: "store-result-item",
+    storeResultBtn: "store-result-btn",
+
+}
+
+var domStyle = {
+    roundedTop: "rounded-top",
+    roundedBottom: "rounded-bottom",
+    borderBottomLight: "border-bottom-light",
+    bottomShadow: "bottom-shadow"
+}
+
+var mouseHover = false;
+
 window.onload = e => {
     get("/stores/").then(response => {
         window.storeQueries = response["stores"];
@@ -8,14 +27,24 @@ window.onload = e => {
             buildStoreQueries);
 })}
 
-const storeBox = document.querySelector(".store-box");
-const storeInput = document.getElementById("store-input");
-const storesList = document.querySelector(".stores-list");
+const storeBox = document.querySelector("." + dom.storeBox);
+const storeInput = document.getElementById(dom.storeInput);
+const storesList = document.querySelector("." + dom.storesList);
 
 var previousQuery = ["", []]
 
+storeBox.addEventListener("mouseleave", e => {
+    mouseHover = false;
+})
+
+storeBox.addEventListener("mouseover", e => {
+    mouseHover = true;
+})
+
+// STORE RESULT FUNCTIONS
+
 function storeQuery() {
-    let element = storeBox.querySelector(".store-result-container");
+    let element = storeBox.querySelector("." + dom.storeContainer);
     let value = storeInput.value
     if (value.length !== 0) {
         if (value !== previousQuery[0]) {
@@ -25,13 +54,18 @@ function storeQuery() {
             get("/store/query/", {value: value}).then(response => {
                 createStoreResultsDialog(response);
                 previousQuery = [value, response]
+                storeInput.classList.add(
+                    domStyle.roundedTop,
+                    domStyle.borderBottomLight)
                 storeInput.style = "outline: none;"
-                storeInput.classList.add("rounded-top", "border-bottom-light")
+                
             })
         } else {
             createStoreResultsDialog(previousQuery[1])
+            storeInput.classList.add(
+                domStyle.roundedTop,
+                domStyle.borderBottomLight)
             storeInput.style = "outline: none;"
-            storeInput.classList.add("rounded-top", "border-bottom-light")
         }
     } else {
         hideStoreResults()
@@ -39,22 +73,32 @@ function storeQuery() {
 };
 
 
-
 function displayStoreResults() {
-    let resultBox = document.querySelector(".store-result-container");
+    let resultBox = document.querySelector("." + dom.storeContainer);
     if (resultBox !== null) {
-        resultBox.style = "display: flex;"
+        storeInput.classList.add(
+            domStyle.roundedTop,
+            domStyle.borderBottomLight)
         storeInput.style = "outline: none;"
-        storeInput.classList.add("rounded-top", "border-bottom-light")
+        resultBox.style = "display: flex;"
     }
 }
 
 
-function hideStoreResults() {
-    let resultBox = document.querySelector(".store-result-container");
+function hideStoreResults(ignoreMouseOver = false) {
+    let resultBox = document.querySelector("." + dom.storeContainer);
     if (resultBox !== null) {
-        resultBox.style = "display: none;"
-        storeInput.classList.remove("rounded-top", "border-bottom-light")
+        if (ignoreMouseOver) {
+            storeInput.classList.remove(
+                domStyle.roundedTop,
+                domStyle.borderBottomLight)
+            resultBox.style = "display: none;"
+        } else if (!mouseHover) {
+            storeInput.classList.remove(
+                domStyle.roundedTop,
+                domStyle.borderBottomLight)
+            resultBox.style = "display: none;"
+        }
     }
 }
 
@@ -76,9 +120,9 @@ function createStoreResultsDialog(response) {
 function createStoreContainer() {
     let resultBox = document.createElement("div");;
     resultBox.classList.add(
-        "store-result-container",
-        "bottom-shadow",
-        "rounded-bottom");
+        dom.storeContainer,
+        domStyle.bottomShadow,
+        domStyle.roundedBottom);
     resultBox.appendChild(document.createElement("ul"))
     return resultBox
 }
@@ -86,10 +130,10 @@ function createStoreContainer() {
 
 function createStoreResultItem(item) {
     let listItem = document.createElement("li");
-    listItem.classList.add("store-result-item");
+    listItem.classList.add(dom.storeResult);
     let btn = document.createElement("button");
-    btn.classList.add("store-result-btn");
-    btn.classList.add("border-bottom-light");
+    btn.classList.add(dom.storeResultBtn);
+    btn.classList.add(domStyle.borderBottomLight);
     btn.innerText = item["name"]
     btn.addEventListener("click", e => {
         addStoreQuery(
@@ -101,6 +145,7 @@ function createStoreResultItem(item) {
     return listItem
 }
 
+// STORE ITEM FUNCTIONS
 
 function addStoreQuery(store) {
     if (!storeQueries.includes(store)) {
@@ -116,6 +161,7 @@ function addStoreQuery(store) {
                     }
                 }
                 console.log(`storeQueries: [${storeQueries}]`)
+                hideStoreResults(true)
                 refreshList(storesList, storeQueries,
                     buildStoreQueries);
             })
