@@ -137,6 +137,7 @@ def parse_response(search: Search, response: dict) -> Search:
     if len(stores) == 0:
         search.state = NoResults()
     else:
+        stores.sort(key=lambda i: i.name)
         search.set_result(stores, Success())
     return search
 
@@ -248,9 +249,10 @@ def add_store_query(request_json: dict, stores: list[tuple[str, str, str]]
     key = tuple(map(str, key))
     store: tuple[str, str, str] = key[:3]
     if store not in stores:
-        stores.append(store)
-        result = True
-        logger.debug("Added store %s, to store queries.", store)
+        if not len(stores) >= 5:
+            stores.append(store)
+            result = True
+            logger.debug("Added store %s, to store queries.", store)
     return result, stores
 
 

@@ -120,7 +120,7 @@ h1 {
 .stores-list {
     margin: 0.5rem;
     height: fit-content;
-    width: 50%;
+    width: 60%;
     flex-wrap: wrap;
 }
 

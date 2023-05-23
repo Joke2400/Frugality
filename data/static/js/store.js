@@ -8,10 +8,13 @@ var dom = {
     storeContainer: "store-result-container",
     storeResult: "store-result-item",
     storeResultBtn: "store-result-btn",
+    storeItem: "store-item",
+    storeItemText: "store-item-txt",
 
 }
 
 var domStyle = {
+    rounded: "rounded",
     roundedTop: "rounded-top",
     roundedBottom: "rounded-bottom",
     borderBottomLight: "border-bottom-light",
@@ -46,11 +49,11 @@ storeBox.addEventListener("mouseover", e => {
 function storeQuery() {
     let element = storeBox.querySelector("." + dom.storeContainer);
     let value = storeInput.value
+    if (element !== null) {
+        storeBox.removeChild(element);
+    }
     if (value.length !== 0) {
         if (value !== previousQuery[0]) {
-            if (element !== null) {
-                storeBox.removeChild(element);
-            }
             get("/store/query/", {value: value}).then(response => {
                 createStoreResultsDialog(response);
                 previousQuery = [value, response]
@@ -69,6 +72,9 @@ function storeQuery() {
         }
     } else {
         hideStoreResults()
+        storeInput.classList.remove(
+            domStyle.roundedTop,
+            domStyle.borderBottomLight)
     }
 };
 
@@ -201,14 +207,14 @@ function buildStoreQueries(stores) {
 
 function createStoreItem(store) {
     let li = document.createElement("li");
-    li.classList.add("store-item");
+    li.classList.add(dom.storeItem);
 
     let p = document.createElement("p");
-    p.classList.add("store-item-txt", "rounded", "shadow")
+    p.classList.add(dom.storeItemText, domStyle.rounded, domStyle.bottomShadow)
     p.innerText = store[0];
 
     let btn = document.createElement("button");
-    btn.classList.add("shadow")
+    btn.classList.add(domStyle.bottomShadow)
     btn.innerText = "-";
     btn.addEventListener("click", e => {
         removeStoreQuery(store)
