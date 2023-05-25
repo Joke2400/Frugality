@@ -1,4 +1,40 @@
-export { delay, refreshList, get, post, getCookie };
+export { delay, refreshList, get, post, getCookie, dom, domStyle };
+
+
+// Keeping all the IDs and classes used in selectors/element creation
+// in one place, maybe there's a better solution but this is good for now
+var dom = {
+    storeBox: "store-box",
+    storeInput: "store-input",
+    storesList: "stores-list",
+    storeContainer: "store-result-container",
+    storeResult: "store-result-item",
+    storeResultBtn: "store-result-btn",
+    storeItem: "store-item",
+    storeItemText: "store-item-txt",
+    queryAddBtn: "query-add-btn",
+    queryInput: "query-input",
+    productsList: "products-list",
+    productName: "product-name",
+    productCategory: "product-category",
+    productText: "product-text",
+    productData: "product-data",
+    productItem: "product-item",
+    btn: "btn",
+    
+
+}
+
+var domStyle = {
+    rounded: "rounded",
+    roundedMore: "rounded-more",
+    roundedTop: "rounded-top",
+    roundedBottom: "rounded-bottom",
+    borderBottomLight: "border-bottom-light",
+    bottomShadow: "bottom-shadow",
+    shadow: "shadow"
+}
+
 
 const request = (url, params, method) => {
     let options = {

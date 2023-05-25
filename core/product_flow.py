@@ -1,6 +1,7 @@
 """Contains functions for managing product query flow."""
 
 import asyncio
+from typing import Any
 
 from api import api_fetch_products
 from utils import get_quantity_from_string
@@ -16,7 +17,7 @@ def parse_user_query(data: dict) -> dict | None:
     """Take in a dict, parse and format query data from it.
 
     Args:
-        data (dict): Dict containing 'query', 'count' and
+        data (dict): Dict containing 'name', 'count' and
         'category' keys (str, int, str).
 
     Returns:
@@ -24,7 +25,7 @@ def parse_user_query(data: dict) -> dict | None:
         fields. Otherwise it returns 'None'.
     """
     try:
-        query = str(data["query"]).strip()
+        query = str(data["name"]).strip()
         if query == "":
             return None
     except (ValueError, KeyError) as err:
@@ -50,41 +51,6 @@ def parse_user_query(data: dict) -> dict | None:
         "unit": unit,
         "slug": slug
     }
-
-
-def add_product_query(queries: list[dict], request_json: dict) -> list[dict]:
-    """Add a product query to the provided queries list."""
-    if (query_dict := parse_user_query(request_json)):
-        in_list = False
-        for i in queries:
-            if query_dict["slug"] == i["slug"]:
-                in_list = True
-                i["count"] += query_dict["count"]
-                logger.debug("Added '%s' to count of: '%s'.",
-                             query_dict["count"], i["query"])
-                break
-        if not in_list:
-            queries.append(query_dict)
-            logger.debug("Added new query: '%s' to list.",
-                         query_dict["query"])
-    return queries
-
-
-def remove_product_query(queries: list[dict],
-                         request_json: dict) -> list[dict]:
-    """Remove a product query from the provided queries list."""
-    if len(queries) > 0:
-        try:
-            index = int(request_json["index"])
-            item = queries[index]
-        except (KeyError, ValueError, IndexError) as err:
-            logger.exception(err)
-        else:
-            if item["count"] > 1:
-                item["count"] -= 1
-            else:
-                queries.remove(item)
-    return queries
 
 
 async def get_products_from_api(
@@ -124,3 +90,52 @@ async def execute_product_search(
 
 def get_products_from_db(queries: list[dict]):
     pass
+
+
+def add_product_query(request_json: dict, products: list[dict]
+                      ) -> tuple[bool, bool, list[dict]]:
+    """Add a product query to the provided products list.
+
+    added is set to True if a new query was appended to list.
+    found is returned as True if product query was already in list,
+    and it's count was thus incremented.
+    """
+    added, found = False, False
+    key: Any = request_json.get("product", None)
+    if not isinstance(key, dict):
+        return added, found, products
+    if not (product := parse_user_query(key)):
+        return added, found, products
+    for i in products:
+        if i["slug"] == product["slug"]:
+            i["count"] += product["count"]
+            logger.debug("Added '%s' to count of: '%s'.",
+                         product["count"], i["query"])
+            found = True
+            break
+
+    if not found:
+        if not len(products) >= 30:
+            products.append(product)
+            logger.debug("Added new query: '%s' to products list.",
+                         product["name"])
+            added = True
+    return added, found, products
+
+
+def remove_product_query(queries: list[dict],
+                         request_json: dict) -> list[dict]:
+    """Remove a product query from the provided queries list."""
+    return None
+    if len(queries) > 0:
+        try:
+            index = int(request_json["index"])
+            item = queries[index]
+        except (KeyError, ValueError, IndexError) as err:
+            logger.exception(err)
+        else:
+            if item["count"] > 1:
+                item["count"] -= 1
+            else:
+                queries.remove(item)
+    return queries

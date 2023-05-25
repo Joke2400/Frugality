@@ -1,21 +1,40 @@
-import { storeQuery, displayStoreResults, hideStoreResults } from "./store.js";
-import { delay } from "./utils.js";
+import { addProductQuery, productsList, buildProductQueries } from "./product.js"
+import { storeQuery, displayStoreResults, hideStoreResults, storesList, buildStoreQueries } from "./store.js";
+import { delay, dom, get, refreshList} from "./utils.js";
 
-var productQueries = [];
+const addQueryBtn = document.getElementById(dom.queryAddBtn);
+const storeInput = document.getElementById(dom.storeInput);
 
-const addStoreBtn = document.getElementById("store_add_btn");
-const addQueryBtn = document.getElementById("query_add_btn");
+window.onload = e => {
+    get("/stores/").then(response => {
+        window.storeQueries = response["stores"];
+        refreshList(storesList, storeQueries,
+            buildStoreQueries)
+    })
+    get("/products/").then(response => {
+        window.productQueries = response["products"];
+        refreshList(productsList, productQueries,
+            buildProductQueries);
+    })
+}
 
-const storeInput = document.getElementById("store-input");
-const storesList = document.querySelector(".stores-list");
+addQueryBtn.addEventListener("click", event => {
+    let name = document.getElementById(dom.queryInput).value;
+    if (name !== "") {
+        let product = {
+            name: name,
+            count: 1,
+            category: "",
+        }
+        addProductQuery(product);
+    }
+});
 
-//addStoreBtn.addEventListener("click", testFunc2);
-//addQueryBtn.addEventListener("click", addProductQuery);
+/* Store input element event listeners */
+storeInput.addEventListener("input", delay(storeQuery, 600));
 storeInput.addEventListener("input", event => {
     event.target.style = "color: '';";
 })
-
-storeInput.addEventListener("input", delay(storeQuery, 600));
 
 storeInput.addEventListener("focusin", event => {
     if (storeInput.value.length === 0) {
@@ -24,7 +43,6 @@ storeInput.addEventListener("focusin", event => {
         displayStoreResults()
     }
 });
-
 storeInput.addEventListener("focusout", event => {
     event.target.style = "color: '';";
     hideStoreResults()

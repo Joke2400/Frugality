@@ -12,7 +12,10 @@ from .store_flow import add_store_query
 from .store_flow import remove_store_query
 
 from .product_flow import execute_product_search
+from .product_flow import add_product_query
+from .product_flow import remove_product_query
 from .search import Search
+from .store import Store
 
 
 logger = LoggerManager.get_logger(name=__name__)
@@ -54,8 +57,16 @@ def results_page():
 
 @app.route("/stores/", methods=["GET"])
 def get_stores():
+    """Return session stores."""
     stores = session.get("stores", default=[])
     return {"stores": stores}
+
+
+@app.route("/products/", methods=["GET"])
+def get_products():
+    """Return session products."""
+    products = session.get("products", default=[])
+    return {"products": products}
 
 
 @app.route("/store/query/", methods=["GET"])
@@ -105,12 +116,12 @@ def modify_store_queries():
     """
     stores = session.get("stores", default=[])
     if request.method == "POST":
-        logger.debug("Adding a store query to stores...")
+        logger.debug("Adding a store query to stores list...")
         result, stores = add_store_query(
             request_json=request.json,
             stores=stores)
     else:
-        logger.debug("Removing a store query from stores...")
+        logger.debug("Removing a store query from stores list...")
         result, stores = remove_store_query(
             request_args=request.args,
             stores=stores)
@@ -130,9 +141,32 @@ def product_search():
         return redirect(url_for(".main_page"))
 
     # Expensive operation, Store class will be reworked later
-    stores: list[Store] = [Store(x, y, z, Found()) for x, y, z in stores]
+    stores: list[Store] = [Store(x, y, z) for x, y, z in stores]
 
     results = loop.run_until_complete(
         execute_product_search(queries=queries, stores=stores))
     session["results"] = results
     return {"url": url_for(".results_page")}
+
+
+@app.route("/product/query/select/", methods=["GET", "POST"])
+def modify_product_queries():
+    """Add or remove a product query from user session.
+
+    Which action to take is determined by the method
+    used in the request: (POST = REMOVE, GET = ADD)
+    """
+    products = session.get("products", default=[])
+    if request.method == "POST":
+        logger.debug("Adding a product query to products list...")
+        result, products = add_product_query(
+            request_json=request.json,
+            products=products)
+    else:
+        logger.debug("Removing a product query from products list...")
+        result, products = remove_product_query(
+            request_args=request.args,
+            products=products)
+
+    session["products"] = products
+    return {"result": result}

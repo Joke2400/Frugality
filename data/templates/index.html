@@ -8,7 +8,6 @@
 
 {% block scripts %}
 <script defer type="module" src="{{url_for('static', filename='js/index.js')}}"></script>
-<script defer type="module" src="{{url_for('static', filename='js/utils.js')}}"></script>
 {% endblock %}
 
 {%block content %}
@@ -23,13 +22,13 @@
     <ul class="horizontal-list stores-list"></ul>
 </header>
 <main>
-    <section class="section-1 shadow">
+    <section class="shadow">
         <h2>Product Search</h2>
-        <div class="query-box">
+        <div>
             <input id="query-input" class="field rounded shadow" type="text" placeholder="Enter products to query"></input>
-            <button id="query_add_btn"class="btn rounded shadow">+</button>
+            <button id="query-add-btn"class="btn rounded shadow">+</button>
         </div>
-        <ul class="vertical-list queries-list">
+        <ul class="vertical-list products-list">
             {% for item in queries %}
             <li class="query-item shadow rounded-more">
                 <div class="query-data">

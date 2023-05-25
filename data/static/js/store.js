@@ -1,34 +1,7 @@
-export { storeQuery, displayStoreResults, hideStoreResults };
-import { get, post, refreshList } from "./utils.js"
-
-var dom = {
-    storeBox: "store-box",
-    storeInput: "store-input",
-    storesList: "stores-list",
-    storeContainer: "store-result-container",
-    storeResult: "store-result-item",
-    storeResultBtn: "store-result-btn",
-    storeItem: "store-item",
-    storeItemText: "store-item-txt",
-
-}
-
-var domStyle = {
-    rounded: "rounded",
-    roundedTop: "rounded-top",
-    roundedBottom: "rounded-bottom",
-    borderBottomLight: "border-bottom-light",
-    bottomShadow: "bottom-shadow"
-}
+export { storeQuery, displayStoreResults, hideStoreResults, storesList, buildStoreQueries };
+import { get, post, refreshList, dom, domStyle } from "./utils.js";
 
 var mouseHover = false;
-
-window.onload = e => {
-    get("/stores/").then(response => {
-        window.storeQueries = response["stores"];
-        refreshList(storesList, storeQueries,
-            buildStoreQueries);
-})}
 
 const storeBox = document.querySelector("." + dom.storeBox);
 const storeInput = document.getElementById(dom.storeInput);
@@ -52,9 +25,13 @@ function storeQuery() {
     if (element !== null) {
         storeBox.removeChild(element);
     }
+    // Yes this function is disgustingly nested, shh...
     if (value.length !== 0) {
         if (value !== previousQuery[0]) {
             get("/store/query/", {value: value}).then(response => {
+                if ("message" in response) {
+                    console.log(response["message"]);
+                }
                 createStoreResultsDialog(response);
                 previousQuery = [value, response]
                 storeInput.classList.add(
@@ -158,9 +135,6 @@ function addStoreQuery(store) {
         post("/store/query/select/",
             {store: store})
             .then(response => {
-                if ("message" in response) {
-                    console.log(response["message"]);
-                }
                 if ("result" in response) {
                     if (response["result"] === true) {
                         storeQueries.push(store);

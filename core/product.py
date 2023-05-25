@@ -30,9 +30,9 @@ class PriceData:
 class Product:
     """Dataclass that represents a product."""
 
-    ean: str   # Should be unique.
-    slug: str  # Should be unique.
-    name: str
+    ean: str   # Unique
+    slug: str  # Unique
+    name: str  # Unique
     brand_name: str
     category: str
     category_str_path: str
