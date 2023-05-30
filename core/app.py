@@ -106,7 +106,7 @@ def modify_store_queries():
     """Add or remove a store query from user session.
 
     Which action to take is determined by the method
-    used in the request: (POST = REMOVE, GET = ADD)
+    used in the request: (POST = ADD GET = REMOVE)
 
     Adding requires a tuple in the form: (name, id, slug),
     to be present in the request.json["store"] key.
@@ -154,7 +154,7 @@ def modify_product_queries():
     """Add or remove a product query from user session.
 
     Which action to take is determined by the method
-    used in the request: (POST = REMOVE, GET = ADD)
+    used in the request: (POST = ADD GET = REMOVE)
     """
     products = session.get("products", default=[])
     if request.method == "POST":
@@ -162,6 +162,7 @@ def modify_product_queries():
         result, products = add_product_query(
             request_json=request.json,
             products=products)
+        
     else:
         logger.debug("Removing a product query from products list...")
         result, products = remove_product_query(

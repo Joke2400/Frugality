@@ -24,12 +24,13 @@ def parse_user_query(data: dict) -> dict | None:
         dict | None: If query can be parsed, returns dict
         fields. Otherwise it returns 'None'.
     """
+    if not isinstance(data, dict):
+        return None
     try:
-        query = str(data["name"]).strip()
-        if query == "":
+        if (query := str(data["name"]).strip()) == "":
             return None
     except (ValueError, KeyError) as err:
-        logger.exception(err)
+        logger.debug(err)
         return None
     quantity, unit = None, None
     if (result := get_quantity_from_string(query)) is not None:
@@ -93,38 +94,35 @@ def get_products_from_db(queries: list[dict]):
 
 
 def add_product_query(request_json: dict, products: list[dict]
-                      ) -> tuple[bool, bool, list[dict]]:
+                      ) -> tuple[tuple[bool, bool], list[dict]]:
     """Add a product query to the provided products list.
 
     added is set to True if a new query was appended to list.
     found is returned as True if product query was already in list,
     and it's count was thus incremented.
     """
-    added, found = False, False
+    added, incremented = False, False
     key: Any = request_json.get("product", None)
-    if not isinstance(key, dict):
-        return added, found, products
     if not (product := parse_user_query(key)):
-        return added, found, products
+        return (added, incremented), products
     for i in products:
         if i["slug"] == product["slug"]:
             i["count"] += product["count"]
             logger.debug("Added '%s' to count of: '%s'.",
                          product["count"], i["query"])
-            found = True
+            incremented = True
             break
-
-    if not found:
+    if not incremented:
         if not len(products) >= 30:
             products.append(product)
             logger.debug("Added new query: '%s' to products list.",
                          product["name"])
             added = True
-    return added, found, products
+    return (added, incremented), products
 
 
-def remove_product_query(queries: list[dict],
-                         request_json: dict) -> list[dict]:
+def remove_product_query(products: list[dict],
+                         request_args: dict) -> list[dict]:
     """Remove a product query from the provided queries list."""
     return None
     if len(queries) > 0:
