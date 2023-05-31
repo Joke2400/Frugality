@@ -27,7 +27,7 @@ def parse_user_query(data: dict) -> dict | None:
     if not isinstance(data, dict):
         return None
     try:
-        if (query := str(data["name"]).strip()) == "":
+        if (query := str(data["query"]).strip()) == "":
             return None
     except (ValueError, KeyError) as err:
         logger.debug(err)
@@ -116,7 +116,7 @@ def add_product_query(request_json: dict, products: list[dict]
         if not len(products) >= 30:
             products.append(product)
             logger.debug("Added new query: '%s' to products list.",
-                         product["name"])
+                         product["query"])
             added = True
     return (added, incremented), products
 

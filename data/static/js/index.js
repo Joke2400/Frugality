@@ -22,7 +22,7 @@ addQueryBtn.addEventListener("click", event => {
     let name = document.getElementById(dom.queryInput).value;
     if (name !== "") {
         let product = {
-            name: name,
+            query: name,
             count: 1,
             category: "",
         }
