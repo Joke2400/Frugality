@@ -94,17 +94,17 @@ def get_products_from_db(queries: list[dict]):
 
 
 def add_product_query(request_json: dict, products: list[dict]
-                      ) -> tuple[tuple[bool, bool], list[dict]]:
+                      ) -> list[dict]:
     """Add a product query to the provided products list.
 
     added is set to True if a new query was appended to list.
     found is returned as True if product query was already in list,
     and it's count was thus incremented.
     """
-    added, incremented = False, False
+    incremented = False
     key: Any = request_json.get("product", None)
     if not (product := parse_user_query(key)):
-        return (added, incremented), products
+        return products
     for i in products:
         if i["slug"] == product["slug"]:
             i["count"] += product["count"]
@@ -117,8 +117,7 @@ def add_product_query(request_json: dict, products: list[dict]
             products.append(product)
             logger.debug("Added new query: '%s' to products list.",
                          product["query"])
-            added = True
-    return (added, incremented), products
+    return products
 
 
 def remove_product_query(products: list[dict],

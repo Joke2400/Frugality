@@ -29,18 +29,6 @@
             <button id="query-add-btn"class="btn rounded shadow">+</button>
         </div>
         <ul class="vertical-list products-list">
-            {% for item in queries %}
-            <li class="query-item shadow rounded-more">
-                <div class="query-data">
-                    <p class="count">{{item["count"]}}x</p>
-                    <div class="item-text">
-                        <p class="name">{{item["query"]}}</p>
-                        <p class="category">{{item["category"]}}</p>
-                    </div>
-                    <button class="btn rounded" onclick="removeProductQuery({{loop.index0}})">-</button>
-                </div>
-            </li>
-            {% endfor %}
         </ul>
         <button id="send-query-btn" class="btn rounded shadow" onclick="sendProductQuery()">Query Search</button>
     </section>

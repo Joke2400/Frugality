@@ -240,35 +240,31 @@ def execute_store_search(value: Any) -> Search:
 
 
 def add_store_query(request_json: dict, stores: list[tuple[str, str, str]]
-                    ) -> tuple[bool, list[tuple[str, str, str]]]:
+                    ) -> list[tuple[str, str, str]]:
     """Append a store query to the provided stores list."""
-    added = False
     key: Any = request_json.get("store", None)
     if not isinstance(key, list):
-        return added, stores
+        return stores
     key = tuple(map(str, key))
     store: tuple[str, str, str] = key[:3]
     if not all(store):
-        return added, stores
+        return stores
     if store not in stores:
         if not len(stores) >= 5:
             stores.append(store)
-            added = True
             logger.debug("Added store %s, to store queries.", store)
-    return added, stores
+    return stores
 
 
 def remove_store_query(request_args: dict, stores: list[tuple[str, str, str]]
-                       ) -> tuple[bool, list[tuple[str, str, str]]]:
+                       ) -> list[tuple[str, str, str]]:
     """Remove a store from the provided stores list."""
     store_id: Any = request_args.get("id", None)
-    added = False
     if not isinstance(store_id, str):
-        return added, stores
+        return stores
     results = list(filter(lambda i: i[1] == store_id, stores))
     if len(results) > 0:
         if store_id in results[0]:
             stores.remove(results[0])
-            added = True
             logger.debug("Removed store %s, from store queries.", results[0])
-    return added, stores
+    return stores

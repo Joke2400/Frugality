@@ -117,16 +117,16 @@ def modify_store_queries():
     stores = session.get("stores", default=[])
     if request.method == "POST":
         logger.debug("Adding a store query to stores list...")
-        result, stores = add_store_query(
+        stores = add_store_query(
             request_json=request.json,
             stores=stores)
     else:
         logger.debug("Removing a store query from stores list...")
-        result, stores = remove_store_query(
+        stores = remove_store_query(
             request_args=request.args,
             stores=stores)
     session["stores"] = stores
-    return {"result": result}
+    return {"result": stores}
 
 
 @app.route("/product/query/", methods=["GET"])
@@ -159,15 +159,14 @@ def modify_product_queries():
     products = session.get("products", default=[])
     if request.method == "POST":
         logger.debug("Adding a product query to products list...")
-        result, products = add_product_query(
+        products = add_product_query(
             request_json=request.json,
             products=products)
-        
     else:
         logger.debug("Removing a product query from products list...")
-        result, products = remove_product_query(
+        products = remove_product_query(
             request_args=request.args,
             products=products)
 
     session["products"] = products
-    return {"result": result}
+    return {"result": products}

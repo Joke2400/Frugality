@@ -95,8 +95,8 @@ function createStoreResultsDialog(response) {
             resultList.appendChild(
                 createStoreResultItem(response["stores"][i]));
         }
+        storeBox.appendChild(resultBox);
     }
-    storeBox.appendChild(resultBox);
 }
 
 
@@ -136,9 +136,7 @@ function addStoreQuery(store) {
             {store: store})
             .then(response => {
                 if ("result" in response) {
-                    if (response["result"] === true) {
-                        storeQueries.push(store);
-                    }
+                    storeQueries = response["result"];
                 }
                 console.log(`storeQueries: [${storeQueries}]`)
                 hideStoreResults(true)
@@ -150,18 +148,12 @@ function addStoreQuery(store) {
 
 
 function removeStoreQuery(store) {
-    let index = storeQueries.indexOf(store);
     if (storeQueries.includes(store)) {
         get("/store/query/select/",
             {id: store[1]})
             .then(response => {
-                if ("message" in response) {
-                    console.log(response["message"]);
-                }
                 if ("result" in response) {
-                    if (response["result"] === true) {                        
-                        storeQueries.splice(index, 1);
-                    }
+                    storeQueries = response["result"];
                 }
                 console.log(`storeQueries: [${storeQueries}]`)
                 refreshList(storesList, storeQueries,

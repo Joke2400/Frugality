@@ -5,20 +5,16 @@ const productsList = document.querySelector("." + dom.productsList)
 
 /* Adding and removing queries */
 function addProductQuery(product) {
-    if (!productQueries.includes(product)) {
-        post("/product/query/select/",
-            {product: product})
-            .then(response => {
-                if ("result" in response) {
-                    if (response["result"] === true) {
-                        productQueries.push(product);
-                    }
-                }
-                console.log(`productQueries: [${productQueries}]`)
-                refreshList(productsList, productQueries,
-                    buildProductQueries);
-            })
-    }
+    post("/product/query/select/",
+        {product: product})
+        .then(response => {
+            if ("result" in response) {
+                productQueries = response["result"];
+            }
+            console.log(`productQueries: [${productQueries}]`)
+            refreshList(productsList, productQueries,
+                buildProductQueries);
+        })
 }
 
 function removeProductQuery() {}
@@ -33,7 +29,9 @@ function buildProductQueries(products) {
 
 
 function createProductItem(values) {
-    let [count, name, category] = values
+    let count = values["count"];
+    let name = values["query"];
+    let category = values["category"];
     let productItem = document.createElement("div");
     productItem.classList.add(dom.productItem, domStyle.roundedMore, domStyle.shadow)
     productItem.appendChild(createProductDataElement(count, name, category));
