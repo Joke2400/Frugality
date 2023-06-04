@@ -17,7 +17,18 @@ function addProductQuery(product) {
         })
 }
 
-function removeProductQuery() {}
+function removeProductQuery(product) {
+    get("/product/query/select",
+        {product: product})
+        .then(response => {
+            if ("result" in response) {
+                productQueries = response["result"];
+            }
+            console.log(`productQueries: [${productQueries}]`)
+            refreshList(productsList, productQueries,
+                buildProductQueries);
+        })
+}
 
 /* Element creation functions */
 function buildProductQueries(products) {
@@ -63,7 +74,12 @@ function createProductDataElement(productCount, productName, productCategory) {
     btn.classList.add(dom.btn, domStyle.roundedMore);
     btn.innerText = "-";
     btn.addEventListener("click", e => {
-        removeProductQuery(productCount, productName, productCategory);
+        let product = {
+            query: productName,
+            count: productCount,
+            category: productCategory,
+        }
+        removeProductQuery(product);
     });
 
     let productData = document.createElement("div");
