@@ -4,6 +4,7 @@ import { delay, dom, get, refreshList} from "./utils.js";
 
 const addQueryBtn = document.getElementById(dom.queryAddBtn);
 const storeInput = document.getElementById(dom.storeInput);
+const sendQueryBtn = document.getElementById(dom.sendQueryBtn)
 
 window.onload = e => {
     get("/stores/").then(response => {
@@ -17,6 +18,14 @@ window.onload = e => {
             buildProductQueries);
     })
 }
+
+sendQueryBtn.addEventListener("click", event => {
+    get("/product/query/").then(response => {
+        if ("url" in response) {
+            location.href = response["url"];
+        }
+    })
+})
 
 addQueryBtn.addEventListener("click", event => {
     let name = document.getElementById(dom.queryInput).value;

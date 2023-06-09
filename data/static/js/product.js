@@ -19,7 +19,12 @@ function addProductQuery(product) {
 
 function removeProductQuery(product) {
     get("/product/query/select",
-        {product: product})
+        {category: product["category"],
+         count: product["count"],
+         quantity: product["quantity"],
+         query: product["query"],
+         slug: product["slug"],
+         unit: product["unit"]})
         .then(response => {
             if ("result" in response) {
                 productQueries = response["result"];
@@ -39,18 +44,15 @@ function buildProductQueries(products) {
 }
 
 
-function createProductItem(values) {
-    let count = values["count"];
-    let name = values["query"];
-    let category = values["category"];
+function createProductItem(product) {
     let productItem = document.createElement("div");
     productItem.classList.add(dom.productItem, domStyle.roundedMore, domStyle.shadow)
-    productItem.appendChild(createProductDataElement(count, name, category));
+    productItem.appendChild(createProductDataElement(product));
 
     return productItem;
 }
 
-function createProductTextElement(productName, productCategory) {
+function createProductTextElement(productName, productCategory, productQuantity, productUnit) {
     let name = document.createElement("p");
     let category = document.createElement("p");
     name.classList.add(dom.productName);
@@ -65,7 +67,12 @@ function createProductTextElement(productName, productCategory) {
     return div;
 }
 
-function createProductDataElement(productCount, productName, productCategory) {
+function createProductDataElement(product) {
+    let productName = product["query"];
+    let productCount = product["count"];
+    let productCategory = product["category"];
+    let productQuantity = product["quantity"];
+    let productUnit = product["unit"];
     let count = document.createElement("p");
     count.classList.add("count");
     count.innerText = productCount.toString() + "x";
@@ -74,11 +81,6 @@ function createProductDataElement(productCount, productName, productCategory) {
     btn.classList.add(dom.btn, domStyle.roundedMore);
     btn.innerText = "-";
     btn.addEventListener("click", e => {
-        let product = {
-            query: productName,
-            count: productCount,
-            category: productCategory,
-        }
         removeProductQuery(product);
     });
 
@@ -86,7 +88,11 @@ function createProductDataElement(productCount, productName, productCategory) {
     productData.classList.add(dom.productData)
 
     productData.appendChild(count);
-    productData.appendChild(createProductTextElement(productName, productCategory));
+    productData.appendChild(createProductTextElement(
+        productName,
+        productCategory,
+        productQuantity,
+        productUnit));
     productData.appendChild(btn);
     
     return productData;

@@ -71,6 +71,7 @@ def get_products():
 
 @app.route("/store/query/", methods=["GET"])
 def store_query():
+    """Execute a search for a store."""
     search: Search = execute_store_search(
         value=request.args.get("value", default=None))
     match search.state:
@@ -130,14 +131,11 @@ def modify_store_queries():
 
 
 @app.route("/product/query/", methods=["GET"])
-def product_search():
-    """Query stores list with stored product queries.
-
-    TODO: rest of this docstring
-    """
+def product_query():
+    """Execute a product search with session stores/products."""
     if len(stores := session.get("stores", default=[])) == 0:
         return redirect(url_for(".main_page"))
-    if len(queries := session.get("queries", default=[])) == 0:
+    if len(queries := session.get("products", default=[])) == 0:
         return redirect(url_for(".main_page"))
 
     # Expensive operation, Store class will be reworked later

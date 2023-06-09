@@ -12,15 +12,32 @@
 
 {%block content %}
 <nav>
-
+    <p>Navigation</p>
 </nav>
 <header>
-
+    <div>
+        <h1>Overview</h1>
+    </div>
 </header>
 <main>
-    {% for item in results %}
-    <section>
-        <h2>{{item[0]}}</h2>
+    {% for store in results %}
+    <section class="store-result shadow">
+        <h3>{{store.1}}</h3>
+        <ul class="vertical-list results-list">
+        {% for i in store.2 %}
+            {% set query = i["query"] %}
+            {% set store = i["store"] %}
+            {% set products = i["products"] %}
+            <li class="result-item">
+                <p>{{products.0["name"]}}</p>
+                {% set price_data = products.0["price_data"] %}
+                <div>
+                    <p>{{price_data[0]}}€</p>
+                    <p>{{price_data[2]}}€/{{price_data[3]}}</p>
+                </div>
+            </li>
+        {% endfor %}
+        </ul>
     </section>
     {% endfor %}
 </main>

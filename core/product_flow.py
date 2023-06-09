@@ -70,7 +70,7 @@ async def get_products_from_api(
 
 async def execute_product_search(
         queries: list[dict],
-        stores: list[Store]) -> list[tuple[str, list[dict]]]:
+        stores: list[Store]) -> list[tuple[str, str, list[dict]]]:
     data = await get_products_from_api(queries=queries, stores=stores)
 
     parsers = []
@@ -86,7 +86,7 @@ async def execute_product_search(
                     store=query.pop("store"))
                 query_results.append(parser.dictify())
                 parsers.append(parser)
-        store_results.append((str(store.slug), query_results))
+        store_results.append((str(store.slug), str(store.name), query_results))
     return store_results
 
 def get_products_from_db(queries: list[dict]):
@@ -122,17 +122,18 @@ def add_product_query(request_json: dict, products: list[dict]
 
 def remove_product_query(products: list[dict],
                          request_args: dict) -> list[dict]:
-    """Remove a product query from the provided queries list."""
-    return None
-    if len(queries) > 0:
-        try:
-            index = int(request_json["index"])
-            item = queries[index]
-        except (KeyError, ValueError, IndexError) as err:
-            logger.exception(err)
+    """Remove a product query from the provided products list."""
+    slug = request_args.get("slug", None)
+    if not isinstance(slug, str):
+        return products
+
+    results = list(filter(lambda i: i["slug"] == slug, products))
+    if len(results) > 0:
+        item = results[0]
+        if item["count"] > 1:
+            item["count"] -= 1
+            logger.debug("Reduced count of %s, in product queries.", item)
         else:
-            if item["count"] > 1:
-                item["count"] -= 1
-            else:
-                queries.remove(item)
-    return queries
+            products.remove(item)
+            logger.debug("Removed product %s, from product queries.", item)
+    return products

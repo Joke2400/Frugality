@@ -264,7 +264,6 @@ def remove_store_query(request_args: dict, stores: list[tuple[str, str, str]]
         return stores
     results = list(filter(lambda i: i[1] == store_id, stores))
     if len(results) > 0:
-        if store_id in results[0]:
-            stores.remove(results[0])
-            logger.debug("Removed store %s, from store queries.", results[0])
+        stores.remove(results[0])
+        logger.debug("Removed store %s, from store queries.", results[0])
     return stores

@@ -160,8 +160,6 @@ def api_fetch_store(query_data: tuple[str | None, str | None]
     if not response:
         return None
     content = json.loads(response.text)
-    query_logger.debug("%s", json.dumps(
-        content, indent=4))
     return content
 
 
@@ -272,7 +270,7 @@ async def api_fetch_products(
         query_dict = query.copy()
         query_dict["store"] = store
         tasks.append(asyncio.ensure_future(
-            async_product_search(query=query_dict, log_response_body=True,
+            async_product_search(query=query_dict, log_response_body=False,
                                  url=API_URL, params=params, timeout=20)))
 
     logger.debug("[ASYNCIO] Calling asyncio.gather() - Tasks: %s", len(tasks))

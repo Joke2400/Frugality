@@ -21,6 +21,7 @@ var dom = {
     productData: "product-data",
     productItem: "product-item",
     btn: "btn",
+    sendQueryBtn: "send-query-btn"
     
 
 }
