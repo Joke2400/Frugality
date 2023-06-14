@@ -12,7 +12,7 @@ from .orm import database
 
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-# This segment will be moved into the (currently non-existent) 'Process' class
+# This segment will be moved into the (currently non-existent) 'process' file
 # ----------------------------------------------------------------
 
 # Temporary settings as it's not a priority

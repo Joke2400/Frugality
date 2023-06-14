@@ -70,9 +70,41 @@ p, h1, h2, h3 {
 .result-item {
     display: flex;
     flex-flow: row;
-    height: min-content;
+    height: 3.5rem;
     width: 100%;
-    margin-bottom: 0.5rem;
-    border: 0.1rem solid black;
-    background-color: var(--clr-primary-100);
+    border-bottom: 0.1rem solid black;
+}
+
+.results-list li:first-child {
+    border-top: 0.1rem solid black;
+}
+
+.product-data {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    width: 100%;
+    border-left: 0.1rem solid black;
+}
+
+.product-data p, .price-data p {
+    padding: 0;
+    margin: 0;
+}
+
+.price-data {
+    display: flex;
+    flex-flow: column;
+    width: 6rem;
+    border-left: 0.1rem solid black;
+}
+
+.price-data p {
+    font-size: 0.7rem;
+}
+
+.price-data p:first-child {
+    font-size: 1.1rem;
 }

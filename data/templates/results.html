@@ -29,10 +29,17 @@
             {% set store = i["store"] %}
             {% set products = i["products"] %}
             <li class="result-item">
-                <p>{{products.0["name"]}}</p>
                 {% set price_data = products.0["price_data"] %}
-                <div>
-                    <p>{{price_data[0]}}€</p>
+                <p>{{query["count"]}}x</p>
+                <div class="product-data">
+                    <p>{{products.0["name"]}}</p>
+                    <p>{{products.0["category"]}}</p>
+                </div>
+                <div class="price-data">
+                    <div>
+                        <p>{{price_data[0]}}€</p>
+                        <p>{{price_data[1]}}</p>
+                    </div>
                     <p>{{price_data[2]}}€/{{price_data[3]}}</p>
                 </div>
             </li>
