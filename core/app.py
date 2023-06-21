@@ -5,7 +5,7 @@ from flask import redirect, url_for, render_template
 from flask import request, session, Blueprint
 
 from utils import LoggerManager
-from utils import Success, NoResults, ParseFailed, NoResponse
+from utils import Success, Fail, ParseFailed, NoResponse
 
 from .store_flow import execute_store_search
 from .store_flow import add_store_query
@@ -24,26 +24,14 @@ loop = asyncio.get_event_loop()
 
 
 @app.route("/", methods=["GET"])
-def main_page():
+def index_page():
     """Return a template for the main page."""
     products = session.get("products", default=[])
     stores = session.get("stores", default=[])
     return render_template(
         "index.html",
         products=products,
-        stores=stores)
-
-
-@app.route("/store/", methods=["GET"])
-def store_page():
-    """Return a template for the store page."""
-    return "PAGE NOT IMPLEMENTED"
-
-
-@app.route("/product/", methods=["GET"])
-def product_page():
-    """Return a template for the product page."""
-    return "PAGE NOT IMPLEMENTED"
+        stores=stores), 200
 
 
 @app.route("/results/", methods=["GET"])
@@ -52,82 +40,78 @@ def results_page():
     results = session.get("results", default=[])
     return render_template(
         "results.html",
-        results=results)
+        results=results), 200
 
 
 @app.route("/stores/", methods=["GET"])
-def get_stores():
+def fetch_stores():
     """Return session stores."""
     stores = session.get("stores", default=[])
-    return {"stores": stores}
+    return {"stores": stores}, 200
 
 
 @app.route("/products/", methods=["GET"])
-def get_products():
+def fetch_products():
     """Return session products."""
     products = session.get("products", default=[])
-    return {"products": products}
+    return {"products": products}, 200
 
 
-@app.route("/store/query/", methods=["GET"])
+@app.route("/store/query/", methods=["POST"])
 def store_query():
     """Execute a search for a store."""
     search: Search = execute_store_search(
-        value=request.args.get("value", default=None))
+        value=request.json.get("value", None))
     match search.state:
 
         case Success():
             return {
-                "message":
-                    f"Success! Found: {len(search.result)} stores.",
+                "message": f"Success! Found: {len(search.result)} stores.",
                 "stores": search.result
-            }
+            }, 200
 
-        case NoResults():
+        case Fail():
             return {
                 "message":
-                    f"No results received: {search.query}."}
+                    f"No results received: {search.query}."
+            }, 404
 
         case ParseFailed():
             return {
-                "message": search.result}
+                "message": search.feedback
+            }, 400
 
         case NoResponse():
             return {
                 "message":
-                    "API response was empty or invalid."
-            }
+                    "Response from API call was empty or invalid."
+            }, 500
         case _:
             return {
-                "message": "Unknown server error."}
+                "message": "Unknown server error."}, 500
 
 
-@app.route("/store/query/select/", methods=["GET", "POST"])
+@app.route("/store/query/select/", methods=["DELETE", "POST"])
 def modify_store_queries():
     """Add or remove a store query from user session.
 
     Which action to take is determined by the method
-    used in the request: (POST = ADD GET = REMOVE)
+    used in the request (POST = ADD).
 
     Adding requires a tuple in the form: (name, id, slug),
-    to be present in the request.json["store"] key.
+    to be present in the "store" key.
 
     Removing requires a store id string to be present in
-    the request.args["id"] key.
+    the "id" key.
     """
     stores = session.get("stores", default=[])
-    if request.method == "POST":
-        logger.debug("Adding a store query to stores list...")
-        stores = add_store_query(
-            request_json=request.json,
-            stores=stores)
+    if request.method == "DELETE":
+        stores, status = remove_store_query(request.json, stores)
     else:
-        logger.debug("Removing a store query from stores list...")
-        stores = remove_store_query(
-            request_args=request.args,
-            stores=stores)
-    session["stores"] = stores
-    return {"result": stores}
+        stores, status = add_store_query(request.json, stores)
+    if status in (200, 201):
+        session["stores"] = stores
+    return {"result": stores}, status
 
 
 @app.route("/product/query/", methods=["GET"])
@@ -147,24 +131,23 @@ def product_query():
     return {"url": url_for(".results_page")}
 
 
-@app.route("/product/query/select/", methods=["GET", "POST"])
+@app.route("/product/query/select/", methods=["DELETE", "POST"])
 def modify_product_queries():
     """Add or remove a product query from user session.
 
     Which action to take is determined by the method
-    used in the request: (POST = ADD GET = REMOVE)
+    used in the request (POST = ADD).
+
+    Adding requires a string to be present in the "product" key.
+
+    Removing requires a string to be present in the "slug" key.
     """
     products = session.get("products", default=[])
-    if request.method == "POST":
-        logger.debug("Adding a product query to products list...")
-        products = add_product_query(
-            request_json=request.json,
-            products=products)
-    else:
-        logger.debug("Removing a product query from products list...")
-        products = remove_product_query(
-            request_args=request.args,
-            products=products)
 
-    session["products"] = products
-    return {"result": products}
+    if request.method == "DELETE":
+        products, status = remove_product_query(request.json, products)
+    else:
+        products, status = add_product_query(request.json, products)
+    if status in (200, 201):
+        session["products"] = products
+    return {"result": products}, status

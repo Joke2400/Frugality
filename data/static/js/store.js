@@ -1,5 +1,5 @@
 export { storeQuery, displayStoreResults, hideStoreResults, storesList, buildStoreQueries };
-import { get, post, refreshList, dom, domStyle } from "./utils.js";
+import { post, del, refreshList, dom, domStyle } from "./utils.js";
 
 var mouseHover = false;
 
@@ -28,7 +28,7 @@ function storeQuery() {
     // Yes this function is disgustingly nested, shh...
     if (value.length !== 0) {
         if (value !== previousQuery[0]) {
-            get("/store/query/", {value: value}).then(response => {
+            post("/store/query/", {value: value}).then(response => {
                 if ("message" in response) {
                     console.log(response["message"]);
                 }
@@ -149,7 +149,7 @@ function addStoreQuery(store) {
 
 function removeStoreQuery(store) {
     if (storeQueries.includes(store)) {
-        get("/store/query/select/",
+        del("/store/query/select/",
             {id: store[1]})
             .then(response => {
                 if ("result" in response) {

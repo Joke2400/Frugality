@@ -1,4 +1,4 @@
-export { delay, refreshList, get, post, getCookie, dom, domStyle };
+export { delay, refreshList, get, post, del, dom, domStyle };
 
 
 // Keeping all the IDs and classes used in selectors/element creation
@@ -59,11 +59,7 @@ const request = (url, params, method) => {
 
 const get = (url, params) => request(url, params, "GET");
 const post = (url, params) => request(url, params, "POST");
-
-function getCookie() {
-    document.cookie
-    console.log(document.cookie)
-}
+const del = (url, params) => request(url, params, "DELETE");
 
 function delay(fn, ms) {
     let timer = 0;

@@ -1,8 +1,7 @@
-import { addProductQuery, productsList, buildProductQueries } from "./product.js"
+import { productsList, buildProductQueries } from "./product.js"
 import { storeQuery, displayStoreResults, hideStoreResults, storesList, buildStoreQueries } from "./store.js";
 import { delay, dom, get, refreshList} from "./utils.js";
 
-const addQueryBtn = document.getElementById(dom.queryAddBtn);
 const storeInput = document.getElementById(dom.storeInput);
 const sendQueryBtn = document.getElementById(dom.sendQueryBtn)
 
@@ -26,18 +25,6 @@ sendQueryBtn.addEventListener("click", event => {
         }
     })
 })
-
-addQueryBtn.addEventListener("click", event => {
-    let name = document.getElementById(dom.queryInput).value;
-    if (name !== "") {
-        let product = {
-            query: name,
-            count: 1,
-            category: "",
-        }
-        addProductQuery(product);
-    }
-});
 
 /* Store input element event listeners */
 storeInput.addEventListener("input", delay(storeQuery, 600));

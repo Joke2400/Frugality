@@ -1,7 +1,21 @@
 export { addProductQuery, productsList, buildProductQueries };
-import { dom, domStyle, get, post, refreshList } from "./utils.js";
+import { dom, domStyle, post, del, refreshList } from "./utils.js";
 
+const addQueryBtn = document.getElementById(dom.queryAddBtn);
 const productsList = document.querySelector("." + dom.productsList)
+
+addQueryBtn.addEventListener("click", event => {
+    let name = document.getElementById(dom.queryInput).value;
+    if (name !== "") {
+        let product = {
+            query: name,
+            count: 1,
+            category: "",
+        }
+        addProductQuery(product);
+    }
+});
+
 
 /* Adding and removing queries */
 function addProductQuery(product) {
@@ -18,7 +32,7 @@ function addProductQuery(product) {
 }
 
 function removeProductQuery(product) {
-    get("/product/query/select",
+    del("/product/query/select",
         {category: product["category"],
          count: product["count"],
          quantity: product["quantity"],

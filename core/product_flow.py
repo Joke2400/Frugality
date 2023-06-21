@@ -93,39 +93,39 @@ def get_products_from_db(queries: list[dict]):
     pass
 
 
-def add_product_query(request_json: dict, products: list[dict]
-                      ) -> list[dict]:
+def add_product_query(request: dict, products: list[dict]
+                      ) -> tuple[list[dict], int]:
     """Add a product query to the provided products list.
 
     added is set to True if a new query was appended to list.
     found is returned as True if product query was already in list,
     and it's count was thus incremented.
     """
-    incremented = False
-    key: Any = request_json.get("product", None)
+    logger.debug("Adding a product query to products list...")
+    key: Any = request.get("product", None)
     if not (product := parse_user_query(key)):
-        return products
+        return products, 400
     for i in products:
         if i["slug"] == product["slug"]:
             i["count"] += product["count"]
             logger.debug("Added '%s' to count of: '%s'.",
                          product["count"], i["query"])
-            incremented = True
-            break
-    if not incremented:
-        if not len(products) >= 30:
-            products.append(product)
-            logger.debug("Added new query: '%s' to products list.",
-                         product["query"])
-    return products
+            return products, 200
+    if not len(products) >= 30:
+        products.append(product)
+        logger.debug("Added new query: '%s' to products list.",
+                     product["query"])
+        return products, 201
+    return products, 404
 
 
-def remove_product_query(products: list[dict],
-                         request_args: dict) -> list[dict]:
+def remove_product_query(request: dict, products: list[dict]
+                         ) -> tuple[list[dict], int]:
     """Remove a product query from the provided products list."""
-    slug = request_args.get("slug", None)
+    logger.debug("Removing a product query from products list...")
+    slug = request.get("slug", None)
     if not isinstance(slug, str):
-        return products
+        return products, 400
 
     results = list(filter(lambda i: i["slug"] == slug, products))
     if len(results) > 0:
@@ -136,4 +136,5 @@ def remove_product_query(products: list[dict],
         else:
             products.remove(item)
             logger.debug("Removed product %s, from product queries.", item)
-    return products
+        return products, 200
+    return products, 404

@@ -38,12 +38,12 @@ class Success(State):
         return "State: <Success>"
 
 
-class NoResults(State):
-    """State singleton for representing 'NoResults' state."""
+class Fail(State):
+    """State singleton for representing 'Fail' state."""
 
     def __repr__(self) -> str:
         """Return state representation as a string."""
-        return "State: <NoResults>"
+        return "State: <Fail>"
 
 
 class ParseFailed(State):

@@ -11,7 +11,7 @@ from .patterns import SingletonMeta
 from .state import State
 from .state import Pending
 from .state import Success
-from .state import NoResults
+from .state import Fail
 from .state import ParseFailed
 from .state import NoResponse
 
@@ -20,5 +20,5 @@ __all__ = ["ProjectPaths", "LoggerManager", "timer",
            "regex_search", "regex_findall",
            "get_quantity_from_string", "OneOfType",
            "SingletonMeta", "State", "Pending",
-           "Success", "NoResults", "ParseFailed",
+           "Success", "Fail", "ParseFailed",
            "NoResponse"]
