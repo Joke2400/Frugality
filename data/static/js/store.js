@@ -1,5 +1,5 @@
-export { storeQuery, displayStoreResults, hideStoreResults, storesList, buildStoreQueries };
-import { post, del, refreshList, dom, domStyle } from "./utils.js";
+export { storeQuery, storesList, buildStoreQueries };
+import { post, del, refreshList, dom, domStyle, delay } from "./utils.js";
 
 var mouseHover = false;
 
@@ -16,6 +16,24 @@ storeBox.addEventListener("mouseleave", e => {
 storeBox.addEventListener("mouseover", e => {
     mouseHover = true;
 })
+
+/* Store input element event listeners */
+storeInput.addEventListener("input", delay(storeQuery, 600));
+storeInput.addEventListener("input", event => {
+    event.target.style = "color: '';";
+})
+
+storeInput.addEventListener("focusin", event => {
+    if (storeInput.value.length === 0) {
+        event.target.style = "color: transparent;";
+    } else {
+        displayStoreResults()
+    }
+});
+storeInput.addEventListener("focusout", event => {
+    event.target.style = "color: '';";
+    hideStoreResults()
+});
 
 // STORE RESULT FUNCTIONS
 

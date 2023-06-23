@@ -1,8 +1,17 @@
 export { addProductQuery, productsList, buildProductQueries };
-import { dom, domStyle, post, del, refreshList } from "./utils.js";
+import { dom, domStyle, get, post, del, refreshList } from "./utils.js";
 
+const sendQueryBtn = document.getElementById(dom.sendQueryBtn)
 const addQueryBtn = document.getElementById(dom.queryAddBtn);
 const productsList = document.querySelector("." + dom.productsList)
+
+sendQueryBtn.addEventListener("click", event => {
+    get("/product/query/").then(response => {
+        if ("url" in response) {
+            location.href = response["url"];
+        }
+    })
+})
 
 addQueryBtn.addEventListener("click", event => {
     let name = document.getElementById(dom.queryInput).value;

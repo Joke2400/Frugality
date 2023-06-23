@@ -86,7 +86,7 @@ async def execute_product_search(
                     store=query.pop("store"))
                 query_results.append(parser.dictify())
                 parsers.append(parser)
-        store_results.append((str(store.slug), str(store.name), query_results))
+        store_results.append([str(store.slug), str(store.name), query_results])
     return store_results
 
 def get_products_from_db(queries: list[dict]):

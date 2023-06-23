@@ -4,7 +4,7 @@ import re
 from typing import Any, Callable
 from sqlalchemy.exc import NoResultFound, MultipleResultsFound
 
-from api import api_fetch_store
+from api import fetch_store_from_api
 
 from utils import Pending
 from utils import Success
@@ -88,7 +88,7 @@ def parse_store_from_string(
                 except ValueError as err:
                     logger.exception(err)
         case _:
-            logger.debug("String was empty.")
+            logger.debug("Received an empty string to parse.")
 
     logger.debug("Data parsed from string: ('%s', '%s', '%s')",
                  s_name, s_id, slug)
@@ -205,8 +205,8 @@ def api_store_search(search: Search) -> Search:
         <NoResponse>: The API did not return a response.
     """
     logger.debug("Fetching %s from API...", search.query.name)
-    response = api_fetch_store(
-        query_data=(search.query.name, search.query.store_id))
+    response = fetch_store_from_api(
+        store_query=(search.query.name, search.query.store_id))
     if response:
         search = parse_response(search=search, response=response)
     else:
@@ -218,28 +218,28 @@ def execute_db_search(search: Search) -> Search:
     """Query the DB by calling the search function and log the result."""
     logger.debug("[Store search]: Querying database.")
     search = db_store_search(search=search)
-    logger.debug("Database search state (%s)", search.state)
+    logger.debug("Database search: ('%s')", search.state)
     match search.state:
 
         case Success():
             logger.debug(
-                "Database query for %s, was successful!",
+                "Database query for '%s', was successful!",
                 search.query)
 
         case Fail():
             logger.debug(
-                "Could not find results for query %s from database.",
+                "Could not find results for query '%s' from database.",
                 search.query)
 
         case ParseFailed():
             logger.debug(
-                "Parsing of query string failed for query: %s",
+                "Parsing of query string failed for query: '%s'",
                 search.query)
             search.feedback = "Error parsing query string."
 
         case _:
             logger.debug(
-                "Store search reached an invalid state during execution. %s",
+                "search.state reached an invalid state during execution. %s",
                 search)
             # At this point we want the match statement in app.store_query()
             # to fall back on the ('case _: or 'other') case.
@@ -252,12 +252,12 @@ def execute_api_search(search: Search) -> Search:
     """Query the API by calling the search function and log the result."""
     logger.debug("[Store search]: Querying api.")
     search = api_store_search(search=search)
-    logger.debug("API search state (%s)", search.state)
+    logger.debug("API search: ('%s')", search.state)
     match search.state:
 
         case Success():
             logger.debug(
-                "API query for %s, was successful!",
+                "API query for '%s', was successful!",
                 search.query)
             # THIS NEXT PART WILL IN THE FUTURE BE CALLED AFTER THE
             # RESPONSE HAS BEEN SENT TO THE CLIENT.
@@ -275,12 +275,12 @@ def execute_api_search(search: Search) -> Search:
 
         case Fail():
             logger.debug(
-                "Could not find results for query %s from API.",
+                "Could not find results for query '%s' from API.",
                 search.query)
 
         case ParseFailed():
             logger.debug(
-                "Failed to parse response %s for query %s",
+                "Failed to parse response %s for query '%s'",
                 search.result, search.query)
             search.feedback = "Error parsing API response."
 
@@ -290,7 +290,7 @@ def execute_api_search(search: Search) -> Search:
 
         case _:
             logger.debug(
-                "state field reached an invalid state during execution. %s",
+                "search.state reached an invalid state during execution. %s",
                 search)
             # At this point we want the match statement in app.store_query()
             # to fall back on the ('case _: or 'other') case.

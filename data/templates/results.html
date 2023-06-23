@@ -20,6 +20,7 @@
     </div>
 </header>
 <main>
+    {% if results != None %}
     {% for store in results %}
     <section class="store-result shadow">
         <h3>{{store.1}}</h3>
@@ -28,25 +29,28 @@
             {% set query = i["query"] %}
             {% set store = i["store"] %}
             {% set products = i["products"] %}
-            <li class="result-item">
-                {% set price_data = products.0["price_data"] %}
-                <p>{{query["count"]}}x</p>
-                <div class="product-data">
-                    <p>{{products.0["name"]}}</p>
-                    <p>{{products.0["category"]}}</p>
-                </div>
-                <div class="price-data">
-                    <div>
-                        <p>{{price_data[0]}}€</p>
-                        <p>{{price_data[1]}}</p>
+            {% if products|length > 1%}
+                <li class="result-item">
+                    {% set price_data = products.0["price_data"] %}
+                    <p>{{query["count"]}}x</p>
+                    <div class="product-data">
+                        <p>{{products.0["name"]}}</p>
+                        <p>{{products.0["category"]}}</p>
                     </div>
-                    <p>{{price_data[2]}}€/{{price_data[3]}}</p>
-                </div>
-            </li>
+                    <div class="price-data">
+                        <div>
+                            <p>{{price_data[0]}}€</p>
+                            <p>{{price_data[1]}}</p>
+                        </div>
+                        <p>{{price_data[2]}}€/{{price_data[3]}}</p>
+                    </div>
+                </li>
+            {% endif %}
         {% endfor %}
         </ul>
     </section>
     {% endfor %}
+    {% endif%}
 </main>
 <footer>
 

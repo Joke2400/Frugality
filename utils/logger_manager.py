@@ -1,8 +1,9 @@
+"""Contains a class to manage logging."""
 import os
 import logging
 from pathlib import Path
 
-from .project_paths import ProjectPaths
+from .project_paths import FrugalityPaths
 
 
 class LoggerManager:
@@ -15,8 +16,8 @@ class LoggerManager:
     create a new 'logs' directory in the current working directory.
     """
     directory_loggers: dict[str, logging.Logger] = {}
-    logs_dir_path: Path = ProjectPaths.logs()
-    root_log_path: Path = ProjectPaths.logs() / "root.log"
+    logs_dir_path: Path = FrugalityPaths.logs_path()
+    root_log_path: Path = FrugalityPaths.logs_path() / "root.log"
     keep_logs: bool = False
     configured: bool = False
     default_format = logging.Formatter(

@@ -1,7 +1,8 @@
 """Main file for Flask app, contains all the app routes."""
 
+import json
 import asyncio
-from flask import redirect, url_for, render_template
+from flask import url_for, render_template
 from flask import request, session, Blueprint
 
 from utils import LoggerManager
@@ -37,7 +38,9 @@ def index_page():
 @app.route("/results/", methods=["GET"])
 def results_page():
     """Return a template for the results page."""
-    results = session.get("results", default=[])
+    results = request.args.get("results", default=None)
+    if results is not None:
+        results = json.loads(results)
     return render_template(
         "results.html",
         results=results), 200
@@ -118,17 +121,16 @@ def modify_store_queries():
 def product_query():
     """Execute a product search with session stores/products."""
     if len(stores := session.get("stores", default=[])) == 0:
-        return redirect(url_for(".main_page"))
+        return url_for(".main_page")
     if len(queries := session.get("products", default=[])) == 0:
-        return redirect(url_for(".main_page"))
+        return url_for(".main_page")
 
     # Expensive operation, Store class will be reworked later
     stores: list[Store] = [Store(x, y, z) for x, y, z in stores]
 
     results = loop.run_until_complete(
         execute_product_search(queries=queries, stores=stores))
-    session["results"] = results
-    return {"url": url_for(".results_page")}
+    return {"url": url_for(".results_page", results=json.dumps(results))}, 200
 
 
 @app.route("/product/query/select/", methods=["DELETE", "POST"])

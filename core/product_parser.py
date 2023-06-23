@@ -62,6 +62,7 @@ class ProductQueryParser:
         try:
             _items = self.response["data"]["store"]["products"]["items"]
             if len(_items) == 0:
+                logger.debug("Response items length was 0")
                 return None
             return _items
         except (KeyError, TypeError) as err:
@@ -116,17 +117,6 @@ class ProductQueryParser:
             "store": self.store.data,
             "products": products
         }
-
-    def cheapest_item(self) -> Product | None:
-        """Return item with lowest price per unit."""
-        if len(self.products) == 0:
-            return None
-        values = (0, self.products[0])
-        for inx, item in enumerate(self.products, start=1):
-            if (item.price_data.comparison_price <
-                    values[1].price_data.comparison_price):
-                values = (inx, item)
-        return values[1]
 
     def __str__(self):
         """Return human-readable name for class."""

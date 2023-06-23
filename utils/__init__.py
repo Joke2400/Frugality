@@ -1,6 +1,6 @@
 """Contains various utility functions and classes."""
 
-from .project_paths import ProjectPaths
+from .project_paths import FrugalityPaths
 from .logger_manager import LoggerManager
 from .util_funcs import timer
 from .util_funcs import regex_search
@@ -16,7 +16,7 @@ from .state import ParseFailed
 from .state import NoResponse
 
 
-__all__ = ["ProjectPaths", "LoggerManager", "timer",
+__all__ = ["FrugalityPaths", "LoggerManager", "timer",
            "regex_search", "regex_findall",
            "get_quantity_from_string", "OneOfType",
            "SingletonMeta", "State", "Pending",
