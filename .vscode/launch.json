@@ -40,6 +40,10 @@
                     "url": "http://127.0.0.1:5000/static/js/product.js",
                     "path": "${workspaceFolder}/data/static/js/product.js"
                 },
+                {
+                    "url": "http://127.0.0.1:5000/static/js/results.js",
+                    "path": "${workspaceFolder}/data/static/js/results.js"
+                },
             ]
         }
     ]
