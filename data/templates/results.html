@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script defer src="{{url_for('static', filename='js/index.js')}}"></script>
+<script defer type="module" src="{{url_for('static', filename='js/results.js')}}"></script>
 {% endblock %}
 
 {%block content %}
@@ -19,7 +19,7 @@
         <h1>Overview</h1>
     </div>
 </header>
-<main>
+<main id="main">
     {% if results != None %}
     {% for store in results %}
     <section class="store-result shadow">

@@ -1,5 +1,5 @@
 export { storeQuery, storesList, buildStoreQueries };
-import { post, del, refreshList, dom, domStyle, delay } from "./utils.js";
+import { post, del, refreshChildren, dom, domStyle, delay } from "./utils.js";
 
 var mouseHover = false;
 
@@ -46,7 +46,8 @@ function storeQuery() {
     // Yes this function is disgustingly nested, shh...
     if (value.length !== 0) {
         if (value !== previousQuery[0]) {
-            post("/store/query/", {value: value}).then(response => {
+            post("/store/query/", {value: value}).then(response => response.json())
+            .then(response => {
                 if ("message" in response) {
                     console.log(response["message"]);
                 }
@@ -151,14 +152,14 @@ function createStoreResultItem(item) {
 function addStoreQuery(store) {
     if (!storeQueries.includes(store)) {
         post("/store/query/select/",
-            {store: store})
+            {store: store}).then(response => response.json())
             .then(response => {
                 if ("result" in response) {
                     storeQueries = response["result"];
                 }
                 console.log(`storeQueries: [${storeQueries}]`)
                 hideStoreResults(true)
-                refreshList(storesList, storeQueries,
+                refreshChildren(storesList, storeQueries,
                     buildStoreQueries);
             })
     }
@@ -168,13 +169,13 @@ function addStoreQuery(store) {
 function removeStoreQuery(store) {
     if (storeQueries.includes(store)) {
         del("/store/query/select/",
-            {id: store[1]})
+            {id: store[1]}).then(response => response.json())
             .then(response => {
                 if ("result" in response) {
                     storeQueries = response["result"];
                 }
                 console.log(`storeQueries: [${storeQueries}]`)
-                refreshList(storesList, storeQueries,
+                refreshChildren(storesList, storeQueries,
                     buildStoreQueries);
             })
     }

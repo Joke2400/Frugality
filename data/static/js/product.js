@@ -1,15 +1,15 @@
 export { addProductQuery, productsList, buildProductQueries };
-import { dom, domStyle, get, post, del, refreshList } from "./utils.js";
+import { dom, domStyle, get, post, del, refreshChildren } from "./utils.js";
 
 const sendQueryBtn = document.getElementById(dom.sendQueryBtn)
 const addQueryBtn = document.getElementById(dom.queryAddBtn);
 const productsList = document.querySelector("." + dom.productsList)
 
 sendQueryBtn.addEventListener("click", event => {
-    get("/product/query/").then(response => {
-        if ("url" in response) {
-            location.href = response["url"];
-        }
+    get("/product/query/").then(response => response.json())
+    .then(response => {
+        localStorage.setItem("results", JSON.stringify(response["results"]));
+        window.location = response["url"];
     })
 })
 
@@ -29,13 +29,13 @@ addQueryBtn.addEventListener("click", event => {
 /* Adding and removing queries */
 function addProductQuery(product) {
     post("/product/query/select/",
-        {product: product})
+        {product: product}).then(response => response.json())
         .then(response => {
             if ("result" in response) {
                 productQueries = response["result"];
             }
             console.log(`productQueries: [${productQueries}]`)
-            refreshList(productsList, productQueries,
+            refreshChildren(productsList, productQueries,
                 buildProductQueries);
         })
 }
@@ -47,13 +47,13 @@ function removeProductQuery(product) {
          quantity: product["quantity"],
          query: product["query"],
          slug: product["slug"],
-         unit: product["unit"]})
+         unit: product["unit"]}).then(response => response.json())
         .then(response => {
             if ("result" in response) {
                 productQueries = response["result"];
             }
             console.log(`productQueries: [${productQueries}]`)
-            refreshList(productsList, productQueries,
+            refreshChildren(productsList, productQueries,
                 buildProductQueries);
         })
 }

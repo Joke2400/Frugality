@@ -309,7 +309,7 @@ def execute_store_search(value: Any) -> Search:
     returned, and each possible state should be handled by the function
     that calls this one.
     """
-    logger.info("[Store search]: Begun a new store search!")
+    logger.debug("[Store search]: Begun a new store search!")
     search = execute_db_search(search=Search(query=value, state=Pending()))
     if search.state is Fail():
         return execute_api_search(search=search)

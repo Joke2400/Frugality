@@ -38,12 +38,8 @@ def index_page():
 @app.route("/results/", methods=["GET"])
 def results_page():
     """Return a template for the results page."""
-    results = request.args.get("results", default=None)
-    if results is not None:
-        results = json.loads(results)
     return render_template(
-        "results.html",
-        results=results), 200
+        "results.html"), 200
 
 
 @app.route("/stores/", methods=["GET"])
@@ -130,7 +126,9 @@ def product_query():
 
     results = loop.run_until_complete(
         execute_product_search(queries=queries, stores=stores))
-    return {"url": url_for(".results_page", results=json.dumps(results))}, 200
+    return {
+        "url": url_for(".results_page"),
+        "results": results}, 200
 
 
 @app.route("/product/query/select/", methods=["DELETE", "POST"])

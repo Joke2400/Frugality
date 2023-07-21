@@ -70,7 +70,7 @@ async def get_products_from_api(
 
 async def execute_product_search(
         queries: list[dict],
-        stores: list[Store]) -> list[tuple[str, str, list[dict]]]:
+        stores: list[Store]) -> list[tuple[str, list[dict]]]:
     data = await get_products_from_api(queries=queries, stores=stores)
 
     parsers = []
@@ -86,8 +86,9 @@ async def execute_product_search(
                     store=query.pop("store"))
                 query_results.append(parser.dictify())
                 parsers.append(parser)
-        store_results.append([str(store.slug), str(store.name), query_results])
+        store_results.append((str(store.slug), query_results))
     return store_results
+
 
 def get_products_from_db(queries: list[dict]):
     pass

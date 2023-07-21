@@ -1,8 +1,8 @@
-export { delay, refreshList, get, post, del, dom, domStyle };
+export { delay, refreshChildren, get, post, del, dom, domStyle };
 
 
-// Keeping all the IDs and classes used in selectors/element creation
-// in one place, maybe there's a better solution but this is good for now
+// Keeping all the IDs and classes used in selectors/(element creation)
+// in one place, there's better solutions but this is good for now
 var dom = {
     storeBox: "store-box",
     storeInput: "store-input",
@@ -21,10 +21,9 @@ var dom = {
     productData: "product-data",
     productItem: "product-item",
     btn: "btn",
-    sendQueryBtn: "send-query-btn"
-    
-
-}
+    sendQueryBtn: "send-query-btn",
+    storeSection: "store-result"
+}   // This is getting so long it needs to be split/redone completely
 
 var domStyle = {
     rounded: "rounded",
@@ -43,7 +42,7 @@ const request = (url, params, method) => {
     };
     if (method === "GET") {
         options.headers = {
-            "Accept": "application/json"
+            "Accept": "text/html, application/json"
         }
         if (params !== undefined) {
             url += '?' + (new URLSearchParams(params)).toString();
@@ -51,10 +50,10 @@ const request = (url, params, method) => {
     } else {
         options.body = JSON.stringify(params);
         options.headers = {
-            "Accept": "application/json",
+            "Accept": "text/html, application/json",
             "Content-Type": "application/json"}
     }
-    return fetch(url, options).then(response => response.json());
+    return fetch(url, options);
 };
 
 const get = (url, params) => request(url, params, "GET");
@@ -69,7 +68,7 @@ function delay(fn, ms) {
     }
 }
 
-function refreshList(listNode, items, fn) {
+function refreshChildren(listNode, items, fn) {
     clearNodeChildren(listNode);
     fn(items);
 }

@@ -1,18 +1,18 @@
-import { productsList, buildProductQueries } from "./product.js"
+import { productsList, buildProductQueries } from "./product.js";
 import { storesList, buildStoreQueries } from "./store.js";
-import { get, refreshList} from "./utils.js";
+import { get, refreshChildren} from "./utils.js";
 
 window.onload = e => {
-    get("/stores/").then(response => {
+    get("/stores/").then(response => response.json()).then(response => {
         window.storeQueries = response["stores"];
         localStorage.setItem("storeQueries", JSON.stringify(response["stores"]))
-        refreshList(storesList, storeQueries,
+        refreshChildren(storesList, storeQueries,
             buildStoreQueries);
     })
-    get("/products/").then(response => {
+    get("/products/").then(response => response.json()).then(response => {
         window.productQueries = response["products"];
         localStorage.setItem("productQueries", JSON.stringify(response["products"]))
-        refreshList(productsList, productQueries,
+        refreshChildren(productsList, productQueries,
             buildProductQueries);
     })
 }

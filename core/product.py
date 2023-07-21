@@ -45,7 +45,10 @@ class Product:
         return self.price_data.price * count
 
     def dictify(self) -> dict:
-        """Convert data to a dict and return it."""
+        """Convert data to a dict and return it.
+
+        Store field is omitted as it's redundant in the final dict.
+        """
         return {
             "ean": self.ean,
             "slug": self.slug,
@@ -53,12 +56,9 @@ class Product:
             "brand_name": self.brand_name,
             "category": self.category,
             "category_str_path": self.category_str_path,
-
-            "store": self.store.data,
             "price_data": self.price_data.data
         }
 
     def __repr__(self) -> str:
         """Return name and price of item."""
         return f"<{self.name} {self.price_data.price}€>"
-
