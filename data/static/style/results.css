@@ -115,7 +115,6 @@ p, h1, h2, h3, h4 {
     font-size: 1rem;
     color: var(--clr-text-basic);
     border-bottom: 0.1rem solid var(--clr-primary-300);
-    filter: drop-shadow(0 0 0.05rem var(--clr-primary-100));
 }
 
 .product-data p:nth-child(3) {
@@ -158,12 +157,13 @@ p, h1, h2, h3, h4 {
 }
 
 .count {
-    margin-top: 0.6rem;
+    margin-top: 0.8rem;
     padding-left: 0.3rem;
     padding-right: 0.3rem;
     height: min-content;
     width: fit-content;
     font-weight: bold;
+    font-size: 0.9rem;
 }
 
 .dropdown-btn {
@@ -183,5 +183,21 @@ p, h1, h2, h3, h4 {
 }
 
 .dropdown {
-    background-color: red;
+    position: absolute;
+    max-height: 15rem;
+    width: 15rem;
+    right: 10rem;
+}
+
+.dropdown-item {
+    width: 100%
+}
+
+.dropdown-item button {
+    border: 0;
+    width: 100%;
+    height: fit-content;
+    font-size: 0.6rem;
+    margin: 0;
+    padding: 0.2rem 0.3rem;
 }
