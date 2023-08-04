@@ -1,4 +1,4 @@
-export { delay, refreshChildren, get, post, del, dom, domStyle };
+export { delay, createCustomElement, appendToParentInOrder, appendNewTextElement, refreshChildren, get, post, del, dom, domStyle };
 
 
 // Keeping all the IDs and classes used in selectors/(element creation)
@@ -22,7 +22,17 @@ var dom = {
     productItem: "product-item",
     btn: "btn",
     sendQueryBtn: "send-query-btn",
-    storeSection: "store-result"
+    storeSection: "store-result",
+    resultItem: "result-item",
+    productData: "product-data",
+    priceData: "price-data",
+    verticalList: "vertical-list",
+    resultsList: "results-list",
+    count: "count",
+    storeHeader: "store-header",
+    originalQuery: "orig-query",
+    dropdownBtn: "dropdown-btn",
+    dropdown: "dropdown",
 }   // This is getting so long it needs to be split/redone completely
 
 var domStyle = {
@@ -77,4 +87,24 @@ function clearNodeChildren(node) {
     while (node.lastElementChild) {
         node.removeChild(node.lastElementChild);
     }
+}
+
+function createCustomElement(type) {
+    let element = document.createElement(arguments[0]);
+    for (let i = 1; i < arguments.length; i++) {
+        element.classList.add(arguments[i])
+    }
+    return element
+}
+
+function appendToParentInOrder(parent) {
+    for (let i = 1; i < arguments.length; i++) {
+        parent.appendChild(arguments[i]);
+    }
+}
+
+function appendNewTextElement(parent, type, text) {
+    let paragraph = document.createElement(type);
+    paragraph.innerText = text;
+    parent.appendChild(paragraph);
 }
