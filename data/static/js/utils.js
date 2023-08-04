@@ -1,4 +1,4 @@
-export { delay, createCustomElement, appendToParentInOrder, appendNewTextElement, refreshChildren, get, post, del, dom, domStyle };
+export { delay, createCustomElement, clearNodeChildren, appendToParentInOrder, appendNewTextElement, refreshChildren, get, post, del, dom, domStyle };
 
 
 // Keeping all the IDs and classes used in selectors/(element creation)
@@ -33,6 +33,7 @@ var dom = {
     originalQuery: "orig-query",
     dropdownBtn: "dropdown-btn",
     dropdown: "dropdown",
+    dropdownItem: "dropdown-item"
 }   // This is getting so long it needs to be split/redone completely
 
 var domStyle = {

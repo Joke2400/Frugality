@@ -33,18 +33,11 @@ queries["StoreSearch"] = """query StoreSearch($brand: StoreBrand, $cursor: Strin
         }
 """
 
-queries["GetStoreInfo"] = """query GetStoreInfo($StoreID: ID!) {
+queries["GetProductsByEans"] = """query GetProductsByEans($StoreID: ID!, $query: [String!]) {
         store(id: $StoreID) {
             name
             id
             brand
-        }
-    }
-    """
-
-queries["GetProductsByEans"] = """query GetProductsByEans($StoreID: ID!, $query: [String!]) {
-        store(id: $StoreID) {
-            name
             products(
                 includeAgeLimitedByAlcohol: true
                 searchProvider: elasticsearch
@@ -66,6 +59,8 @@ queries["GetProductsByEans"] = """query GetProductsByEans($StoreID: ID!, $query:
 queries["GetProductByName"] = """query GetProductByName($StoreID: ID!, $query: String, $limit: Int, $slugs: String) {
         store(id: $StoreID) {
             name
+            id
+            brand
             products(
                 limit: $limit
                 includeAgeLimitedByAlcohol: true
