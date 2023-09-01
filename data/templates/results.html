@@ -19,43 +19,7 @@
         <h4>Overview</h4>
     </div>
 </header>
-<main id="main">
-    {% if results != None %}
-    {% for store in results %}
-    <section class="store-result">
-        <div class="store-header">
-            <h3>{{store.1}}</h3>
-            <h4>queries retrieved</h4>
-        </div>
-        <ul class="vertical-list results-list">
-        {% for i in store.2 %}
-            {% set query = i["query"] %}
-            {% set store = i["store"] %}
-            {% set products = i["products"] %}
-            {% if products|length > 1%}
-                <li class="result-item">
-                    {% set price_data = products.0["price_data"] %}
-                    <p class="count">{{query["count"]}}x</p>
-                    <div class="product-data">
-                        <p>{{products.0["name"]}}</p>
-                        <p>{{products.0["category"]}}</p>
-                    </div>
-                    <p>original query</p>
-                    <div class="price-data">
-                        <div>
-                            <p>{{price_data[0]}}€</p>
-                            <p>{{price_data[1]}}</p>
-                        </div>
-                        <p>{{price_data[2]}}€/{{price_data[3]}}</p>
-                    </div>
-                </li>
-            {% endif %}
-        {% endfor %}
-        </ul>
-    </section>
-    {% endfor %}
-    {% endif%}
-</main>
+<main id="main"></main>
 <footer>
 
 </footer>

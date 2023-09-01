@@ -1,5 +1,7 @@
-export { delay, createCustomElement, clearNodeChildren, appendToParentInOrder, appendNewTextElement, refreshChildren, get, post, del, dom, domStyle };
-
+export { get, post, del, dom, domStyle, delay};
+export { clearNodeChildren, appendToParentInOrder, refreshChildren}
+export { createCustomElement, appendTextElement, appendParagraph, appendClassedParagraph }
+export { appendH1Element, appendH2Element, appendH3Element, appendH4Element, appendH5Element, appendH6Element,}
 
 // Keeping all the IDs and classes used in selectors/(element creation)
 // in one place, there's better solutions but this is good for now
@@ -33,7 +35,8 @@ var dom = {
     originalQuery: "orig-query",
     dropdownBtn: "dropdown-btn",
     dropdown: "dropdown",
-    dropdownItem: "dropdown-item"
+    dropdownItem: "dropdown-item",
+    itemTotalBox: "item-total",
 }   // This is getting so long it needs to be split/redone completely
 
 var domStyle = {
@@ -104,8 +107,50 @@ function appendToParentInOrder(parent) {
     }
 }
 
-function appendNewTextElement(parent, type, text) {
+
+// ---------------------------------------------------------
+// Text element creation functions
+// ---------------------------------------------------------
+function appendTextElement(parent, type, text) {
     let paragraph = document.createElement(type);
     paragraph.innerText = text;
     parent.appendChild(paragraph);
 }
+
+function appendParagraph(parent, text) {
+    appendTextElement(parent, "p", text)
+}
+
+function appendClassedParagraph(parent, text) {
+    let element = document.createElement("p");
+    for (let i = 2; i < arguments.length; i++) {
+        element.classList.add(arguments[i])
+    }
+    element.innerText = text
+    parent.append(element)
+}
+
+function appendH1Element(parent, text) {
+    appendTextElement(parent, "h1", text)
+}
+
+function appendH2Element(parent, text) {
+    appendTextElement(parent, "h2", text)
+}
+
+function appendH3Element(parent, text) {
+    appendTextElement(parent, "h3", text)
+}
+
+function appendH4Element(parent, text) {
+    appendTextElement(parent, "h4", text)
+}
+
+function appendH5Element(parent, text) {
+    appendTextElement(parent, "h5", text)
+}
+
+function appendH6Element(parent, text) {
+    appendTextElement(parent, "h6", text)
+}
+// ---------------------------------------------------------

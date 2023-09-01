@@ -1,9 +1,12 @@
 * {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
 html {
     --clr-text-basic: hsl(0, 0%, 25%);
+    --clr-text-darker-grey: hsl(0, 0%, 35%);
     --clr-text-grey: hsl(0, 0%, 40%);
     --clr-text-light-grey: hsl(0, 0%, 85%);
     --clr-blue-default: hsl(189, 100%, 35%);
@@ -142,15 +145,40 @@ html {
 /* Generic styles END */
 
 /* Media START */
-@media only screen and (min-width: 1000px) {
+@media only screen and (min-width: 500px) {
     html {
-        font-size: 22px;
+        font-size: 14px;
     }
 }
 
-@media only screen and (min-width: 1500px) {
+@media only screen and (min-width: 1000px) {
+    html {
+        font-size: 20px;
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+    html {
+        font-size: 24px;
+    }
+}
+
+@media only screen and (min-width: 1400px) {
     html {
         font-size: 28px;
     }
 }
+
+@media only screen and (min-width: 1600px) {
+    html {
+        font-size: 28px;
+    }
+}
+
+@media only screen and (min-width: 1600px) {
+    html {
+        font-size: 36px;
+    }
+}
+
 /* Media END */ 
