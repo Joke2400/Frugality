@@ -8,12 +8,6 @@ The webscraper module is currently not functional/being used as I was in the mid
 
 "active" branch shows current progress
 
-IMPORTANT: project path in utils.program_paths.py needs to be changed if program is to be run from somewhere other than the desktop.
-
-Project has been developed on Windows 10, with python version: 3.10.4
-
-Dependencies: flask, flask-sqlalchemy
-
 Basic project idea/vision:
 - Grocery bag price calulcator
 - Scope of the project is limited to the larger grocery store chains situated in Finland
