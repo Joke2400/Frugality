@@ -34,25 +34,6 @@ html {
     box-shadow: 0px 5px 5px 0px rgba(0, 0, 0, 0.2);
 }
 
-.arrow {
-    border: solid var(--clr-text-grey);
-    border-width: 0 0.125rem 0.125rem 0;
-    display: inline-block;
-    position: absolute;
-    top: 8.75rem;
-    left: 7.5rem;
-    padding: 0.1rem;
-  }
-
-.down-arrow {
-    transform: rotate(45deg);
-    -webkit-transform: rotate(45deg);
-}
-
-.up-arrow {
-    transform: rotate(-135deg);
-    -webkit-transform: rotate(-135deg);
-  }
 
 .field {
     border: 0;

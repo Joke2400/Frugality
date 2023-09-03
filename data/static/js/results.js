@@ -1,4 +1,4 @@
-import { dom, refreshChildren, createCustomElement, clearNodeChildren, appendToParentInOrder, appendH3Element, appendH4Element, appendParagraph} from "./utils.js";
+import { delay, refreshChildren, createCustomElement, clearNodeChildren, appendToParentInOrder, appendH3Element, appendH4Element, appendParagraph} from "./utils.js";
 
 const mainNode = document.getElementById("main");
 const storedResults = JSON.parse(localStorage.getItem("results")); // Get stored results
@@ -9,24 +9,34 @@ const defs = {
     // used in <section>
     storeHeader: "store-header",
     sectionBody: "section-body",
+    dropdownColumn: "dropdown-column",
+    countColumn: "count-column",
     productColumn: "product-column",
     priceTotalColumn: "price-total-column",
     priceDetailColumn: "price-detail-column",
 
-    // used in productColumn
     resultItem: "result-item",
+    productCountItem: "product-count-item",
     productCount: "product-count",
-    productData: "product-data",
+    countArrow: "count-arrow",
+    countUpArrow: "count-up-arrow",
+    countDownArrow: "count-down-arrow",
+    dropdownColumnItem: "dropdown-column-item",
     dropdownBtn: "dropdown-btn",
+    dropdownList: "dropdown-list",
+    dropdownBar: "dropdown-bar",
+    dropdownItem: "dropdown-item",
+    dropdownArrow: "dropdown-arrow",
+    dropdownDownArrow: "dropdown-down-arrow",
+    dropdownUpArrow: "dropdown-up-arrow",
+    verticalList: "vertical-list",
 
-    // used in priceColumn
     priceTotal: "price-total",
     priceDetail: "price-detail",
 }
 
-// CSS class definitions for simple attributes, ex. shadow, border
+// CSS class definitions for simple/basic attributes, ex. shadow, border
 const attr = {
-
 }
 window.onload = e => {
     refreshChildren(mainNode, storedResults, buildPage);
@@ -39,106 +49,183 @@ function buildPage(storedResults) {
     for (let i = 0; i < storedResults.length; i++) {
         let section = buildSection(storedResults[i][1])
         pageSections.push(section);
-        mainNode.appendChild(section.getNode());
+        let columns = section.getListColumns();
+        mainNode.appendChild(section.getNode(columns));
     }
 }
 
-function buildSection(queriesList) {
+// ---------------------------------------------------------
+// Functions for updating displayed data
+// ---------------------------------------------------------
+function refreshPage(originalItem, newItemData) {
+    const query = originalItem.query
+    for (let pageSection of pageSections) {
+        if (pageSection != originalItem.parentSection) {
+            for (let i = 0; i < pageSection.items.length; i++) {
+                let currentItem = pageSection.items[i]
+                if (query["query"] !== currentItem.query["query"]) {continue};
+                for (let product of currentItem.products) {
+                    if (product["ean"] === newItemData["ean"]) {
+                        currentItem.displayed = product;
+                        pageSection.refreshItem(originalItem);
+                    }
+                }
+            }
+        } else {
+            originalItem.displayed = newItemData;
+            pageSection.refreshItem(originalItem)
+        }
+    }
+}
+
+function buildSection(queries) {
     let section = {
-        results: buildResults(queriesList),
-        getNode: function() {
-            let node = document.createElement("section");
+        items: [],
+        queries: queries,
+        columns: [],
+        buildResultItems: function(list) {
+            let items = [];
+            for (let i = 0; i < list.length; i++) {
+                let newItem = buildResultItem(list[i], this)
+                items.push(newItem);
+            }
+            return items
+        },
+        refreshAll: function() {
+            // Not implemented
+        },
+        refreshItem: function(item) {
+            let [oldNodes, newNodes] = item.getNodes();
+            for (let i = 0; i < newNodes.length; i++) {
+                const currentCol = this.columns[i];
+                for (let y = 0; y < currentCol.children.length; y++) {
+                    const oldNode = currentCol.children[y];
+                    const newNode = newNodes[i];
+                    if (oldNode == oldNodes[i]) {
+                        currentCol.replaceChild(newNode, oldNode);
+                    }
+                }
+            }
+            item.nodes = newNodes;
+        },
+        getHeader: function() {
             let header = createCustomElement("div", defs.storeHeader);
-            appendH3Element(header, queriesList[0]["store"][0]);
-            appendH4Element(header, queriesList.length + " queries retrieved.");
-            node.appendChild(header);
+            appendH3Element(header, queries[0]["store"][0]);
+            appendH4Element(header, queries.length + " queries retrieved.");
+            return header
+        },
+        getListColumns: function() {
+            if (this.items.length === 0) {this.items = this.buildResultItems(this.queries)};
+            let dropdownCol = createCustomElement("ul", defs.dropdownColumn);
+            let countCol = createCustomElement("ul", defs.countColumn);
+            let textCol = createCustomElement("ul", defs.productColumn);
+            let detailCol = createCustomElement("ul", defs.priceDetailColumn);
+            let totalCol = createCustomElement("ul", defs.priceTotalColumn);
+
+            for (let i = 0; i < this.items.length; i++) {
+                dropdownCol.appendChild(this.items[i].getDropdownNode())
+                countCol.appendChild(this.items[i].getCountNode())
+                textCol.appendChild(this.items[i].getTextNode());
+                detailCol.appendChild(this.items[i].getPriceDetailNode());
+                totalCol.appendChild(this.items[i].getPriceTotalNode());
+            };
+            return [dropdownCol, countCol, textCol, detailCol, totalCol]
+        },
+        getNode: function(columns) {
+            let node = document.createElement("section");
+            node.appendChild(this.getHeader())
 
             let body = createCustomElement("div", defs.sectionBody);
-            let productColumn = this.results.getProductColumnNode();
-            let priceDetail = this.results.getPriceDetailColumnNode();
-            let priceTotal = this.results.getPriceTotalColumnNode();
-            appendToParentInOrder(body, productColumn, priceDetail, priceTotal);
+            appendToParentInOrder(body, ...columns);
+            this.columns = columns;
             node.appendChild(body);
-            
             return node
-        }
-        
+        },
     }
     return section
 }
-// ---------------------------------------------------------
-// Results list creation
-// ---------------------------------------------------------
-function buildResults(queriesList) {
-    let results = {
-        items: buildResultItems(queriesList),
-        getProductColumnNode: function() {
-            let node = createCustomElement("ul", defs.productColumn);
-            for (let i = 0; i < this.items.length; i++) {
-                node.appendChild(this.items[i].getProductNode());
-            }
-            return node
-        },
-        getPriceTotalColumnNode: function() {
-            let node = createCustomElement("ul", defs.priceTotalColumn);
-            for (let i = 0; i < this.items.length; i++) {
-                node.appendChild(this.items[i].getPriceTotalNode());
-            }
-            return node
-        },
-        getPriceDetailColumnNode: function() {
-            let node = createCustomElement("ul", defs.priceDetailColumn);
-            for (let i = 0; i < this.items.length; i++) {
-                node.appendChild(this.items[i].getPriceDetailNode());
-            }
-            return node
-        }
-    }
-    return results
-}
 
-function buildResultItems(list) {
-    let items = [];
-    for (let i = 0; i < list.length; i++) {
-        let queryItem = list[i];
-        const newItem = {
-            selectedProduct: queryItem["products"][0],
-            products: queryItem["products"],
-            query: queryItem["query"],
-            getProductNode: function() {
-                let node = createCustomElement("li", defs.resultItem);
-                let dropdownBtn = buildDropdownBtn(
-                    node, this.products, this.selectedProduct);
-                let itemCount = buildItemCount(this.query["count"]);
-                let itemText = buildItemText(
-                    this.query["query"],
-                    this.selectedProduct["category"],
-                    this.selectedProduct["name"]);
-                appendToParentInOrder(node, dropdownBtn, itemCount, itemText)
-                return node
-            },
-            getPriceTotalNode: function() {
-                return buildPriceTotal(this.selectedProduct["price_data"], this.query["count"]);
-            },
-            getPriceDetailNode: function() {
-                return buildPriceDetail(this.selectedProduct["price_data"]);
-            }
+function buildResultItem(queryItem, section) {
+    const item = {
+        displayed: queryItem["products"][0],
+        products: queryItem["products"],
+        query: queryItem["query"],
+        parentSection: section,
+        nodes: [],
+        getDropdownNode: function() {
+            let node = buildDropdownBtn(this, this.products, this.displayed);
+            this.nodes.push(node);
+            return node
+        },
+        getCountNode: function() {
+            let node = buildItemCount(this);
+            this.nodes.push(node);
+            return node
+        },
+        getTextNode: function() {
+            let node = buildItemText(
+                this.displayed["name"],
+                this.displayed["category"],
+                this.query["query"]);
+            this.nodes.push(node);
+            return node
+        },
+        getPriceTotalNode: function() {
+            let node = buildPriceTotal(this.displayed["price_data"], this.query["count"]);
+            this.nodes.push(node);
+            return node
+        },
+        getPriceDetailNode: function() {
+            let node = buildPriceDetail(this.displayed["price_data"]);
+            this.nodes.push(node);
+            return node
+        },
+        getNodes: function() {
+            let oldNodes = this.nodes;
+            this.nodes = [];
+
+            let newNodes = [];
+            newNodes.push(this.getDropdownNode());
+            newNodes.push(this.getCountNode());
+            newNodes.push(this.getTextNode());
+            newNodes.push(this.getPriceDetailNode());
+            newNodes.push(this.getPriceTotalNode());
+            return [oldNodes, newNodes]
         }
-        items.push(newItem);
     }
-    return items
+    return item
 }
 // ---------------------------------------------------------
 // Item data element creation
 // ---------------------------------------------------------
-function buildItemCount(count) {
-    let node = createCustomElement("p", defs.productCount);
-    node.innerText = count + "x";
+function buildItemCount(item) {
+    let node = createCustomElement("li", defs.productCountItem);
+    let btnUp = document.createElement("button");
+    btnUp.appendChild(createCustomElement("div", defs.countArrow, defs.countUpArrow))
+    btnUp.addEventListener("click", e => {
+        item.query["count"] += 1;
+        item.parentSection.refreshItem(item);
+    })
+
+    let btnDown = document.createElement("button");
+    btnDown.addEventListener("click", e => {
+        if (item.query["count"] !== 1) {
+            item.query["count"] -= 1;
+            item.parentSection.refreshItem(item);
+        }
+    })
+    btnDown.appendChild(createCustomElement("div", defs.countArrow, defs.countDownArrow))
+    
+    let p = createCustomElement("p", defs.productCount); 
+    p.innerText = item.query["count"] + "x";
+    node.appendChild(btnUp);
+    node.appendChild(p);
+    node.appendChild(btnDown);
     return node
 }
 
 function buildItemText(name, category, queryString) {
-    let node = createCustomElement("div", defs.productData);
+    let node = createCustomElement("li", defs.resultItem);
     appendParagraph(node, "Search: '" + queryString + "'");
     appendParagraph(node, name);
     appendParagraph(node, category);
@@ -146,32 +233,57 @@ function buildItemText(name, category, queryString) {
 }
 
 function buildPriceDetail(data) {
-    let node = createCustomElement("div", defs.priceDetail);
+    let node = createCustomElement("li", defs.priceDetail);
     appendParagraph(node, data[0] + "€/" + data[1].toLowerCase());
     appendParagraph(node, data[2] + "€/" + data[3])
     return node
 }
 
 function buildPriceTotal(data, count) {
-    let node = createCustomElement("div", defs.priceTotal);
+    let node = createCustomElement("li", defs.priceTotal);
     appendParagraph(node, (data[0] * count).toFixed(2) + "€");
     return node
 }
 // ---------------------------------------------------------
-
+// Dropdown logic
+// ---------------------------------------------------------
 function buildDropdownBtn(parentItem, products, displayedProduct) {
-    let dropdownBtn = createCustomElement("button", defs.dropdownBtn);
-    dropdownBtn.innerText = "X"
-    dropdownBtn.addEventListener("click", event => {
-        toggleDropdown(parentItem, dropdownBtn, products, displayedProduct);
+    let node = createCustomElement("li", defs.dropdownColumnItem);
+    let btn = createCustomElement("button", defs.dropdownBtn);
+    let arrow = createCustomElement("div", defs.dropdownArrow, defs.dropdownDownArrow);
+    btn.appendChild(arrow);
+   
+    btn.isMouseOver = false
+    btn.addEventListener("click", event => {
+        toggleDropdown(parentItem, btn, products, displayedProduct);
     })
-    return dropdownBtn
+    btn.addEventListener("mouseenter", e => {
+        btn.isMouseOver = true
+    })
+    btn.addEventListener("mouseleave", e => {
+        btn.isMouseOver = false
+    })
+    btn.addEventListener("mouseleave", delay(e => {
+        if (btn.isMouseOver !== true) {
+            if (btn.children.length > 1) {
+                toggleDropdown(parentItem, btn, products, displayedProduct);
+            }
+        }
+    }, 700))
+    node.appendChild(btn)
+    return node
 }
 
 function toggleDropdown(parentItem, dropdownBtn, products, displayedProduct) {
-    if (dropdownBtn.children.length !== 0) {
+    if (dropdownBtn.children.length > 1) {
         clearNodeChildren(dropdownBtn);
+        let arrow = createCustomElement("div", defs.dropdownArrow, defs.dropdownDownArrow);
+        dropdownBtn.appendChild(arrow);
     } else {
+        clearNodeChildren(dropdownBtn);
+        let arrow = createCustomElement("div", defs.dropdownArrow, defs.dropdownUpArrow);
+       
+        dropdownBtn.appendChild(arrow);
         let items = buildDropdownItems(parentItem, products, displayedProduct);
         dropdownBtn.appendChild(items);
     }
@@ -179,7 +291,7 @@ function toggleDropdown(parentItem, dropdownBtn, products, displayedProduct) {
 }
 
 function buildDropdownItems(parentItem, products, displayedProduct) {
-    let items = createCustomElement("ul", dom.dropdown, dom.verticalList);
+    let items = createCustomElement("ul", defs.dropdownList, defs.verticalList);
     // Order dropdown items alphabetically
     let ordered = products.sort((a, b) => {
         const keyA = a.name.toUpperCase();
@@ -192,12 +304,11 @@ function buildDropdownItems(parentItem, products, displayedProduct) {
             let priceStr = item["price_data"][0] + "€/" + item["price_data"][1];
             let nameStr = "  |  " + item["name"];
 
-
-            let li = createCustomElement("li", dom.dropdownItem);
+            let li = createCustomElement("li", defs.dropdownItem);
             let btn = document.createElement("button");
             btn.innerText = priceStr + nameStr;
             btn.addEventListener("click", event => {
-                refreshProductLists(parentItem.query["query"], ordered[i].ean);
+                refreshPage(parentItem, ordered[i]);
             })
             li.appendChild(btn);
             items.appendChild(li)
@@ -205,35 +316,3 @@ function buildDropdownItems(parentItem, products, displayedProduct) {
     }
     return items
 }
-
-// Functions for updating displayed data
-function refreshResultItem(item, newDisplayedProduct) {
-    item.displayedProduct = newDisplayedProduct;
-    clearNodeChildren(item);
-    appendItemData(item, item.query, item.products, newDisplayedProduct);
-}
-
-function refreshProductLists(queryToRefresh, newDisplayProductEan) {
-    let lists = document.getElementsByClassName(dom.resultsList);
-    for (let resultsList of lists) {
-        for (let resultItem of resultsList.children) {
-            let query = resultItem.query["query"]
-            if (queryToRefresh === query) {
-                let hasChanged = false;
-                for (let i = 0; i < resultItem.products.length; i++) {
-                    let product = resultItem.products[i];
-                    if (product.ean === newDisplayProductEan) {
-                        refreshResultItem(resultItem, product);
-                        hasChanged = true;
-                        break
-                    }
-                }
-                if (hasChanged === false) {
-                    resultItem.style = "background: red" //temp
-                }
-            }
-        }
-        //refreshlistOverview()
-    }
-}
-
