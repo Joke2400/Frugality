@@ -34,9 +34,13 @@ class DataManager(metaclass=SingletonMeta):
         """
         self.database = kwargs.get("database", None)
         self.app = kwargs.get("app", None)
+        self.path = kwargs.get("path", None)
         if self.database is None or self.app is None:
             raise TypeError(
                 ".__init__() needs a 'database' and 'app' as params.")
+        if self.path is not None:
+            if not self.path.exists():
+                self.reset_db()
 
     def filter_query(self, table: Model, key_value: dict):
         """Fetch items from a table, filter results by the value provided."""
