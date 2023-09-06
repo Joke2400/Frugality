@@ -64,12 +64,21 @@ function refreshPage(originalItem, newItemData) {
             for (let i = 0; i < pageSection.items.length; i++) {
                 let currentItem = pageSection.items[i]
                 if (query["query"] !== currentItem.query["query"]) {continue};
+                let itemHasChanged = false
                 for (let product of currentItem.products) {
                     if (product["ean"] === newItemData["ean"]) {
                         currentItem.displayed = product;
-                        pageSection.refreshItem(originalItem);
+                        currentItem.query["count"] = originalItem.query["count"];
+                        pageSection.refreshItem(currentItem);
+                        itemHasChanged = true
+                        break
                     }
                 }
+                if (itemHasChanged === false) {
+                    originalItem.applyHighlight("background-color: var(--clr-highlight-yellow)");
+                    currentItem.applyHighlight("background-color: var(--clr-highlight-red)");
+                }
+                break
             }
         } else {
             originalItem.displayed = newItemData;
@@ -191,6 +200,9 @@ function buildResultItem(queryItem, section) {
             newNodes.push(this.getPriceDetailNode());
             newNodes.push(this.getPriceTotalNode());
             return [oldNodes, newNodes]
+        },
+        applyHighlight: function(string) {
+            this.nodes[2].style = string
         }
     }
     return item
@@ -204,14 +216,14 @@ function buildItemCount(item) {
     btnUp.appendChild(createCustomElement("div", defs.countArrow, defs.countUpArrow))
     btnUp.addEventListener("click", e => {
         item.query["count"] += 1;
-        item.parentSection.refreshItem(item);
+        refreshPage(item, item.displayed);
     })
 
     let btnDown = document.createElement("button");
     btnDown.addEventListener("click", e => {
         if (item.query["count"] !== 1) {
             item.query["count"] -= 1;
-            item.parentSection.refreshItem(item);
+            refreshPage(item, item.displayed);
         }
     })
     btnDown.appendChild(createCustomElement("div", defs.countArrow, defs.countDownArrow))
