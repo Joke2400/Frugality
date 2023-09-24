@@ -33,6 +33,9 @@ const defs = {
 
     priceTotal: "price-total",
     priceDetail: "price-detail",
+
+    pageOverview: "page-overview",
+    storeOverview: "store-overview",
 }
 
 // CSS class definitions for simple/basic attributes, ex. shadow, border
@@ -51,9 +54,10 @@ function buildPage(storedResults) {
         pageSections.push(section);
         let columns = section.getListColumns();
         mainNode.appendChild(section.getNode(columns));
+        refreshStoreOverview(section.node);
     }
+    refreshPageOverview()
 }
-
 // ---------------------------------------------------------
 // Functions for updating displayed data
 // ---------------------------------------------------------
@@ -62,15 +66,15 @@ function refreshPage(originalItem, newItemData) {
     for (let pageSection of pageSections) {
         if (pageSection != originalItem.parentSection) {
             for (let i = 0; i < pageSection.items.length; i++) {
-                let currentItem = pageSection.items[i]
+                let currentItem = pageSection.items[i];
                 if (query["query"] !== currentItem.query["query"]) {continue};
-                let itemHasChanged = false
+                let itemHasChanged = false;
                 for (let product of currentItem.products) {
                     if (product["ean"] === newItemData["ean"]) {
                         currentItem.displayed = product;
                         currentItem.query["count"] = originalItem.query["count"];
                         pageSection.refreshItem(currentItem);
-                        itemHasChanged = true
+                        itemHasChanged = true;
                         break
                     }
                 }
@@ -82,9 +86,35 @@ function refreshPage(originalItem, newItemData) {
             }
         } else {
             originalItem.displayed = newItemData;
-            pageSection.refreshItem(originalItem)
+            pageSection.refreshItem(originalItem);
         }
+        refreshStoreOverview(pageSection.node);
     }
+    refreshPageOverview();
+}
+function refreshPageOverview() {
+    
+}
+
+function refreshStoreOverview(parentNode) {
+    let node = createCustomElement("div", defs.storeOverview);
+    let div = createCustomElement("div", "bottom-shadow");
+    node.appendChild(div)
+
+    let total = createCustomElement("p", "store-total")
+    total.innerText = "Total: 123.64€" // temp
+    div.appendChild(total)
+
+    let avg = createCustomElement("p", "store-avg")
+    avg.innerText = "Avg. price: 2.73€/kpl" // temp
+    div.appendChild(avg)
+
+    if (parentNode.children.length < 3) {
+        parentNode.appendChild(node)
+    } else {
+        parentNode.replaceChild(node, parentNode.children[2])
+    }
+
 }
 
 function buildSection(queries) {
@@ -92,6 +122,7 @@ function buildSection(queries) {
         items: [],
         queries: queries,
         columns: [],
+        node: null,
         buildResultItems: function(list) {
             let items = [];
             for (let i = 0; i < list.length; i++) {
@@ -148,6 +179,7 @@ function buildSection(queries) {
             appendToParentInOrder(body, ...columns);
             this.columns = columns;
             node.appendChild(body);
+            this.node = node
             return node
         },
     }

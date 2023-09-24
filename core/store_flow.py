@@ -223,7 +223,7 @@ def execute_db_search(search: Search) -> Search:
 
         case Success():
             logger.debug(
-                "Database query for '%s', was successful!",
+                'Database query for "%s", was successful!',
                 search.query)
 
         case Fail():

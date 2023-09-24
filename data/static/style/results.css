@@ -43,7 +43,7 @@ section {
     display: flex;
     flex-flow: column;
     border: 0.15rem solid var(--clr-primary-100);
-    border-radius: 0.3rem;
+    border-radius: 0.5rem;
     margin-bottom: 3svh;
     height: fit-content;
 }
@@ -79,6 +79,7 @@ p, h1, h2, h3, h4 {
 .section-body {
     display: flex;
     flex-flow: row;
+    border-bottom: 0.1rem solid var(--clr-primary-100);
 }
 
 .dropdown-column {
@@ -305,4 +306,28 @@ p, h1, h2, h3, h4 {
 
 .dropdown-item button:hover {
     background-color: var(--clr-white-hover);
+}
+
+.store-overview {
+    width: 100%;
+    height: 7rem;
+    padding: 1rem 3rem 1rem 3rem;
+}
+
+.store-overview div {
+    display: grid;
+    grid-template-areas: "a b b"
+                         "a b b";
+    width: 100%;
+    height: 100%;
+    gap: 0.5rem;
+    border-left: 0.2rem solid var(--clr-primary-100);
+}
+
+.store-total {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--clr-text-basic);
+    background-color: rgba(255, 0, 0, 0.1);
+    grid-area: a;
 }
