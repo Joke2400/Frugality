@@ -54,7 +54,7 @@ function buildPage(storedResults) {
         pageSections.push(section);
         let columns = section.getListColumns();
         mainNode.appendChild(section.getNode(columns));
-        refreshStoreOverview(section.node);
+        refreshStoreOverview(section);
     }
     refreshPageOverview()
 }
@@ -88,7 +88,7 @@ function refreshPage(originalItem, newItemData) {
             originalItem.displayed = newItemData;
             pageSection.refreshItem(originalItem);
         }
-        refreshStoreOverview(pageSection.node);
+        refreshStoreOverview(pageSection);
     }
     refreshPageOverview();
 }
@@ -96,19 +96,20 @@ function refreshPageOverview() {
     
 }
 
-function refreshStoreOverview(parentNode) {
+function refreshStoreOverview(section) {
+    let parentNode = section.node;
     let node = createCustomElement("div", defs.storeOverview);
     let div = createCustomElement("div", "bottom-shadow");
     node.appendChild(div)
 
+    let totalNum = section.getTotal()
     let total = createCustomElement("p", "store-total")
-    total.innerText = "Total: 123.64€" // temp
+    total.innerText = "Total: " + totalNum.toFixed(2) + "€";
     div.appendChild(total)
 
     let avg = createCustomElement("p", "store-avg")
-    avg.innerText = "Avg. price: 2.73€/kpl" // temp
+    avg.innerText = "Avg: " + (totalNum/section.items.length).toFixed(2) + "€";
     div.appendChild(avg)
-
     if (parentNode.children.length < 3) {
         parentNode.appendChild(node)
     } else {
@@ -131,6 +132,17 @@ function buildSection(queries) {
             }
             return items
         },
+        getTotal: function() {
+            let totalNum = 0;
+            for (let i = 0; i < this.items.length; i++) {
+                let unitPrice = this.items[i].displayed["price_data"][0];
+                console.log(unitPrice);
+                totalNum += unitPrice;
+            }
+            console.log(totalNum)
+            return totalNum
+        },
+
         refreshAll: function() {
             // Not implemented
         },
