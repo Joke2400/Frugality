@@ -79,8 +79,8 @@ function refreshPage(originalItem, newItemData) {
                     }
                 }
                 if (itemHasChanged === false) {
-                    originalItem.applyHighlight("background-color: var(--clr-highlight-yellow)");
-                    currentItem.applyHighlight("background-color: var(--clr-highlight-red)");
+                    originalItem.applyStyle("background-color: var(--clr-highlight-yellow)");
+                    currentItem.applyStyle("background-color: var(--clr-highlight-red)");
                 }
                 break
             }
@@ -245,7 +245,7 @@ function buildResultItem(queryItem, section) {
             newNodes.push(this.getPriceTotalNode());
             return [oldNodes, newNodes]
         },
-        applyHighlight: function(string) {
+        applyStyle: function(string) {
             this.nodes[2].style = string
         }
     }
