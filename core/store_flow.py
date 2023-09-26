@@ -176,18 +176,17 @@ def db_store_search(search: Search) -> Search:
     logger.debug("Fetching %s from DB...", store)
 
     if store.store_id:  # If id exists query using that.
-        query = {"store_id": store.store_id}
+        key, value = "store_id", store.store_id
     else:  # Otherwise query by using slug.
-        query = {"slug": str(store.slug)}
+        key, value = "slug", str(store.slug)
 
     try:
-        resp = core.manager.filter_query(StoreModel, query).one()
+        resp = core.manager.filter_like(StoreModel, key, value).all()
     except (NoResultFound, MultipleResultsFound):
         logger.debug("Could not fetch %s from DB.", store)
         search.set_result(None, Fail())
     else:
-        store.set_fields(resp.name, resp.store_id, resp.slug)
-        search.set_result([store], Success())
+        search.set_result(["DB search unavailable"], Success())
     return search
 
 
