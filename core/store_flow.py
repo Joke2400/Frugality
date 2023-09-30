@@ -181,7 +181,7 @@ def db_store_search(search: Search) -> Search:
         key, value = "slug", str(query_store.slug)
     try:
         response = core.manager.filter_like(StoreModel, key, value).all()
-    except (NoResultFound, MultipleResultsFound):
+    except (NoResultFound):
         logger.debug("Could not fetch %s from DB.", query_store)
         search.set_result(None, Fail())
     else:
