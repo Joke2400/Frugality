@@ -1,4 +1,4 @@
-# Frugality v 0.1 - WIP
+# Frugality - WIP
 
 Current iteration of the groceries price calculator.
 WIP, host over the internet at your own risk.
