@@ -1,0 +1,9 @@
+services:
+  app:
+    build: .
+    container_name: frugality-container
+    command: uvicorn app.main:app --host 0.0.0.0 --port 80 --reload --reload-include *
+    ports:
+      - 8080:80
+    volumes:
+      - .:/app
