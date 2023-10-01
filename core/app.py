@@ -103,6 +103,13 @@ def modify_store_queries():
     Removing requires a store id string to be present in
     the "id" key.
     """
+    
+    # This function should be removed and adding/removing stores
+    # should be handled client-side. Parse user data at a single time
+    # instead when a product query is sent.
+    
+    
+    
     stores = session.get("stores", default=[])
     if request.method == "DELETE":
         stores, status = remove_store_query(request.json, stores)
@@ -142,6 +149,13 @@ def modify_product_queries():
 
     Removing requires a string to be present in the "slug" key.
     """
+    
+    # This function should be removed and adding/removing products
+    # should be handled client-side. Parse user data at a single time
+    # instead when a product query is sent.
+    
+    
+    
     products = session.get("products", default=[])
 
     if request.method == "DELETE":

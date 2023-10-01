@@ -172,22 +172,23 @@ def db_store_search(search: Search) -> Search:
     if the id/string matches exactly. In the future, the function
     filter_query() will be reworked with a better search algorithm.
     """
-    store = search.query
-    logger.debug("Fetching %s from DB...", store)
+    query_store: Store = search.query
+    logger.debug("Fetching %s from DB...", query_store)
 
-    if store.store_id:  # If id exists query using that.
-        query = {"store_id": store.store_id}
+    if query_store.store_id:  # If id exists query using that.
+        key, value = "store_id", query_store.store_id
     else:  # Otherwise query by using slug.
-        query = {"slug": str(store.slug)}
-
+        key, value = "slug", str(query_store.slug)
     try:
-        resp = core.manager.filter_query(StoreModel, query).one()
-    except (NoResultFound, MultipleResultsFound):
-        logger.debug("Could not fetch %s from DB.", store)
+        response = core.manager.filter_like(StoreModel, key, value).all()
+    except (NoResultFound):
+        logger.debug("Could not fetch %s from DB.", query_store)
         search.set_result(None, Fail())
     else:
-        store.set_fields(resp.name, resp.store_id, resp.slug)
-        search.set_result([store], Success())
+        stores = []
+        for result in response:
+            stores.append(Store(result.name, result.store_id, result.slug))
+        search.set_result(stores, Success())
     return search
 
 
@@ -223,7 +224,7 @@ def execute_db_search(search: Search) -> Search:
 
         case Success():
             logger.debug(
-                "Database query for '%s', was successful!",
+                'Database query for "%s", was successful!',
                 search.query)
 
         case Fail():
