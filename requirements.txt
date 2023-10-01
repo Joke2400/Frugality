@@ -1,3 +1,5 @@
+uvicorn[standard]
 fastapi[all]
 httpx
 sqlalchemy
+pytest

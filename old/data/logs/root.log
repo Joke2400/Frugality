@@ -1,0 +1,107 @@
+(2023-10-01 11:27:03) [DEBUG] ['root']: Configured root logger.
+(2023-10-01 11:27:03) [DEBUG] ['root']: Directory logger 'utils' not found.
+(2023-10-01 11:27:03) [DEBUG] ['root']: Streamhandler added to: 'utils'
+(2023-10-01 11:27:03) [DEBUG] ['root']: Removed log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\utils.log'
+(2023-10-01 11:27:03) [DEBUG] ['root']: Configured logger: 'utils'
+(2023-10-01 11:27:03) [DEBUG] ['root']: Created new directory logger: 'utils'
+(2023-10-01 11:27:03) [DEBUG] ['root']: Creating child for newly created directory logger
+(2023-10-01 11:27:03) [DEBUG] ['root']: Created logger: 'utils.util_funcs'
+(2023-10-01 11:27:03) [DEBUG] ['root']: Directory logger 'query' not found.
+(2023-10-01 11:27:03) [DEBUG] ['root']: Streamhandler added to: 'query'
+(2023-10-01 11:27:03) [DEBUG] ['root']: Removed log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\query.log'
+(2023-10-01 11:27:03) [DEBUG] ['root']: Configured logger: 'query'
+(2023-10-01 11:27:03) [DEBUG] ['root']: Created new directory logger: 'query'
+(2023-10-01 11:27:04) [DEBUG] ['root']: Directory logger 'api' not found.
+(2023-10-01 11:27:04) [DEBUG] ['root']: Streamhandler added to: 'api'
+(2023-10-01 11:27:04) [DEBUG] ['root']: Removed log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\api.log'
+(2023-10-01 11:27:04) [DEBUG] ['root']: Configured logger: 'api'
+(2023-10-01 11:27:04) [DEBUG] ['root']: Created new directory logger: 'api'
+(2023-10-01 11:27:04) [DEBUG] ['root']: Creating child for newly created directory logger
+(2023-10-01 11:27:04) [DEBUG] ['root']: Created logger: 'api.api'
+(2023-10-01 11:27:04) [DEBUG] ['root']: Directory logger 'core' not found.
+(2023-10-01 11:27:04) [DEBUG] ['root']: Streamhandler added to: 'core'
+(2023-10-01 11:27:04) [DEBUG] ['root']: Removed log file at: 'C:\Users\Joke\Desktop\Frugality\data\logs\core.log'
+(2023-10-01 11:27:04) [DEBUG] ['root']: Configured logger: 'core'
+(2023-10-01 11:27:04) [DEBUG] ['root']: Created new directory logger: 'core'
+(2023-10-01 11:27:04) [DEBUG] ['root']: Creating child for newly created directory logger
+(2023-10-01 11:27:04) [DEBUG] ['root']: Created logger: 'core.product'
+(2023-10-01 11:27:04) [DEBUG] ['root']: Found directory logger: 'core'
+(2023-10-01 11:27:04) [DEBUG] ['root']: Created logger: 'core.orm.manager'
+(2023-10-01 11:27:04) [DEBUG] ['root']: Found directory logger: 'core'
+(2023-10-01 11:27:04) [DEBUG] ['root']: Created logger: 'core.store_flow'
+(2023-10-01 11:27:04) [DEBUG] ['root']: Found directory logger: 'core'
+(2023-10-01 11:27:04) [DEBUG] ['root']: Created logger: 'core.product_parser'
+(2023-10-01 11:27:04) [DEBUG] ['root']: Found directory logger: 'core'
+(2023-10-01 11:27:04) [DEBUG] ['root']: Created logger: 'core.product_flow'
+(2023-10-01 11:27:04) [DEBUG] ['root']: Found directory logger: 'core'
+(2023-10-01 11:27:04) [DEBUG] ['root']: Created logger: 'core.app'
+(2023-10-01 11:27:04) [DEBUG] ['asyncio']: Using proactor: IocpProactor
+(2023-10-01 11:27:04) [DEBUG] ['root']: Found directory logger: 'core'
+(2023-10-01 11:27:04) [DEBUG] ['root']: Created logger: 'core.core'
+(2023-10-01 11:27:04) [INFO] ['werkzeug']: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+(2023-10-01 11:27:04) [INFO] ['werkzeug']: [33mPress CTRL+C to quit[0m
+(2023-10-01 11:27:04) [INFO] ['werkzeug']:  * Restarting with stat
+(2023-10-01 11:27:05) [DEBUG] ['root']: Configured root logger.
+(2023-10-01 11:27:05) [DEBUG] ['root']: Directory logger 'utils' not found.
+(2023-10-01 11:27:05) [DEBUG] ['root']: Streamhandler added to: 'utils'
+(2023-10-01 11:27:05) [DEBUG] ['root']: (Permission denied) Could not remove log file: 'C:\Users\Joke\Desktop\Frugality\data\logs\utils.log'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Configured logger: 'utils'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Created new directory logger: 'utils'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Creating child for newly created directory logger
+(2023-10-01 11:27:05) [DEBUG] ['root']: Created logger: 'utils.util_funcs'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Directory logger 'query' not found.
+(2023-10-01 11:27:05) [DEBUG] ['root']: Streamhandler added to: 'query'
+(2023-10-01 11:27:05) [DEBUG] ['root']: (Permission denied) Could not remove log file: 'C:\Users\Joke\Desktop\Frugality\data\logs\query.log'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Configured logger: 'query'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Created new directory logger: 'query'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Directory logger 'api' not found.
+(2023-10-01 11:27:05) [DEBUG] ['root']: Streamhandler added to: 'api'
+(2023-10-01 11:27:05) [DEBUG] ['root']: (Permission denied) Could not remove log file: 'C:\Users\Joke\Desktop\Frugality\data\logs\api.log'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Configured logger: 'api'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Created new directory logger: 'api'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Creating child for newly created directory logger
+(2023-10-01 11:27:05) [DEBUG] ['root']: Created logger: 'api.api'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Directory logger 'core' not found.
+(2023-10-01 11:27:05) [DEBUG] ['root']: Streamhandler added to: 'core'
+(2023-10-01 11:27:05) [DEBUG] ['root']: (Permission denied) Could not remove log file: 'C:\Users\Joke\Desktop\Frugality\data\logs\core.log'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Configured logger: 'core'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Created new directory logger: 'core'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Creating child for newly created directory logger
+(2023-10-01 11:27:05) [DEBUG] ['root']: Created logger: 'core.product'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Found directory logger: 'core'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Created logger: 'core.orm.manager'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Found directory logger: 'core'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Created logger: 'core.store_flow'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Found directory logger: 'core'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Created logger: 'core.product_parser'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Found directory logger: 'core'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Created logger: 'core.product_flow'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Found directory logger: 'core'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Created logger: 'core.app'
+(2023-10-01 11:27:05) [DEBUG] ['asyncio']: Using proactor: IocpProactor
+(2023-10-01 11:27:05) [DEBUG] ['root']: Found directory logger: 'core'
+(2023-10-01 11:27:05) [DEBUG] ['root']: Created logger: 'core.core'
+(2023-10-01 11:27:05) [WARNING] ['werkzeug']:  * Debugger is active!
+(2023-10-01 11:27:05) [INFO] ['werkzeug']:  * Debugger PIN: 145-263-324
+(2023-10-01 11:27:05) [INFO] ['werkzeug']: 127.0.0.1 - - [01/Oct/2023 11:27:05] "GET / HTTP/1.1" 200 -
+(2023-10-01 11:27:05) [INFO] ['werkzeug']: 127.0.0.1 - - [01/Oct/2023 11:27:05] "GET /static/style/base.css HTTP/1.1" 200 -
+(2023-10-01 11:27:05) [INFO] ['werkzeug']: 127.0.0.1 - - [01/Oct/2023 11:27:05] "GET /static/style/index.css HTTP/1.1" 200 -
+(2023-10-01 11:27:05) [INFO] ['werkzeug']: 127.0.0.1 - - [01/Oct/2023 11:27:05] "GET /static/js/index.js HTTP/1.1" 200 -
+(2023-10-01 11:27:05) [INFO] ['werkzeug']: 127.0.0.1 - - [01/Oct/2023 11:27:05] "GET /static/js/product.js HTTP/1.1" 200 -
+(2023-10-01 11:27:05) [INFO] ['werkzeug']: 127.0.0.1 - - [01/Oct/2023 11:27:05] "GET /static/js/utils.js HTTP/1.1" 200 -
+(2023-10-01 11:27:05) [INFO] ['werkzeug']: 127.0.0.1 - - [01/Oct/2023 11:27:05] "GET /static/js/store.js HTTP/1.1" 200 -
+(2023-10-01 11:27:05) [INFO] ['werkzeug']: 127.0.0.1 - - [01/Oct/2023 11:27:05] "[33mGET /static/favicon.ico HTTP/1.1[0m" 404 -
+(2023-10-01 11:27:05) [INFO] ['werkzeug']: 127.0.0.1 - - [01/Oct/2023 11:27:05] "GET /stores/ HTTP/1.1" 200 -
+(2023-10-01 11:27:05) [INFO] ['werkzeug']: 127.0.0.1 - - [01/Oct/2023 11:27:05] "GET /products/ HTTP/1.1" 200 -
+(2023-10-01 11:27:09) [INFO] ['werkzeug']: 127.0.0.1 - - [01/Oct/2023 11:27:09] "POST /store/query/ HTTP/1.1" 200 -
+(2023-10-01 11:27:10) [INFO] ['werkzeug']: 127.0.0.1 - - [01/Oct/2023 11:27:10] "[35m[1mPOST /store/query/select/ HTTP/1.1[0m" 201 -
+(2023-10-01 11:27:17) [INFO] ['werkzeug']: 127.0.0.1 - - [01/Oct/2023 11:27:17] "[35m[1mPOST /product/query/select/ HTTP/1.1[0m" 201 -
+(2023-10-01 11:27:18) [DEBUG] ['httpx._client']: HTTP Request: POST https://cfapi.voikukka.fi/graphql "HTTP/1.1 200 OK"
+(2023-10-01 11:27:18) [INFO] ['werkzeug']: 127.0.0.1 - - [01/Oct/2023 11:27:18] "GET /product/query/ HTTP/1.1" 200 -
+(2023-10-01 11:27:18) [INFO] ['werkzeug']: 127.0.0.1 - - [01/Oct/2023 11:27:18] "GET /results/ HTTP/1.1" 200 -
+(2023-10-01 11:27:18) [INFO] ['werkzeug']: 127.0.0.1 - - [01/Oct/2023 11:27:18] "[36mGET /static/style/base.css HTTP/1.1[0m" 304 -
+(2023-10-01 11:27:18) [INFO] ['werkzeug']: 127.0.0.1 - - [01/Oct/2023 11:27:18] "GET /static/style/results.css HTTP/1.1" 200 -
+(2023-10-01 11:27:18) [INFO] ['werkzeug']: 127.0.0.1 - - [01/Oct/2023 11:27:18] "GET /static/js/results.js HTTP/1.1" 200 -
+(2023-10-01 11:27:18) [INFO] ['werkzeug']: 127.0.0.1 - - [01/Oct/2023 11:27:18] "[36mGET /static/js/utils.js HTTP/1.1[0m" 304 -
+(2023-10-01 11:27:26) [INFO] ['werkzeug']: 127.0.0.1 - - [01/Oct/2023 11:27:26] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -

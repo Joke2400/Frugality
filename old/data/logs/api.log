@@ -1,0 +1,4 @@
+(2023-10-01 11:27:18) [DEBUG] ['api.api']: Creating tasks for store: '647396324', 'Prisma Iso Omena'
+(2023-10-01 11:27:18) [DEBUG] ['api.api']: Adding task: query='banaani' category='' @ index=0
+(2023-10-01 11:27:18) [DEBUG] ['api.api']: [ASYNCIO] Calling asyncio.gather() - Tasks: 1
+(2023-10-01 11:27:18) [DEBUG] ['api.api']: [ASYNCIO] Awaiting post request: Query: 'banaani', <Store: 'Prisma Iso Omena', '647396324'>

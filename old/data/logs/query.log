@@ -1,0 +1,683 @@
+(2023-10-01 11:27:18) [DEBUG] ['query']: Parameters: {
+    "timeout": 10,
+    "headers": {
+        "Content-Type": "application/json",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "User-Agent": "\"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0\"",
+        "x-client-name": "skaupat-web"
+    },
+    "json": {
+        "operation_name": "GetProductByName",
+        "query": "query GetProductByName($StoreID: ID!, $query: String, $limit: Int, $slugs: String) {\n        store(id: $StoreID) {\n            name\n            id\n            brand\n            products(\n                limit: $limit\n                includeAgeLimitedByAlcohol: true\n                searchProvider: elasticsearch\n                queryString: $query\n                slug: $slugs\n            ) {\n                items {\n                    name\n                    ean\n                    price\n                    basicQuantityUnit\n                    comparisonPrice\n                    comparisonUnit\n                    brandName\n                    slug\n                    hierarchyPath {\n                        id\n                        name\n                        slug\n                    }\n                }\n            }\n        }\n    }\n    ",
+        "variables": {
+            "StoreID": "647396324",
+            "limit": 24,
+            "query": "banaani",
+            "slugs": ""
+        }
+    }
+}
+(2023-10-01 11:27:18) [DEBUG] ['query']: Request event hook: POST https://cfapi.voikukka.fi/graphql - Waiting for response
+(2023-10-01 11:27:18) [DEBUG] ['query']: Response event hook: POST https://cfapi.voikukka.fi/graphql - Status 200
+(2023-10-01 11:27:18) [DEBUG] ['query']: Response: {
+    "data": {
+        "store": {
+            "name": "Prisma Iso Omena",
+            "id": "647396324",
+            "brand": "prisma",
+            "products": {
+                "items": [
+                    {
+                        "name": "Chiquita banaani",
+                        "ean": "2000503600002",
+                        "price": 0.24,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 1.25,
+                        "comparisonUnit": "KGM",
+                        "brandName": "Chiquita",
+                        "slug": "chiquita-banaani",
+                        "hierarchyPath": [
+                            {
+                                "id": "Herkku_00000198",
+                                "name": "Banaanit",
+                                "slug": "hedelmat-ja-vihannekset-1/hedelmat/banaanit"
+                            },
+                            {
+                                "id": "Herkku_00000021",
+                                "name": "Hedelm\u00e4t",
+                                "slug": "hedelmat-ja-vihannekset-1/hedelmat"
+                            },
+                            {
+                                "id": "Herkku_00000001",
+                                "name": "Hedelm\u00e4t ja vihannekset",
+                                "slug": "hedelmat-ja-vihannekset-1"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Ingman 900 g Banaanijogurtti",
+                        "ean": "6413300025750",
+                        "price": 1.49,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 1.66,
+                        "comparisonUnit": "KGM",
+                        "brandName": "Ingman",
+                        "slug": "ingman-900-g-banaanijogurtti",
+                        "hierarchyPath": [
+                            {
+                                "id": "1591691235643803",
+                                "name": "Maustetut jogurtit",
+                                "slug": "maito-munat-ja-rasvat-0/jogurtit/maustetut-jogurtit"
+                            },
+                            {
+                                "id": "Herkku_00000118",
+                                "name": "Jogurtit",
+                                "slug": "maito-munat-ja-rasvat-0/jogurtit"
+                            },
+                            {
+                                "id": "Herkku_00000006",
+                                "name": "Maito, munat ja rasvat",
+                                "slug": "maito-munat-ja-rasvat-0"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Rainbow 150 g banaanijogurtti",
+                        "ean": "6414893095687",
+                        "price": 0.35,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 2.33,
+                        "comparisonUnit": "KGM",
+                        "brandName": "Rainbow",
+                        "slug": "rainbow-150-g-banaanijogurtti",
+                        "hierarchyPath": [
+                            {
+                                "id": "1591691235643803",
+                                "name": "Maustetut jogurtit",
+                                "slug": "maito-munat-ja-rasvat-0/jogurtit/maustetut-jogurtit"
+                            },
+                            {
+                                "id": "Herkku_00000118",
+                                "name": "Jogurtit",
+                                "slug": "maito-munat-ja-rasvat-0/jogurtit"
+                            },
+                            {
+                                "id": "Herkku_00000006",
+                                "name": "Maito, munat ja rasvat",
+                                "slug": "maito-munat-ja-rasvat-0"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Banaani Luomu Reilun kaupan",
+                        "ean": "2000503700009",
+                        "price": 0.37,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 1.95,
+                        "comparisonUnit": "KGM",
+                        "brandName": "Reilun Kaupan",
+                        "slug": "banaani-luomu-reilun-kaupan",
+                        "hierarchyPath": [
+                            {
+                                "id": "Herkku_00000198",
+                                "name": "Banaanit",
+                                "slug": "hedelmat-ja-vihannekset-1/hedelmat/banaanit"
+                            },
+                            {
+                                "id": "Herkku_00000021",
+                                "name": "Hedelm\u00e4t",
+                                "slug": "hedelmat-ja-vihannekset-1/hedelmat"
+                            },
+                            {
+                                "id": "Herkku_00000001",
+                                "name": "Hedelm\u00e4t ja vihannekset",
+                                "slug": "hedelmat-ja-vihannekset-1"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Rainbow 700g banaani-jogurtti-suklaamuromysli",
+                        "ean": "7340011442721",
+                        "price": 4.49,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 6.41,
+                        "comparisonUnit": "KGM",
+                        "brandName": "Rainbow",
+                        "slug": "rainbow-700g-banaani-jogurtti-suklaamuromysli",
+                        "hierarchyPath": [
+                            {
+                                "id": "Herkku_00000317",
+                                "name": "Myslit",
+                                "slug": "kuivatuotteet-ja-leivonta-1/hiutaleet-murot-ja-myslit/myslit"
+                            },
+                            {
+                                "id": "Herkku_00000053",
+                                "name": "Hiutaleet, murot ja myslit",
+                                "slug": "kuivatuotteet-ja-leivonta-1/hiutaleet-murot-ja-myslit"
+                            },
+                            {
+                                "id": "Herkku_00000007",
+                                "name": "Kuivatuotteet ja leivonta",
+                                "slug": "kuivatuotteet-ja-leivonta-1"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Arla AB-Banaanijogurtti 100 g laktoositon",
+                        "ean": "6413300024685",
+                        "price": 0.39,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 3.9,
+                        "comparisonUnit": "KGM",
+                        "brandName": "Arla",
+                        "slug": "arla-ab-banaanijogurtti-100-g-laktoositon",
+                        "hierarchyPath": [
+                            {
+                                "id": "1591691235643803",
+                                "name": "Maustetut jogurtit",
+                                "slug": "maito-munat-ja-rasvat-0/jogurtit/maustetut-jogurtit"
+                            },
+                            {
+                                "id": "Herkku_00000118",
+                                "name": "Jogurtit",
+                                "slug": "maito-munat-ja-rasvat-0/jogurtit"
+                            },
+                            {
+                                "id": "Herkku_00000006",
+                                "name": "Maito, munat ja rasvat",
+                                "slug": "maito-munat-ja-rasvat-0"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Arla Luonto+ AB laktoositon banaani jogurtti 175g",
+                        "ean": "6413300024760",
+                        "price": 0.79,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 4.51,
+                        "comparisonUnit": "KGM",
+                        "brandName": "Arla Luonto+",
+                        "slug": "arla-luonto-ab-laktoositon-banaani-jogurtti-175g",
+                        "hierarchyPath": [
+                            {
+                                "id": "1591691235643803",
+                                "name": "Maustetut jogurtit",
+                                "slug": "maito-munat-ja-rasvat-0/jogurtit/maustetut-jogurtit"
+                            },
+                            {
+                                "id": "Herkku_00000118",
+                                "name": "Jogurtit",
+                                "slug": "maito-munat-ja-rasvat-0/jogurtit"
+                            },
+                            {
+                                "id": "Herkku_00000006",
+                                "name": "Maito, munat ja rasvat",
+                                "slug": "maito-munat-ja-rasvat-0"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Alpro Soijajuoma, banaani 250ml",
+                        "ean": "5411188121992",
+                        "price": 1.19,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 4.76,
+                        "comparisonUnit": "LTR",
+                        "brandName": "Alpro",
+                        "slug": "alpro-soijajuoma-banaani-250ml",
+                        "hierarchyPath": [
+                            {
+                                "id": "Herkku_00000685",
+                                "name": "Soijajuomat",
+                                "slug": "maito-munat-ja-rasvat-0/kasvipohjaiset-maitojuomat/soijajuomat"
+                            },
+                            {
+                                "id": "Herkku_00000123",
+                                "name": "Kasvipohjaiset maitojuomat",
+                                "slug": "maito-munat-ja-rasvat-0/kasvipohjaiset-maitojuomat"
+                            },
+                            {
+                                "id": "Herkku_00000006",
+                                "name": "Maito, munat ja rasvat",
+                                "slug": "maito-munat-ja-rasvat-0"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Bonne Banaanisose 0,5L",
+                        "ean": "6420610111967",
+                        "price": 3.09,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 6.18,
+                        "comparisonUnit": "LTR",
+                        "brandName": "Bonne",
+                        "slug": "bonne-banaanisose-0-5l",
+                        "hierarchyPath": [
+                            {
+                                "id": "1591691238458406",
+                                "name": "Soseet",
+                                "slug": "kuivatuotteet-ja-leivonta-1/hillot-ja-marmeladit/soseet"
+                            },
+                            {
+                                "id": "Herkku_00000064",
+                                "name": "Hillot ja marmeladit",
+                                "slug": "kuivatuotteet-ja-leivonta-1/hillot-ja-marmeladit"
+                            },
+                            {
+                                "id": "Herkku_00000007",
+                                "name": "Kuivatuotteet ja leivonta",
+                                "slug": "kuivatuotteet-ja-leivonta-1"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Rainbow mansikka-banaani virvoitusjuoma 0,5l",
+                        "ean": "6415712611361",
+                        "price": 0.99,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 1.58,
+                        "comparisonUnit": "LTR",
+                        "brandName": "Rainbow",
+                        "slug": "rainbow-mansikka-banaani-virvoitusjuoma-0-5l",
+                        "hierarchyPath": [
+                            {
+                                "id": "Herkku_00000797",
+                                "name": "Muut virvoitusjuomat",
+                                "slug": "juomat-1/virvoitusjuomat/muut-virvoitusjuomat"
+                            },
+                            {
+                                "id": "Herkku_00000048",
+                                "name": "Virvoitusjuomat",
+                                "slug": "juomat-1/virvoitusjuomat"
+                            },
+                            {
+                                "id": "Herkku_00000005",
+                                "name": "Juomat",
+                                "slug": "juomat-1"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Semper Smoothie banaani mango 1v 200ml",
+                        "ean": "7312170032075",
+                        "price": 1.09,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 5.45,
+                        "comparisonUnit": "LTR",
+                        "brandName": "Semper",
+                        "slug": "semper-smoothie-banaani-mango-1v-200ml",
+                        "hierarchyPath": [
+                            {
+                                "id": "1591691240683155",
+                                "name": "Muut v\u00e4lipalat",
+                                "slug": "lapset-1/lasten-valipalasoseet-ja-muut-valipalat/muut-valipalat"
+                            },
+                            {
+                                "id": "1591691240683140",
+                                "name": "Lasten v\u00e4lipalasoseet ja muut v\u00e4lipalat",
+                                "slug": "lapset-1/lasten-valipalasoseet-ja-muut-valipalat"
+                            },
+                            {
+                                "id": "Herkku_00000010",
+                                "name": "Lapset",
+                                "slug": "lapset-1"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Valiojogurtti\u00ae 1 kg banaani laktoositon",
+                        "ean": "6408430021031",
+                        "price": 1.99,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 1.99,
+                        "comparisonUnit": "KGM",
+                        "brandName": "Valiojogurtti",
+                        "slug": "valiojogurttir-1-kg-banaani-laktoositon",
+                        "hierarchyPath": [
+                            {
+                                "id": "1591691235643803",
+                                "name": "Maustetut jogurtit",
+                                "slug": "maito-munat-ja-rasvat-0/jogurtit/maustetut-jogurtit"
+                            },
+                            {
+                                "id": "Herkku_00000118",
+                                "name": "Jogurtit",
+                                "slug": "maito-munat-ja-rasvat-0/jogurtit"
+                            },
+                            {
+                                "id": "Herkku_00000006",
+                                "name": "Maito, munat ja rasvat",
+                                "slug": "maito-munat-ja-rasvat-0"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Valiojogurtti\u00ae 200 g banaani laktoositon",
+                        "ean": "6408430002023",
+                        "price": 0.58,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 2.9,
+                        "comparisonUnit": "KGM",
+                        "brandName": "Valiojogurtti",
+                        "slug": "valiojogurttir-200-g-banaani-laktoositon",
+                        "hierarchyPath": [
+                            {
+                                "id": "1591691235643803",
+                                "name": "Maustetut jogurtit",
+                                "slug": "maito-munat-ja-rasvat-0/jogurtit/maustetut-jogurtit"
+                            },
+                            {
+                                "id": "Herkku_00000118",
+                                "name": "Jogurtit",
+                                "slug": "maito-munat-ja-rasvat-0/jogurtit"
+                            },
+                            {
+                                "id": "Herkku_00000006",
+                                "name": "Maito, munat ja rasvat",
+                                "slug": "maito-munat-ja-rasvat-0"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Semper Smoothie banaani mansikka 1v 200ml",
+                        "ean": "7312170032044",
+                        "price": 1.09,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 5.45,
+                        "comparisonUnit": "LTR",
+                        "brandName": "Semper",
+                        "slug": "semper-smoothie-banaani-mansikka-1v-200ml",
+                        "hierarchyPath": [
+                            {
+                                "id": "1591691240683155",
+                                "name": "Muut v\u00e4lipalat",
+                                "slug": "lapset-1/lasten-valipalasoseet-ja-muut-valipalat/muut-valipalat"
+                            },
+                            {
+                                "id": "1591691240683140",
+                                "name": "Lasten v\u00e4lipalasoseet ja muut v\u00e4lipalat",
+                                "slug": "lapset-1/lasten-valipalasoseet-ja-muut-valipalat"
+                            },
+                            {
+                                "id": "Herkku_00000010",
+                                "name": "Lapset",
+                                "slug": "lapset-1"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Moomin mango banaani smoothie luomu 200ml",
+                        "ean": "4740098099611",
+                        "price": 1.49,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 7.45,
+                        "comparisonUnit": "LTR",
+                        "brandName": "Moomin",
+                        "slug": "moomin-mango-banaani-smoothie-luomu-200ml",
+                        "hierarchyPath": [
+                            {
+                                "id": "1591691240683155",
+                                "name": "Muut v\u00e4lipalat",
+                                "slug": "lapset-1/lasten-valipalasoseet-ja-muut-valipalat/muut-valipalat"
+                            },
+                            {
+                                "id": "1591691240683140",
+                                "name": "Lasten v\u00e4lipalasoseet ja muut v\u00e4lipalat",
+                                "slug": "lapset-1/lasten-valipalasoseet-ja-muut-valipalat"
+                            },
+                            {
+                                "id": "Herkku_00000010",
+                                "name": "Lapset",
+                                "slug": "lapset-1"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Naturdiet VLCD suklaa-banaani shake 330ml",
+                        "ean": "7350028543564",
+                        "price": 2.3,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 6.97,
+                        "comparisonUnit": "LTR",
+                        "brandName": "Naturdiet",
+                        "slug": "naturdiet-vlcd-suklaa-banaani-shake-330ml",
+                        "hierarchyPath": [
+                            {
+                                "id": "1591691263003051",
+                                "name": "Lcd-tuotteet",
+                                "slug": "luontaistuotteet-ja-lisaravinteet-1/painonhallintatuotteet/lcd-tuotteet"
+                            },
+                            {
+                                "id": "1591691263003050",
+                                "name": "Painonhallintatuotteet",
+                                "slug": "luontaistuotteet-ja-lisaravinteet-1/painonhallintatuotteet"
+                            },
+                            {
+                                "id": "Herkku_00000016",
+                                "name": "Luontaistuotteet ja lis\u00e4ravinteet",
+                                "slug": "luontaistuotteet-ja-lisaravinteet-1"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Puhdistamo Parempi Sn\u00e4kipala, Banaani 40 g",
+                        "ean": "6430039223660",
+                        "price": 0.8,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 20,
+                        "comparisonUnit": "KGM",
+                        "brandName": "Puhdistamo",
+                        "slug": "puhdistamo-parempi-snakipala-banaani-40-g",
+                        "hierarchyPath": [
+                            {
+                                "id": "1591691262950884",
+                                "name": "Urheiluravinnepatukat",
+                                "slug": "luontaistuotteet-ja-lisaravinteet-1/urheiluravinteet/urheiluravinnepatukat"
+                            },
+                            {
+                                "id": "1591691262950882",
+                                "name": "Urheiluravinteet",
+                                "slug": "luontaistuotteet-ja-lisaravinteet-1/urheiluravinteet"
+                            },
+                            {
+                                "id": "Herkku_00000016",
+                                "name": "Luontaistuotteet ja lis\u00e4ravinteet",
+                                "slug": "luontaistuotteet-ja-lisaravinteet-1"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Danone Danonino mansikka-banaani hedelm\u00e4rahka 4x95g",
+                        "ean": "5410146408632",
+                        "price": 2.59,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 6.82,
+                        "comparisonUnit": "KGM",
+                        "brandName": "Danonino",
+                        "slug": "danone-danonino-mansikka-banaani-hedelmarahka-4x95g",
+                        "hierarchyPath": [
+                            {
+                                "id": "1591691235703027",
+                                "name": "Maustetut rahkat",
+                                "slug": "maito-munat-ja-rasvat-0/rahkat-vanukkaat-ja-jalkiruoka/maustetut-rahkat"
+                            },
+                            {
+                                "id": "Herkku_00000115",
+                                "name": "Rahkat, vanukkaat ja j\u00e4lkiruoka",
+                                "slug": "maito-munat-ja-rasvat-0/rahkat-vanukkaat-ja-jalkiruoka"
+                            },
+                            {
+                                "id": "Herkku_00000006",
+                                "name": "Maito, munat ja rasvat",
+                                "slug": "maito-munat-ja-rasvat-0"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "TEHO Sport palautusjuoma banaani-suklaa 0,33 l",
+                        "ean": "6419800121305",
+                        "price": 2.19,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 6.64,
+                        "comparisonUnit": "LTR",
+                        "brandName": "Teho",
+                        "slug": "teho-sport-palautusjuoma-banaani-suklaa-0-33-l",
+                        "hierarchyPath": [
+                            {
+                                "id": "1591691262950883",
+                                "name": "Urheiluravinnejuomat",
+                                "slug": "luontaistuotteet-ja-lisaravinteet-1/urheiluravinteet/urheiluravinnejuomat"
+                            },
+                            {
+                                "id": "1591691262950882",
+                                "name": "Urheiluravinteet",
+                                "slug": "luontaistuotteet-ja-lisaravinteet-1/urheiluravinteet"
+                            },
+                            {
+                                "id": "Herkku_00000016",
+                                "name": "Luontaistuotteet ja lis\u00e4ravinteet",
+                                "slug": "luontaistuotteet-ja-lisaravinteet-1"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Moomin Luomu banaani mustikka smoothie 200ml",
+                        "ean": "4740098001409",
+                        "price": 1.49,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 7.45,
+                        "comparisonUnit": "LTR",
+                        "brandName": "Moomin",
+                        "slug": "moomin-luomu-banaani-mustikka-smoothie-200ml",
+                        "hierarchyPath": [
+                            {
+                                "id": "1591691240683155",
+                                "name": "Muut v\u00e4lipalat",
+                                "slug": "lapset-1/lasten-valipalasoseet-ja-muut-valipalat/muut-valipalat"
+                            },
+                            {
+                                "id": "1591691240683140",
+                                "name": "Lasten v\u00e4lipalasoseet ja muut v\u00e4lipalat",
+                                "slug": "lapset-1/lasten-valipalasoseet-ja-muut-valipalat"
+                            },
+                            {
+                                "id": "Herkku_00000010",
+                                "name": "Lapset",
+                                "slug": "lapset-1"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Robby Easy jogurttijuoma mansikka-banaani 200 ml",
+                        "ean": "4002971655308",
+                        "price": 1.25,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 6.25,
+                        "comparisonUnit": "LTR",
+                        "brandName": "Ehrmann",
+                        "slug": "robby-easy-jogurttijuoma-mansikka-banaani-200-ml",
+                        "hierarchyPath": [
+                            {
+                                "id": "Herkku_00000637",
+                                "name": "Juotavat jogurtit",
+                                "slug": "maito-munat-ja-rasvat-0/jogurtit/juotavat-jogurtit"
+                            },
+                            {
+                                "id": "Herkku_00000118",
+                                "name": "Jogurtit",
+                                "slug": "maito-munat-ja-rasvat-0/jogurtit"
+                            },
+                            {
+                                "id": "Herkku_00000006",
+                                "name": "Maito, munat ja rasvat",
+                                "slug": "maito-munat-ja-rasvat-0"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Leader BareBar taatelipatukka taateli-banaani 40 g",
+                        "ean": "6430067845384",
+                        "price": 1.29,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 32.25,
+                        "comparisonUnit": "KGM",
+                        "brandName": "Barebar",
+                        "slug": "leader-barebar-taatelipatukka-taateli-banaani-40-g",
+                        "hierarchyPath": [
+                            {
+                                "id": "1591691262950884",
+                                "name": "Urheiluravinnepatukat",
+                                "slug": "luontaistuotteet-ja-lisaravinteet-1/urheiluravinteet/urheiluravinnepatukat"
+                            },
+                            {
+                                "id": "1591691262950882",
+                                "name": "Urheiluravinteet",
+                                "slug": "luontaistuotteet-ja-lisaravinteet-1/urheiluravinteet"
+                            },
+                            {
+                                "id": "Herkku_00000016",
+                                "name": "Luontaistuotteet ja lis\u00e4ravinteet",
+                                "slug": "luontaistuotteet-ja-lisaravinteet-1"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Valio Oddlygood\u00ae kaurapohjainen gurtti 1kg banaani",
+                        "ean": "6408430400256",
+                        "price": 2.98,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 2.98,
+                        "comparisonUnit": "KGM",
+                        "brandName": "Valio",
+                        "slug": "valio-oddlygoodr-kaurapohjainen-gurtti-1kg-banaani",
+                        "hierarchyPath": [
+                            {
+                                "id": "Herkku_00000640",
+                                "name": "Kasvipohjaiset jogurtit",
+                                "slug": "maito-munat-ja-rasvat-0/jogurtit/kasvipohjaiset-jogurtit"
+                            },
+                            {
+                                "id": "Herkku_00000118",
+                                "name": "Jogurtit",
+                                "slug": "maito-munat-ja-rasvat-0/jogurtit"
+                            },
+                            {
+                                "id": "Herkku_00000006",
+                                "name": "Maito, munat ja rasvat",
+                                "slug": "maito-munat-ja-rasvat-0"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "WAOW 150 g Banaanilastu",
+                        "ean": "6430061150521",
+                        "price": 1.69,
+                        "basicQuantityUnit": "KPL",
+                        "comparisonPrice": 11.27,
+                        "comparisonUnit": "KGM",
+                        "brandName": "Waow",
+                        "slug": "waow-150-g-banaanilastu",
+                        "hierarchyPath": [
+                            {
+                                "id": "Herkku_00000306",
+                                "name": "Kuivatut hedelm\u00e4t ja marjat",
+                                "slug": "kuivatuotteet-ja-leivonta-1/siemenet-pahkinat-ja-kuivatut-hedelmat/kuivatut-hedelmat-ja-marjat"
+                            },
+                            {
+                                "id": "Herkku_00000050",
+                                "name": "Siemenet, p\u00e4hkin\u00e4t ja kuivatut hedelm\u00e4t",
+                                "slug": "kuivatuotteet-ja-leivonta-1/siemenet-pahkinat-ja-kuivatut-hedelmat"
+                            },
+                            {
+                                "id": "Herkku_00000007",
+                                "name": "Kuivatuotteet ja leivonta",
+                                "slug": "kuivatuotteet-ja-leivonta-1"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}
