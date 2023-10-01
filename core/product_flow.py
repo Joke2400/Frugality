@@ -58,6 +58,17 @@ async def get_products_from_api(
         queries: list[dict],
         stores: list[Store],
         limit: int = 24) -> list[list[tuple[dict, dict | None]]]:
+    """Query one or more stores from the api with a list of queries.
+
+    Args:
+        queries (list[dict]): Queries to query.
+        stores (list[Store]): Stores to query.
+        limit (int, optional): API result length limit Defaults to 24.
+
+    Returns:
+        list[list[tuple[dict, dict | None]]]: List of lists each containing a
+        tuple with the query item(dict) and its result(dict or None)
+    """    
     tasks = []
     for store in stores:
         tasks.append(asyncio.create_task(
@@ -71,6 +82,16 @@ async def get_products_from_api(
 async def execute_product_search(
         queries: list[dict],
         stores: list[Store]) -> list[tuple[str, list[dict]]]:
+    """Execute a store search and process the results into dictionaries.
+
+    Args:
+        queries (list[dict]): Queries to query.
+        stores (list[Store]): Stores to query.
+
+    Returns:
+        list[tuple[str, list[dict]]]: List of tuples each containing the
+        store slug and the results dictionary.
+    """
     data = await get_products_from_api(queries=queries, stores=stores)
 
     parsers = []

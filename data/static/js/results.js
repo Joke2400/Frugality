@@ -33,6 +33,9 @@ const defs = {
 
     priceTotal: "price-total",
     priceDetail: "price-detail",
+
+    pageOverview: "page-overview",
+    storeOverview: "store-overview",
 }
 
 // CSS class definitions for simple/basic attributes, ex. shadow, border
@@ -51,9 +54,10 @@ function buildPage(storedResults) {
         pageSections.push(section);
         let columns = section.getListColumns();
         mainNode.appendChild(section.getNode(columns));
+        refreshStoreOverview(section);
     }
+    refreshPageOverview()
 }
-
 // ---------------------------------------------------------
 // Functions for updating displayed data
 // ---------------------------------------------------------
@@ -62,20 +66,56 @@ function refreshPage(originalItem, newItemData) {
     for (let pageSection of pageSections) {
         if (pageSection != originalItem.parentSection) {
             for (let i = 0; i < pageSection.items.length; i++) {
-                let currentItem = pageSection.items[i]
+                let currentItem = pageSection.items[i];
                 if (query["query"] !== currentItem.query["query"]) {continue};
+                let itemHasChanged = false;
                 for (let product of currentItem.products) {
                     if (product["ean"] === newItemData["ean"]) {
                         currentItem.displayed = product;
-                        pageSection.refreshItem(originalItem);
+                        currentItem.query["count"] = originalItem.query["count"];
+                        pageSection.refreshItem(currentItem);
+                        itemHasChanged = true;
+                        break
                     }
                 }
+                if (itemHasChanged === false) {
+                    originalItem.applyStyle("background-color: var(--clr-highlight-yellow)");
+                    currentItem.applyStyle("background-color: var(--clr-highlight-red)");
+                }
+                break
             }
         } else {
             originalItem.displayed = newItemData;
-            pageSection.refreshItem(originalItem)
+            pageSection.refreshItem(originalItem);
         }
+        refreshStoreOverview(pageSection);
     }
+    refreshPageOverview();
+}
+function refreshPageOverview() {
+    
+}
+
+function refreshStoreOverview(section) {
+    let parentNode = section.node;
+    let node = createCustomElement("div", defs.storeOverview);
+    let div = createCustomElement("div", "bottom-shadow");
+    node.appendChild(div)
+
+    let totalNum = section.getTotal()
+    let total = createCustomElement("p", "store-total")
+    total.innerText = "Total: " + totalNum.toFixed(2) + "€";
+    div.appendChild(total)
+
+    let avg = createCustomElement("p", "store-avg")
+    avg.innerText = "Avg: " + (totalNum/section.items.length).toFixed(2) + "€";
+    div.appendChild(avg)
+    if (parentNode.children.length < 3) {
+        parentNode.appendChild(node)
+    } else {
+        parentNode.replaceChild(node, parentNode.children[2])
+    }
+
 }
 
 function buildSection(queries) {
@@ -83,6 +123,7 @@ function buildSection(queries) {
         items: [],
         queries: queries,
         columns: [],
+        node: null,
         buildResultItems: function(list) {
             let items = [];
             for (let i = 0; i < list.length; i++) {
@@ -91,6 +132,17 @@ function buildSection(queries) {
             }
             return items
         },
+        getTotal: function() {
+            let totalNum = 0;
+            for (let i = 0; i < this.items.length; i++) {
+                let unitPrice = this.items[i].displayed["price_data"][0];
+                console.log(unitPrice);
+                totalNum += unitPrice;
+            }
+            console.log(totalNum)
+            return totalNum
+        },
+
         refreshAll: function() {
             // Not implemented
         },
@@ -139,6 +191,7 @@ function buildSection(queries) {
             appendToParentInOrder(body, ...columns);
             this.columns = columns;
             node.appendChild(body);
+            this.node = node
             return node
         },
     }
@@ -191,6 +244,9 @@ function buildResultItem(queryItem, section) {
             newNodes.push(this.getPriceDetailNode());
             newNodes.push(this.getPriceTotalNode());
             return [oldNodes, newNodes]
+        },
+        applyStyle: function(string) {
+            this.nodes[2].style = string
         }
     }
     return item
@@ -204,14 +260,14 @@ function buildItemCount(item) {
     btnUp.appendChild(createCustomElement("div", defs.countArrow, defs.countUpArrow))
     btnUp.addEventListener("click", e => {
         item.query["count"] += 1;
-        item.parentSection.refreshItem(item);
+        refreshPage(item, item.displayed);
     })
 
     let btnDown = document.createElement("button");
     btnDown.addEventListener("click", e => {
         if (item.query["count"] !== 1) {
             item.query["count"] -= 1;
-            item.parentSection.refreshItem(item);
+            refreshPage(item, item.displayed);
         }
     })
     btnDown.appendChild(createCustomElement("div", defs.countArrow, defs.countDownArrow))

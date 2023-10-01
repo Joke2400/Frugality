@@ -23,6 +23,9 @@ html {
     --clr-primary-400: hsl(200, 60%, 50%);
     --clr-primary-450: hsl(200, 60%, 45%);
     --clr-primary-500: hsl(200, 60%, 40%);
+
+    --clr-highlight-yellow: hsla(60, 100%, 50%, 0.1);
+    --clr-highlight-red: hsla(0, 100%, 50%, 0.1);
 }
 
 /* Generic styles BEGIN */

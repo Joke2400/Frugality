@@ -17,7 +17,7 @@ config.read(FrugalityPaths.settings_path())
 
 USER_AGENT = config["API"]["user_agent"]
 API_ENDPOINT = config["SKAUPAT_URLS"]["graphql_endpoint"]
-DO_LOGGING = bool("True" in config["API"]["do_logging"])
+DO_LOGGING = bool("True" in config["API"]["do_query_logging"])
 
 
 def get_store_by_id(data: tuple[None, str] | tuple[str, str]

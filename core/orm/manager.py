@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.exc import NoResultFound
+from sqlalchemy.orm.attributes import InstrumentedAttribute
 
 from utils import LoggerManager
 from utils import SingletonMeta
@@ -15,7 +16,7 @@ from .orm_classes import ProductData as ProductDataModel
 from ..product import Product as ProductItem
 from ..store import Store as StoreItem
 
-
+FIELD = InstrumentedAttribute
 logger = LoggerManager.get_logger(name=__name__)
 
 
@@ -34,16 +35,31 @@ class DataManager(metaclass=SingletonMeta):
         """
         self.database = kwargs.get("database", None)
         self.app = kwargs.get("app", None)
+        self.path = kwargs.get("path", None)
         if self.database is None or self.app is None:
             raise TypeError(
                 ".__init__() needs a 'database' and 'app' as params.")
+        if self.path is not None:
+            if not self.path.exists():
+                self.reset_db()
 
     def filter_query(self, table: Model, key_value: dict):
-        """Fetch items from a table, filter results by the value provided."""
+        """Fetch items from a table, filter results by the key-value pair."""
         if len(key_value) > 1:
             raise ValueError("More than one key was found in dict.")
         result = self.database.session.scalars(
             self.database.select(table).filter_by(**key_value))
+        return result
+
+    def filter_like(self, table: Model, key: str, value: str):
+        """Fetch items from a table, filter using SQL like operator."""
+        search = f"%{value}%"
+        target_attr = getattr(table, key)
+        if not isinstance(target_attr, FIELD):
+            raise ValueError(f"Key: {key} not a valid table name")
+
+        result = self.database.session.scalars(
+            self.database.select(table).where(target_attr.like(search)))
         return result
 
     def add_store(self, store: StoreItem) -> tuple[bool]:
