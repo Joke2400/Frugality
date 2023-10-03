@@ -1,10 +1,11 @@
-FROM python:3.11.5
+FROM mcr.microsoft.com/devcontainers/universal:2-linux
 
-WORKDIR /src
+RUN apt-get install -y && apt-get upgrade -y
 
-COPY ./requirements.txt /src
+WORKDIR /usr/src/
+
+COPY ./requirements.txt /usr/src/
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
-COPY . /src
-
+COPY . /usr/src/
 CMD ["uvicorn", "main:process.app", "--host", "0.0.0.0", "--port", "80"]
