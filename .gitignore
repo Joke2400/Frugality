@@ -1,4 +1,3 @@
 .mypy_cache
-.vscode
 __pycache__
 frugality-env
