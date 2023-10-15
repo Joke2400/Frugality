@@ -1,10 +1,11 @@
 version: "3.8"
 services:
-  app:
+  backend:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: frugality-container
-    command: python3 main.py
     ports:
       - 8080:80
+    volumes:
+      - type: bind
+        source: .
+        target: /home/Frugality/app

@@ -1,4 +1,4 @@
-uvicorn[standard]
+uvicorn
 fastapi[all]
 httpx
 sqlalchemy
