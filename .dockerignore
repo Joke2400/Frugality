@@ -1,3 +1,6 @@
-old
-.git
-frugality-env
+**old
+**.git
+**.mypy_cache
+**.vscode
+**__pycache__
+**frugality-env
