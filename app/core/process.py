@@ -18,4 +18,4 @@ app = Process.app
 
 @app.get("/")
 def read_root():
-    return Response("The server is running!")
+    return Response("This is a test")

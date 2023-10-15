@@ -2,5 +2,7 @@
 	"name": "Frugality Container",
 	"dockerComposeFile": "../docker-compose.yaml",
 	"service": "backend",
-	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	"workspaceFolder": "/home/Frugality/app",
+	"shutdownAction": "stopCompose",
+	//"postCreateCommand": "bash /home/Frugality/app/setup.sh"
 }

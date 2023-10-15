@@ -3,6 +3,8 @@ services:
   backend:
     build:
       context: .
+      args:
+      - devcontainercli=true
     ports:
       - 8080:80
     volumes:
