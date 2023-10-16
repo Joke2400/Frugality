@@ -2,16 +2,14 @@
 
 
 from fastapi import FastAPI, Response
-
+from ..api.routes import router
 
 class Process():
 
     app: FastAPI = FastAPI()
 
     def __init__(self, **kwargs):
-        print("hello")
-        pass
-
+        self.app.include_router(router)
 
 app = Process.app
 
