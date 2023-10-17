@@ -4,3 +4,4 @@ httpx
 sqlalchemy
 pytest
 pydantic
+python-dotenv
