@@ -6,4 +6,6 @@ from patterns import (
     SingletonMeta
 )
 
-__all__ = ["Validator", "OneOfType", "SingletonMeta"]
+from logger_manager import LoggerManager
+
+__all__ = ["Validator", "OneOfType", "SingletonMeta", "LoggerManager"]

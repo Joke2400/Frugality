@@ -6,19 +6,20 @@ from typing_extensions import TypeAlias
 
 Handler: TypeAlias = logging.StreamHandler | logging.FileHandler
 
-#from utils import SingletonMeta
+#from app.utils import SingletonMeta
 
 
 class LoggerManager:
     """Class for managing logging."""
 
+    top_level_loggers: dict[str, logging.Logger] = {}
     default_format = logging.Formatter(
         fmt="(%(asctime)s) [%(levelname)s] ['%(name)s']: %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S")
 
     def __init__(self, log_path: Path | str,
                  purge_old_logs: bool = False) -> None:
-        """Initialize an instance of the class.
+        """Initialize an instance of LoggerManager.
 
         Args:
             log_path (Path | str):
@@ -32,30 +33,16 @@ class LoggerManager:
             if purge_old_logs:
                 self.purge_logs(path=self.log_path)
         else:
-            try:
-                os.mkdir(self.log_path)
-            except PermissionError as err:
-                logging.exception(err)
+            os.mkdir(self.log_path)
+        self.root_logger = logging.getLogger()
+        self.root_logger = self.create_logger(
+            level=logging.DEBUG,
+            sh=(logging.INFO, None),
+            fh=(logging.DEBUG, None, self.log_path / "root.log"))
 
-    @staticmethod
-    def purge_logs(path: Path) -> None:
-        """Purge all files ending with '.log' at the given directory path."""
-        try:
-            if not os.path.isdir(path):
-                return None
-        except ValueError as err:
-            logging.exception(err)
-            return None
 
-        for file in os.listdir(path):
-            if file.endswith(".log"):
-                try:
-                    filepath = path / file
-                    filepath.unlink()
-                except PermissionError as err:
-                    logging.exception(err)
-                finally:
-                    logging.debug("Removed file at: '%s'", filepath)
+    def get_logger(self, name, level: int, sh: bool, fh: bool):
+        print(name)
         return None
 
     @classmethod
@@ -135,3 +122,28 @@ class LoggerManager:
         else:
             handler.setFormatter(cls.default_format)
         return handler
+
+    @staticmethod
+    def purge_logs(path: Path) -> None:
+        """Purge all files ending with '.log' at the given directory path."""
+        try:
+            if not os.path.isdir(path):
+                return None
+        except ValueError as err:
+            logging.exception(err)
+            return None
+
+        for file in os.listdir(path):
+            if file.endswith(".log"):
+                try:
+                    filepath = path / file
+                    filepath.unlink()
+                except PermissionError as err:
+                    logging.exception(err)
+                finally:
+                    logging.debug("Removed file at: '%s'", filepath)
+        return None
+
+
+#logger_manager = LoggerManager(Path.cwd() / "app" / "data" / "logs")
+#this_file_logger = logger_manager.get_logger(__name__, logging.DEBUG, True, True)
