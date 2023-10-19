@@ -1,11 +1,14 @@
 """Contains helpful classes/functions/tests."""
 
-from patterns import (
+from .patterns import (
     Validator,
     OneOfType,
-    SingletonMeta
+    SingletonMeta,
+    TreeRoot,
+    TreeNode
 )
 
-from logger_manager import LoggerManager
+from .logger_manager import LoggerManager
 
-__all__ = ["Validator", "OneOfType", "SingletonMeta", "LoggerManager"]
+__all__ = ["Validator", "OneOfType", "SingletonMeta",
+           "LoggerManager", "TreeNode", "TreeRoot"]

@@ -2,22 +2,28 @@
 import os
 import logging
 from pathlib import Path
+from typing import Any
 from typing_extensions import TypeAlias
+
+from app.utils import (
+    SingletonMeta,
+    TreeRoot,
+    TreeNode
+)
 
 Handler: TypeAlias = logging.StreamHandler | logging.FileHandler
 
-#from app.utils import SingletonMeta
 
-
-class LoggerManager:
+class LoggerManager(metaclass=SingletonMeta):
     """Class for managing logging."""
 
-    top_level_loggers: dict[str, logging.Logger] = {}
+    tree: TreeRoot
     default_format = logging.Formatter(
         fmt="(%(asctime)s) [%(levelname)s] ['%(name)s']: %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S")
 
     def __init__(self, log_path: Path | str,
+                 root_dir: Path | None = None,
                  purge_old_logs: bool = False) -> None:
         """Initialize an instance of LoggerManager.
 
@@ -29,6 +35,11 @@ class LoggerManager:
                 Defaults to False.
         """
         self.log_path = Path(log_path)
+        if root_dir is None:
+            self.root_dir = Path.cwd()
+        else:
+            self.root_dir = root_dir
+        print(self.root_dir)
         if self.log_path.exists():
             if purge_old_logs:
                 self.purge_logs(path=self.log_path)
@@ -39,11 +50,22 @@ class LoggerManager:
             level=logging.DEBUG,
             sh=(logging.INFO, None),
             fh=(logging.DEBUG, None, self.log_path / "root.log"))
+        self.tree = TreeRoot(
+            data={"logger": self.root_logger, "path": self.root_dir})
 
+    def get_logger(self, __name: str, level: int,
+                   sh: dict[str, Any], fh: dict[str, Any]):
+        logger_path = Path(__name.replace(".", "/") + ".py")
+        if not logger_path.exists():
+            raise ValueError(
+                "Could not construct a valid logger path from __name.")
 
-    def get_logger(self, name, level: int, sh: bool, fh: bool):
-        print(name)
-        return None
+    def get_parent_logger(self, path: Path):
+        print(path)
+        for i in path.parents[::-1]:
+            print(i.name)
+            if i.name == self.root_log_dir.name:
+                print("True", i.name)
 
     @classmethod
     def create_logger(
@@ -79,8 +101,8 @@ class LoggerManager:
     def configure_new_handler(
             cls,
             level: int,
-            formatter: logging.Formatter | None,
             handler_type: str = "stream",
+            formatter: logging.Formatter | None = None,
             filename: Path | None = None) -> Handler:
         """Create and configure a new handler.
 
@@ -127,7 +149,7 @@ class LoggerManager:
     def purge_logs(path: Path) -> None:
         """Purge all files ending with '.log' at the given directory path."""
         try:
-            if not os.path.isdir(path):
+            if not path.is_dir():
                 return None
         except ValueError as err:
             logging.exception(err)
@@ -144,6 +166,6 @@ class LoggerManager:
                     logging.debug("Removed file at: '%s'", filepath)
         return None
 
-
-#logger_manager = LoggerManager(Path.cwd() / "app" / "data" / "logs")
-#this_file_logger = logger_manager.get_logger(__name__, logging.DEBUG, True, True)
+log_folder_path = Path.cwd() / "app" / "data" / "logs"
+logger_manager = LoggerManager(log_folder_path)
+this_file_logger = logger_manager.get_logger(__name__, logging.DEBUG, True, True)

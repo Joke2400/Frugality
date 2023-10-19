@@ -2,8 +2,8 @@
 import os
 from fastapi import FastAPI
 
-from ..api.routes import router
-from ..utils.patterns import SingletonMeta
+from app.api.routes.store import router
+from app.utils.patterns import SingletonMeta
 
 
 class Process(metaclass=SingletonMeta):

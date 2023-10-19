@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import TypeVar, Type, TypeAlias, Any
 
 
 class Validator(ABC):
@@ -61,3 +62,47 @@ class SingletonMeta(type):
             instance = super().__call__(*args, **kwargs)
             cls._instances[cls] = instance
         return cls._instances[cls]
+
+
+_TreeNode = TypeVar("_TreeNode", bound="TreeNode")
+_TreeRoot = TypeVar("_TreeRoot", bound="TreeRoot")
+_Node: TypeAlias = _TreeNode | _TreeRoot
+
+
+class TreeRoot:
+    """The root node of a tree datastructure."""
+
+    def __init__(self, data: Any) -> None:
+        """Initialize the root of the tree."""
+        self.data: Any = data
+        self.children: list[_Node] = []
+
+    def add_child(self, child: _TreeNode) -> None:
+        """Add a child to this node, and set its parent to this node."""
+        self.children.append(child)
+        child.set_parent(parent=self)
+
+    def get_children(self) -> list[_TreeNode]:
+        """Return a list of child nodes."""
+        return self.children
+
+
+class TreeNode(TreeRoot):
+    """A node in the tree datastructure.
+
+    Note: The constructor does not take in a parent node.
+    This must be added manually by calling set_parent()
+    """
+
+    def __init__(self, data: Any) -> None:
+        """Initialize a node in the tree."""
+        super().__init__(data)
+        self.parent: Type[_Node]
+
+    def set_parent(self, parent: _Node) -> None:
+        """Set the parent of this node."""
+        self.parent = parent
+
+    def get_parent(self) -> Type[_TreeNode]:
+        """Get the parent of this node."""
+        return self.parent
