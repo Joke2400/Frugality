@@ -3,5 +3,6 @@ fastapi[all]
 httpx
 sqlalchemy
 pytest
+pytest-coverage
 pydantic
 python-dotenv

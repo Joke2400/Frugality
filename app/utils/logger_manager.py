@@ -5,11 +5,8 @@ from pathlib import Path
 from typing import Any
 from typing_extensions import TypeAlias
 
-from app.utils import (
-    SingletonMeta,
-    TreeRoot,
-    TreeNode
-)
+
+from app.utils import SingletonMeta, Node, depth_first_search
 
 Handler: TypeAlias = logging.StreamHandler | logging.FileHandler
 
@@ -17,7 +14,7 @@ Handler: TypeAlias = logging.StreamHandler | logging.FileHandler
 class LoggerManager(metaclass=SingletonMeta):
     """Class for managing logging."""
 
-    tree: TreeRoot
+    tree: Node
     default_format = logging.Formatter(
         fmt="(%(asctime)s) [%(levelname)s] ['%(name)s']: %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S")
@@ -39,7 +36,6 @@ class LoggerManager(metaclass=SingletonMeta):
             self.root_dir = Path.cwd()
         else:
             self.root_dir = root_dir
-        print(self.root_dir)
         if self.log_path.exists():
             if purge_old_logs:
                 self.purge_logs(path=self.log_path)
@@ -50,22 +46,18 @@ class LoggerManager(metaclass=SingletonMeta):
             level=logging.DEBUG,
             sh=(logging.INFO, None),
             fh=(logging.DEBUG, None, self.log_path / "root.log"))
-        self.tree = TreeRoot(
-            data={"logger": self.root_logger, "path": self.root_dir})
+        self.tree = Node(
+            data={"name": "root",
+                  "logger": self.root_logger,
+                  "path": self.root_dir})
 
-    def get_logger(self, __name: str, level: int,
-                   sh: dict[str, Any], fh: dict[str, Any]):
-        logger_path = Path(__name.replace(".", "/") + ".py")
+    def get_logger(self, name: str, level: int):
+        logger_path = Path(name.replace(".", "/") + ".py")
+        logging.debug("logger_path: %s", logger_path)
         if not logger_path.exists():
             raise ValueError(
                 "Could not construct a valid logger path from __name.")
 
-    def get_parent_logger(self, path: Path):
-        print(path)
-        for i in path.parents[::-1]:
-            print(i.name)
-            if i.name == self.root_log_dir.name:
-                print("True", i.name)
 
     @classmethod
     def create_logger(
@@ -165,7 +157,3 @@ class LoggerManager(metaclass=SingletonMeta):
                 finally:
                     logging.debug("Removed file at: '%s'", filepath)
         return None
-
-log_folder_path = Path.cwd() / "app" / "data" / "logs"
-logger_manager = LoggerManager(log_folder_path)
-this_file_logger = logger_manager.get_logger(__name__, logging.DEBUG, True, True)

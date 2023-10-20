@@ -1,5 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar, Type, TypeAlias, Any
+from typing import (
+    TypeVar,
+    Any,
+    Generic
+)
+from typing_extensions import Self
 
 
 class Validator(ABC):
@@ -63,46 +68,52 @@ class SingletonMeta(type):
             cls._instances[cls] = instance
         return cls._instances[cls]
 
+    @classmethod
+    def debug_clear(cls):
+        """Clear the instances dict."""
+        cls._instances = {}
 
-_TreeNode = TypeVar("_TreeNode", bound="TreeNode")
-_TreeRoot = TypeVar("_TreeRoot", bound="TreeRoot")
-_Node: TypeAlias = _TreeNode | _TreeRoot
+
+T = TypeVar("T")
 
 
-class TreeRoot:
-    """The root node of a tree datastructure."""
+class Node(Generic[T]):
+    """A Node class representing a single element in a tree data structure."""
 
-    def __init__(self, data: Any) -> None:
-        """Initialize the root of the tree."""
+    def __init__(self, data: T) -> None:
+        """Initialize node with data."""
         self.data: Any = data
-        self.children: list[_Node] = []
+        self.children: list[Node[T]] = []
+        self.parent: Node[T] | None = None
 
-    def add_child(self, child: _TreeNode) -> None:
-        """Add a child to this node, and set its parent to this node."""
+    def add_child(self, child: Self) -> None:
+        """Add a child to this node. Set child parent to this node."""
+        child.parent = self
         self.children.append(child)
-        child.set_parent(parent=self)
-
-    def get_children(self) -> list[_TreeNode]:
-        """Return a list of child nodes."""
-        return self.children
 
 
-class TreeNode(TreeRoot):
-    """A node in the tree datastructure.
-
-    Note: The constructor does not take in a parent node.
-    This must be added manually by calling set_parent()
+def depth_first_search(root: Node[T]) -> list[Node[T]]:
     """
+    Perform a Depth-First Search (DFS) traversal of a tree.
 
-    def __init__(self, data: Any) -> None:
-        """Initialize a node in the tree."""
-        super().__init__(data)
-        self.parent: Type[_Node]
+    Args:
+        root (Node[T]): The root node from which to start the traversal.
 
-    def set_parent(self, parent: _Node) -> None:
-        """Set the parent of this node."""
-        self.parent = parent
+    Returns:
+        list[Node[T]]: A list of data elements visited in DFS order.
+    """
+    result = []
 
-    def get_parent(self) -> Type[_TreeNode]:
-        """Get the parent of this node."""
-        return self.parent
+    # Define a recursive helper function to perform DFS
+    def dfs(node: Node[T]):
+        if node is not None:
+            # Visit the current node's data
+            result.append(node.data)
+            # Recursively visit all child nodes
+            for child in node.children:
+                dfs(child)
+
+    # Start the DFS traversal from the root
+    dfs(root)
+
+    return result

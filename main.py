@@ -2,7 +2,6 @@
 import uvicorn
 from dotenv import load_dotenv
 
-from app.utils import LoggerManager
 from app.core import Process
 
 load_dotenv()
