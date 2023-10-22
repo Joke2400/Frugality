@@ -5,6 +5,7 @@ from typing import (
     Generic
 )
 from typing_extensions import Self
+from collections import deque
 
 
 class Validator(ABC):
@@ -92,28 +93,15 @@ class Node(Generic[T]):
         self.children.append(child)
 
 
-def depth_first_search(root: Node[T]) -> list[Node[T]]:
-    """
-    Perform a Depth-First Search (DFS) traversal of a tree.
+def breadth_first_search(graph: Node, node: Node):
+    visited = set()
+    queue: deque[Node] = deque()
 
-    Args:
-        root (Node[T]): The root node from which to start the traversal.
+    while queue:
+        node = queue.popleft()
+        print(node, end=" ")
 
-    Returns:
-        list[Node[T]]: A list of data elements visited in DFS order.
-    """
-    result = []
-
-    # Define a recursive helper function to perform DFS
-    def dfs(node: Node[T]):
-        if node is not None:
-            # Visit the current node's data
-            result.append(node.data)
-            # Recursively visit all child nodes
-            for child in node.children:
-                dfs(child)
-
-    # Start the DFS traversal from the root
-    dfs(root)
-
-    return result
+        visited.add(node)
+        queue.extend(
+            child for child in node.children
+            if child not in visited)

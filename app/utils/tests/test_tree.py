@@ -21,14 +21,10 @@ def test_node_root():
     assert root.children[0].data == 1
 
 
-def test_dfs_order():
-    """Test that dfs searches in the correct order."""
-    # Correct dfs order
-    correct_order = [0, 1, 2, 4, 3]
-    assert depth_first_search(root) == correct_order
-
-
 def test_child2():
     """Test child2 data."""
     assert child2.parent is child1
     assert child2.children[0] is child4
+
+def test_bfs():
+    pass
