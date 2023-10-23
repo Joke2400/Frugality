@@ -4,10 +4,13 @@ from .patterns import (
     Validator,
     OneOfType,
     SingletonMeta,
-    Node
+    TreeNode,
+    find_neighbour_node,
+    find_node_bfs
 )
 
 from .logger_manager import LoggerManager
 
 __all__ = ["Validator", "OneOfType", "SingletonMeta",
-           "LoggerManager", "Node"]
+           "LoggerManager", "TreeNode", "find_neighbour_node",
+           "find_node_bfs"]

@@ -1,16 +1,16 @@
-from app.utils import Node, depth_first_search
+from app.utils import TreeNode
 
 # Create sample tree
-root = Node(0)
-child1 = Node(1)
+root = TreeNode(0)
+child1 = TreeNode(1)
 root.add_child(child1)
 
-child2 = Node(2)
-child3 = Node(3)
+child2 = TreeNode(2)
+child3 = TreeNode(3)
 child1.add_child(child2)
 child1.add_child(child3)
 
-child4 = Node(4)
+child4 = TreeNode(4)
 child2.add_child(child4)
 
 

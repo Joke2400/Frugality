@@ -40,4 +40,3 @@ def test_init_custom_directory():
     # Reset the singleton
     del manager
     SingletonMeta.debug_clear()
-

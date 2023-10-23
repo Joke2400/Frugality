@@ -2,7 +2,8 @@ from abc import ABC, abstractmethod
 from typing import (
     TypeVar,
     Any,
-    Generic
+    Generic,
+    Callable
 )
 from typing_extensions import Self
 from collections import deque
@@ -78,14 +79,14 @@ class SingletonMeta(type):
 T = TypeVar("T")
 
 
-class Node(Generic[T]):
+class TreeNode(Generic[T]):
     """A Node class representing a single element in a tree data structure."""
 
     def __init__(self, data: T) -> None:
         """Initialize node with data."""
         self.data: Any = data
-        self.children: list[Node[T]] = []
-        self.parent: Node[T] | None = None
+        self.children: list[TreeNode[T]] = []
+        self.parent: TreeNode[T] | None = None
 
     def add_child(self, child: Self) -> None:
         """Add a child to this node. Set child parent to this node."""
@@ -93,15 +94,31 @@ class Node(Generic[T]):
         self.children.append(child)
 
 
-def breadth_first_search(graph: Node, node: Node):
+# These functions below don't (for now) need to work with graphs
+def find_node_bfs(start: TreeNode, validator: Callable
+                  ) -> TreeNode | None:
     visited = set()
-    queue: deque[Node] = deque()
+    queue: deque[TreeNode] = deque([start])
+    result = None
 
     while queue:
         node = queue.popleft()
-        print(node, end=" ")
-
         visited.add(node)
-        queue.extend(
-            child for child in node.children
-            if child not in visited)
+        if validator(node):
+            result = node
+            break
+
+        for child in node.children:
+            if child not in visited:
+                visited.add(child)
+                queue.extend([child])
+
+    return result
+
+
+def find_neighbour_node(start: TreeNode, validator: Callable
+                        ) -> TreeNode | None:
+    for i in start.children:
+        if validator(i):
+            return i
+    return None
