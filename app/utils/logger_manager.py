@@ -19,7 +19,8 @@ class LoggerManager(metaclass=SingletonMeta):
 
     def __init__(self, log_path: Path | str,
                  root_dir: Path | None = None,
-                 purge_old_logs: bool = False) -> None:
+                 purge_old_logs: bool = False,
+                 formatter: logging.Formatter | None = None) -> None:
         """Initialize an instance of LoggerManager.
 
         Args:
@@ -40,19 +41,11 @@ class LoggerManager(metaclass=SingletonMeta):
         else:
             os.mkdir(self.log_path)
         self.root_logger = logging.getLogger()
+        config = self.set_config(logging.DEBUG, logging.DEBUG, formatter)
+        config["file"]["filename"] = self.log_path / "root.log"
         self.root_logger = self.create_logger(
             level=logging.DEBUG,
-            config={
-                "stream": {
-                    "level": logging.DEBUG,
-                    "formatter": None
-                },
-                "file": {
-                    "filename": self.log_path / "root.log",
-                    "level": logging.DEBUG,
-                    "formatter": None
-                }
-            })
+            config=config)
         self.tree = TreeNode(
             data={"name": "root",
                   "logger": self.root_logger,
@@ -139,8 +132,8 @@ class LoggerManager(metaclass=SingletonMeta):
             handler.setFormatter(cls.default_format)
         return handler
 
-    @classmethod
-    def set_config(cls, sh: int, fh: int,
+    @staticmethod
+    def set_config(sh: int, fh: int,
                    formatter: logging.Formatter | None) -> dict[str, dict]:
         """Set a config dict with levels/formatters for logger handlers."""
         config: dict[str, dict] = {}

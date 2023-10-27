@@ -14,7 +14,7 @@ child4 = TreeNode(4)
 child2.add_child(child4)
 
 
-def test_node_root():
+def test_root_node():
     """Test root node data."""
     assert root.parent is None
     assert len(root.children) == 1
@@ -25,6 +25,4 @@ def test_child2():
     """Test child2 data."""
     assert child2.parent is child1
     assert child2.children[0] is child4
-
-def test_bfs():
-    pass
+    assert child2.data == 2
