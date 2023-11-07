@@ -2,4 +2,5 @@
 
 
 def run() -> None:
+    """Run debug script."""
     pass
