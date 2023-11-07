@@ -13,6 +13,7 @@ class LoggerManager(metaclass=SingletonMeta):
     """Class for managing logging."""
 
     tree: TreeNode
+    loggers: list[logging.Logger] = []
     default_format = logging.Formatter(
         fmt="(%(asctime)s) [%(levelname)s] ['%(name)s']: %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S")
@@ -66,32 +67,30 @@ class LoggerManager(metaclass=SingletonMeta):
             # Funny one-liner | expecting only one result -> len() == 1
             if len(lst := ([i for i in node.children
                             if i.data["name"] == filename])) != 1:
+                if filename.endswith(".py"):
+                    filename = filename.removesuffix(".py")
                 child_config = config.copy()
                 log_path = self.log_path / f"{filename}.log"
-                try:
-                    child_config["file"]["filename"] = log_path
-                except KeyError:
-                    pass
+                child_config["file"]["filename"] = log_path
                 new_child = TreeNode({
                     "name": filename,
                     "logger": self.create_logger(
-                        name=rel_path.name,
+                        name=filename,
                         level=logging.DEBUG,
                         parent=node.data["logger"],
                         config=config
                     ),
-                    "path": Path.cwd() / Path("".join(rel_path.parts[0:inx]))
+                    "path": Path.cwd() / Path("/".join(rel_path.parts[0:inx]))
                 })
                 node.add_child(new_child)
                 node = new_child
-                continue
-            node = lst[0]
+            else:
+                node = lst[0]
 
         return node.data["logger"]
 
-    @classmethod
     def create_logger(
-            cls,
+            self,
             name: str | None = None,
             level: int = 10,
             parent: logging.Logger | None = None,
@@ -108,14 +107,15 @@ class LoggerManager(metaclass=SingletonMeta):
         if config is None:  # Avoiding having a dict as a default value
             config = {}
         if (sh := config.get("stream", None)) is not None:
-            logger.addHandler(cls.configure_handler(
+            logger.addHandler(self.configure_handler(
                 handler=logging.StreamHandler(),
                 **sh))
 
         if (fh := config.get("file", None)) is not None:
-            logger.addHandler(cls.configure_handler(
+            logger.addHandler(self.configure_handler(
                 handler=logging.FileHandler(filename=fh.pop("filename")),
                 **fh))
+        self.loggers.append(logger)
         return logger
 
     @classmethod
@@ -165,7 +165,8 @@ class LoggerManager(metaclass=SingletonMeta):
                     filepath = path / file
                     filepath.unlink()
                 except PermissionError as err:
-                    logging.exception(err)
+                    if file != "root":
+                        logging.debug(err)
                 finally:
                     logging.debug("Removed file at: '%s'", filepath)
         return None

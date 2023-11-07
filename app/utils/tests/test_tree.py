@@ -1,4 +1,4 @@
-from app.utils import TreeNode
+from app.utils.patterns import TreeNode
 
 # Create sample tree
 root = TreeNode(0)

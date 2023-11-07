@@ -4,3 +4,4 @@ frugality-env
 .env
 .coverage
 debug.py
+*.log

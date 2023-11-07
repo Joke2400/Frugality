@@ -136,16 +136,32 @@ def test_create_child_logger():
     assert logger.handlers[0].formatter is LoggerManager.default_format
     assert logger.handlers[1].formatter is custom_fmt
 
+    # Reset the singleton
+    SingletonMeta.debug_clear()
+    del manager
+
 
 def test_get_logger():
-    pass
-    """
+    """Test get logger method."""
+    # Since sub-function calls have their own methods,
+    # I'm more interested in ensuring that the generated tree is correct.
+    # Remove root handlers that have been created by pytest
+    root = logging.getLogger()
+    root.handlers = []
+
+    manager = LoggerManager(
+        log_path=log_folder_path,
+        root_dir=custom_dir)
+
+    path = Path(__name__.replace(".", "/"))
+    logger = manager.get_logger(__name__, sh=20, fh=10, formatter=custom_fmt)
+    assert logger.name == __name__
     node = manager.tree
-    for inx, part in enumerate(test_path.parts, start=0):
-        if inx == 0:
-            assert node.data["name"] == "root"
-        else:
-            assert node.data["name"] == part
+    part_list = ["root"]
+    for i in path.parts:
+        part_list.append(i)
+    for inx, part in enumerate(part_list, start=0):
+        assert node.data["name"] == part
 
         def wrap(comp):
             def validator(node):
@@ -153,5 +169,20 @@ def test_get_logger():
                     return True
                 return False
             return validator
-        node = find_neighbour_node(node, wrap(part))
-    """
+        if inx != len(part_list) - 1:
+            node = find_neighbour_node(node, wrap(part_list[inx + 1]))
+    # Reset the singleton
+    SingletonMeta.debug_clear()
+    del manager
+
+
+def test_purge_logs():
+    """Test purge logs, also conveniently purges test logs."""
+    logging.shutdown()
+    LoggerManager.purge_logs(log_folder_path)
+    lst = list(Path(log_folder_path).iterdir())
+    assert len(lst) <= 1
+    # Removing root log gives a permission error, which is why it doesn't
+    # get removed here. Root.log gets removed on app start either way,
+    # as long as purge_old_logs is set to true
+    assert lst[0].name == "root.log"
