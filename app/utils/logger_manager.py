@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 from typing_extensions import TypeAlias
 
-from app.utils import SingletonMeta, TreeNode
+from app.utils.patterns import SingletonMeta, TreeNode
 
 Handler: TypeAlias = logging.StreamHandler | logging.FileHandler
 

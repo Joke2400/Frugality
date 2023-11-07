@@ -2,7 +2,10 @@ import logging
 from pathlib import Path
 
 from app.utils import LoggerManager
-from app.utils import SingletonMeta
+from app.utils.patterns import (
+    SingletonMeta,
+    find_neighbour_node
+)
 
 custom_fmt = logging.Formatter(
     fmt="(%(asctime)s) [%(levelname)s]: %(message)s",
@@ -43,6 +46,7 @@ def test_init_custom_directory():
 
 
 def test_set_config():
+    """Test set config method"""
     args = {"sh": 20, "fh": 0, "formatter": None}
     config = LoggerManager.set_config(**args)
     assert config.get("stream", None) is not None
@@ -52,6 +56,7 @@ def test_set_config():
 
 
 def test_configure_handler():
+    """Test configure handler method."""
     handler = logging.StreamHandler()
     LoggerManager.configure_handler(handler, 10, None)
     assert handler.level == 10
@@ -65,6 +70,7 @@ def test_configure_handler():
 
 
 def test_create_root_logger():
+    """Test create logger method - create root logger."""
     # Remove root handlers that have been created by pytest
     root = logging.getLogger()
     root.handlers = []
@@ -92,6 +98,7 @@ def test_create_root_logger():
 
 
 def test_create_child_logger():
+    """Test create logger method - create child logger."""
     # Remove root handlers that have been created by pytest
     root = logging.getLogger()
     root.handlers = []
@@ -111,7 +118,8 @@ def test_create_child_logger():
         }
     }
     name = "custom_name"
-    config["file"]["filename"] = log_folder_path / "test.log"
+    test_path = log_folder_path / "test.log"
+    config["file"]["filename"] = test_path
     logger = manager.create_logger(
         name=name,
         level=logging.DEBUG,
@@ -127,3 +135,23 @@ def test_create_child_logger():
 
     assert logger.handlers[0].formatter is LoggerManager.default_format
     assert logger.handlers[1].formatter is custom_fmt
+
+
+def test_get_logger():
+    pass
+    """
+    node = manager.tree
+    for inx, part in enumerate(test_path.parts, start=0):
+        if inx == 0:
+            assert node.data["name"] == "root"
+        else:
+            assert node.data["name"] == part
+
+        def wrap(comp):
+            def validator(node):
+                if node.data["name"] == comp:
+                    return True
+                return False
+            return validator
+        node = find_neighbour_node(node, wrap(part))
+    """

@@ -97,6 +97,7 @@ class TreeNode(Generic[T]):
 # These functions below don't (for now) need to work with graphs
 def find_node_bfs(start: TreeNode, validator: Callable
                   ) -> TreeNode | None:
+    """Find node using BFS search, choose correct node using validator."""
     visited = set()
     queue: deque[TreeNode] = deque([start])
     result = None
@@ -118,6 +119,7 @@ def find_node_bfs(start: TreeNode, validator: Callable
 
 def find_neighbour_node(start: TreeNode, validator: Callable
                         ) -> TreeNode | None:
+    """Find neighbour node using a validator function for selection."""
     for i in start.children:
         if validator(i):
             return i
