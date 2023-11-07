@@ -3,3 +3,4 @@ __pycache__
 frugality-env
 .env
 .coverage
+debug.py
