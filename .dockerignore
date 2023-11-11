@@ -1,7 +1,9 @@
-**old
-**.git
-**.mypy_cache
-**.vscode
-**__pycache__
-**frugality-env
+**/old
+**/.git
+**/.mypy_cache
+**/.vscode
+**/__pycache__
+**/frugality-env
+.pytest_cache
 .coverage
+debug.py

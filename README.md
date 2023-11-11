@@ -18,5 +18,8 @@ Basic project idea/vision:
 - Able to factor in potential delivery cost into final calculation.
 - Caching of previously fetched price data for price development statistics.
 
-Docker:
-- Docker config is configured to be used in conjuction with Vscode's Dev Containers extension.
+Docker notes:
+- Docker compose currently defines services "backend" and "database".
+- "backend" is defined as a bind mount to the project directory
+- I've created the docker config with the intention of it being used in conjunction with the VSCode DevContainers extension.
+- Postgres credentials are currently set through environment variables. A .env file must be configured manually.
