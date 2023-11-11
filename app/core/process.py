@@ -1,13 +1,17 @@
 """Contains a process singleton class for managing the application."""
 import os
-from pathlib import Path
 from fastapi import FastAPI
 
 from app.api.routes.store import router
 from app.utils.patterns import SingletonMeta
 from app.utils.exceptions import MissingEnvironmentVar
 
-from app.utils import LoggerManager
+from app.core.orm.database import set_url
+
+from app.utils import (
+    LoggerManager,
+    ProjectPaths
+)
 
 
 class Process(metaclass=SingletonMeta):
@@ -15,7 +19,7 @@ class Process(metaclass=SingletonMeta):
 
     app: FastAPI = FastAPI()
     logger_manager = LoggerManager(
-        log_path=Path.cwd() / "app" / "data" / "logs",
+        log_path=ProjectPaths.logs_dir_path(),
         purge_old_logs=True
     )
 
@@ -31,6 +35,7 @@ class Process(metaclass=SingletonMeta):
         self.db_password: str = str(db_password)
         self.app.include_router(router)
         self._execute_debug_code()
+        set_url(db_user, db_password)
 
     @staticmethod
     def _execute_debug_code():

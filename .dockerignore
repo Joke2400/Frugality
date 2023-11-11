@@ -4,5 +4,4 @@
 **.vscode
 **__pycache__
 **frugality-env
-.env
 .coverage
