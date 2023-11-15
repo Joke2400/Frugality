@@ -1,7 +1,6 @@
 """The starting point for the app."""
 import uvicorn
 from dotenv import load_dotenv
-
 from app.core import Process
 
 load_dotenv()

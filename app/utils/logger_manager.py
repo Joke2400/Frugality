@@ -18,7 +18,7 @@ class LoggerManager(metaclass=SingletonMeta):
         fmt="(%(asctime)s) [%(levelname)s] ['%(name)s']: %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S")
 
-    def __init__(self, log_path: Path | str,
+    def __init__(self, log_path: Path | str | None = None,
                  root_dir: Path | None = None,
                  purge_old_logs: bool = False,
                  formatter: logging.Formatter | None = None) -> None:
@@ -31,6 +31,9 @@ class LoggerManager(metaclass=SingletonMeta):
                 Set to True if logs from previous runs should be purged.
                 Defaults to False.
         """
+        if log_path is None:
+            raise ValueError(
+                "Log path must be provided on first call to class.")
         self.log_path: Path = Path(log_path)
         if root_dir is None:
             self.root_dir = Path.cwd()
@@ -115,6 +118,7 @@ class LoggerManager(metaclass=SingletonMeta):
             logger.addHandler(self.configure_handler(
                 handler=logging.FileHandler(filename=fh.pop("filename")),
                 **fh))
+        logger.propagate = False
         self.loggers.append(logger)
         return logger
 
@@ -156,7 +160,7 @@ class LoggerManager(metaclass=SingletonMeta):
             if not path.is_dir():
                 return None
         except ValueError as err:
-            logging.exception(err)
+            logging.error(err)
             return None
 
         for file in os.listdir(path):

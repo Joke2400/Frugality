@@ -1,4 +1,4 @@
-ARG WORKDIR="/app"
+ARG WORKDIR="/Frugality"
 ARG APPNAME="Frugality"
 ARG USERNAME="frugality"
 
@@ -20,7 +20,7 @@ RUN adduser --system --group --home ${WORKDIR} ${USERNAME}
 USER ${USERNAME}
 
 # Install requirements
-WORKDIR /home/${APPNAME}${WORKDIR}
+WORKDIR /home/${WORKDIR}
 COPY  ./requirements.txt .
 RUN pip3 install --no-cache-dir --upgrade -r requirements.txt
 

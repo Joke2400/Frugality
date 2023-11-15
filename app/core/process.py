@@ -5,40 +5,49 @@ from fastapi import FastAPI
 from app.api.routes.store import router
 from app.utils.patterns import SingletonMeta
 from app.utils.exceptions import MissingEnvironmentVar
-
-from app.core.orm.database import set_url
-
-from app.utils import (
-    LoggerManager,
-    ProjectPaths
-)
+from app.core.orm import DBContext
 
 
 class Process(metaclass=SingletonMeta):
     """Singleton for managing the execution of the entire app."""
 
     app: FastAPI = FastAPI()
-    logger_manager = LoggerManager(
-        log_path=ProjectPaths.logs_dir_path(),
-        purge_old_logs=True
-    )
 
     def __init__(self) -> None:
         """Initialize app routes & fetch environment variables."""
-        if (db_user := os.getenv("POSTGRES_USER")) in (None, ""):
+        if (postgres_user := os.getenv("POSTGRES_USER")) in (None, ""):
             raise MissingEnvironmentVar(
                 "ENVIRONMENT VAR 'POSTGRES_USER' WAS NOT SUPPLIED")
-        if (db_password := os.getenv("POSTGRES_PASSWORD")) in (None, ""):
+        if (postgres_pass := os.getenv("POSTGRES_PASSWORD")) in (None, ""):
             raise MissingEnvironmentVar(
                 "ENVIRONMENT VAR 'POSTGRES_PASSWORD' WAS NOT SUPPLIED")
-        self.db_user: str = str(db_user)
-        self.db_password: str = str(db_password)
+        if (postgres_db := os.getenv("POSTGRES_DB")) in (None, ""):
+            raise MissingEnvironmentVar(
+                "ENVIRONMENT VAR 'POSTGRES_DB' WAS NOT SUPPLIED")    
+
+        self.db_user: str = str(postgres_user)
+        self.db_pass: str = str(postgres_pass)
+        self.db: str = str(postgres_db)
         self.app.include_router(router)
-        self._execute_debug_code()
-        set_url(db_user, db_password)
+
+        # This check will be removed in final versions.
+        if bool(os.getenv("DEBUG")):
+            DBContext.prepare_context(
+                url=self.get_database_url(),
+                purge_all_tables=True)  # Reset database tables in debug mode
+            self._execute_debug_code()
+        else:
+            DBContext.prepare_context(
+                url=self.get_database_url())
+
+    def get_database_url(self) -> str:
+        """Get database URL string."""
+        auth = f"{self.db_user}:{self.db_pass}"
+        url = f"postgresql://{auth}@localhost:5432/{self.db}"
+        return url
 
     @staticmethod
-    def _execute_debug_code():
+    def _execute_debug_code() -> None:
         """NOTE: THIS FUNCTION WILL NOT EXIST IN RELEASE VERSIONS."""
         if os.getenv("DEBUG"):
             from debug import run

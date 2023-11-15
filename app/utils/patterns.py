@@ -71,7 +71,7 @@ class SingletonMeta(type):
         return cls._instances[cls]
 
     @classmethod
-    def debug_clear(cls):
+    def _debug_clear(cls):
         """Clear the instances dict."""
         cls._instances = {}
 

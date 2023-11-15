@@ -26,7 +26,7 @@ def test_init_default():
     assert manager.tree.data["path"] == Path.cwd()
 
     # Reset the singleton
-    SingletonMeta.debug_clear()
+    SingletonMeta._debug_clear()
     del manager
 
 
@@ -41,7 +41,7 @@ def test_init_custom_directory():
     assert manager.tree.data["path"] == custom_dir
 
     # Reset the singleton
-    SingletonMeta.debug_clear()
+    SingletonMeta._debug_clear()
     del manager
 
 
@@ -93,7 +93,7 @@ def test_create_root_logger():
     assert logger.handlers[1].formatter is LoggerManager.default_format
 
     # Reset the singleton
-    SingletonMeta.debug_clear()
+    SingletonMeta._debug_clear()
     del manager
 
 
@@ -137,7 +137,7 @@ def test_create_child_logger():
     assert logger.handlers[1].formatter is custom_fmt
 
     # Reset the singleton
-    SingletonMeta.debug_clear()
+    SingletonMeta._debug_clear()
     del manager
 
 
@@ -172,7 +172,7 @@ def test_get_logger():
         if inx != len(part_list) - 1:
             node = find_neighbour_node(node, wrap(part_list[inx + 1]))
     # Reset the singleton
-    SingletonMeta.debug_clear()
+    SingletonMeta._debug_clear()
     del manager
 
 
@@ -182,7 +182,8 @@ def test_purge_logs():
     LoggerManager.purge_logs(log_folder_path)
     lst = list(Path(log_folder_path).iterdir())
     assert len(lst) <= 1
-    # Removing root log gives a permission error, which is why it doesn't
-    # get removed here. Root.log gets removed on app start either way,
+    # Removing root log might give a permission error, which is why it might
+    # not get removed here. Root.log gets removed on app start either way,
     # as long as purge_old_logs is set to true
-    assert lst[0].name == "root.log"
+    if len(lst) != 0:
+        assert lst[0].name == "root.log"

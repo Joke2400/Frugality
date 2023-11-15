@@ -2,6 +2,6 @@
 	"name": "Frugality Container",
 	"dockerComposeFile": "../docker-compose.yaml",
 	"service": "backend",
-	"workspaceFolder": "/home/Frugality/app"
+	"workspaceFolder": "/home/Frugality"
 	//"postCreateCommand": ""
 }
