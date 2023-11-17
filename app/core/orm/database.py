@@ -3,10 +3,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Engine
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from sqlalchemy.orm import DeclarativeBase
+from fastapi import HTTPException
 
 from app.utils import LoggerManager
+
 
 logger = LoggerManager().get_logger(__name__, sh=20, fh=10)
 
@@ -50,9 +52,22 @@ class DBContext:
             else:
                 self.session.rollback()
                 logger.debug("Rolled back the database transaction.")
-        except SQLAlchemyError as err:  # THIS ERROR IS TOO GENERIC; CHANGE LATER
-            logger.exception(err)
+        except IntegrityError as err:
+            # Re-raising in order to handle elsewhere.
+            # NOTE: Should maybe consider another solution in the future...
             self.session.rollback()
+            raise HTTPException(
+                status_code=422, detail="Unable to add record.") from err
+
+        except SQLAlchemyError as err:  # THIS ERROR IS TOO GENERIC; CHANGE LATER
+            self.session.rollback()
+            logger.exception(err)
         finally:
             self.session.close()
             logger.debug("Closed the database session.")
+
+
+async def get_db() -> Session:
+    """Create a context manager and yield a database session."""
+    with DBContext() as session:
+        yield session

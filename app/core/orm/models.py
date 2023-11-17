@@ -2,15 +2,19 @@
 from typing import List, Callable
 from datetime import datetime
 
-
 from sqlalchemy import func
 from sqlalchemy import ForeignKey
-from sqlalchemy.types import DateTime, ARRAY, String
+from sqlalchemy.types import (
+    DateTime,
+    ARRAY,
+    String
+)
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
     relationship
 )
+
 from app.core.orm import Base
 
 # Fixing a pylint false-positive, it is in fact a callable... gg

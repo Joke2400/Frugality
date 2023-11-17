@@ -5,9 +5,9 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
-StoreT = TypeVar("StoreT", bound="StoreOut")
-ProductT = TypeVar("ProductT", bound="ProductOut")
-ProductRecordT = TypeVar("ProductRecordT", bound="ProductRecordOut")
+StoreT = TypeVar("StoreT", bound=BaseModel)
+ProductT = TypeVar("ProductT", bound=BaseModel)
+ProductRecordT = TypeVar("ProductRecordT", bound=BaseModel)
 
 
 class StoreIn(BaseModel):

@@ -2,10 +2,10 @@
 import os
 from fastapi import FastAPI
 
-from app.api.routes.store import router
 from app.utils.patterns import SingletonMeta
 from app.utils.exceptions import MissingEnvironmentVar
 from app.core.orm import DBContext
+from app.api.routes.store import router
 
 
 class Process(metaclass=SingletonMeta):
@@ -43,6 +43,7 @@ class Process(metaclass=SingletonMeta):
     def get_database_url(self) -> str:
         """Get database URL string."""
         auth = f"{self.db_user}:{self.db_pass}"
+        # Host must currently be manually changed
         url = f"postgresql://{auth}@localhost:5432/{self.db}"
         return url
 

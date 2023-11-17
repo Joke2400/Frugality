@@ -1,27 +1,25 @@
 from sqlalchemy.orm import Session
 
-from app.core.orm import models, schemas, DBContext
+from app.core.orm import models, schemas
 
 
 # STORE CRUD----------------------------------
-def create_store(store: schemas.StoreIn) -> None:
+def create_store(session: Session, store: schemas.StoreIn) -> models.Store:
     """Create a Store record."""
     db_store = models.Store(**dict(store))
-    with DBContext() as session:
-        session.add(db_store)
+    session.add(db_store)
+    return db_store
 
 
-def get_store(store_id: int):
+def get_store(session: Session, store_id: int) -> models.Store | None:
     """Get a Store record by store id."""
-    with DBContext() as session:
-        return session.query(models.Store).filter(
-            models.Store.store_id == store_id).first()
+    return session.query(models.Store).filter(
+        models.Store.store_id == store_id).first()
 
 
-def get_stores():
+def get_stores(session: Session) -> list[models.Store]:
     """Get all Stores in Stores table."""
-    with DBContext() as session:
-        return session.query(models.Store).all()
+    return session.query(models.Store).all()
 
 
 # PRODUCT CRUD -------------------------------
