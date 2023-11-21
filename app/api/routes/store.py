@@ -6,26 +6,23 @@ from app.core.orm import (
     crud,
     get_db
 )
+from app.utils import LoggerManager
 
+logger = LoggerManager().get_logger(__name__, sh=20, fh=10)
 router = APIRouter()
 
 
-@router.get("/debug/stores/create/{string}", response_model=schemas.StoreIn)
-async def debug_store_create(string: str, db: Session = Depends(get_db)):
-    """TEMPORARY DEBUG ROUTE: CREATE STORE RECORD"""
-    from random import randint
-    store = schemas.StoreIn(
-        store_id=str(randint(0, 100000)),
-        name=string,
-        slug="test_slug",
-        brand="test_brand"
-    )
-    return crud.create_store(db, store)
-    # Issue with HTTPException, ctx manager gets closed too late on return
-    # Might need to just not use the FastAPI Depends 
+@router.get("/stores/{store_id}")
+async def get_store_by_id(store_id: int, db: Session = Depends(get_db)):
+    """Route that returns a single store record by searching by its id."""
+    logger.debug(
+        "Received a query for a store. Store ID: %s", store_id)
+    return crud.get_store(session=db, store_id=store_id)
 
 
-@router.get("/debug/stores/get/all", response_model=list[schemas.StoreOut])
-async def debug_store_get_all(db: Session = Depends(get_db)):
-    """TEMPORARY DEBUG ROUTE: GET ALL STORE RECORDS"""
-    return crud.get_stores(db)
+@router.get("/stores/{string}")
+async def get_store_by_name(store_name: str, db: Session = Depends(get_db)):
+    """Route that returns a single store record by searching by its name."""
+    logger.debug(
+        "Received a query for a store. Store Name: %s", store_name)
+    return "OK" # Temp

@@ -7,3 +7,4 @@ coverage
 pydantic
 python-dotenv
 psycopg2
+ariadne

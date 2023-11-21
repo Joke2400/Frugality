@@ -1,0 +1,31 @@
+query StoreSearch($brand: StoreBrand, $cursor: String, $query: String) {
+    searchStores(brand: $brand, cursor: $cursor, query: $query) {
+        totalCount
+        cursor
+        stores {
+            ...storeInfo
+            }
+        }
+    }
+
+fragment storeInfo on StoreInfo {
+    id
+    slug
+    name
+    brand
+    location {
+        address {
+        ...StoreAddress
+        }
+    }
+}
+
+fragment StoreAddress on StoreAddress {
+    street {
+        default
+    }
+    postcode
+    postcodeName {
+        default
+    }
+}

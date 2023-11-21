@@ -1,12 +1,14 @@
+"""State-singletons for representing search execution status."""
 from abc import ABC, abstractmethod
 
+# Might eventually want to just discard this in favor of using Enums
 
 class State(ABC):
     """Singleton base-class for representing states.
 
     Subsequent calls of State() constructor thus
     return the same instance as the very first call.
-    Subclassing State return creates a new singleton
+    Subclassing State creates a new singleton
     with the same functionality.
     """
 
@@ -20,14 +22,6 @@ class State(ABC):
     @abstractmethod
     def __repr__(self) -> str:
         """__repr__ must be implemented."""
-
-
-class Pending(State):
-    """State singleton for representing 'Pending' state."""
-
-    def __repr__(self) -> str:
-        """Return state representation as a string."""
-        return "State: <Pending>"
 
 
 class Success(State):
@@ -44,6 +38,14 @@ class Fail(State):
     def __repr__(self) -> str:
         """Return state representation as a string."""
         return "State: <Fail>"
+
+
+class Pending(State):
+    """State singleton for representing 'Pending' state."""
+
+    def __repr__(self) -> str:
+        """Return state representation as a string."""
+        return "State: <Pending>"
 
 
 class ParseFailed(State):

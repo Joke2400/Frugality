@@ -1,4 +1,6 @@
+"""Python implementations for standard design patterns."""
 from abc import ABC, abstractmethod
+from collections import deque
 from typing import (
     TypeVar,
     Any,
@@ -6,7 +8,6 @@ from typing import (
     Callable
 )
 from typing_extensions import Self
-from collections import deque
 
 
 class Validator(ABC):
@@ -92,6 +93,14 @@ class TreeNode(Generic[T]):
         """Add a child to this node. Set child parent to this node."""
         child.parent = self
         self.children.append(child)
+
+
+class AbstractStrategy(ABC):
+    """ABC for a strategy pattern."""
+
+    @abstractmethod
+    def execute(self):
+        """This function must be implemented."""
 
 
 # These functions below don't (for now) need to work with graphs
