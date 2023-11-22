@@ -2,7 +2,7 @@
 from pathlib import Path
 
 
-class ProjectPaths:
+class Project:
     """Class that provides paths to files in the application."""
     # Class adds a little overhead on app start, but is quick to edit.
 

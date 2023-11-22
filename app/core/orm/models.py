@@ -14,8 +14,8 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship
 )
-
-from app.core.orm import Base
+from app.core.orm import database
+Base = database.Base
 
 # Fixing a pylint false-positive, it is in fact a callable... gg
 func: Callable

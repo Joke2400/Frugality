@@ -1,12 +1,12 @@
 """The starting point for the app."""
 import uvicorn
 from dotenv import load_dotenv
-from app.core import Process
+from app.core import process
 
 load_dotenv()
-process = Process()
 
 if __name__ == "__main__":
+    app = process.Process()
     uvicorn.run(
         "main:process.app",
         host="0.0.0.0",

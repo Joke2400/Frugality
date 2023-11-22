@@ -1,20 +1,18 @@
 """TEMP"""
 from enum import Enum
-from configparser import ConfigParser
 from ariadne import load_schema_from_path
-from app.utils import ProjectPaths
 
-config = ConfigParser()
-config.read(ProjectPaths.settings_path())
+from app.core import config
+from app.utils import paths
 
-USER_AGENT = config["API"]["user_agent"]
-GRAPHQL_ENDPOINT = config["SKAUPAT_URLS"]["api_graphql"]
+USER_AGENT = config.parser["API"]["user_agent"]
+GRAPHQL_ENDPOINT = config.parser["SKAUPAT_URLS"]["api_graphql"]
 
 # Load graphql schema from static files
 PRODUCT_GRAPHQL = load_schema_from_path(
-    path=ProjectPaths.graphql_path() / "product.graphql")
+    path=paths.Project.graphql_path() / "product.graphql")
 STORE_GRAPHQL = load_schema_from_path(
-    path=ProjectPaths.graphql_path() / "store.graphql")
+    path=paths.Project.graphql_path() / "store.graphql")
 
 
 class Operation(str, Enum):
@@ -56,10 +54,26 @@ def build_json_dict(operation: Operation, variables: dict):
 
 
 def build_request_params(
-        operation: Operation, variables: dict, timeout: int = 10):
+        method: str, operation: Operation,
+        variables: dict, timeout: int = 10):
     """Build the request parameters dictionary."""
     return {
+        "method": method,
+        "url": GRAPHQL_ENDPOINT,
         "timeout": timeout,
         "headers": build_headers_dict(),
         "json": build_json_dict(operation, variables)
     }
+
+
+def build_store_search_variables(value: str) -> dict:
+    """Build the variables dict for use in a store search."""
+    return {
+        "StoreBrand": None,
+        "cursor": None,
+        "query": value}
+
+
+def build_product_search_variables() -> None:
+    """Build the variables dict for use in a product search."""
+    pass

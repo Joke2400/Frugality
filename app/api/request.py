@@ -9,9 +9,11 @@ from httpx import (
     ConnectError,
     ConnectTimeout
 )
+from app.core import config
 from app.utils import LoggerManager
 
 logger = LoggerManager().get_logger(path=__name__, sh=20, fh=10)
+DEBUG_FLAG = bool(config.parser["APP"]["debug"])
 
 
 async def log_request(r: Request) -> None:
@@ -37,9 +39,45 @@ async_client = AsyncClient(
 )
 
 
-async def send_request(method: str, url: str3):
-    request = async_client.request(
-        method=method,
-        url=url,
-        
-    )
+def handle_response(response: Response) -> bool:
+    """Handle and log potential httpx response exceptions.
+
+    Returns:
+        Boolean indicates whether or not an exception occurred.
+        True = No exception occurred
+        False = Exception occurred
+    """
+    try:
+        response.raise_for_status()
+
+    except ConnectTimeout as err:
+        logger.info(
+            "Connection timed out: %s %s",
+            err.request.method, err.request.url)
+
+    except ConnectError as err:
+        logger.info(
+            "Could not establish connection to: %s %s",
+            err.request.method, err.request.url)
+
+    except (HTTPError, RequestError) as err:
+        logger.exception(err)
+
+    else:
+        if DEBUG_FLAG:
+            logger.debug("Response: %s", json.dumps(
+                json.loads(response.text), indent=4))
+        return True
+    return False
+
+
+async def send_request(params: dict) -> Response | None:
+    """Sends a request & raises the for status on the response.
+
+    Returns an httpx.Response upon successful request.
+    If an httpx exception occurred, returns None instead.
+    """
+    response = await async_client.request(**params)
+    if not handle_response(response):
+        return None
+    return response

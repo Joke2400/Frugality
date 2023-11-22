@@ -2,13 +2,14 @@
 import os
 from fastapi import FastAPI
 
-from app.utils.patterns import SingletonMeta
-from app.utils.exceptions import MissingEnvironmentVar
-from app.core.orm import DBContext
-from app.api.routes.store import router
+from app.utils import patterns
+from app.utils import exceptions
+from app.core.orm import database
+from app.api.routes import store as store_route
+from app.core import config
 
 
-class Process(metaclass=SingletonMeta):
+class Process(metaclass=patterns.SingletonMeta):
     """Singleton for managing the execution of the entire app."""
 
     app: FastAPI = FastAPI()
@@ -16,28 +17,27 @@ class Process(metaclass=SingletonMeta):
     def __init__(self) -> None:
         """Initialize app routes & fetch environment variables."""
         if (postgres_user := os.getenv("POSTGRES_USER")) in (None, ""):
-            raise MissingEnvironmentVar(
+            raise exceptions.MissingEnvironmentVar(
                 "ENVIRONMENT VAR 'POSTGRES_USER' WAS NOT SUPPLIED")
         if (postgres_pass := os.getenv("POSTGRES_PASSWORD")) in (None, ""):
-            raise MissingEnvironmentVar(
+            raise exceptions.MissingEnvironmentVar(
                 "ENVIRONMENT VAR 'POSTGRES_PASSWORD' WAS NOT SUPPLIED")
         if (postgres_db := os.getenv("POSTGRES_DB")) in (None, ""):
-            raise MissingEnvironmentVar(
+            raise exceptions.MissingEnvironmentVar(
                 "ENVIRONMENT VAR 'POSTGRES_DB' WAS NOT SUPPLIED")    
-
         self.db_user: str = str(postgres_user)
         self.db_pass: str = str(postgres_pass)
         self.db: str = str(postgres_db)
-        self.app.include_router(router)
+        self.app.include_router(store_route.router)
 
         # This check will be removed in final versions.
-        if bool(os.getenv("DEBUG")):
-            DBContext.prepare_context(
+        if bool(config.parser["APP"]["debug"]):
+            database.DBContext.prepare_context(
                 url=self.get_database_url(),
                 purge_all_tables=True)  # Reset database tables in debug mode
             self._execute_debug_code()
         else:
-            DBContext.prepare_context(
+            database.DBContext.prepare_context(
                 url=self.get_database_url())
 
     def get_database_url(self) -> str:

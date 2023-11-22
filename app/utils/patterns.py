@@ -9,6 +9,9 @@ from typing import (
 )
 from typing_extensions import Self
 
+StrategyT = TypeVar("StrategyT", bound="Strategy")
+StrategyContextT = TypeVar("StrategyContextT", bound="StrategyContext")
+
 
 class Validator(ABC):
     """A validator descriptor for managed attribute access.
@@ -95,41 +98,24 @@ class TreeNode(Generic[T]):
         self.children.append(child)
 
 
-class AbstractStrategy(ABC):
+class StrategyContext(ABC, Generic[StrategyT]):
+    """An ABC for a context class that executes strategies."""
+    strategy: StrategyT
+
+    def __init__(self, strategy: StrategyT) -> None:
+        self.strategy = strategy
+
+    @abstractmethod
+    async def execute(self, *args: Any, **kwargs: Any):
+        """Implement this abstractmethod when inheriting."""
+
+
+class Strategy(ABC, Generic[StrategyContextT]):
     """ABC for a strategy pattern."""
 
     @abstractmethod
-    def execute(self):
-        """This function must be implemented."""
+    async def execute(self, context: StrategyContextT):
+        """Implement this abstractmethod when inheriting."""
 
-
-# These functions below don't (for now) need to work with graphs
-def find_node_bfs(start: TreeNode, validator: Callable
-                  ) -> TreeNode | None:
-    """Find node using BFS search, choose correct node using validator."""
-    visited = set()
-    queue: deque[TreeNode] = deque([start])
-    result = None
-
-    while queue:
-        node = queue.popleft()
-        visited.add(node)
-        if validator(node):
-            result = node
-            break
-
-        for child in node.children:
-            if child not in visited:
-                visited.add(child)
-                queue.extend([child])
-
-    return result
-
-
-def find_neighbour_node(start: TreeNode, validator: Callable
-                        ) -> TreeNode | None:
-    """Find neighbour node using a validator function for selection."""
-    for i in start.children:
-        if validator(i):
-            return i
-    return None
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__}>"
