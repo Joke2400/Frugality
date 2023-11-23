@@ -12,7 +12,7 @@ from app.utils import patterns
 
 
 logger = LoggerManager().get_logger(path=__name__, sh=20, fh=10)
-StrategyT = TypeVar("StrategyT", bound=patterns.Strategy)
+StrategyT = TypeVar("StrategyT", bound=patterns.Strategy, covariant=True)
 SchemaT = schemas.StoreQuery
 
 
@@ -20,12 +20,11 @@ class State(str, Enum):
     """TODO: DOCSTRING"""
     SUCCESS = "SUCCESS"
     FAIL = "FAIL"
+
     PENDING = "PENDING"
     NOT_STARTED = "NOT_STARTED"
-
     PARSE_ERROR = "PARSE_ERROR"
     NO_RESPONSE = "NO_RESPONSE"
-    NO_RESULTS = "NO_RESULTS"
 
 
 class SearchContext(patterns.StrategyContext, Generic[StrategyT]):
@@ -36,7 +35,7 @@ class SearchContext(patterns.StrategyContext, Generic[StrategyT]):
 
     __slots__ = "query", "strategy", "status"
 
-    def __init__(self, strategy: Type[StrategyT]):
+    def __init__(self, strategy: StrategyT):
         super().__init__(strategy=strategy)
         self.status = State.NOT_STARTED
 
@@ -61,7 +60,8 @@ class APIStoreNameSearchStrategy(patterns.Strategy):
 
     @staticmethod
     async def execute(
-            context: SearchContext) -> tuple[State, list[schemas.StoreIn]]:
+            context: SearchContext
+            ) -> tuple[State, list[schemas.StoreIn], str]:
         store_name: str = str(context.query.store_name)
         params = api_query.build_request_params(
             method="post",
@@ -75,27 +75,32 @@ class APIStoreNameSearchStrategy(patterns.Strategy):
             logger.debug(
                 "Exception occurred during request, got no response to parse.")
             context.status = State.NO_RESPONSE
-            return context.status, []
+            return (
+                context.status, [],
+                "Unable to communicate with external API.")
 
         match parse.parse_store_response(response):
-
             case None:
                 context.status = State.PARSE_ERROR
-                return context.status, []
+                return (
+                    context.status, [],
+                    "Could not parse the query from external API response.")
             case []:
-                context.status = State.NO_RESULTS
-                return context.status, []
+                context.status = State.FAIL
+                return (
+                    context.status, [],
+                    "Failed to find matching results for the query.")
             case list() as data:
                 context.status = State.SUCCESS
-                return context.status, data
-            case _:
+                return context.status, data, "Success!"
+            case _ as data:
                 raise ValueError(
-                    "Parsing returned impossible value.")
+                    f"Parsing returned an unexpected value: {data}")
 
 
 class DBStoreNameSearchStrategy(patterns.Strategy):
     """TODO: DOCSTRING"""
 
     @staticmethod
-    async def execute():
+    async def execute(context: ):
         return None

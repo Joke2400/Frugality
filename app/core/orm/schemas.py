@@ -1,5 +1,5 @@
 """Contains Pydantic schema definitions."""
-from typing import TypeVar, Generic, Optional
+from typing import TypeVar, Generic
 from datetime import datetime
 
 import pydantic
@@ -33,20 +33,14 @@ class StoreOut(StoreIn, Generic[ProductT]):
 
 class StoreQuery(pydantic.BaseModel):
     """Schema for a user query for a store."""
-    store_name: Optional[str]
-    store_id: Optional[str]
+    store_name: str | None
+    store_id: str | None
 
     class Config:
         """Pydantic config."""
         from_attributes = True
 
-    @pydantic.model_validator(mode="before")
-    @classmethod
-    def check_name_or_id(cls, values: dict):
-        """Check that either a store_name or store_id was given."""
-        if "store_name" not in values and "store_id" not in values:
-            raise exceptions.MissingSearchQuery(
-                "Either store name or a store_id must be provided.")
+    # TODO: Figure out a working model validator that doesn't make my life harder
 
 
 class ProductIn(pydantic.BaseModel):

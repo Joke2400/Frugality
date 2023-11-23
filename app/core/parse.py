@@ -38,4 +38,5 @@ def parse_store_response(
                 "Store record validation failed: %s",
                 item)
             continue
-    return stores.sort(key=lambda i: i.store_name)
+    stores.sort(key=lambda i: i.store_name)
+    return stores
