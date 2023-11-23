@@ -1,36 +1,55 @@
 """Contains Pydantic schema definitions."""
-from typing import TypeVar
-from typing import Generic
+from typing import TypeVar, Generic, Optional
 from datetime import datetime
-from pydantic import BaseModel
+
+import pydantic
+from app.utils import exceptions
 
 
-StoreT = TypeVar("StoreT", bound=BaseModel)
-ProductT = TypeVar("ProductT", bound=BaseModel)
-ProductRecordT = TypeVar("ProductRecordT", bound=BaseModel)
+StoreT = TypeVar("StoreT", bound=pydantic.BaseModel)
+ProductT = TypeVar("ProductT", bound=pydantic.BaseModel)
+ProductRecordT = TypeVar("ProductRecordT", bound=pydantic.BaseModel)
 
 
-class StoreIn(BaseModel):
-    """Pydantic model for a store going into the database."""
+class StoreIn(pydantic.BaseModel):
+    """"Schema for a Store going into the database."""
+
+    store_name: str
     store_id: str
-    name: str
     slug: str
     brand: str
-
-
-class StoreOut(StoreIn, Generic[ProductT]):
-    """Pydantic model for a store coming out of the database."""
-
-    id: int
-    timestamp: datetime
-    products: list[ProductT] = []
 
     class Config:
         """Pydantic config."""
         from_attributes = True
 
 
-class ProductIn(BaseModel):
+class StoreOut(StoreIn, Generic[ProductT]):
+    """"Schema for a Store coming out of the database."""
+    id: int
+    timestamp: datetime
+    products: list[ProductT] = []
+
+
+class StoreQuery(pydantic.BaseModel):
+    """Schema for a user query for a store."""
+    store_name: Optional[str]
+    store_id: Optional[str]
+
+    class Config:
+        """Pydantic config."""
+        from_attributes = True
+
+    @pydantic.model_validator(mode="before")
+    @classmethod
+    def check_name_or_id(cls, values: dict):
+        """Check that either a store_name or store_id was given."""
+        if "store_name" not in values and "store_id" not in values:
+            raise exceptions.MissingSearchQuery(
+                "Either store name or a store_id must be provided.")
+
+
+class ProductIn(pydantic.BaseModel):
     """Pydantic model for a product going into the database."""
     ean: str
     name: str
@@ -51,7 +70,7 @@ class ProductOut(ProductIn, Generic[ProductRecordT]):
         from_attributes = True
 
 
-class ProductRecordIn(BaseModel):
+class ProductRecordIn(pydantic.BaseModel):
     """Pydantic model for a product record going into the database."""
     eur_unit_price_whole: int
     eur_unit_price_decimal: int

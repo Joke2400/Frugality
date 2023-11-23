@@ -5,7 +5,7 @@ from ariadne import load_schema_from_path
 from app.core import config
 from app.utils import paths
 
-USER_AGENT = config.parser["API"]["user_agent"]
+USER_AGENT = str(config.parser["API"]["user_agent"])
 GRAPHQL_ENDPOINT = config.parser["SKAUPAT_URLS"]["api_graphql"]
 
 # Load graphql schema from static files

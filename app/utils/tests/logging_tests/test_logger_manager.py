@@ -3,8 +3,7 @@ from pathlib import Path
 
 from app.utils import LoggerManager
 from app.utils.patterns import (
-    SingletonMeta,
-    find_neighbour_node
+    SingletonMeta
 )
 
 custom_fmt = logging.Formatter(

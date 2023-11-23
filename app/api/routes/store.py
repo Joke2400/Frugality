@@ -16,5 +16,7 @@ async def get_store_by_name(store_name: str):
     logger.debug(
         "Received query for store by its name: %s", store_name)
     context = search.SearchContext(
-        strategy=search.APISearchStrategy)
-    return await context.execute(query={"store_name": store_name})
+        strategy=search.APIStoreNameSearchStrategy)
+    d = {"store_name": store_name}
+    query = schemas.StoreQuery(**d)
+    return await context.execute(query=query)

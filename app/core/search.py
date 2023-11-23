@@ -4,6 +4,7 @@ from enum import Enum
 from typing import TypeVar, Generic, Any, Type
 
 from app.core import parse
+from app.core.orm import schemas
 from app.api import request
 from app.api.skaupat import query as api_query
 from app.utils.logging import LoggerManager
@@ -12,6 +13,7 @@ from app.utils import patterns
 
 logger = LoggerManager().get_logger(path=__name__, sh=20, fh=10)
 StrategyT = TypeVar("StrategyT", bound=patterns.Strategy)
+SchemaT = schemas.StoreQuery
 
 
 class State(str, Enum):
@@ -23,11 +25,12 @@ class State(str, Enum):
 
     PARSE_ERROR = "PARSE_ERROR"
     NO_RESPONSE = "NO_RESPONSE"
+    NO_RESULTS = "NO_RESULTS"
 
 
 class SearchContext(patterns.StrategyContext, Generic[StrategyT]):
     """TODO: DOCSTRING"""
-    query: dict
+    query: SchemaT
     strategy: StrategyT
     status: State
 
@@ -44,8 +47,7 @@ class SearchContext(patterns.StrategyContext, Generic[StrategyT]):
         # linter complains about the function signature
         # if I don't use them here.
         """
-        # Let the request fail here if kwargs is missing the key.
-        query: dict = kwargs["query"]
+        query: schemas.StoreQuery = kwargs["query"]
         self.status = State.PENDING
         logger.debug(
             "Executing strategy %s with query %s",
@@ -54,28 +56,44 @@ class SearchContext(patterns.StrategyContext, Generic[StrategyT]):
         return await self.strategy.execute(context=self)
 
 
-class APISearchStrategy(patterns.Strategy):
+class APIStoreNameSearchStrategy(patterns.Strategy):
     """TODO: DOCSTRING"""
 
     @staticmethod
-    async def execute(context: SearchContext) -> dict:
-        store_name: str = str(context.query["store_name"])
+    async def execute(
+            context: SearchContext) -> tuple[State, list[schemas.StoreIn]]:
+        store_name: str = str(context.query.store_name)
         params = api_query.build_request_params(
             method="post",
             operation=api_query.Operation.STORE_SEARCH,
             variables=api_query.build_store_search_variables(store_name),
             timeout=10)
+        logger.debug("Awaiting request for query %s", context.query)
         response = await request.send_request(params=params)
-        match parse.parse_store_response(response=response):
+        logger.debug("Parsing response for query %s", context.query)
+        if response is None:
+            logger.debug(
+                "Exception occurred during request, got no response to parse.")
+            context.status = State.NO_RESPONSE
+            return context.status, []
+
+        match parse.parse_store_response(response):
+
+            case None:
+                context.status = State.PARSE_ERROR
+                return context.status, []
+            case []:
+                context.status = State.NO_RESULTS
+                return context.status, []
+            case list() as data:
+                context.status = State.SUCCESS
+                return context.status, data
             case _:
-                pass
-        return {}
-
-    # -> "stores" key exists
-    # -> "store" key
+                raise ValueError(
+                    "Parsing returned impossible value.")
 
 
-class DBSearchStrategy(patterns.Strategy):
+class DBStoreNameSearchStrategy(patterns.Strategy):
     """TODO: DOCSTRING"""
 
     @staticmethod

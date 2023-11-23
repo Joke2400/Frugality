@@ -11,3 +11,7 @@ class CustomErrorBase(Exception):
 
 class MissingEnvironmentVar(CustomErrorBase):
     """A required environment variable was not provided."""
+
+
+class MissingSearchQuery(CustomErrorBase):
+    """At least one of the specified query fields should be provided."""

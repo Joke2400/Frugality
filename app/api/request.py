@@ -77,6 +77,9 @@ async def send_request(params: dict) -> Response | None:
     Returns an httpx.Response upon successful request.
     If an httpx exception occurred, returns None instead.
     """
+    if DEBUG_FLAG:
+        logger.debug("Request: %s", json.dumps(
+            params, indent=4))
     response = await async_client.request(**params)
     if not handle_response(response):
         return None
