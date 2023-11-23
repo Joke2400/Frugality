@@ -113,9 +113,11 @@ class StrategyContext(ABC, Generic[StrategyT]):
 class Strategy(ABC, Generic[StrategyContextT]):
     """ABC for a strategy pattern."""
 
+    @staticmethod
     @abstractmethod
-    async def execute(self, context: StrategyContextT):
+    async def execute(context: StrategyContextT):
         """Implement this abstractmethod when inheriting."""
 
-    def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}>"
+    @classmethod
+    def __repr__(cls) -> str:
+        return f"<{cls.__name__}>"

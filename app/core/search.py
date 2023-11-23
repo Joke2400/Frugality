@@ -1,7 +1,7 @@
 
 """Classes for managing the search flow."""
 from enum import Enum
-from typing import TypeVar, Generic, Any
+from typing import TypeVar, Generic, Any, Type
 
 from app.core import parse
 from app.api import request
@@ -33,7 +33,7 @@ class SearchContext(patterns.StrategyContext, Generic[StrategyT]):
 
     __slots__ = "query", "strategy", "status"
 
-    def __init__(self, strategy: StrategyT):
+    def __init__(self, strategy: Type[StrategyT]):
         super().__init__(strategy=strategy)
         self.status = State.NOT_STARTED
 
@@ -48,7 +48,7 @@ class SearchContext(patterns.StrategyContext, Generic[StrategyT]):
         query: dict = kwargs["query"]
         self.status = State.PENDING
         logger.debug(
-            "Executing strategy '%s' with query '%s'",
+            "Executing strategy %s with query %s",
             self.strategy, query)
         self.query = query
         return await self.strategy.execute(context=self)
@@ -57,7 +57,8 @@ class SearchContext(patterns.StrategyContext, Generic[StrategyT]):
 class APISearchStrategy(patterns.Strategy):
     """TODO: DOCSTRING"""
 
-    async def execute(self, context: SearchContext) -> dict:
+    @staticmethod
+    async def execute(context: SearchContext) -> dict:
         store_name: str = str(context.query["store_name"])
         params = api_query.build_request_params(
             method="post",
@@ -71,11 +72,12 @@ class APISearchStrategy(patterns.Strategy):
         return {}
 
     # -> "stores" key exists
-    # -> "store" key exists
+    # -> "store" key
 
 
 class DBSearchStrategy(patterns.Strategy):
     """TODO: DOCSTRING"""
 
-    async def execute(self):
+    @staticmethod
+    async def execute():
         return None

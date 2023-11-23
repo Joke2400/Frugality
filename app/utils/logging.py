@@ -8,6 +8,12 @@ from app.utils.patterns import SingletonMeta, TreeNode
 
 Handler: TypeAlias = logging.StreamHandler | logging.FileHandler
 
+# TODO: LOGGING UTILITY CREATES TOO MANY LOG FILES 
+# (i did this on purpose for some unknown reason dont @ me)
+# TODO: Logs marked debug are logged to stream, probably
+# a misconfigured logger and/or log propagation
+# TODO: Refactoring, ex: get_logger() hard to read/understand
+
 
 class LoggerManager(metaclass=SingletonMeta):
     """Class for managing logging."""
@@ -45,9 +51,13 @@ class LoggerManager(metaclass=SingletonMeta):
         else:
             os.mkdir(self.log_path)
         self.root_logger = logging.getLogger()
-        config = self.set_config(logging.DEBUG, logging.DEBUG, formatter)
+        # quick and dirty fix to ensure root logger doesn't log to stream
+        for i in self.root_logger.handlers:
+            self.root_logger.removeHandler(i)
+        config = self.create_config(logging.INFO, logging.DEBUG, formatter)
         config["file"]["filename"] = self.log_path / "root.log"
         self.root_logger = self.create_logger(
+            name="root",
             level=logging.DEBUG,
             config=config)
         self.tree = TreeNode(
@@ -55,51 +65,102 @@ class LoggerManager(metaclass=SingletonMeta):
                   "logger": self.root_logger,
                   "path": self.root_dir})
 
-    def get_logger(self, path: str, sh: int = 0, fh: int = 0,
+    def get_logger(self, path: str, name: str | None = None,
+                   sh: int = 0, fh: int = 0,
                    formatter: logging.Formatter | None = None
                    ) -> logging.Logger:
-        """Get a new logger."""
+        """Get a new logger. TODO: IMPLEMENT CUSTOM NAME"""
         rel_path = Path(path.replace(".", "/") + ".py")
-        abs_path = Path.cwd() / rel_path
-        if not abs_path.exists():
+        if not (Path.cwd() / rel_path).exists():
             raise ValueError(
                 "Could not construct a valid logger path from path.")
-        config = self.set_config(sh, fh, formatter)
+        config = self.create_config(sh, fh, formatter)
+        node = self.create_logger_tree(
+            rel_path=rel_path, config=config)
+        return node.data["logger"]
+
+    def create_logger_tree(self, rel_path: Path, config: dict,
+                           log_file_granularity: int = 2) -> TreeNode:
         node = self.tree
-        for inx, filename in enumerate(rel_path.parts, start=1):
-            # Funny one-liner | expecting only one result -> len() == 1
-            if len(lst := ([i for i in node.children
-                            if i.data["name"] == filename])) != 1:
-                if filename.endswith(".py"):
-                    filename = filename.removesuffix(".py")
+        for index, part_name in enumerate(rel_path.parts, start=1):
+            # Check part_name doesn't exist in current node children.
+            if len(children := (list(
+                    filter(  # Linter sure likes to complain
+                        lambda i: i.data["name"] == part_name, node.children
+                        )))) == 1:
+                # if len() = 1 -> Node with same name exists
+                # -> Use the node in next loop.
+                node = children[0]
+
+            elif len(children) == 0:
+                # if len() == 0 -> Node with name doesn't exist
+                # -> Create that node -> Use the node in next loop
+                rel_path_to_logger = Path(
+                    "/".join(rel_path.parts[0:index]))
+                abs_path_to_logger = Path.cwd() / rel_path_to_logger
                 child_config = config.copy()
-                log_path = self.log_path / f"{filename}.log"
-                child_config["file"]["filename"] = log_path
+                if part_name.endswith(".py"):
+                    part_name = part_name.removesuffix(".py")
+
+                if log_file_granularity >= index:
+                    log_path = self.log_path / f"{part_name}.log"
+                    child_config["file"]["filename"] = log_path
+                else:
+                    # Ensuring a filehandler does not get created
+                    # so that logs don't get logged multiple times
+                    del child_config["file"]
+
                 new_child = TreeNode({
-                    "name": filename,
+                    "name": part_name,
                     "logger": self.create_logger(
-                        name=filename,
+                        name=part_name,
                         level=logging.DEBUG,
                         parent=node.data["logger"],
-                        config=config
+                        config=child_config
                     ),
-                    "path": Path.cwd() / Path("/".join(rel_path.parts[0:inx]))
+                    "path": abs_path_to_logger
                 })
                 node.add_child(new_child)
                 node = new_child
-            else:
-                node = lst[0]
 
-        return node.data["logger"]
+            else:
+                if len(children) != 0:
+                    raise ValueError(
+                        "Many nodes with same name, should not be possible.")
+        return node
 
     def create_logger(
             self,
-            name: str | None = None,
+            name: str | None,
             level: int = 10,
             parent: logging.Logger | None = None,
             config: dict[str, dict] | None = None) -> logging.Logger:
-        """Create a new logger with optional handlers."""
-        if parent is None:
+        """Create a logger & configure it with the provided config.
+
+        Args:
+            name (str | None, optional):
+                Name of the logger to create/modify.
+
+            level (int, optional):
+                The level that the logger (NOT THE HANDLERS!) should
+                be set to. Defaults to 10, or equivalent to logging.DEBUG.
+
+            parent (logging.Logger | None, optional):
+                The parent of the logger to be created. If set to None,
+                the root logger gets used instead. Defaults to None.
+
+            config (dict[str, dict] | None, optional):
+                The config dict used to configure the logger handlers.
+                Defaults to None.
+
+        Raises:
+            ValueError:
+                Raised if both: No parent given & no name given.
+
+        Returns:
+            logging.Logger: A configure logger instance.
+        """
+        if parent is None or name == "root":
             logger = logging.getLogger()  # Gets root logger
         else:
             if name is None:
@@ -118,7 +179,6 @@ class LoggerManager(metaclass=SingletonMeta):
             logger.addHandler(self.configure_handler(
                 handler=logging.FileHandler(filename=fh.pop("filename")),
                 **fh))
-        logger.propagate = False
         self.loggers.append(logger)
         return logger
 
@@ -128,7 +188,19 @@ class LoggerManager(metaclass=SingletonMeta):
             handler: Handler,
             level: int,
             formatter: logging.Formatter | None) -> Handler:
-        """Configure a handler with a new level and formatter."""
+        """Configure a handler with a level and formatter.
+
+        Args:
+            handler (Handler):
+                Handler instance to configure.
+            level (int):
+                Level to set handler instance to.
+            formatter (logging.Formatter | None):
+                Optional custom formatter that handler should use.
+
+        Returns:
+            Handler: Configured handler instance.
+        """
         handler.setLevel(level)
         if formatter is not None:
             handler.setFormatter(formatter)
@@ -137,9 +209,24 @@ class LoggerManager(metaclass=SingletonMeta):
         return handler
 
     @staticmethod
-    def set_config(sh: int, fh: int,
-                   formatter: logging.Formatter | None) -> dict[str, dict]:
-        """Set a config dict with levels/formatters for logger handlers."""
+    def create_config(sh: int, fh: int,
+                      formatter: logging.Formatter | None) -> dict[str, dict]:
+        """Create a config dict with levels/formatters for both handler types.
+        Args:
+            sh (int): The level to set the stream handler to.
+            Should correspond to levels defined in the python logging module.
+
+            fh (int): The level to set the file handler to.
+            Should correspond to levels defined in the python logging module.
+
+            formatter (logging.Formatter | None):
+            Custom formatter to apply to both handlers.
+
+        Returns:
+            dict[str, dict]:
+            Dict containing keys "stream" and "file". Each key contains the
+            keys "level" and "formatter" with the values set.
+        """
         config: dict[str, dict] = {}
         if sh != 0:
             config["stream"] = {
@@ -155,7 +242,11 @@ class LoggerManager(metaclass=SingletonMeta):
 
     @staticmethod
     def purge_logs(path: Path) -> None:
-        """Purge all files ending with '.log' at the given directory path."""
+        """Purge all files ending with '.log' at the given directory path.
+
+        Args:
+            path (Path): Path to the logs folder.
+        """
         try:
             if not path.is_dir():
                 return None

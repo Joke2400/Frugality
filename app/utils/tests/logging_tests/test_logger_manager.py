@@ -48,7 +48,7 @@ def test_init_custom_directory():
 def test_set_config():
     """Test set config method"""
     args = {"sh": 20, "fh": 0, "formatter": None}
-    config = LoggerManager.set_config(**args)
+    config = LoggerManager.create_config(**args)
     assert config.get("stream", None) is not None
     assert config.get("file", None) is None
     assert config["stream"]["formatter"] is None
