@@ -31,7 +31,7 @@ class Store(Base):
     # Unique identifiers
     id: Mapped[int] = mapped_column(primary_key=True)
     store_id: Mapped[str] = mapped_column(unique=True)
-    name: Mapped[str] = mapped_column(unique=True)
+    store_name: Mapped[str] = mapped_column(unique=True)
     slug: Mapped[str] = mapped_column(unique=True)
 
     brand: Mapped[str] = mapped_column()

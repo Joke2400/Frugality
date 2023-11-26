@@ -55,6 +55,10 @@ class DBContext:
         except IntegrityError as err:
             # Re-raising in order to handle elsewhere.
             # NOTE: Should maybe consider another solution in the future...
+            # Raising http exception works since its called from a route,
+            # But its very much unclear why HTTPException is called,
+            # Need to just not catch the integrity error or just create
+            # a custom error type for this.
             self.session.rollback()
             raise HTTPException(
                 status_code=422, detail="Unable to add record.") from err

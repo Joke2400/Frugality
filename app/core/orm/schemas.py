@@ -11,7 +11,7 @@ ProductT = TypeVar("ProductT", bound=pydantic.BaseModel)
 ProductRecordT = TypeVar("ProductRecordT", bound=pydantic.BaseModel)
 
 
-class StoreIn(pydantic.BaseModel):
+class StoreBase(pydantic.BaseModel):
     """"Schema for a Store going into the database."""
 
     store_name: str
@@ -24,7 +24,7 @@ class StoreIn(pydantic.BaseModel):
         from_attributes = True
 
 
-class StoreOut(StoreIn, Generic[ProductT]):
+class StoreDB(StoreBase, Generic[ProductT]):
     """"Schema for a Store coming out of the database."""
     id: int
     timestamp: datetime
@@ -33,8 +33,9 @@ class StoreOut(StoreIn, Generic[ProductT]):
 
 class StoreQuery(pydantic.BaseModel):
     """Schema for a user query for a store."""
-    store_name: str | None
-    store_id: str | None
+    store_name: str | None = None
+    store_id: str | None = None
+    brand: str | None = None
 
     class Config:
         """Pydantic config."""
