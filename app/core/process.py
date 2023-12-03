@@ -11,8 +11,10 @@ from app.core import config
 
 class Process(metaclass=patterns.SingletonMeta):
     """Singleton for managing the execution of the entire app."""
-
     app: FastAPI = FastAPI()
+    db_user: str
+    db_pass: str
+    db: str
 
     def __init__(self) -> None:
         """Initialize app routes & fetch environment variables."""
@@ -24,10 +26,10 @@ class Process(metaclass=patterns.SingletonMeta):
                 "ENVIRONMENT VAR 'POSTGRES_PASSWORD' WAS NOT SUPPLIED")
         if (postgres_db := os.getenv("POSTGRES_DB")) in (None, ""):
             raise exceptions.MissingEnvironmentVar(
-                "ENVIRONMENT VAR 'POSTGRES_DB' WAS NOT SUPPLIED")    
-        self.db_user: str = str(postgres_user)
-        self.db_pass: str = str(postgres_pass)
-        self.db: str = str(postgres_db)
+                "ENVIRONMENT VAR 'POSTGRES_DB' WAS NOT SUPPLIED")
+        self.db_user = str(postgres_user)
+        self.db_pass = str(postgres_pass)
+        self.db = str(postgres_db)
         self.app.include_router(store_route.router)
 
         # This check will be removed in final versions.
@@ -50,6 +52,5 @@ class Process(metaclass=patterns.SingletonMeta):
     @staticmethod
     def _execute_debug_code() -> None:
         """NOTE: THIS FUNCTION WILL NOT EXIST IN RELEASE VERSIONS."""
-        if os.getenv("DEBUG"):
-            from debug import run
-            run()
+        from debug import run
+        run()

@@ -10,7 +10,7 @@ from fastapi import HTTPException
 from app.utils import LoggerManager
 
 
-logger = LoggerManager().get_logger(__name__, sh=20, fh=10)
+logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 
 
 class Base(DeclarativeBase):
@@ -41,6 +41,7 @@ class DBContext:
     def __enter__(self) -> Session:
         """Create a session and return it."""
         self.session = self._sessionmaker()
+        logger.debug("DBContext: Begun database transaction.")
         return self.session
 
     def __exit__(self, exc_type, exc_value, traceback) -> None:
@@ -48,10 +49,10 @@ class DBContext:
         try:
             if exc_type is None:
                 self.session.commit()
-                logger.debug("Committed the database transaction.")
+                logger.debug("DBContext: Committed the database transaction.")
             else:
                 self.session.rollback()
-                logger.debug("Rolled back the database transaction.")
+                logger.debug("DBContext: Rolled back the database transaction.")
         except IntegrityError as err:
             # Re-raising in order to handle elsewhere.
             # NOTE: Should maybe consider another solution in the future...

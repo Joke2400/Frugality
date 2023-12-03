@@ -1,38 +1,81 @@
 """Contains CRUD operations for interaction with the database."""
-from sqlalchemy.orm import Session
-
+from sqlalchemy import select
 from app.core.orm import models, schemas, database
+from app.core import parse
 
 
 # STORE CRUD----------------------------------
-def create_store(store: schemas.StoreBase) -> models.Store:
+def create_store(store: schemas.Store) -> None:
     """Create a Store record."""
     with database.DBContext() as session:
         db_store = models.Store(**dict(store))
         session.add(db_store)
-        return db_store
 
 
-def get_store_by_id(store: schemas.StoreQuery) -> models.Store | None:
+def get_store_by_id(query: int) -> schemas.StoreDB | None:
     """Get a Store record by store id."""
     with database.DBContext() as session:
-        return session.query(models.Store).filter(
-            models.Store.store_id == store.store_id).first()
+        stmt = (
+            select(models.Store)
+            .where(models.Store.store_id == query)
+        )
+        store = session.scalars(stmt).one_or_none()
+        if store is None:
+            return None
+        return schemas.StoreDB.model_validate(store)
 
 
-def get_stores_by_name(store: schemas.StoreQuery) -> list[models.Store] | None:
-    """Get Store records by likeness to provided store name."""
+def get_stores_by_slug(query: str) -> list[schemas.StoreDB]:
+    """CRUD: Get Store records by store slug.
+
+    Parses the given string into an item slug before a query.
+
+    Implements SQL LIKE operator on the parsed slug ->
+        pattern: WHERE slug LIKE %slug%
+
+    If a brand is present at the start of the string ->
+        pattern: WHERE slug LIKE %slug% AND brand = brand
+
+    Args:
+        query (str):
+        The entire query string, may include store brand at start.
+
+    Returns:
+        list[schemas.StoreDB]:
+        A list of pydantic StoreDB instances.
+        The list may be empty if no results were found.
+    """
+    brand = parse.parse_store_brand_from_string(query)
     with database.DBContext() as session:
-        return session.query(models.Store).filter(
-            models.Store.store_name.like(store.store_name)).all()
+        stmt = (
+            select(models.Store)
+            .where(models.Store.slug.like(f"%{parse.slugify(query)}%"))
+            )
+        if brand is not None:
+            query = query.lstrip(brand.capitalize()).strip()
+            stmt = stmt.where(models.Store.brand == brand)
+
+        stmt = stmt.order_by(models.Store.store_name)
+        stores = session.scalars(stmt).all()
+        return [schemas.StoreDB.model_validate(i) for i in stores]
 
 
-def get_stores() -> list[models.Store]:
+def get_stores() -> list[schemas.StoreDB]:
     """Get all Stores in Stores table."""
     with database.DBContext() as session:
-        return session.query(models.Store).all()
+        stores = session.scalars(select(models.Store)).all()
+        return [schemas.StoreDB.model_validate(i) for i in stores]
 
 
+
+
+
+
+
+
+
+
+"""
 # PRODUCT CRUD -------------------------------
 def create_product(db: Session, product: schemas.ProductIn) -> None:
     pass
@@ -49,3 +92,4 @@ def create_product_record(db: Session, data: schemas.ProductRecordIn) -> None:
 
 def get_product_record(db: Session):
     pass
+"""

@@ -12,7 +12,7 @@ from httpx import (
 from app.core import config
 from app.utils import LoggerManager
 
-logger = LoggerManager().get_logger(path=__name__, sh=20, fh=10)
+logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 DEBUG_FLAG = bool(config.parser["APP"]["debug"])
 
 
@@ -65,7 +65,7 @@ def handle_response(response: Response) -> bool:
 
     else:
         if DEBUG_FLAG:
-            logger.debug("Response: %s", json.dumps(
+            logger.debug("Received response: %s", json.dumps(
                 json.loads(response.text), indent=4))
         return True
     return False
@@ -78,7 +78,7 @@ async def send_request(params: dict) -> Response | None:
     If an httpx exception occurred, returns None instead.
     """
     if DEBUG_FLAG:
-        logger.debug("Request: %s", json.dumps(
+        logger.debug("Sending request: %s", json.dumps(
             params, indent=4))
     response = await async_client.request(**params)
     if not handle_response(response):
