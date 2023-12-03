@@ -4,16 +4,30 @@ from app.core.orm import models, schemas, database
 from app.core import parse
 
 
-# STORE CRUD----------------------------------
 def create_store(store: schemas.Store) -> None:
-    """Create a Store record."""
+    """CRUD: Create a new Store record.
+
+    Args:
+        store (schemas.Store):
+        Takes in a pydantic Store instance.
+    """
     with database.DBContext() as session:
         db_store = models.Store(**dict(store))
         session.add(db_store)
 
 
 def get_store_by_id(query: int) -> schemas.StoreDB | None:
-    """Get a Store record by store id."""
+    """CRUD: Get Store records by store id.
+
+    Pattern: WHERE store_id = query
+
+    Args:
+        query (int): Store id to query using.
+
+    Returns:
+        schemas.StoreDB | None:
+        A pydantic StoreDB instance or None if not found.
+    """
     with database.DBContext() as session:
         stmt = (
             select(models.Store)
@@ -61,35 +75,13 @@ def get_stores_by_slug(query: str) -> list[schemas.StoreDB]:
 
 
 def get_stores() -> list[schemas.StoreDB]:
-    """Get all Stores in Stores table."""
+    """CRUD: Get all Store records.
+
+    Returns:
+        list[schemas.StoreDB]:
+        A list of pydantic StoreDB instances.
+        The list may be empty if no stores exist in the table.
+    """
     with database.DBContext() as session:
         stores = session.scalars(select(models.Store)).all()
         return [schemas.StoreDB.model_validate(i) for i in stores]
-
-
-
-
-
-
-
-
-
-
-"""
-# PRODUCT CRUD -------------------------------
-def create_product(db: Session, product: schemas.ProductIn) -> None:
-    pass
-
-
-def get_product(db: Session):
-    pass
-
-
-# PRODUCT RECORD CRUD ------------------------
-def create_product_record(db: Session, data: schemas.ProductRecordIn) -> None:
-    pass
-
-
-def get_product_record(db: Session):
-    pass
-"""
