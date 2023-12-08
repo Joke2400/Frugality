@@ -20,9 +20,6 @@ Base = database.Base
 # Fixing a pylint false-positive, it is in fact a callable... gg
 func: Callable
 
-# Attributes tagged with "unique identifiers" is unique
-# for each row and thus suitable for easy searching.
-
 
 class Store(Base):
     """An SQLAlchemy ORM mapping for a store item."""

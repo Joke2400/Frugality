@@ -1,25 +1,25 @@
 """API routes for store retrieval."""
 from fastapi import APIRouter, HTTPException
 
+
 from app.utils import exceptions
-from app.core import search
+from app.core import search, config
 from app.core.orm import schemas, models
 
 router = APIRouter()
+MAX_REQUESTS_PER_QUERY = int(config.parser["API"]["max_requests_per_query"])
 
 
 @router.get("/stores/{store_name}", response_model=list[schemas.Store])
 async def get_store_by_name(
         store_name: str
         ) -> list[models.Store] | list[schemas.StoreBase] | list:
-    """Route that returns a single store record by searching by its name."""
-    store_name = store_name.strip()
     strategies = [search.DBStoreSearchStrategy(),
-                  search.APIStoreNameSearchStrategy()]
+                  search.APIStoreSearchStrategy()]
     # Looping over strategies as the match-case syntax is the same for both
-    for _ in range(0, len(strategies)):
+    while strategies:
         context = search.SearchContext(strategy=strategies.pop(0))
-        match await context.execute(query=store_name):
+        match await context.execute(query=store_name.strip()):
             case [search.State.SUCCESS, list()] as result:
                 return result[1]  # Return the retrieved items
             case [search.State.FAIL | search.State.NO_RESPONSE, list()]:

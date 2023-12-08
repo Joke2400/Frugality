@@ -16,10 +16,45 @@ def create_store(store: schemas.Store) -> None:
         session.add(db_store)
 
 
+def create_product(product: schemas.Product,
+                   data: schemas.ProductData) -> None:
+    # TODO: Add check: if product exists
+    with database.DBContext() as session:
+        db_product = models.Product(
+            **dict(product))
+        db_product_data = models.ProductData(
+            **dict(data))
+        session.add(db_product)
+        db_product.data.append(db_product_data)
+
+
+def get_product_by_ean(ean: str) -> schemas.ProductDB | None:
+    """CRUD: Get Product records by product EAN.
+
+    Pattern: WHERE models.Product.ean = ean
+
+    Args:
+        ean (str): Product EAN to query using.
+
+    Returns:
+        schemas.ProductDB | None:
+        A pydantic ProductDB instance or None if not found.
+    """
+    with database.DBContext() as session:
+        stmt = (
+            select(models.Product)
+            .where(models.Product.ean == ean)
+        )
+        product = session.scalars(stmt).one_or_none()
+        if product is None:
+            return None
+        return schemas.ProductDB.model_validate(product)
+
+
 def get_store_by_id(query: int) -> schemas.StoreDB | None:
     """CRUD: Get Store records by store id.
 
-    Pattern: WHERE store_id = query
+    Pattern: WHERE models.Store.store_id = query
 
     Args:
         query (int): Store id to query using.

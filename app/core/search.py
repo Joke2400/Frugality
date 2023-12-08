@@ -1,11 +1,12 @@
 """Classes for managing the search flow."""
+import asyncio
 from enum import Enum
-from typing import TypeVar, Generic, Any, Callable
+from typing import TypeVar, Generic, Any, Callable, Coroutine
 
 from app.core import parse
 from app.core.orm import schemas, crud
 from app.api import request
-from app.api.skaupat import query as api_query
+from app.api.skaupat import query as api
 from app.utils.logging import LoggerManager
 from app.utils import patterns, exceptions
 
@@ -15,7 +16,7 @@ StrategyT = TypeVar("StrategyT", bound=patterns.Strategy)
 
 
 class State(str, Enum):
-    """TODO: DOCSTRING"""
+    """Enum for representing the state of a search."""
     SUCCESS = "SUCCESS"
     FAIL = "FAIL"
     PENDING = "PENDING"
@@ -25,7 +26,13 @@ class State(str, Enum):
 
 
 class SearchContext(patterns.StrategyContext, Generic[StrategyT]):
-    """TODO: DOCSTRING"""
+    """Context for executing a search strategy.
+
+    Inherits from patterns.StrategyContext ABC & implements execute().
+    """
+    # TODO: Look into changing query variable
+    # TODO: self.execute() *args **kwargs is too unspecific,
+    # hard to know what exactly the function expects as an argument.
     query: Any
     strategy: StrategyT
     status: State
@@ -36,12 +43,14 @@ class SearchContext(patterns.StrategyContext, Generic[StrategyT]):
         super().__init__(strategy=strategy)
         self.status = State.PENDING
 
-    async def execute(self, *args: Any, **kwargs: Any) -> Any:
-        """Execute the search strategy with provided query.
+    async def execute(self, *args: Any, **kwargs: Any
+                      ) -> Coroutine[Any, Any, None]:  # TODO: Proper typehint for async
+        """Execute the current search strategy with the provided query.
+        Args:
+            query (Any): a 'query' keyword argument must be provided.
 
-        # TODO: Figure out a better solution than *args & **kwargs
-        # linter complains about the function signature
-        # if I don't use them here.
+        Returns:
+            Any: _description_
         """
         query: Any = kwargs["query"]
         logger.debug(
@@ -57,7 +66,7 @@ class DBStoreSearchStrategy(patterns.Strategy):
     @staticmethod
     async def execute(
             context: SearchContext
-            ) -> tuple[State, list[schemas.StoreDB]]:
+            ) -> tuple[State, list[schemas.StoreDB]]:  # TODO: Proper typehint for async
         query: str | int
         crud_func: Callable
         try:
@@ -87,17 +96,17 @@ class DBStoreSearchStrategy(patterns.Strategy):
                     f"Match stmt matched an undefined value: {data}")
 
 
-class APIStoreNameSearchStrategy(patterns.Strategy):
+class APIStoreSearchStrategy(patterns.Strategy):
     """TODO: DOCSTRING"""
 
     @staticmethod
     async def execute(
             context: SearchContext
-            ) -> tuple[State, list[schemas.Store]]:
-        params = api_query.build_request_params(
+            ) -> tuple[State, list[schemas.Store]]:  # TODO: Proper typehint for async
+        params = api.build_request_params(
             method="post",
-            operation=api_query.Operation.STORE_SEARCH,
-            variables=api_query.build_store_search_variables(
+            operation=api.Operation.STORE_SEARCH,
+            variables=api.build_store_search_vars(
                 str(context.query)),
             timeout=10)
         logger.debug("Awaiting request for query '%s'", context.query)
@@ -109,7 +118,7 @@ class APIStoreNameSearchStrategy(patterns.Strategy):
             return context.status, []
 
         logger.debug("Parsing response for query '%s'", context.query)
-        match parse.parse_store_response(response):
+        match parse.parse_store_response(response, str(context.query)):
             case None:
                 context.status = State.PARSE_ERROR
                 logger.error("Could not parse stores from API response.")
@@ -128,6 +137,37 @@ class APIStoreNameSearchStrategy(patterns.Strategy):
             case _ as data:
                 raise exceptions.InvalidMatchCaseError(
                     f"Could not match value: {data} to a predefined case.")
-# TODO: Refactor DB/API strategy to be more generic
-# Or split the match statement into an external function
-# & create several smaller strategies
+
+
+class DBProductSearchStrategy(patterns.Strategy):
+
+    @staticmethod
+    async def execute(context: SearchContext) -> None:
+        pass
+
+
+class APIProductSearchStrategy(patterns.Strategy):
+
+    @staticmethod
+    async def execute(context: SearchContext) -> None:
+        tasks = []
+        user_query: schemas.ProductQuery = context.query
+        for store_id in user_query.stores:
+            for item_query in user_query.queries:
+                query: dict[str, str | int] = {
+                    "store_id": store_id,
+                    "query": item_query["query"],
+                    "slugs": item_query["category"]
+                }
+                params = api.build_request_params(
+                    method="post",
+                    operation=api.Operation.PRODUCT_SEARCH,
+                    variables=api.build_product_search_vars(query=query),
+                    timeout=10)
+                logger.debug(
+                    "Creating async task for: (store_id: '%s', query: '%s')",
+                    store_id, item_query)
+                tasks.append(asyncio.create_task(
+                    api.send_product_query(query=query, params=params)))
+        results = await asyncio.gather(*tasks)
+        print("Length of results: ", len(results))

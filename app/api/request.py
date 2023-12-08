@@ -71,7 +71,7 @@ def handle_response(response: Response) -> bool:
     return False
 
 
-async def send_request(params: dict) -> Response | None:
+async def send_request(params: dict) -> Response | None:  # TODO: Proper typehint for async
     """Sends a request & raises the for status on the response.
 
     Returns an httpx.Response upon successful request.

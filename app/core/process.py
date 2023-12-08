@@ -6,6 +6,7 @@ from app.utils import patterns
 from app.utils import exceptions
 from app.core.orm import database
 from app.api.routes import store as store_route
+from app.api.routes import product as product_route
 from app.core import config
 
 
@@ -31,6 +32,7 @@ class Process(metaclass=patterns.SingletonMeta):
         self.db_pass = str(postgres_pass)
         self.db = str(postgres_db)
         self.app.include_router(store_route.router)
+        self.app.include_router(product_route.router)
 
         # This check will be removed in final versions.
         if bool(config.parser["APP"]["debug"]):

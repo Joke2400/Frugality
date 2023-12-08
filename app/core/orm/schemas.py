@@ -5,53 +5,82 @@ from datetime import datetime
 import pydantic
 
 
-StoreT = TypeVar("StoreT", bound=pydantic.BaseModel)
-ProductT = TypeVar("ProductT", bound=pydantic.BaseModel)
-ProductRecordT = TypeVar("ProductRecordT", bound=pydantic.BaseModel)
+StoreT = TypeVar("StoreT", bound="Store")
+ProductT = TypeVar("ProductT", bound="Product")
+ProductDataT = TypeVar("ProductDataT", bound="ProductDataDB")
+
+
+# ---------------------------------------
 
 
 class StoreBase(pydantic.BaseModel):
+    """Store base schema."""
     store_name: str
 
 
-class Store(StoreBase):
+class Store(pydantic.BaseModel):
+    """Store schema for items going in/out of routes."""
+    store_name: str
     store_id: int
     slug: str
     brand: str
 
-    model_config = pydantic.ConfigDict(from_attributes=True)
+    model_config = pydantic.ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
+            "examples": [
+                {
+                    "store_name": "Prisma Olari",
+                    "store_id": 542862479,
+                    "slug": "prisma-olari",
+                    "brand": "prisma"
+                }
+            ]
+        })
 
 
 class StoreDB(Store, Generic[ProductT]):
+    """Complete schema for a Store, equivalent to DB Store model."""
     id: int
     timestamp: datetime
-    products: list[ProductT] = pydantic.Field(default_factory=list)
+    products: list[ProductT] = pydantic.Field(
+        default_factory=list)
 
 
-"""
-class ProductIn(pydantic.BaseModel):
+# ---------------------------------------
 
-    ean: str
+
+class ProductBase(pydantic.BaseModel):
+    "Product base schema."
     name: str
-    slug: str
     category: str
+
+
+class Product(ProductBase):
+    """Store schema for items going in/out of routes."""
+    ean: str
+    slug: str
     brand: str
+    aliases: list[str] = pydantic.Field(
+        default_factory=list)
+
+    model_config = pydantic.ConfigDict(
+        from_attributes=True)
 
 
-class ProductOut(ProductIn, Generic[ProductRecordT]):
-
+class ProductDB(Product, Generic[ProductDataT]):
+    """Complete schema for a Product, equivalent to DB Product model."""
     id: int
     timestamp: datetime
-    aliases: list[str] = []
-    data: list[ProductRecordT] = []
-
-    class Config:
-
-        from_attributes = True
+    data: list[ProductDataT] = pydantic.Field(
+        default_factory=list)
 
 
-class ProductRecordIn(pydantic.BaseModel):
+# ---------------------------------------
 
+
+class ProductData(pydantic.BaseModel):
+    """ProductData schema."""
     eur_unit_price_whole: int
     eur_unit_price_decimal: int
     eur_cmp_price_whole: int
@@ -59,19 +88,47 @@ class ProductRecordIn(pydantic.BaseModel):
     label_unit: str
     comparison_unit: str
 
+    model_config = pydantic.ConfigDict(
+        from_attributes=True)
 
-class ProductRecordOut(ProductRecordIn, Generic[StoreT, ProductT]):
 
+class ProductDataDB(ProductData):
+    """Complete schema for ProductData, equivalent to DB ProductData Model"""
     id: int
     timestamp: datetime
 
     store_id: int
     product_id: int
+    store: Store
+    product: Product
 
-    store: StoreT
-    product: ProductT
 
-    class Config:
+# ---------------------------------------
 
-        from_attributes = True
-"""
+
+class ProductQuery(pydantic.BaseModel):
+    """Schema for how product searches should look like."""
+    stores: set[int]
+    queries: list[dict[str, str]]
+
+    model_config = pydantic.ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
+            "examples": [
+                {
+                    "stores": [
+                        542862479,
+                        647396324,
+                        515451524
+                    ],
+                    "queries": [
+                        {"query": "Maito Laktoositon 1L",
+                         "category": "Maito, munat ja rasvat"},
+                        {"query": "Naudan Jauheliha 400g",
+                         "category": ""},
+                        {"query": "Leipä",
+                         "category": ""}
+                    ]
+                }
+            ]
+        })

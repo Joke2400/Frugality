@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Engine
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import DeclarativeBase
 from fastapi import HTTPException
 
@@ -29,7 +29,7 @@ class DBContext:
         """
         Create engine and sessionmaker, call create_all().
 
-        Must be called once before context manager is used.
+        Must be called before the context manager is used for the first time.
         """
         cls.engine = create_engine(url=url)
         cls._sessionmaker = sessionmaker(bind=cls.engine)
@@ -49,22 +49,13 @@ class DBContext:
         try:
             if exc_type is None:
                 self.session.commit()
-                logger.debug("DBContext: Committed the database transaction.")
+                logger.debug(
+                    "DBContext: Committed the database transaction.")
             else:
                 self.session.rollback()
-                logger.debug("DBContext: Rolled back the database transaction.")
-        except IntegrityError as err:
-            # Re-raising in order to handle elsewhere.
-            # NOTE: Should maybe consider another solution in the future...
-            # Raising http exception works since its called from a route,
-            # But its very much unclear why HTTPException is called,
-            # Need to just not catch the integrity error or just create
-            # a custom error type for this.
-            self.session.rollback()
-            raise HTTPException(
-                status_code=422, detail="Unable to add record.") from err
-
-        except SQLAlchemyError as err:  # THIS ERROR IS TOO GENERIC; CHANGE LATER
+                logger.debug(
+                    "DBContext: Rolled back the database transaction.")
+        except SQLAlchemyError as err:
             self.session.rollback()
             logger.exception(err)
         finally:
