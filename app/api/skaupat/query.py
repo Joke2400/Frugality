@@ -78,19 +78,20 @@ def build_store_search_vars(value: str) -> dict:
 
 
 def build_product_search_vars(
-        query: dict[str, str | int],
+        store_id: int,
+        query: dict[str, str],
         limit: int = 24) -> dict:
     """Build the variables dict for use in a product search."""
     return {
-        "StoreID": query["store_id"],
+        "StoreID": store_id,
         "query": query["query"],
-        "slugs": query["slugs"],
+        "slugs": query["category"],
         "limit": limit
     }
 
 
 async def send_product_query(
-        query: dict[str, str | int], params: dict[str, Any]
+        query: dict[str, str], params: dict[str, Any]
         ) -> tuple[
             dict[str, str | int],
             list[
@@ -110,8 +111,8 @@ async def send_product_query(
 
 
     Args:
-        query (dict[str, str  |  int]):
-        A dict containing the store id, query string & query category.
+        query (dict[str, str]):
+        A dict containing the query string & query category.
         params (dict[str, Any]):
         The request & query parameters to be used with the request.
 
@@ -125,7 +126,7 @@ async def send_product_query(
                 ]
             ]
         ]:
-        Returns tuple with the first item being a dict with the query details.
+        Return a tuple with the first item being a dict with the query details.
         The second item is a list with all the parsed product items inside it.
         Each parsed item is a tuple containing two different pydantic schemas.
     """

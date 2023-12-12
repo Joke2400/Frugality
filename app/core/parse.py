@@ -80,10 +80,14 @@ def parse_store_brand_from_string(string: str) -> str | None:
     return None
 
 
-def prepare_response_dict(response: httpx.Response) -> dict | None:
+def prepare_response_dict(response: httpx.Response | None) -> dict | None:
     """Convert httpx.Response to python dict.
 
-    Returns 'None' if a json.JSONDecodeError is raised."""
+    Returns type 'None' if a json.JSONDecodeError is raised.
+    Also returns type 'None' if the given response is of that type.
+    """
+    if response is None:
+        return None
     try:
         content = json.loads(response.text)
     except json.JSONDecodeError:
@@ -181,7 +185,7 @@ def parse_product_to_schema(
 
 def parse_product_response(
         response: httpx.Response | None,
-        query: dict[str, str | int]
+        query: dict[str, str]
         ) -> tuple[
             dict[str, str | int],
             list[
@@ -197,7 +201,7 @@ def parse_product_response(
         response (httpx.Response | None):
         The response object provided by the httpx library.
         If the given response is of type 'None', return an empty list of items.
-        query (dict[str, str  |  int]):
+        query (dict[str, str]):
         A dict containing the store id, query string & query category.
 
     Returns:
@@ -210,28 +214,34 @@ def parse_product_response(
                 ]
             ]
         ]:
-        Returns tuple with the first item being a dict with the query details.
+        Return a tuple with the first item being a dict with the query details.
         The second item is a list with all the parsed product items inside it.
         Each parsed item is a tuple containing two different pydantic schemas.
     """
-    if response is None:
-        return query, []
-    content = prepare_response_dict(response)
-    if content is None:
-        return query, []
+    # Creating new return dict to appease the linter
+    details: dict[str, str | int] = {
+        "query": query["query"],
+        "category": query["category"]
+    }
+    if (content := prepare_response_dict(response)) is None:
+        return details, []
     try:
         response_items = content["data"]["store"]["products"]["items"]
+        store_name = content["data"]["store"]["name"]
+        store_id = content["data"]["store"]["id"]
     except KeyError as err:
         logger.debug(err)
-        return query, []
+        return details, []
     if len(response_items) == 0:
         logger.debug(
-            "Returned response contained an empty 'items' key.")
-        return query, []
+            "Key 'items' was empty for store response: ('%s', %s)",
+            store_name, store_id)
+        return details, []
+    details["store_id"] = store_id
     items: list[tuple[schemas.Product, schemas.ProductData]] = []
     for i in response_items:
         item = parse_product_to_schema(i)
         if not item:
             continue
         items.append(item)
-    return query, items
+    return details, items

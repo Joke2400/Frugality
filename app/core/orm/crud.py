@@ -2,34 +2,95 @@
 from sqlalchemy import select
 from app.core.orm import models, schemas, database
 from app.core import parse
+from app.utils import LoggerManager
+
+logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 
 
-def create_store(store: schemas.Store) -> None:
-    """CRUD: Create a new Store record.
+# TODO: Implement asynchronous database operations
+# TODO: Batched/bulk commits on products / stores
+
+def add_store_record(store: schemas.Store) -> bool:
+    """Add a new 'Store' record to the database (CRUD).
+
+    Uses an EAFP approach -> attempts to add the store ->
+    if an error is raised -> the transaction gets rolled back.
 
     Args:
         store (schemas.Store):
-        Takes in a pydantic Store instance.
+        A pydantic Store instance.
+
+    Returns:
+        bool:
+        A boolean indicating if the operation was successful.
     """
-    with database.DBContext() as session:
-        db_store = models.Store(**dict(store))
-        session.add(db_store)
+    db_store = models.Store(**dict(store))
+    with database.DBContext() as context:
+        context.session.add(db_store)
+        logger.debug(
+            "Added store record: ('%s', %s) to database.",
+            db_store.store_name, db_store.store_id)
+    if context.status is database.CommitState.SUCCESS:
+        return True
+    logger.debug(
+        "Unable to add store record: ('%s', %s) to database.",
+        store.store_name, store.store_id)
+    return False
 
 
-def create_product(product: schemas.Product,
-                   data: schemas.ProductData) -> None:
-    # TODO: Add check: if product exists
-    with database.DBContext() as session:
-        db_product = models.Product(
-            **dict(product))
-        db_product_data = models.ProductData(
-            **dict(data))
-        session.add(db_product)
-        db_product.data.append(db_product_data)
+def bulk_add_store_records(stores: list[schemas.Store]) -> bool:
+    """
+    NOT IMPLEMENTED, ALWAYS RETURNS FALSE
+    TODO: IMPLEMENTATION
+    """
+    return False
+
+
+def add_product_record(product: schemas.Product) -> bool:
+    """Add a new 'Product' record to the database (CRUD).
+
+    Uses an EAFP approach -> attempts to add the product ->
+    if an error is raised -> the transaction gets rolled back.
+
+    Args:
+        product (schemas.Product):
+        A pydantic Product instance.
+
+    Returns:
+        bool:
+        A boolean indicating if the operation was successful.
+    """
+    db_product = models.Product(**dict(product))
+    with database.DBContext() as context:
+        context.session.add(db_product)
+    if context.status is database.CommitState.SUCCESS:
+        logger.debug(
+            "Added product record: ('%s', '%s) to database.",
+            product.name, product.ean)
+        return True
+    logger.debug(
+        "Unable to add product record: ('%s', '%s') to database.",
+        product.name, product.ean)
+    return False
+
+
+def add_product_data_record(product_data: schemas.ProductData) -> bool:
+    db_product_data = models.ProductData(**dict(product_data))
+    with database.DBContext() as context:
+        context.session.add(db_product_data)
+    if context.status is database.CommitState.SUCCESS:
+        logger.debug(
+            "Added product data record for: \
+            (store_id: %s, product_ean: %s) to database.")
+        return True
+    logger.debug(
+        "Unable to add product data record for: \
+        (store_id: %s, product_ean: %s) to database.")
+    return False
 
 
 def get_product_by_ean(ean: str) -> schemas.ProductDB | None:
-    """CRUD: Get Product records by product EAN.
+    """Get Product records by product EAN (CRUD).
 
     Pattern: WHERE models.Product.ean = ean
 
@@ -40,34 +101,38 @@ def get_product_by_ean(ean: str) -> schemas.ProductDB | None:
         schemas.ProductDB | None:
         A pydantic ProductDB instance or None if not found.
     """
-    with database.DBContext() as session:
+    with database.DBContext() as context:
+        session = context.session
         stmt = (
             select(models.Product)
             .where(models.Product.ean == ean)
         )
+        logger.debug("Fetching product by ean... (%s)", ean)
         product = session.scalars(stmt).one_or_none()
         if product is None:
             return None
         return schemas.ProductDB.model_validate(product)
 
 
-def get_store_by_id(query: int) -> schemas.StoreDB | None:
-    """CRUD: Get Store records by store id.
+def get_store_by_id(store_id: int) -> schemas.StoreDB | None:
+    """Get Store records by store id (CRUD).
 
-    Pattern: WHERE models.Store.store_id = query
+    Pattern: WHERE models.Store.store_id = store_id
 
     Args:
-        query (int): Store id to query using.
+        store_id (int): Store id to query using.
 
     Returns:
         schemas.StoreDB | None:
         A pydantic StoreDB instance or None if not found.
     """
-    with database.DBContext() as session:
+    with database.DBContext(read_only=True) as context:
+        session = context.session
         stmt = (
             select(models.Store)
-            .where(models.Store.store_id == query)
+            .where(models.Store.store_id == store_id)
         )
+        logger.debug("Fetching store by id... (%s)", store_id)
         store = session.scalars(stmt).one_or_none()
         if store is None:
             return None
@@ -75,7 +140,7 @@ def get_store_by_id(query: int) -> schemas.StoreDB | None:
 
 
 def get_stores_by_slug(query: str) -> list[schemas.StoreDB]:
-    """CRUD: Get Store records by store slug.
+    """Get Store records by store slug (CRUD).
 
     Parses the given string into an item slug before a query.
 
@@ -95,28 +160,37 @@ def get_stores_by_slug(query: str) -> list[schemas.StoreDB]:
         The list may be empty if no results were found.
     """
     brand = parse.parse_store_brand_from_string(query)
-    with database.DBContext() as session:
+    with database.DBContext(read_only=True) as context:
+        session = context.session
+        slug_query = parse.slugify(query)
         stmt = (
             select(models.Store)
-            .where(models.Store.slug.like(f"%{parse.slugify(query)}%"))
+            .where(models.Store.slug.like(f"%{slug_query}%"))
             )
         if brand is not None:
-            query = query.lstrip(brand.capitalize()).strip()
             stmt = stmt.where(models.Store.brand == brand)
-
+            logger.debug(
+                "Fetching stores by slug... (brand=%s, query=%s)",
+                brand, slug_query)
+        else:
+            logger.debug(
+                "Fetching stores by slug... (query=%s)",
+                slug_query)
         stmt = stmt.order_by(models.Store.store_name)
         stores = session.scalars(stmt).all()
         return [schemas.StoreDB.model_validate(i) for i in stores]
 
 
 def get_stores() -> list[schemas.StoreDB]:
-    """CRUD: Get all Store records.
+    """Get all Store records (CRUD).
 
     Returns:
         list[schemas.StoreDB]:
         A list of pydantic StoreDB instances.
         The list may be empty if no stores exist in the table.
     """
-    with database.DBContext() as session:
+    with database.DBContext(read_only=True) as context:
+        session = context.session
+        logger.debug("Fetching all stores from db...")
         stores = session.scalars(select(models.Store)).all()
         return [schemas.StoreDB.model_validate(i) for i in stores]

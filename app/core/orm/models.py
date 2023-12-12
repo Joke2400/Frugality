@@ -20,6 +20,8 @@ Base = database.Base
 # Fixing a pylint false-positive, it is in fact a callable... gg
 func: Callable
 
+# TODO: Better documentation over relationships etc
+
 
 class Store(Base):
     """An SQLAlchemy ORM mapping for a store item."""
@@ -58,12 +60,14 @@ class Product(Base):
 
     # One-To-Many relationship
     data: Mapped[List["ProductData"]] = relationship(
-        back_populates="product")
+        back_populates="product",
+        cascade="save-update, merge, delete, delete-orphan",
+        passive_deletes=True)
 
 
 class ProductData(Base):
     """An SQLAlchemy ORM mapping for a product data item."""
-    __tablename__ = "ProductRecords"
+    __tablename__ = "ProductData"
 
     # Unique identifiers
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -78,8 +82,9 @@ class ProductData(Base):
         DateTime(timezone=True), server_default=func.now())
 
     # Foreign keys for parent store id & parent product id
-    store_id: Mapped[int] = mapped_column(ForeignKey("Stores.id"))
-    product_id: Mapped[int] = mapped_column(ForeignKey("Products.id"))
+    store_id: Mapped[int] = mapped_column(ForeignKey("Stores.store_id"))
+    product_ean: Mapped[int] = mapped_column(ForeignKey(
+        "Products.ean", ondelete="CASCADE"))
 
     # Reverse sides (Many-to-One) of the One-To-Many relationships
     store: Mapped["Store"] = relationship(back_populates="products")
