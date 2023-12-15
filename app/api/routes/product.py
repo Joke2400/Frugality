@@ -1,7 +1,7 @@
 """API routes for product retrieval."""
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 
-from app.core import search, config
+from app.core import product_search, search_context as search, config
 from app.core.orm import schemas
 
 router = APIRouter()
@@ -17,7 +17,7 @@ async def product_query(
         raise HTTPException(
             detail="Too many item requests per query.",
             status_code=400)
-    strategies = [search.APIProductSearchStrategy()]
+    strategies = [product_search.APIProductSearchStrategy()]
 
     for _ in range(0, len(strategies)):
         context = search.SearchContext(strategy=strategies.pop(0))

@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException, BackgroundTasks
 
 
 from app.utils import exceptions
-from app.core import search, config
+from app.core import store_search, search_context as search, config
 from app.core.orm import schemas, models
 
 router = APIRouter()
@@ -14,8 +14,8 @@ MAX_REQUESTS_PER_QUERY = int(config.parser["API"]["max_requests_per_query"])
 async def get_store_by_name(
         store_name: str, background_tasks: BackgroundTasks
         ) -> list[models.Store] | list[schemas.StoreBase] | list:
-    strategies = [search.DBStoreSearchStrategy(),
-                  search.APIStoreSearchStrategy()]
+    strategies = [store_search.DBStoreSearchStrategy(),
+                  store_search.APIStoreSearchStrategy()]
     # Looping over strategies as the match-case syntax is the same for both
     while strategies:
         context = search.SearchContext(strategy=strategies.pop(0))

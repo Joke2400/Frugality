@@ -1,5 +1,5 @@
 """Contains CRUD operations for interaction with the database."""
-from sqlalchemy import select
+from sqlalchemy import select, insert
 from app.core.orm import models, schemas, database
 from app.core import parse
 from app.utils import LoggerManager
@@ -26,10 +26,10 @@ def add_store_record(store: schemas.Store) -> bool:
     """
     db_store = models.Store(**dict(store))
     with database.DBContext() as context:
-        context.session.add(db_store)
         logger.debug(
-            "Added store record: ('%s', %s) to database.",
+            "Adding store record: ('%s', %s) to database...",
             db_store.store_name, db_store.store_id)
+        context.session.add(db_store)
     if context.status is database.CommitState.SUCCESS:
         return True
     logger.debug(
@@ -62,15 +62,23 @@ def add_product_record(product: schemas.Product) -> bool:
     """
     db_product = models.Product(**dict(product))
     with database.DBContext() as context:
+        logger.debug(
+            "Adding product record: ('%s', '%s) to database...",
+            product.name, product.ean)
         context.session.add(db_product)
     if context.status is database.CommitState.SUCCESS:
-        logger.debug(
-            "Added product record: ('%s', '%s) to database.",
-            product.name, product.ean)
         return True
     logger.debug(
         "Unable to add product record: ('%s', '%s') to database.",
         product.name, product.ean)
+    return False
+
+
+def bulk_add_product_records(products: list[schemas.Product]) -> bool:
+    """
+    NOT IMPLEMENTED, ALWAYS RETURNS FALSE
+    TODO: IMPLEMENTATION
+    """
     return False
 
 
@@ -86,6 +94,23 @@ def add_product_data_record(product_data: schemas.ProductData) -> bool:
     logger.debug(
         "Unable to add product data record for: \
         (store_id: %s, product_ean: %s) to database.")
+    return False
+
+
+def bulk_add_product_data_records(
+        data: list[tuple[schemas.ProductData, int, str]]) -> bool:
+    dicts = []
+    for i in data:
+        item = dict(i[0])
+        item["store_id"], item["product_ean"] = i[1], i[2]
+        dicts.append(item)
+    with database.DBContext() as context:
+        context.session.execute(
+            insert(models.ProductData),
+            [*dicts]
+        )
+    if context.status is database.CommitState.SUCCESS:
+        return True
     return False
 
 

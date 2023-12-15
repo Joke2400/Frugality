@@ -1,5 +1,4 @@
 """Contains background tasks used in the app."""
-from functools import partial
 from itertools import islice
 from typing import Iterable
 from app.core.orm import schemas, crud
@@ -46,26 +45,48 @@ def save_store_results(stores: list[schemas.Store]) -> None:
 
 
 def save_product_results(
-        results: ProductSearchResultT,
-        batch_size: int = 24) -> None:
+        results: ProductSearchResultT) -> None:
     """Background task for adding product records to the db."""
     logger.debug(
         "Running background task to save the retrieved product results...")
-    products = []
-    product_data = []
+    products, product_data = [], []
     for result in results:
-        products.extend(
-            list(map(lambda x: x[0], result[1])))
-        product_data.extend(
-            list(map(lambda x: (x[1], result[0]["store_id"]), result[1])))
-
-    print(products)
-    print(product_data)
+        for item_tuple in result[1]:
+            products.append(item_tuple[0])
+            product_data.append(
+                (item_tuple[1],               # ProductData
+                 int(result[0]["store_id"]),  # Store ID
+                 item_tuple[0].ean))          # Product EAN
+    save_products(products=products)
+    save_product_data(data=product_data)
 
 
 def save_products(products: list[schemas.Product]):
-    pass
+    total_count = len(products)
+    success_count = 0
+    for product in products:
+        if crud.add_product_record(product=product):
+            success_count += 1
+    logger.debug(
+        "Added %s products out of a total of %s to db. %s",
+        success_count, total_count,
+        f"Remaining: {total_count-success_count}")
 
 
-def save_product_data(product_data: list[schemas.ProductData]):
-    pass
+def save_product_data(data: list[tuple[schemas.ProductData, int, str]]):
+    total_count = 0
+    failed_batch_count = 0
+    failed_item_count = 0
+    failed_batches = []
+    for batch in batched(data, batch_size=50):
+        total_count += len(batch)
+        if not crud.bulk_add_product_data_records(batch):
+            failed_batch_count += 1
+            failed_batches.append(batch)
+
+    failed = []
+    for batch in failed_batches:
+        for item in batch:
+            if not crud.add_product_data_record(item):
+                failed_item_count += 1
+                failed.append(item)

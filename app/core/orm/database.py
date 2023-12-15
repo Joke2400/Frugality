@@ -1,11 +1,11 @@
 """Contains a database context manager."""
 from enum import Enum
-from typing import Self
+from typing_extensions import Self
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Engine
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from sqlalchemy.orm import DeclarativeBase
 
 from app.utils import LoggerManager
@@ -67,32 +67,47 @@ class DBContext:
         self.session: Session = self._sessionmaker()
         self.status = CommitState.PENDING
         logger.debug(
-            "ID: %s Opened a new database session.",
+            "[Session ID: %s] Opened a database session.",
             self.session.hash_key)
         return self
 
-    def __exit__(self, exc_type, exc_value, traceback) -> None:
+    def __exit__(self, exc_type, exc_value, traceback) -> bool:
         """Exit context & commit changes"""
-        try:
-            if exc_type is None:
-                if not self.read_only:
-                    self.session.commit()
-                    self.status = CommitState.SUCCESS
-                    logger.debug(
-                        "Successfully committed a database transaction.")
-            else:
-                self.session.rollback()
-                self.status = CommitState.FAIL
-                logger.debug(
-                    "Performed a transaction rollback due to an error.")
-        except SQLAlchemyError as err:
+        if exc_type is not None:
             self.session.rollback()
             self.status = CommitState.FAIL
             logger.debug(
-                "Performed a transaction rollback due to an error.")
+                "[Session ID: %s] Performed a rollback due to an error.",
+                self.session.hash_key)
+            return True
+        try:
+            if not self.read_only:
+                self.session.commit()
+        except IntegrityError:
+            logger.debug(
+                "Unable to add record, an integrity error was raised.")
+        except SQLAlchemyError as err:
             logger.debug(err)
-        finally:
+        else:
+            # If no error was raised:
+            self.status = CommitState.SUCCESS
+            logger.debug(
+                "[Session ID: %s] Committed the database transaction.",
+                self.session.hash_key)
             self.session.close()
             logger.debug(
-                "ID: %s Closed the database session.",
+                "[Session ID: %s] Closed the database session.",
                 self.session.hash_key)
+            return True
+
+        # If an error was raised:
+        self.session.rollback()
+        self.status = CommitState.FAIL
+        logger.debug(
+            "[Session ID: %s] Performed a rollback due to an error.",
+            self.session.hash_key)
+        self.session.close()
+        logger.debug(
+            "[Session ID: %s] Closed the database session.",
+            self.session.hash_key)
+        return True
