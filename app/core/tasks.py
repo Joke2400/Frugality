@@ -26,6 +26,14 @@ def batched(iterable: Iterable, batch_size: int):
     while batch := tuple(islice(it, batch_size)):
         yield batch
 
+def batched_call():
+    pass
+
+    dicts = []
+    for i in data:
+        item = dict(i[0])
+        item["store_id"], item["product_ean"] = i[1], i[2]
+        dicts.append(item)
 
 def save_store_results(stores: list[schemas.Store]) -> None:
     """Background task for adding store records to the db.
@@ -33,15 +41,14 @@ def save_store_results(stores: list[schemas.Store]) -> None:
     """
     logger.debug(
         "Running background task to save the retrieved store results...")
-    total_count = len(stores)
-    success_count = 0
+    total_count, successful_count = len(stores), 0
     for store in stores:
         if crud.add_store_record(store):
-            success_count += 1
+            successful_count += 1
     logger.debug(
         "Added %s stores out of a total of %s to db. %s",
-        success_count, total_count,
-        f"Remaining: {total_count-success_count}")
+        successful_count, total_count,
+        f"Was unable to add: {total_count-successful_count} stores.")
 
 
 def save_product_results(

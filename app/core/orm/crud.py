@@ -1,4 +1,5 @@
 """Contains CRUD operations for interaction with the database."""
+from typing import TypeVar
 from sqlalchemy import select, insert
 from app.core.orm import models, schemas, database
 from app.core import parse
@@ -9,6 +10,12 @@ logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 
 # TODO: Implement asynchronous database operations
 # TODO: Batched/bulk commits on products / stores
+
+SchemasAlias = schemas.Store | schemas.Product | schemas.ProductData
+ModelsAlias = models.Store | models.Product | models.ProductData
+PydanticSchemaT = TypeVar("PydanticSchemaT", bound=SchemasAlias)
+OrmModelT = TypeVar("OrmModelT", bound=ModelsAlias)
+
 
 def add_store_record(store: schemas.Store) -> bool:
     """Add a new 'Store' record to the database (CRUD).
@@ -35,14 +42,6 @@ def add_store_record(store: schemas.Store) -> bool:
     logger.debug(
         "Unable to add store record: ('%s', %s) to database.",
         store.store_name, store.store_id)
-    return False
-
-
-def bulk_add_store_records(stores: list[schemas.Store]) -> bool:
-    """
-    NOT IMPLEMENTED, ALWAYS RETURNS FALSE
-    TODO: IMPLEMENTATION
-    """
     return False
 
 
@@ -74,14 +73,6 @@ def add_product_record(product: schemas.Product) -> bool:
     return False
 
 
-def bulk_add_product_records(products: list[schemas.Product]) -> bool:
-    """
-    NOT IMPLEMENTED, ALWAYS RETURNS FALSE
-    TODO: IMPLEMENTATION
-    """
-    return False
-
-
 def add_product_data_record(product_data: schemas.ProductData) -> bool:
     db_product_data = models.ProductData(**dict(product_data))
     with database.DBContext() as context:
@@ -97,17 +88,25 @@ def add_product_data_record(product_data: schemas.ProductData) -> bool:
     return False
 
 
-def bulk_add_product_data_records(
-        data: list[tuple[schemas.ProductData, int, str]]) -> bool:
-    dicts = []
-    for i in data:
-        item = dict(i[0])
-        item["store_id"], item["product_ean"] = i[1], i[2]
-        dicts.append(item)
+def bulk_add_records(records: list[PydanticSchemaT], model: OrmModelT) -> bool:
+    """Add records to the database using a bulk insert.
+
+    Args:
+        records (list[PydanticSchemaT]):
+        The batch of items to be added to the database.
+
+    Returns:
+        bool:
+        A boolean indicating if the operation was successful.
+    """
+    items = [dict(i) for i in records]  # Convert the schemas to dicts
     with database.DBContext() as context:
+        logger.debug(
+            "Adding batch of %s '%s' records to database...",
+            len(items), records[0])
         context.session.execute(
-            insert(models.ProductData),
-            [*dicts]
+            insert(model),
+            [*items]  # Unpack dicts into statement
         )
     if context.status is database.CommitState.SUCCESS:
         return True
@@ -136,7 +135,8 @@ def get_product_by_ean(ean: str) -> schemas.ProductDB | None:
         product = session.scalars(stmt).one_or_none()
         if product is None:
             return None
-        return schemas.ProductDB.model_validate(product)
+        result: schemas.ProductDB = schemas.ProductDB.model_validate(product)
+    return result
 
 
 def get_store_by_id(store_id: int) -> schemas.StoreDB | None:
@@ -161,7 +161,8 @@ def get_store_by_id(store_id: int) -> schemas.StoreDB | None:
         store = session.scalars(stmt).one_or_none()
         if store is None:
             return None
-        return schemas.StoreDB.model_validate(store)
+        result: schemas.StoreDB = schemas.StoreDB.model_validate(store)
+    return result
 
 
 def get_stores_by_slug(query: str) -> list[schemas.StoreDB]:
@@ -203,7 +204,10 @@ def get_stores_by_slug(query: str) -> list[schemas.StoreDB]:
                 slug_query)
         stmt = stmt.order_by(models.Store.store_name)
         stores = session.scalars(stmt).all()
-        return [schemas.StoreDB.model_validate(i) for i in stores]
+        result: list[schemas.StoreDB] = [
+            schemas.StoreDB.model_validate(i) for i in stores
+        ]
+    return result
 
 
 def get_stores() -> list[schemas.StoreDB]:
@@ -218,4 +222,7 @@ def get_stores() -> list[schemas.StoreDB]:
         session = context.session
         logger.debug("Fetching all stores from db...")
         stores = session.scalars(select(models.Store)).all()
-        return [schemas.StoreDB.model_validate(i) for i in stores]
+        result: list[schemas.StoreDB] = [
+            schemas.StoreDB.model_validate(i) for i in stores
+        ]
+    return result
