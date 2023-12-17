@@ -2,6 +2,7 @@ uvicorn
 fastapi[all]
 httpx
 sqlalchemy
+sqlalchemy2-stubs
 pytest
 coverage
 pydantic

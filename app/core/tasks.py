@@ -20,20 +20,18 @@ ProductSearchResultT = \
 
 
 def batched(iterable: Iterable, batch_size: int):
+    """Batch an iterable into chunks of a certain size.
+    
+    The last batch may be smaller than the batch size.
+    
+    This function is from the official python docs, new in python 3.12
+    """
     if batch_size < 1:
         raise ValueError("Batch size must be at least 1.")
     it = iter(iterable)
     while batch := tuple(islice(it, batch_size)):
         yield batch
 
-def batched_call():
-    pass
-
-    dicts = []
-    for i in data:
-        item = dict(i[0])
-        item["store_id"], item["product_ean"] = i[1], i[2]
-        dicts.append(item)
 
 def save_store_results(stores: list[schemas.Store]) -> None:
     """Background task for adding store records to the db.

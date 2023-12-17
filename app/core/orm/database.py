@@ -85,7 +85,7 @@ class DBContext:
                 self.session.commit()
         except IntegrityError:
             logger.debug(
-                "Unable to add record, an integrity error was raised.")
+                "IntegrityError raised. Unable to complete transaction.")
         except SQLAlchemyError as err:
             logger.debug(err)
         else:

@@ -23,3 +23,5 @@ Docker notes:
 - "backend" is defined as a bind mount to the project directory
 - I've created the docker config with the intention of it being used in conjunction with the VSCode DevContainers extension.
 - Postgres credentials are currently set through environment variables. A .env file must be configured manually.
+
+Python version 3.12.1

@@ -1,5 +1,5 @@
 """Contains CRUD operations for interaction with the database."""
-from typing import TypeVar
+from typing import TypeVar, Type
 from sqlalchemy import select, insert
 from app.core.orm import models, schemas, database
 from app.core import parse
@@ -17,78 +17,38 @@ PydanticSchemaT = TypeVar("PydanticSchemaT", bound=SchemasAlias)
 OrmModelT = TypeVar("OrmModelT", bound=ModelsAlias)
 
 
-def add_store_record(store: schemas.Store) -> bool:
-    """Add a new 'Store' record to the database (CRUD).
+def create_record(record: PydanticSchemaT, model: Type[OrmModelT]) -> bool:
+    """Add a new record to the database.
 
-    Uses an EAFP approach -> attempts to add the store ->
-    if an error is raised -> the transaction gets rolled back.
 
     Args:
-        store (schemas.Store):
-        A pydantic Store instance.
+        record (PydanticSchemaT):
+            An instance of a Pydantic schema defined in schemas.py
+        model (Type[OrmModelT]):
+            The type for an ORM model defined in models.py
 
     Returns:
         bool:
-        A boolean indicating if the operation was successful.
+            Returns True if the operation was successful.
+            If an SQLAlchemy error was raised, or any other exception
+            occurred inside the context (DBContext), returns False.
     """
-    db_store = models.Store(**dict(store))
+    db_model: OrmModelT = model(**dict(record))
     with database.DBContext() as context:
         logger.debug(
-            "Adding store record: ('%s', %s) to database...",
-            db_store.store_name, db_store.store_id)
-        context.session.add(db_store)
+            "Adding a single record (%s) to the database...",
+            model.__class__.__name__)
+        context.session.add(db_model)
     if context.status is database.CommitState.SUCCESS:
         return True
     logger.debug(
-        "Unable to add store record: ('%s', %s) to database.",
-        store.store_name, store.store_id)
+        "Unable to add record %s of type [%s] to the database.",
+        model, type(model))
     return False
 
 
-def add_product_record(product: schemas.Product) -> bool:
-    """Add a new 'Product' record to the database (CRUD).
-
-    Uses an EAFP approach -> attempts to add the product ->
-    if an error is raised -> the transaction gets rolled back.
-
-    Args:
-        product (schemas.Product):
-        A pydantic Product instance.
-
-    Returns:
-        bool:
-        A boolean indicating if the operation was successful.
-    """
-    db_product = models.Product(**dict(product))
-    with database.DBContext() as context:
-        logger.debug(
-            "Adding product record: ('%s', '%s) to database...",
-            product.name, product.ean)
-        context.session.add(db_product)
-    if context.status is database.CommitState.SUCCESS:
-        return True
-    logger.debug(
-        "Unable to add product record: ('%s', '%s') to database.",
-        product.name, product.ean)
-    return False
-
-
-def add_product_data_record(product_data: schemas.ProductData) -> bool:
-    db_product_data = models.ProductData(**dict(product_data))
-    with database.DBContext() as context:
-        context.session.add(db_product_data)
-    if context.status is database.CommitState.SUCCESS:
-        logger.debug(
-            "Added product data record for: \
-            (store_id: %s, product_ean: %s) to database.")
-        return True
-    logger.debug(
-        "Unable to add product data record for: \
-        (store_id: %s, product_ean: %s) to database.")
-    return False
-
-
-def bulk_add_records(records: list[PydanticSchemaT], model: OrmModelT) -> bool:
+def bulk_create_records(
+        records: list[PydanticSchemaT], model: Type[OrmModelT]) -> bool:
     """Add records to the database using a bulk insert.
 
     Args:
@@ -102,14 +62,17 @@ def bulk_add_records(records: list[PydanticSchemaT], model: OrmModelT) -> bool:
     items = [dict(i) for i in records]  # Convert the schemas to dicts
     with database.DBContext() as context:
         logger.debug(
-            "Adding batch of %s '%s' records to database...",
-            len(items), records[0])
+            "Adding batch of %s records (%s) records to the database...",
+            len(items), records[0].__class__.__name__)
         context.session.execute(
             insert(model),
             [*items]  # Unpack dicts into statement
         )
     if context.status is database.CommitState.SUCCESS:
         return True
+    logger.debug(
+        "Unable to add batch of records of type [%s] to the database.",
+        type(items[0]))
     return False
 
 
