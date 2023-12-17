@@ -1,37 +1,33 @@
 """Contains background tasks used in the app."""
-from itertools import islice
-from typing import Iterable
-from app.core.orm import schemas, crud
+from typing import Type
+from itertools import batched
+from app.core.orm import schemas, models, crud
 from app.utils import LoggerManager
 
+from app.core.typedefs import (
+    ProductSearchResultT,
+    PydanticSchemaInT,
+    OrmModelT
+)
+
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
-ProductSearchResultT = \
-    list[
-        tuple[
-            dict[str, str | int],
-            list[
-                tuple[
-                    schemas.Product,
-                    schemas.ProductData
-                ]
-            ]
-        ]
-    ]
 
 
-def batched(iterable: Iterable, batch_size: int):
-    """Batch an iterable into chunks of a certain size.
-    
-    The last batch may be smaller than the batch size.
-    
-    This function is from the official python docs, new in python 3.12
-    """
-    if batch_size < 1:
-        raise ValueError("Batch size must be at least 1.")
-    it = iter(iterable)
-    while batch := tuple(islice(it, batch_size)):
-        yield batch
-
+def save_in_batches(
+        items: list[PydanticSchemaInT], model: Type[OrmModelT],
+        batch_size: int = 24) -> list[PydanticSchemaInT]:
+    total_item_count: int = len(items)
+    failed_count: int = 0
+    failed_batches: list[PydanticSchemaInT] = []
+    for batch in batched(iterable=items, n=batch_size):
+        if not crud.bulk_create_records(records=batch, model=model):
+            failed_count += len(batch)
+            failed_batches.append(batch)
+    logger.debug(
+        "Saved %s item(s) out of a total of %s in batches. %s",
+        total_item_count-failed_count, total_item_count,
+        f"Remaining: {failed_count}")
+    return failed_batches
 
 def save_store_results(stores: list[schemas.Store]) -> None:
     """Background task for adding store records to the db.
@@ -39,19 +35,28 @@ def save_store_results(stores: list[schemas.Store]) -> None:
     """
     logger.debug(
         "Running background task to save the retrieved store results...")
-    total_count, successful_count = len(stores), 0
-    for store in stores:
-        if crud.add_store_record(store):
-            successful_count += 1
+    #remainder = save_in_batches(
+        #items=stores, model=models.Store, batch_size=50)
+    remainder = stores
+    if len(remainder) == 0:
+        return None
     logger.debug(
-        "Added %s stores out of a total of %s to db. %s",
-        successful_count, total_count,
-        f"Was unable to add: {total_count-successful_count} stores.")
-
+        "Saving the remaining %s stores individually...",
+        len(remainder))
+    failed_count: int = 0
+    for store in remainder:
+        if not crud.create_record(record=store, model=models.Store):
+            failed_count += 1
+    logger.debug(
+        "Saved %s out of the remaining %s stores. %s",
+        len(remainder)-failed_count, len(remainder),
+        f"Unable to add {failed_count} stores, ignoring...")
+        
 
 def save_product_results(
         results: ProductSearchResultT) -> None:
     """Background task for adding product records to the db."""
+    pass
     logger.debug(
         "Running background task to save the retrieved product results...")
     products, product_data = [], []
@@ -67,6 +72,7 @@ def save_product_results(
 
 
 def save_products(products: list[schemas.Product]):
+    pass
     total_count = len(products)
     success_count = 0
     for product in products:
@@ -79,6 +85,7 @@ def save_products(products: list[schemas.Product]):
 
 
 def save_product_data(data: list[tuple[schemas.ProductData, int, str]]):
+    pass
     total_count = 0
     failed_batch_count = 0
     failed_item_count = 0

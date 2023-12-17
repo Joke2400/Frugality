@@ -1,9 +1,14 @@
 """Contains CRUD operations for interaction with the database."""
-from typing import TypeVar, Type
+from typing import Type
 from sqlalchemy import select, insert
-from app.core.orm import models, schemas, database
 from app.core import parse
+from app.core.orm import models, schemas, database
 from app.utils import LoggerManager
+
+from app.core.typedefs import (
+    PydanticSchemaInT,
+    OrmModelT
+)
 
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 
@@ -11,13 +16,8 @@ logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 # TODO: Implement asynchronous database operations
 # TODO: Batched/bulk commits on products / stores
 
-SchemasAlias = schemas.Store | schemas.Product | schemas.ProductData
-ModelsAlias = models.Store | models.Product | models.ProductData
-PydanticSchemaT = TypeVar("PydanticSchemaT", bound=SchemasAlias)
-OrmModelT = TypeVar("OrmModelT", bound=ModelsAlias)
 
-
-def create_record(record: PydanticSchemaT, model: Type[OrmModelT]) -> bool:
+def create_record(record: PydanticSchemaInT, model: Type[OrmModelT]) -> bool:
     """Add a new record to the database.
 
 
@@ -36,8 +36,8 @@ def create_record(record: PydanticSchemaT, model: Type[OrmModelT]) -> bool:
     db_model: OrmModelT = model(**dict(record))
     with database.DBContext() as context:
         logger.debug(
-            "Adding a single record (%s) to the database...",
-            model.__class__.__name__)
+            "Adding a single (%s) record to the database...",
+            type(model))
         context.session.add(db_model)
     if context.status is database.CommitState.SUCCESS:
         return True
@@ -48,7 +48,7 @@ def create_record(record: PydanticSchemaT, model: Type[OrmModelT]) -> bool:
 
 
 def bulk_create_records(
-        records: list[PydanticSchemaT], model: Type[OrmModelT]) -> bool:
+        records: list[PydanticSchemaInT], model: Type[OrmModelT]) -> bool:
     """Add records to the database using a bulk insert.
 
     Args:
@@ -62,8 +62,8 @@ def bulk_create_records(
     items = [dict(i) for i in records]  # Convert the schemas to dicts
     with database.DBContext() as context:
         logger.debug(
-            "Adding batch of %s records (%s) records to the database...",
-            len(items), records[0].__class__.__name__)
+            "Adding batch of %s (%s) records records to the database...",
+            len(items), type(records[0]))
         context.session.execute(
             insert(model),
             [*items]  # Unpack dicts into statement

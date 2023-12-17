@@ -1,5 +1,5 @@
 """Models definitions for the SQLAlchemy ORM."""
-from typing import List, Callable
+from typing import List, Callable, TypeVar
 from datetime import datetime
 
 from sqlalchemy import func
@@ -22,6 +22,10 @@ func: Callable
 
 # TODO: Better documentation over relationships etc
 
+StoreModelT = TypeVar("StoreModelT", bound="Store")
+ProductModelT = TypeVar("ProductModelT", bound="Product")
+ProductDataModelT = TypeVar("ProductDataModelT", bound="ProductData")
+ModelsAlias = StoreModelT | ProductModelT | ProductDataModelT
 
 class Store(Base):
     """An SQLAlchemy ORM mapping for a store item."""
