@@ -1,22 +1,13 @@
+"""Contains type definitions for easier re-use throughout the app."""
 from typing import TypeVar
 from app.core.orm import schemas, models
 
-# ---- Pydantic ----
-StoreT = schemas.StoreT
-ProductT = schemas.ProductT
-ProductDataT = schemas.ProductDataT
-
-# ---- SQLAlchemy ----
-StoreModelT = models.StoreModelT
-ProductModelT = models.ProductModelT
-ProductDataModelT = models.ProductDataModelT
-
 # ---- Grouped Aliases ----
-ModelsAlias = StoreModelT | ProductModelT | ProductDataModelT
-SchemasInAlias = StoreT | ProductT | ProductDataT
+ModelsAlias = models.Store | models.Product | models.ProductData
+SchemasInAlias = schemas.Store | schemas.Product | schemas.ProductData
 SchemasOutAlias = schemas.StoreDB | schemas.ProductDB | schemas.ProductDataDB
 
-# ---- TypeVars ----
+# ---- Bounded TypeVars ----
 OrmModelT = TypeVar("OrmModelT", bound=ModelsAlias)
 PydanticSchemaInT = TypeVar("PydanticSchemaInT", bound=SchemasInAlias)
 PydanticSchemaOutT = TypeVar("PydanticSchemaOutT", bound=SchemasOutAlias)

@@ -17,15 +17,11 @@ from sqlalchemy.orm import (
 from app.core.orm import database
 Base = database.Base
 
-# Fixing a pylint false-positive, it is in fact a callable... gg
-func: Callable
+
+func: Callable  # type: ignore  | Fixing a pylint false-positive
 
 # TODO: Better documentation over relationships etc
 
-StoreModelT = TypeVar("StoreModelT", bound="Store")
-ProductModelT = TypeVar("ProductModelT", bound="Product")
-ProductDataModelT = TypeVar("ProductDataModelT", bound="ProductData")
-ModelsAlias = StoreModelT | ProductModelT | ProductDataModelT
 
 class Store(Base):
     """An SQLAlchemy ORM mapping for a store item."""

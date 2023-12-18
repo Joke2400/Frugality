@@ -15,10 +15,10 @@ logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 
 def save_in_batches(
         items: list[PydanticSchemaInT], model: Type[OrmModelT],
-        batch_size: int = 24) -> list[PydanticSchemaInT]:
+        batch_size: int = 24) -> list[tuple[PydanticSchemaInT, ...]]:
     total_item_count: int = len(items)
     failed_count: int = 0
-    failed_batches: list[PydanticSchemaInT] = []
+    failed_batches: list[tuple[PydanticSchemaInT, ...]] = []
     for batch in batched(iterable=items, n=batch_size):
         if not crud.bulk_create_records(records=batch, model=model):
             failed_count += len(batch)
@@ -29,24 +29,25 @@ def save_in_batches(
         f"Remaining: {failed_count}")
     return failed_batches
 
+
 def save_store_results(stores: list[schemas.Store]) -> None:
     """Background task for adding store records to the db.
     TODO: Add batched/bulk inserts
     """
     logger.debug(
         "Running background task to save the retrieved store results...")
-    #remainder = save_in_batches(
-        #items=stores, model=models.Store, batch_size=50)
-    remainder = stores
+    remainder = save_in_batches(
+        items=stores, model=models.Store, batch_size=50)
     if len(remainder) == 0:
         return None
     logger.debug(
         "Saving the remaining %s stores individually...",
         len(remainder))
     failed_count: int = 0
-    for store in remainder:
-        if not crud.create_record(record=store, model=models.Store):
-            failed_count += 1
+    for batch in remainder:
+        for store in batch:
+            if not crud.create_record(record=store, model=models.Store):
+                failed_count += 1
     logger.debug(
         "Saved %s out of the remaining %s stores. %s",
         len(remainder)-failed_count, len(remainder),

@@ -1,5 +1,5 @@
 """Contains CRUD operations for interaction with the database."""
-from typing import Type
+from typing import Type, Sequence
 from sqlalchemy import select, insert
 from app.core import parse
 from app.core.orm import models, schemas, database
@@ -11,10 +11,7 @@ from app.core.typedefs import (
 )
 
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
-
-
 # TODO: Implement asynchronous database operations
-# TODO: Batched/bulk commits on products / stores
 
 
 def create_record(record: PydanticSchemaInT, model: Type[OrmModelT]) -> bool:
@@ -48,7 +45,7 @@ def create_record(record: PydanticSchemaInT, model: Type[OrmModelT]) -> bool:
 
 
 def bulk_create_records(
-        records: list[PydanticSchemaInT], model: Type[OrmModelT]) -> bool:
+        records: Sequence[PydanticSchemaInT], model: Type[OrmModelT]) -> bool:
     """Add records to the database using a bulk insert.
 
     Args:
@@ -59,7 +56,7 @@ def bulk_create_records(
         bool:
         A boolean indicating if the operation was successful.
     """
-    items = [dict(i) for i in records]  # Convert the schemas to dicts
+    items: list[dict] = [dict(i) for i in records]  # Convert to dicts
     with database.DBContext() as context:
         logger.debug(
             "Adding batch of %s (%s) records records to the database...",
