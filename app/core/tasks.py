@@ -1,5 +1,5 @@
 """Contains background tasks used in the app."""
-from typing import Type
+from typing import Type, Sequence
 from itertools import batched
 from app.core.orm import schemas, models, crud
 from app.utils import LoggerManager
@@ -14,8 +14,22 @@ logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 
 
 def save_in_batches(
-        items: list[PydanticSchemaInT], model: Type[OrmModelT],
+        items: Sequence[PydanticSchemaInT], model: Type[OrmModelT],
         batch_size: int = 24) -> list[tuple[PydanticSchemaInT, ...]]:
+    """Convert a Sequence into batches & call bulk create on each batch.
+
+    Args:
+        items (Sequence[PydanticSchemaInT]):
+            The sequence of items to be saved in batches.
+        model (Type[OrmModelT]):
+            The type of the ORM model that the items will be converted to.
+        batch_size (int, optional):
+            The size of each batch. Defaults to 24.
+
+    Returns:
+        list[tuple[PydanticSchemaInT, ...]]:
+            Returns the failed batches (if any) as a list of tuples.
+    """
     total_item_count: int = len(items)
     failed_count: int = 0
     failed_batches: list[tuple[PydanticSchemaInT, ...]] = []
@@ -31,28 +45,34 @@ def save_in_batches(
 
 
 def save_store_results(stores: list[schemas.Store]) -> None:
-    """Background task for adding store records to the db.
-    TODO: Add batched/bulk inserts
+    """Background task for saving Store records into the database.
+
+    Attempts to add the Store(s) in batches using a bulk insert.
+    For each failed batch, attempt to add that batch's records
+    individually.
+
+    Args:
+        stores (list[schemas.Store]):
+            The list of stores to be added.
     """
     logger.debug(
         "Running background task to save the retrieved store results...")
     remainder = save_in_batches(
         items=stores, model=models.Store, batch_size=50)
-    if len(remainder) == 0:
-        return None
-    logger.debug(
-        "Saving the remaining %s stores individually...",
-        len(remainder))
-    failed_count: int = 0
-    for batch in remainder:
-        for store in batch:
-            if not crud.create_record(record=store, model=models.Store):
-                failed_count += 1
-    logger.debug(
-        "Saved %s out of the remaining %s stores. %s",
-        len(remainder)-failed_count, len(remainder),
-        f"Unable to add {failed_count} stores, ignoring...")
-        
+    if len(remainder) != 0:
+        logger.debug(
+            "Saving the remaining %s stores individually...",
+            len(remainder))
+        failed_count: int = 0
+        for batch in remainder:
+            for store in batch:
+                if not crud.create_record(record=store, model=models.Store):
+                    failed_count += 1
+        logger.debug(
+            "Saved %s out of the remaining %s stores. %s",
+            len(remainder)-failed_count, len(remainder),
+            f"Unable to add {failed_count} stores, ignoring...")
+
 
 def save_product_results(
         results: ProductSearchResultT) -> None:
