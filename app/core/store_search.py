@@ -84,7 +84,7 @@ class APIStoreSearchStrategy(patterns.Strategy):
                             len(data), context.query)
                 context.status = SearchState.SUCCESS
                 context.background_tasks.add_task(
-                    tasks.save_store_results, stores=data)
+                    tasks.save_store_results, results=data)
                 return context.status, data
             case _ as data:
                 raise exceptions.InvalidMatchCaseError(

@@ -6,20 +6,43 @@ from app.utils import LoggerManager
 
 from app.core.typedefs import (
     ProductSearchResultT,
-    PydanticSchemaInT,
-    OrmModelT
+    OrmModelT,
+    SchemaInOrDict
 )
 
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 
+# TODO: Asynchronous operations
 
-def save_in_batches(
-        items: Sequence[PydanticSchemaInT], model: Type[OrmModelT],
-        batch_size: int = 24) -> list[tuple[PydanticSchemaInT, ...]]:
-    """Convert a Sequence into batches & call bulk create on each batch.
+
+def save_one_by_one(
+        items: Sequence[SchemaInOrDict], model: Type[OrmModelT]) -> int:
+    """Add a sequence of items to the database one-by-one.
 
     Args:
-        items (Sequence[PydanticSchemaInT]):
+        items (Sequence[SchemaInOrDict]):
+            The sequence of items to be saved.
+        model (Type[OrmModelT]):
+            The type of the ORM model that the items will be converted to.
+
+    Returns:
+        int:
+            Returns an int to indicate how many items could not be added.
+    """
+    failed_count: int = 0
+    for store in items:
+        if not crud.create_record(record=store, model=model):
+            failed_count += 1
+    return failed_count
+
+
+def save_in_batches(
+        items: Sequence[SchemaInOrDict], model: Type[OrmModelT],
+        batch_size: int = 24) -> list[tuple[SchemaInOrDict, ...]]:
+    """Convert a sequence into batches & add each batch to the database.
+
+    Args:
+        items (Sequence[SchemaInOrDict]):
             The sequence of items to be saved in batches.
         model (Type[OrmModelT]):
             The type of the ORM model that the items will be converted to.
@@ -27,12 +50,12 @@ def save_in_batches(
             The size of each batch. Defaults to 24.
 
     Returns:
-        list[tuple[PydanticSchemaInT, ...]]:
+        list[tuple[SchemaInOrDict, ...]]:
             Returns the failed batches (if any) as a list of tuples.
     """
     total_item_count: int = len(items)
     failed_count: int = 0
-    failed_batches: list[tuple[PydanticSchemaInT, ...]] = []
+    failed_batches: list[tuple[SchemaInOrDict, ...]] = []
     for batch in batched(iterable=items, n=batch_size):
         if not crud.bulk_create_records(records=batch, model=model):
             failed_count += len(batch)
@@ -44,82 +67,68 @@ def save_in_batches(
     return failed_batches
 
 
-def save_store_results(stores: list[schemas.Store]) -> None:
-    """Background task for saving Store records into the database.
+def save_items(items: Sequence[SchemaInOrDict],
+               model: Type[OrmModelT]) -> None:
+    """Background task for saving records into the database.
 
-    Attempts to add the Store(s) in batches using a bulk insert.
+    Attempts to add the records in batches using a bulk insert.
     For each failed batch, attempt to add that batch's records
     individually.
 
     Args:
-        stores (list[schemas.Store]):
-            The list of stores to be added.
+        items (list[SchemaInOrDict]):
+            The list of items to be saved to the database.
     """
-    logger.debug(
-        "Running background task to save the retrieved store results...")
     remainder = save_in_batches(
-        items=stores, model=models.Store, batch_size=50)
+        items=items, model=model, batch_size=50)
     if len(remainder) != 0:
-        logger.debug(
-            "Saving the remaining %s stores individually...",
-            len(remainder))
+        total_count: int = 0
         failed_count: int = 0
         for batch in remainder:
-            for store in batch:
-                if not crud.create_record(record=store, model=models.Store):
-                    failed_count += 1
+            total_count += len(batch)
+            logger.debug("Saving %s item(s) one-by-one...", len(batch))
+            failed_count += save_one_by_one(items=batch, model=model)
         logger.debug(
-            "Saved %s out of the remaining %s stores. %s",
-            len(remainder)-failed_count, len(remainder),
-            f"Unable to add {failed_count} stores, ignoring...")
+            "Saved %s out of the remaining %s item(s). %s",
+            total_count-failed_count, total_count,
+            f"Unable to add {failed_count} item(s), ignoring...")
 
 
-def save_product_results(
-        results: ProductSearchResultT) -> None:
-    """Background task for adding product records to the db."""
-    pass
-    logger.debug(
-        "Running background task to save the retrieved product results...")
-    products, product_data = [], []
+def save_store_results(results: Sequence[schemas.Store]) -> None:
+    """Save store results to the database.
+
+    Intended to be used as a FastAPI background task.
+
+    Args:
+        results (Sequence[schemas.Store]):
+            The parsed store results to be saved.
+    """
+    logger.debug("Running background task to save store results...")
+    save_items(items=results, model=models.Store)
+
+
+def save_product_results(results: ProductSearchResultT) -> None:
+    """Save product results to the database.
+
+    Intended to be used as a FastAPI background task.
+
+    Args:
+        results (ProductSearchResultT):
+            The parsed product results to be saved.
+    """
+    logger.debug("Running background task to save product results...")
+    products: list[schemas.Product] = []
+    product_data: list[dict[str, str | int]] = []
     for result in results:
-        for item_tuple in result[1]:
-            products.append(item_tuple[0])
-            product_data.append(
-                (item_tuple[1],               # ProductData
-                 int(result[0]["store_id"]),  # Store ID
-                 item_tuple[0].ean))          # Product EAN
-    save_products(products=products)
-    save_product_data(data=product_data)
+        for item in result[1]:  # Accessing the result tuple
+            products.append(item[0])  # item[0] type: schemas.Product
+            data = dict(item[1])  # Convert to dict
+            data["store_id"] = int(result[0]["store_id"])
+            data["product_ean"] = str(item[0].ean)
+            product_data.append(data)
 
+    # Save the Product(s) first
+    save_items(items=products, model=models.Product)
 
-def save_products(products: list[schemas.Product]):
-    pass
-    total_count = len(products)
-    success_count = 0
-    for product in products:
-        if crud.add_product_record(product=product):
-            success_count += 1
-    logger.debug(
-        "Added %s products out of a total of %s to db. %s",
-        success_count, total_count,
-        f"Remaining: {total_count-success_count}")
-
-
-def save_product_data(data: list[tuple[schemas.ProductData, int, str]]):
-    pass
-    total_count = 0
-    failed_batch_count = 0
-    failed_item_count = 0
-    failed_batches = []
-    for batch in batched(data, batch_size=50):
-        total_count += len(batch)
-        if not crud.bulk_add_product_data_records(batch):
-            failed_batch_count += 1
-            failed_batches.append(batch)
-
-    failed = []
-    for batch in failed_batches:
-        for item in batch:
-            if not crud.add_product_data_record(item):
-                failed_item_count += 1
-                failed.append(item)
+    # Save the ProductData second
+    save_items(items=product_data, model=models.ProductData)

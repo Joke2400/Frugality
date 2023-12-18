@@ -6,21 +6,22 @@ from app.core.orm import models, schemas, database
 from app.utils import LoggerManager
 
 from app.core.typedefs import (
-    PydanticSchemaInT,
-    OrmModelT
+    OrmModelT,
+    SchemaInOrDict
 )
 
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
+
 # TODO: Implement asynchronous database operations
 
 
-def create_record(record: PydanticSchemaInT, model: Type[OrmModelT]) -> bool:
+def create_record(record: SchemaInOrDict, model: Type[OrmModelT]) -> bool:
     """Add a new record to the database.
 
 
     Args:
-        record (PydanticSchemaT):
-            An instance of a Pydantic schema defined in schemas.py
+        record (SchemaInOrDict):
+            A Pydantic Schema (IN type only, see typedefs.py) or a dict.
         model (Type[OrmModelT]):
             The type for an ORM model defined in models.py
 
@@ -30,7 +31,8 @@ def create_record(record: PydanticSchemaInT, model: Type[OrmModelT]) -> bool:
             If an SQLAlchemy error was raised, or any other exception
             occurred inside the context (DBContext), returns False.
     """
-    db_model: OrmModelT = model(**dict(record))
+    if not isinstance(record, dict):
+        db_model: OrmModelT = model(**dict(record))
     with database.DBContext() as context:
         logger.debug(
             "Adding a single (%s) record to the database...",
@@ -45,18 +47,23 @@ def create_record(record: PydanticSchemaInT, model: Type[OrmModelT]) -> bool:
 
 
 def bulk_create_records(
-        records: Sequence[PydanticSchemaInT], model: Type[OrmModelT]) -> bool:
+        records: Sequence[SchemaInOrDict],
+        model: Type[OrmModelT]) -> bool:
     """Add records to the database using a bulk insert.
 
     Args:
-        records (list[PydanticSchemaT]):
+        records (list[SchemaInOrDict]):
         The batch of items to be added to the database.
+        Items must be Pydantic Schemas (IN type only, see typedefs.py).
+        Alternatively dicts may also be passed
 
     Returns:
         bool:
         A boolean indicating if the operation was successful.
     """
-    items: list[dict] = [dict(i) for i in records]  # Convert to dicts
+    # Assuming the entire Sequence is of a consistent type
+    if not isinstance(records[0], dict):
+        items: list[dict] = [dict(i) for i in records]  # Convert to dicts
     with database.DBContext() as context:
         logger.debug(
             "Adding batch of %s (%s) records records to the database...",

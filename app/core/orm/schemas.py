@@ -8,7 +8,6 @@ import pydantic
 StoreT = TypeVar("StoreT", bound="Store")
 ProductT = TypeVar("ProductT", bound="Product")
 ProductDataT = TypeVar("ProductDataT", bound="ProductDataDB")
-SchemasAlias = StoreT | ProductT | ProductDataT
 
 # ---------------------------------------
 
