@@ -74,6 +74,7 @@ class DBContext:
     def __exit__(self, exc_type, exc_value, traceback) -> bool:
         """Exit context & commit changes"""
         if exc_type is not None:
+            logger.debug(exc_value)
             self.session.rollback()
             self.status = CommitState.FAIL
             logger.debug(
@@ -83,9 +84,6 @@ class DBContext:
         try:
             if not self.read_only:
                 self.session.commit()
-        except IntegrityError:
-            logger.debug(
-                "IntegrityError raised. Unable to complete transaction.")
         except SQLAlchemyError as err:
             logger.debug(err)
         else:

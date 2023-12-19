@@ -18,7 +18,6 @@ logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 def create_record(record: SchemaInOrDict, model: Type[OrmModelT]) -> bool:
     """Add a new record to the database.
 
-
     Args:
         record (SchemaInOrDict):
             A Pydantic Schema (IN type only, see typedefs.py) or a dict.
@@ -35,14 +34,14 @@ def create_record(record: SchemaInOrDict, model: Type[OrmModelT]) -> bool:
         db_model: OrmModelT = model(**dict(record))
     with database.DBContext() as context:
         logger.debug(
-            "Adding a single (%s) record to the database...",
-            type(model))
+            "Adding a single '%s' record to the database...",
+            record.__class__.__name__)
         context.session.add(db_model)
     if context.status is database.CommitState.SUCCESS:
         return True
     logger.debug(
-        "Unable to add record %s of type [%s] to the database.",
-        model, type(model))
+        "Unable to add record %s (%s) to the database.",
+        model, record.__class__.__name__)
     return False
 
 
@@ -61,13 +60,15 @@ def bulk_create_records(
         bool:
         A boolean indicating if the operation was successful.
     """
-    # Assuming the entire Sequence is of a consistent type
     if not isinstance(records[0], dict):
         items: list[dict] = [dict(i) for i in records]  # Convert to dicts
+    else:
+        # Assuming the entire Sequence is a list of dicts
+        items = records  # type: ignore
     with database.DBContext() as context:
         logger.debug(
-            "Adding batch of %s (%s) records records to the database...",
-            len(items), type(records[0]))
+            "Adding batch of %s '%s' records records to the database...",
+            len(items), records[0].__class__.__name__)
         context.session.execute(
             insert(model),
             [*items]  # Unpack dicts into statement
@@ -75,8 +76,8 @@ def bulk_create_records(
     if context.status is database.CommitState.SUCCESS:
         return True
     logger.debug(
-        "Unable to add batch of records of type [%s] to the database.",
-        type(items[0]))
+        "Unable to add batch of records (%s) to the database.",
+        records[0].__class__.__name__)
     return False
 
 

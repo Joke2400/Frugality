@@ -117,8 +117,7 @@ class ProductQuery(pydantic.BaseModel):
                 {
                     "stores": [
                         542862479,
-                        647396324,
-                        515451524
+                        647396324
                     ],
                     "queries": [
                         {"query": "Maito Laktoositon 1L",

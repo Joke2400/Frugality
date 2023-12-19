@@ -49,9 +49,10 @@ class Product(Base):
     # Unique identifiers
     id: Mapped[int] = mapped_column(primary_key=True)
     ean: Mapped[str] = mapped_column(unique=True)
-    name: Mapped[str] = mapped_column(unique=True)
-    slug: Mapped[str] = mapped_column(unique=True)
 
+    # Some products may have the same names but different EANs
+    name: Mapped[str] = mapped_column()
+    slug: Mapped[str] = mapped_column()
     aliases: Mapped[list[str]] = mapped_column(ARRAY(String))
     category: Mapped[str] = mapped_column()
     brand: Mapped[str] = mapped_column()

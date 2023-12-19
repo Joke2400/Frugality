@@ -53,6 +53,7 @@ def save_in_batches(
         list[tuple[SchemaInOrDict, ...]]:
             Returns the failed batches (if any) as a list of tuples.
     """
+    logger.debug("Batch size set to %s", batch_size)
     total_item_count: int = len(items)
     failed_count: int = 0
     failed_batches: list[tuple[SchemaInOrDict, ...]] = []
