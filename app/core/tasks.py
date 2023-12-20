@@ -6,7 +6,7 @@ from app.utils import LoggerManager
 
 from app.core.typedefs import (
     ProductSearchResultT,
-    OrmModelT,
+    OrmModel,
     SchemaInOrDict
 )
 
@@ -15,8 +15,8 @@ logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 # TODO: Asynchronous operations
 
 
-def save_one_by_one(
-        items: Sequence[SchemaInOrDict], model: Type[OrmModelT]) -> int:
+def save_one_by_one[ModelT: OrmModel](
+        items: Sequence[SchemaInOrDict], model: Type[ModelT]) -> int:
     """Add a sequence of items to the database one-by-one.
 
     Args:
@@ -36,8 +36,8 @@ def save_one_by_one(
     return failed_count
 
 
-def save_in_batches(
-        items: Sequence[SchemaInOrDict], model: Type[OrmModelT],
+def save_in_batches[ModelT: OrmModel](
+        items: Sequence[SchemaInOrDict], model: Type[ModelT],
         batch_size: int = 24) -> list[tuple[SchemaInOrDict, ...]]:
     """Convert a sequence into batches & add each batch to the database.
 
@@ -68,8 +68,8 @@ def save_in_batches(
     return failed_batches
 
 
-def save_items(items: Sequence[SchemaInOrDict],
-               model: Type[OrmModelT]) -> None:
+def save_items[ModelT: OrmModel](items: Sequence[SchemaInOrDict],
+               model: Type[ModelT]) -> None:
     """Background task for saving records into the database.
 
     Attempts to add the records in batches using a bulk insert.
