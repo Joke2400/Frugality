@@ -23,6 +23,8 @@ ProductSearchResultT = \
         ]
     ]
 
+# TODO: Might do good with some refactoring in this file
+
 
 class DBProductSearchStrategy(patterns.Strategy):
 

@@ -10,6 +10,8 @@ from app.utils.logging import LoggerManager
 
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 
+# TODO: Might do good with some refactoring in this file
+
 
 class DBStoreSearchStrategy(patterns.Strategy):
     """TODO: DOCSTRING"""
@@ -25,7 +27,7 @@ class DBStoreSearchStrategy(patterns.Strategy):
             crud_func = crud.get_store_by_id
         except ValueError:
             query = str(context.query)
-            crud_func = crud.get_store_by_slug
+            crud_func = crud.get_stores_by_name
         match crud_func(query):
             case [] | None:
                 context.status = SearchState.FAIL
