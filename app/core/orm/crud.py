@@ -2,7 +2,6 @@
 from typing import Type, Sequence
 from sqlalchemy import select, insert
 from sqlalchemy.sql import Select
-from app.core import parse
 from app.core.orm import models, schemas, database
 from app.utils import LoggerManager
 
@@ -168,7 +167,7 @@ def get_store_by_slug(slug: str) -> schemas.StoreDB | None:
 
 
 def get_stores_by_name(
-        name: str, brand: str | None) -> list[schemas.StoreDB]:
+        name: str, brand: str | None = None) -> list[schemas.StoreDB]:
     """Get stores by name."""
     stmt = (
         select(models.Store)
@@ -202,7 +201,7 @@ def get_product_by_slug(slug: str) -> schemas.ProductDB | None:
 
 
 def get_products_by_name(
-        name: str, category: str | None) -> list[schemas.ProductDB]:
+        name: str, category: str | None = None) -> list[schemas.ProductDB]:
     """Get products by name."""
     stmt = (
         select(models.Product)

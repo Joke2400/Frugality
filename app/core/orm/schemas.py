@@ -97,7 +97,7 @@ class ProductDataDB(ProductData):
     timestamp: datetime
 
     store_id: int
-    product_id: int
+    product_ean: int
     store: Store
     product: Product
 

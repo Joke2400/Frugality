@@ -53,7 +53,6 @@ def save_in_batches[ModelT: OrmModel](
         list[tuple[SchemaInOrDict, ...]]:
             Returns the failed batches (if any) as a list of tuples.
     """
-    logger.debug("Batch size set to %s", batch_size)
     total_item_count: int = len(items)
     failed_count: int = 0
     failed_batches: list[tuple[SchemaInOrDict, ...]] = []
@@ -69,7 +68,7 @@ def save_in_batches[ModelT: OrmModel](
 
 
 def save_items[ModelT: OrmModel](items: Sequence[SchemaInOrDict],
-               model: Type[ModelT]) -> None:
+               model: Type[ModelT], batch_size: int = 24) -> None:
     """Background task for saving records into the database.
 
     Attempts to add the records in batches using a bulk insert.
@@ -80,8 +79,10 @@ def save_items[ModelT: OrmModel](items: Sequence[SchemaInOrDict],
         items (list[SchemaInOrDict]):
             The list of items to be saved to the database.
     """
+    logger.debug("Total items to save: %s", len(items))
+    logger.debug("Batch size set to %s", batch_size)
     remainder = save_in_batches(
-        items=items, model=model, batch_size=50)
+        items=items, model=model, batch_size=batch_size)
     if len(remainder) != 0:
         total_count: int = 0
         failed_count: int = 0
@@ -90,9 +91,9 @@ def save_items[ModelT: OrmModel](items: Sequence[SchemaInOrDict],
             logger.debug("Saving %s item(s) one-by-one...", len(batch))
             failed_count += save_one_by_one(items=batch, model=model)
         logger.debug(
-            "Saved %s out of the remaining %s item(s). %s",
+            "Saved %s out of the remaining %s item(s) one-by-one. %s",
             total_count-failed_count, total_count,
-            f"Unable to add {failed_count} item(s), ignoring...")
+            f"Was unable to add {failed_count} item(s), discarding...")
 
 
 def save_store_results(results: Sequence[schemas.Store]) -> None:
@@ -105,7 +106,8 @@ def save_store_results(results: Sequence[schemas.Store]) -> None:
             The parsed store results to be saved.
     """
     logger.debug("Running background task to save store results...")
-    save_items(items=results, model=models.Store)
+    save_items(items=results, model=models.Store, batch_size=50)
+    logger.debug("Saving of store results complete.")
 
 
 def save_product_results(results: ProductSearchResultT) -> None:
@@ -129,7 +131,8 @@ def save_product_results(results: ProductSearchResultT) -> None:
             product_data.append(data)
 
     # Save the Product(s) first
-    save_items(items=products, model=models.Product)
+    save_items(items=products, model=models.Product, batch_size=24)
 
     # Save the ProductData second
-    save_items(items=product_data, model=models.ProductData)
+    save_items(items=product_data, model=models.ProductData, batch_size=50)
+    logger.debug("Saving of product results complete.")

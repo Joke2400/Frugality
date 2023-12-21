@@ -13,9 +13,9 @@ class MissingEnvironmentVar(CustomErrorBase):
     """A required environment variable was not provided."""
 
 
-class MissingSearchQuery(CustomErrorBase):
-    """At least one of the specified query fields should be provided."""
-
-
 class InvalidMatchCaseError(CustomErrorBase):
     """Pattern matching couldn't match the value against any of the cases."""
+
+
+class ExceptionInContext(CustomErrorBase):
+    """An exception occurred within the context of a context manager."""

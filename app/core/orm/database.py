@@ -9,10 +9,12 @@ from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from sqlalchemy.orm import DeclarativeBase
 
 from app.utils import LoggerManager
-
+from app.utils.exceptions import ExceptionInContext
 
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 
+
+# TODO: Better docstrings
 
 class Base(DeclarativeBase):
     """Base for SQLAlchemy models."""
@@ -54,10 +56,10 @@ class DBContext:
         # so that no data gets accidentally deleted
         if purge_all_tables:
             Base.metadata.drop_all(bind=cls._engine)
-            logger.debug(
+            logger.info(
                 "Purged all database tables. purge_all_tables was set to True")
         Base.metadata.create_all(bind=cls._engine)
-        logger.debug("STARTUP: Successfully prepared the database context.")
+        logger.info("Successfully prepared the database context.")
 
     def __init__(self, read_only: bool = False):
         self.read_only = read_only
@@ -67,45 +69,54 @@ class DBContext:
         self.session: Session = self._sessionmaker()
         self.status = CommitState.PENDING
         logger.debug(
-            "[Session ID: %s] Opened a database session.",
+            "[ID: %s] Opened the database session.",
             self.session.hash_key)
         return self
 
     def __exit__(self, exc_type, exc_value, traceback) -> bool:
-        """Exit context & commit changes"""
-        if exc_type is not None:
-            logger.debug(exc_value)
-            self.session.rollback()
-            self.status = CommitState.FAIL
-            logger.debug(
-                "[Session ID: %s] Performed a rollback due to an error.",
-                self.session.hash_key)
-            return True
+        """Commit or rollback changes, close the session."""
+        # Set status to FAIL, must thus be explicitly set later on
+        self.status = CommitState.FAIL
+        propagate_exc = False  # <-- Only relevant if an exception occurred
         try:
-            if not self.read_only:
-                self.session.commit()
+            # Check if an exception occurred within the context
+            if exc_type is None:
+                if not self.read_only:
+                    self.session.commit()
+            else:
+                # An IntegrityError within context is caught
+                if exc_type is IntegrityError:
+                    raise exc_value
+                # All other "unknown" exceptions propagate further
+                raise ExceptionInContext(exc_value)
+        except IntegrityError:
+            logger.debug(
+                "[ID: %s] Transaction raised an IntegrityError.",
+                self.session.hash_key)
         except SQLAlchemyError as err:
+            logger.exception(
+                "[ID: %s] Transaction raised an error: %s",
+                self.session.hash_key, err)
+        except ExceptionInContext as err:
             logger.debug(err)
+            propagate_exc = True
         else:
-            # If no error was raised:
+            # If no exception occurred -> set status to SUCCESS
             self.status = CommitState.SUCCESS
             logger.debug(
-                "[Session ID: %s] Committed the database transaction.",
+                "[Session ID: %s] Transaction successfully committed.",
                 self.session.hash_key)
-            self.session.close()
+        # Perform rollback if commit was not successful
+        if self.status is CommitState.FAIL:
+            self.session.rollback()
             logger.debug(
-                "[Session ID: %s] Closed the database session.",
+                "[ID: %s] Transaction was rolled back due to an error.",
                 self.session.hash_key)
-            return True
-
-        # If an error was raised:
-        self.session.rollback()
-        self.status = CommitState.FAIL
-        logger.debug(
-            "[Session ID: %s] Performed a rollback due to an error.",
-            self.session.hash_key)
         self.session.close()
         logger.debug(
-            "[Session ID: %s] Closed the database session.",
+            "[ID: %s] Closed the database session.",
             self.session.hash_key)
+        if self.status is not CommitState.SUCCESS:
+            if propagate_exc:
+                return False
         return True

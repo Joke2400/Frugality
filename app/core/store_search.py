@@ -25,7 +25,7 @@ class DBStoreSearchStrategy(patterns.Strategy):
             crud_func = crud.get_store_by_id
         except ValueError:
             query = str(context.query)
-            crud_func = crud.get_stores_by_slug
+            crud_func = crud.get_store_by_slug
         match crud_func(query):
             case [] | None:
                 context.status = SearchState.FAIL
