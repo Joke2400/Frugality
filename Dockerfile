@@ -2,10 +2,7 @@ ARG WORKDIR="/Frugality"
 ARG APPNAME="Frugality"
 ARG USERNAME="frugality"
 
-FROM python:3.11.5
-
-ARG vscode
-RUN if [[ -z "$devcontainercli" ]] ; then printf "\nERROR: This Dockerfile needs to be built with VS Code !" && exit 1; else printf "VS Code is detected: $devcontainercli"; fi
+FROM python:3.12.1
 
 ARG WORKDIR
 ARG APPNAME
@@ -29,4 +26,4 @@ COPY . .
 
 EXPOSE 80
 
-CMD ["python3", "main.py"]
+CMD ["python3", "main.py", "--container=True"]

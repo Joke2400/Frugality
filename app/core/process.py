@@ -17,7 +17,7 @@ class Process(metaclass=patterns.SingletonMeta):
     db_pass: str
     db: str
 
-    def __init__(self) -> None:
+    def __init__(self, in_container: bool = False) -> None:
         """Initialize app routes & fetch environment variables."""
         if (postgres_user := os.getenv("POSTGRES_USER")) in (None, ""):
             raise exceptions.MissingEnvironmentVar(
@@ -37,18 +37,19 @@ class Process(metaclass=patterns.SingletonMeta):
         # This check will be removed in final versions.
         if bool(config.parser["APP"]["debug"]):
             database.DBContext.prepare_context(
-                url=self.get_database_url(),
+                url=self.get_database_url(in_container),
                 purge_all_tables=True)  # Reset database tables in debug mode
             self._execute_debug_code()
         else:
             database.DBContext.prepare_context(
-                url=self.get_database_url())
+                url=self.get_database_url(in_container))
 
-    def get_database_url(self) -> str:
+    def get_database_url(self, in_container: bool = False) -> str:
         """Get database URL string."""
         auth = f"{self.db_user}:{self.db_pass}"
         # Host must currently be manually changed
         url = f"postgresql://{auth}@localhost:5432/{self.db}"
+        #url = f"postgresql://{auth}@5432:5432/db"
         return url
 
     @staticmethod
