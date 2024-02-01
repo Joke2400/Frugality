@@ -1,0 +1,29 @@
+ARG WORKDIR="/Frugality"
+ARG APPNAME="Frugality"
+ARG USERNAME="frugality"
+
+FROM python:3.12.1
+
+ARG WORKDIR
+ARG APPNAME
+ARG USERNAME
+
+ENV PYTHONBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# apt-get update && install && add custom user
+RUN apt-get update -y && apt-get install -y --no-install-recommends
+RUN adduser --system --group --home ${WORKDIR} ${USERNAME}
+USER ${USERNAME}
+
+# Install requirements
+WORKDIR /home/${WORKDIR}
+COPY  ./requirements.txt .
+RUN pip3 install --no-cache-dir --upgrade -r requirements.txt
+
+# Copy files
+COPY . .
+
+EXPOSE 80
+
+CMD ["python3", "main.py", "--container=True"]

@@ -1,0 +1,11 @@
+uvicorn
+fastapi[all]
+httpx
+sqlalchemy
+sqlalchemy2-stubs
+pytest
+coverage
+pydantic
+python-dotenv
+psycopg2
+ariadne

@@ -1,4 +1,16 @@
+"""Python implementations for standard design patterns."""
 from abc import ABC, abstractmethod
+from collections import deque
+from typing import (
+    TypeVar,
+    Any,
+    Generic,
+    Callable
+)
+from typing_extensions import Self
+
+StrategyT = TypeVar("StrategyT", bound="Strategy")
+StrategyContextT = TypeVar("StrategyContextT", bound="StrategyContext")
 
 
 class Validator(ABC):
@@ -61,3 +73,51 @@ class SingletonMeta(type):
             instance = super().__call__(*args, **kwargs)
             cls._instances[cls] = instance
         return cls._instances[cls]
+
+    @classmethod
+    def _debug_clear(cls):
+        """Clear the instances dict."""
+        cls._instances = {}
+
+
+T = TypeVar("T")
+
+
+class TreeNode(Generic[T]):
+    """A Node class representing a single element in a tree data structure."""
+
+    def __init__(self, data: T) -> None:
+        """Initialize node with data."""
+        self.data: Any = data
+        self.children: list[TreeNode[T]] = []
+        self.parent: TreeNode[T] | None = None
+
+    def add_child(self, child: Self) -> None:
+        """Add a child to this node. Set child parent to this node."""
+        child.parent = self
+        self.children.append(child)
+
+
+class StrategyContext(ABC, Generic[StrategyT]):
+    """An ABC for a context class that executes strategies."""
+    strategy: StrategyT
+
+    def __init__(self, strategy: StrategyT) -> None:
+        self.strategy = strategy
+
+    @abstractmethod
+    async def execute(self, *args: Any, **kwargs: Any):
+        """Implement this abstractmethod when inheriting."""
+
+
+class Strategy(ABC, Generic[StrategyContextT]):
+    """ABC for a strategy pattern."""
+
+    @staticmethod
+    @abstractmethod
+    async def execute(context: StrategyContextT):
+        """Implement this abstractmethod when inheriting."""
+
+    @classmethod
+    def __repr__(cls) -> str:
+        return f"<{cls.__name__}>"

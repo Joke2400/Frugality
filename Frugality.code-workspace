@@ -6,15 +6,10 @@
 	],
 	"settings": {
 		"files.exclude": {
-			"**/__pycache__": true
+			"**/__pycache__": true,
+			"**/.mypy_cache": true,
+			".pytest_cache": true,
+			"frugality-env": true
 		},
-		"python.linting.flake8Enabled": true,
-		"python.linting.mypyEnabled": true,
-		"python.linting.prospectorEnabled": true,
-		"python.linting.pycodestyleEnabled": true,
-		"python.linting.pydocstyleEnabled": true,
-		"python.linting.pylamaEnabled": true,
-		"python.linting.pylintEnabled": true,
-		"python.linting.banditEnabled": true
 	},
 }

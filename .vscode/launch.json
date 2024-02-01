@@ -2,16 +2,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Frugality Flask App",
+            "name": "Python: FastAPI",
             "type": "python",
             "request": "launch",
-            "module": "flask",
-            "env": {
-                "FLASK_APP": "${workspaceFolder}/core/__init__.py",
-                "FLASK_DEBUG": "1"
-            },
+            "module": "uvicorn",
             "args": [
-                "run"
+                "main:app.app",
+                "--host",
+                "0.0.0.0",
+                "--port",
+                "80",
+                "--reload",
+                "--container=True"
             ],
             "jinja": true,
             "justMyCode": true

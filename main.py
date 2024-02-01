@@ -1,20 +1,28 @@
-from core import flask_app as app
+"""The starting point for the app."""
+import sys
+import uvicorn
+from dotenv import load_dotenv
+from app.core import process
+
+# Get the arg that the dockerfile passes in
+# This code will probably be moved elsewhere
+container = False
+for arg in sys.argv[1:]:
+    if "--container" in arg:
+        if arg.split("=")[1] in ("True", "true"):
+            container = True
+            break
+print(container)
+
+load_dotenv()
+app = process.Process(in_container=container)
 
 if __name__ == "__main__":
-    # VERY IMPORTANT: APP SECRET KEY IS SET TO HARDCODED DEFAULT
-    # IMPORT KEY FROM .TXT FILE BEFORE HOSTING
-    app.run(debug=True)
-
-    todos = """
-    TODO: NEXT-UP; SQLITE DATABASE -> PRODUCT DATA CACHING | DATA COLLECTION FOR FUTURE PRICE STATISTICS
-
-    TODO: Product filtering functionality is still not present. Implementation details still unclear.
-    Whether to do everything just in JS or to create some backend funcs aswell.
-
-    TODO: SETTINGS file, flask private-key.txt, FUTURE Gmaps Tokens.txt etc etc
-
-    TODO: LoggerManager -> Move away from the classmethods approach and just use a singleton class for
-    easier configuration of loggers.
-
-    TODO: DOCSTRINGS, some functions might still lack adequate logging...
-    """
+    uvicorn.run(
+        "main:app.app",
+        host="0.0.0.0",
+        port=80,
+        log_level="info",
+        reload=True,
+        reload_includes="*"
+    )

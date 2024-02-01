@@ -6,8 +6,8 @@ from .util_funcs import timer
 from .util_funcs import regex_search
 from .util_funcs import regex_findall
 from .util_funcs import get_quantity_from_string
-from .patterns import OneOfType
-from .patterns import SingletonMeta
+from ...app.utils.patterns import OneOfType
+from ...app.utils.patterns import SingletonMeta
 from .state import State
 from .state import Pending
 from .state import Success
