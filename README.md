@@ -3,7 +3,7 @@
 A webapp to help you find the cheapest groceries near you.
 This is a long-term project that I like to work on in my free time.
 
-**NOTE:** *Currently being rewritten with FastAPI / Postgres / Vue.js, may be a bit funky at times.*
+**NOTE:** *Currently being rewritten with FastAPI / Postgres / Vue.js, may be a bit funky at times. Work has thus far focused on rewriting the backend code.*
 
 ## What is this?
 ### Problem:
