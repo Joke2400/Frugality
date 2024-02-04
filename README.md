@@ -40,7 +40,6 @@ This is a long-term project that I like to work on in my free time.
 ## Steps:
 
 1. **Run the setup.sh install script (Linux only)**
-    - setup.sh is found in -/Frugality/backend/setup.sh
     - setup.sh creates a `.env` file with default environment variables for the apps, remember change the password environment variable.
     - **NOTE:** *Environment variables are inherently unsafe for credentials, hence the disclaimer above about hosting over the internet. This method is temporary & will be remedied at a later point.*
     - setup.sh will also install the `virtualenv` package if it's not already installed & create a new Python virtual environment at the project root.
@@ -56,7 +55,7 @@ This is a long-term project that I like to work on in my free time.
         - Windows - `./name_for_your_env/Scripts/activate`
         - Linux - `source /name_for_your_env/Scripts/activate`
     - Then install the required dependencies with pip:
-        - `pip install -r requirements.txt`
+        - `pip install -r ./backend/requirements.txt`
     
     
 3. **Run the application**

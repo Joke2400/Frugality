@@ -18,11 +18,10 @@ echo "POSTGRES_DB=$postgres_db" >> .env
 echo "POSTGRES_PORT=$postgres_port" >> .env
 echo "Created .env file with default values. Please remember to edit it with the appropriate values."
 
-
 # Install [virtualenv] if not already present
 if ! [ "$(pip3 list | grep -F virtualenv)" ]; then
     echo "Installing 'virtualenv' package..."
-    command pip3 install virtualenv
+    command sudo apt install python3-virtualenv
 else
     echo "Package 'virtualenv' is already installed. Skipping package install step..."
 fi
@@ -36,11 +35,12 @@ fi
 
 if ! [ -e "./$env_name/bin/activate" ]; then
     echo "Unable to locate env activation script inside '$env_name'. Aborting setup..."
-    exit
+    return 1 2>/dev/null
+    exit 1
 fi
 
 echo "Activating Python virtual environment..."
 command source ./$env_name/bin/activate
 echo "Installing project requirements..."
-command pip install -r requirements.txt
+command pip install -r ./backend/requirements.txt
 echo "Project setup complete."
