@@ -41,7 +41,7 @@ This is a long-term project that I like to work on in my free time.
     - POSTGRES_USER - The username for the postgres user
     - POSTGRES_PASSWORD - The password for the postgres user.
     - POSTGRES_DB - The name for the database to be used.
-    - POSTGRES_PORT - The port to host the database on (This will not need to be specified needed later on.)
+    - POSTGRES_PORT - The port to host the database on (This might not need to be specified later on.)
 
 2. **Build & run the container images using the Devcontainers extension:**
     - Press ctrl+shift+p inside of VSCode and select the *'Devcontainers: Rebuild and reopen in container'* option.

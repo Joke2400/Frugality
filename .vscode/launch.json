@@ -5,21 +5,14 @@
             "name": "Python: FastAPI",
             "type": "python",
             "request": "launch",
-            "module": "uvicorn",
+            "module": "backend.main",
             "args": [
-                "main:app.app",
-                "--host",
-                "0.0.0.0",
-                "--port",
-                "80",
-                "--reload",
-                "--container=True"
+                "--container=False"
             ],
-            "jinja": true,
             "justMyCode": true
         },
         {
-            "name": "Launch localhost",
+            "name": "Launch localhost Deprecated",
             "type": "firefox",
             "request": "launch",
             "reAttach": true,

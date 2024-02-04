@@ -5,6 +5,7 @@ services:
     container_name: FastAPIBackend
     build:
       context: .
+      dockerfile: backend_dockerfile
       args:
       - devcontainercli=true
     environment:
@@ -18,8 +19,8 @@ services:
       - database
     volumes:
       - type: bind
-        source: .
-        target: /home/Frugality
+        source: ./backend
+        target: /home/Frugality/backend
 
     deploy:
       restart_policy:
@@ -29,7 +30,7 @@ services:
         window: 60s
 
   database:
-    container_name: PostgresDatabase
+    container_name: PostgresDB
     image: postgres:16.0-alpine3.18
     environment:
       - POSTGRES_USER=${POSTGRES_USER}

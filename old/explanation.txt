@@ -1,2 +1,0 @@
-The old folder structure has been moved here temporarily.
-This folder and it's contents will be deleted after the rewrite.
