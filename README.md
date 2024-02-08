@@ -43,7 +43,7 @@ This is a long-term project that I like to work on in my free time.
     - setup.sh creates a `.env` file with default environment variables for the apps, remember change the password environment variable.
     - **NOTE:** *Environment variables are inherently unsafe for credentials, hence the disclaimer above about hosting over the internet. This method is temporary & will be remedied at a later point.*
     - setup.sh will also install the `virtualenv` package if it's not already installed & create a new Python virtual environment at the project root.
-    - This allows the backend to be run from outside a container *(for debugging purposes)*, although the database url in /backend/app/process.py currently needs to be manually changed for the backend to be able to connect to the database.
+    - This allows the backend to be run from outside a container *(for debugging purposes)*.
 
 2. **Or if you want to do this manually (Or you're running Windows)**
 
@@ -60,7 +60,6 @@ This is a long-term project that I like to work on in my free time.
     
 3. **Run the application**
     
-
     **Run the backend inside the container**
     - Press ctrl+shift+p inside of VSCode and select the *'Devcontainers: Rebuild and reopen in container'* option.
     - Devcontainers will then build & run the docker services defined in the docker compose file.
@@ -69,9 +68,8 @@ This is a long-term project that I like to work on in my free time.
 
     **OR**
 
-
     **Run the backend locally**
-    - The postgres database used can be an external one, or the one defined by docker-compose (remember to build the project once before running the backend locally) When running the backend locally, the database url in /backend/app/process.py currently needs to be manually changed for the backend to be able to connect to the database.
+    - The postgres database used can be an external one, or the one defined by docker-compose (remember to build the project once before running the backend locally).
     - Ensure you're using the virtualenv:
         - Windows - `./name_for_your_env/Scripts/activate`
         - Linux - `source /name_for_your_env/Scripts/activate`

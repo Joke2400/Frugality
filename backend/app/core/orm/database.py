@@ -8,13 +8,14 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from sqlalchemy.orm import DeclarativeBase
 
+from backend.app.core import config
 from backend.app.utils import LoggerManager
 from backend.app.utils.exceptions import ExceptionInContext
 
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 
+DEBUG = bool(config.parser["APP"]["DEBUG"])
 
-# TODO: Better docstrings
 
 class Base(DeclarativeBase):
     """Base for SQLAlchemy models."""
@@ -43,7 +44,7 @@ class DBContext:
     read_only: bool
 
     @classmethod
-    def prepare_context(cls, url: str, purge_all_tables: bool = False):
+    def prepare_context(cls, url: str, _purge: bool = False):
         """
         Create engine and sessionmaker, call create_all().
 
@@ -52,12 +53,11 @@ class DBContext:
         cls._engine = create_engine(url=url)
         cls._sessionmaker = sessionmaker(bind=cls._engine)
 
-        # TODO: Add a separate check to prompt the user if in prod,
-        # so that no data gets accidentally deleted
-        if purge_all_tables:
+        # as a safeguard, DEBUG must also be True in app config
+        if _purge and DEBUG:
             Base.metadata.drop_all(bind=cls._engine)
             logger.info(
-                "Purged all database tables. purge_all_tables was set to True")
+                "Purged all existing database tables. _purge was set to True")
         Base.metadata.create_all(bind=cls._engine)
         logger.info("Successfully prepared the database context.")
 
@@ -84,7 +84,7 @@ class DBContext:
                 if not self.read_only:
                     self.session.commit()
             else:
-                # An IntegrityError within context is caught
+                # An IntegrityError within context is re-raised
                 if exc_type is IntegrityError:
                     raise exc_value
                 # All other "unknown" exceptions propagate further
@@ -101,12 +101,12 @@ class DBContext:
             logger.debug(err)
             propagate_exc = True
         else:
-            # If no exception occurred -> set status to SUCCESS
+            # As no exception occurred -> set status to SUCCESS
             self.status = CommitState.SUCCESS
             logger.debug(
                 "[Session ID: %s] Transaction successfully committed.",
                 self.session.hash_key)
-        # Perform rollback if commit was not successful
+        # Perform rollback as commit was not successful
         if self.status is CommitState.FAIL:
             self.session.rollback()
             logger.debug(

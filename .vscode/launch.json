@@ -3,43 +3,12 @@
     "configurations": [
         {
             "name": "Python: FastAPI",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "module": "backend.main",
             "args": [
-                "--container=False"
             ],
             "justMyCode": true
-        },
-        {
-            "name": "Launch localhost Deprecated",
-            "type": "firefox",
-            "request": "launch",
-            "reAttach": true,
-            "url": "http://127.0.0.1:5000/",
-            "webRoot": "${workspaceFolder}",
-            "pathMappings": [
-                {
-                    "url": "http://127.0.0.1:5000/static/js/index.js",
-                    "path": "${workspaceFolder}/data/static/js/index.js"
-                },
-                {
-                    "url": "http://127.0.0.1:5000/static/js/store.js",
-                    "path": "${workspaceFolder}/data/static/js/store.js"
-                },
-                {
-                    "url": "http://127.0.0.1:5000/static/js/utils.js",
-                    "path": "${workspaceFolder}/data/static/js/utils.js"
-                },
-                {
-                    "url": "http://127.0.0.1:5000/static/js/product.js",
-                    "path": "${workspaceFolder}/data/static/js/product.js"
-                },
-                {
-                    "url": "http://127.0.0.1:5000/static/js/results.js",
-                    "path": "${workspaceFolder}/data/static/js/results.js"
-                },
-            ]
         }
     ]
 }
