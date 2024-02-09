@@ -122,7 +122,7 @@ class LoggerManager(metaclass=SingletonMeta):
         return node.data["logger"]
 
     def create_logger_tree(self, rel_path: Path, config: dict,
-                           log_file_granularity: int = 2) -> TreeNode:
+                           log_file_granularity: int = 3) -> TreeNode:
         """TODO: Proper docstring for this one"""
         node = self.tree
         for index, part_name in enumerate(rel_path.parts, start=1):

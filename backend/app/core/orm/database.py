@@ -69,7 +69,7 @@ class DBContext:
         self.session: Session = self._sessionmaker()
         self.status = CommitState.PENDING
         logger.debug(
-            "[ID: %s] Opened the database session.",
+            "[Session ID: %s] Opened the database session.",
             self.session.hash_key)
         return self
 
@@ -114,7 +114,7 @@ class DBContext:
                 self.session.hash_key)
         self.session.close()
         logger.debug(
-            "[ID: %s] Closed the database session.",
+            "[Session ID: %s] Closed the database session.",
             self.session.hash_key)
         if self.status is not CommitState.SUCCESS:
             if propagate_exc:
