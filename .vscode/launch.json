@@ -2,13 +2,45 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: FastAPI",
+            "name": "Firefox Debugger",
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "url": "http://localhost:5173",
+            "pathMappings": [
+                {
+                    "url": "http://localhost:5173",
+                    "path": "${workspaceFolder}/frontend/"
+                }
+            ]
+        },
+        {
+            "name": "NPM: Debug Vue Frontend",
+            "request": "launch",
+            "type": "node",
+            "runtimeExecutable": "${userHome}/.nvm/versions/node/v16.20.0/bin/npm",
+            "runtimeArgs": [
+                "--prefix",
+                "${workspaceFolder}/frontend",
+                "run-script",
+                "dev"
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "restart": true,
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Debug FastAPI Backend",
             "type": "debugpy",
             "request": "launch",
             "module": "backend.main",
-            "args": [
-            ],
-            "justMyCode": true
+            "args": [],
+            "justMyCode": true,
+            "console": "integratedTerminal"
         }
     ]
 }
+
+
