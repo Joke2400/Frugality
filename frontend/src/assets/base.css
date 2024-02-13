@@ -1,4 +1,23 @@
 :root {
+    /* Color definitions */
+    --primary-text-light: hsl(200, 100%, 100%);
+    --primary-text-dark: hsl(hsl(0, 0%, 25%));
+    --secondary-text-dark: hsl(0, 0%, 40%);
+
+    --clr-primary-light-100: hsl(200, 60%, 80%);
+    --clr-primary-light-200: hsl(200, 60%, 70%);
+    --clr-primary-light-300: hsl(200, 60%, 60%);
+    --clr-primary-light-400: hsl(200, 60%, 50%);
+    --clr-primary-light-500: hsl(200, 60%, 40%);
+
+    --clr-foreground-light: hsl(200, 100%, 95%);
+    --clr-background-light: hsl(200, 100%, 100%);
+    /*--color-background-dark: hsl();*/
+}
+
+:root {
+    --clr-primary-text: var(--primary-text-dark);
+    --clr-background: var(--clr-background-light);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -16,8 +35,8 @@
 
 body {
     min-height: 100vh;
-    color: rgb(105, 157, 209);
-    background-color: rgb(240, 240, 240);
+    color: var(--clr-primary-text);
+    background-color: var(--clr-background);
     transition:
         color 0.5s,
         background-color 0.5s;

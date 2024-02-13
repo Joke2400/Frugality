@@ -1,32 +1,30 @@
+<template>
+    <p style="color: var(--clr-primary-light-100)">placeholder1</p>
+    <p style="color: var(--clr-primary-light-200)">placeholder2</p>
+    <p style="color: var(--clr-primary-light-300)">placeholder3</p>
+    <p style="color: var(--clr-primary-light-400)">placeholder4</p>
+    <p style="color: var(--clr-primary-light-500)">placeholder5</p>
+    <Searchbox placeholder="Search for a store" @input-event="sendStoreQuery"/>
+</template>
+
 <script setup lang="ts">
+import Searchbox from "./components/Searchbox.vue"
+import { get } from "./utils"
 
-import  { ref } from 'vue'
+const baseURL = "http://localhost:8080"
 
-let count = ref(0)
-
-function incrementCounter(): void {
-    count.value++
+async function sendStoreQuery(query: string) {
+    let s = `Sending query for: '${query}'`
+    console.log(s)
+    let json = await get(baseURL + "/stores/" + query)
+    console.log(json)
 }
 
 </script>
 
 
-<template>
-    <h1>Hello this is a test</h1>
-    <p ref="counter">Counter: {{ count }}</p>
-    <button @click="incrementCounter">
-        <span>Increment</span>
-    </button>
-</template>
-
-
-<script>
-
-</script>
-
-
 <style>
-    h1 {
-        color: red;
-    }
+#app {
+    text-align: center;
+}
 </style>

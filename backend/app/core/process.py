@@ -3,6 +3,7 @@ import os
 import sys
 from dotenv import load_dotenv
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from backend.app.core import config
 from backend.app.core.orm import database
@@ -54,6 +55,16 @@ class Process(metaclass=patterns.SingletonMeta):
         self.app.include_router(store_route.router)
         self.app.include_router(product_route.router)
 
+        # Enable CORS for frontend
+        origins = ["http://localhost:5173"]
+        self.app.add_middleware(
+            CORSMiddleware,
+            allow_origins=origins,
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"]
+        )
+
         # Determine if debug code should be executed (i.e DEBUG is set to True)
         if DEBUG:  # This check will not exist in the final version
             database.DBContext.prepare_context(
@@ -71,7 +82,7 @@ class Process(metaclass=patterns.SingletonMeta):
         auth = f"{self.postgres_user}:{self.postgres_password}"
         host = f"localhost:{self.postgres_port}/{self.postgres_db}"
         if self.container:
-            host = f"PostgresDB/{self.postgres_db}"
+            host = f"postgres_db/{self.postgres_db}"
 
         logger.info(f"Set postgres host to @{host}")
         return f"postgresql://{auth}@{host}"
