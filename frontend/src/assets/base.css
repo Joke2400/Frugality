@@ -12,7 +12,11 @@
 
     --clr-foreground-light: hsl(200, 100%, 95%);
     --clr-background-light: hsl(200, 100%, 100%);
-    /*--color-background-dark: hsl();*/
+
+    --clr-debug-red: rgba(255, 0, 0, 0.15);
+    --clr-debug-blue: rgba(0, 0, 255, 0.15);
+    --clr-debug-green: rgba(0, 128, 0, 0.15);
+    --clr-debug-yellow: rgba(255, 255, 0, 0.15);
 }
 
 :root {
@@ -45,4 +49,5 @@ body {
     font-size: 1rem;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-family: sans-serif;
 }

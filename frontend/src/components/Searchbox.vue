@@ -2,7 +2,8 @@
 import { ref } from "vue"
 
 const props = defineProps({
-    placeholder: String
+    placeholder: String,
+    items: Array
 });
 const emit = defineEmits({"input-event": String});
 let timer = ref(0);
@@ -24,13 +25,15 @@ function handleInput(event: Event): void {
     <div class="search-box">
         <input class="field" :placeholder="placeholder" @input="handleInput" />
     </div>
-
 </template>
 
 
 
 <style scoped>
 
+    .search-box {
+        background-color: var(--clr-debug-red);
+    }
     .field {
         border: 0;
         border-radius: 1rem;

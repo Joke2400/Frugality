@@ -13,7 +13,7 @@ MAX_REQUESTS_PER_QUERY = int(config.parser["API"]["max_requests_per_query"])
 
 
 @router.get("/stores/{store_name}", response_model=list[schemas.Store])
-async def get_store_by_name(
+async def get_stores(
         store_name: str, background_tasks: BackgroundTasks
         ) -> list[models.Store] | list[schemas.StoreBase] | list:
     strategies = [store_search.DBStoreSearchStrategy(),

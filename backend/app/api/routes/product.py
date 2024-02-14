@@ -12,7 +12,7 @@ MAX_REQUESTS_PER_QUERY = int(config.parser["API"]["max_requests_per_query"])
 
 
 @router.post("/products/")
-async def product_query(
+async def get_products(
         query: schemas.ProductQuery, background_tasks: BackgroundTasks):
     """
     """

@@ -4,7 +4,8 @@
     <p style="color: var(--clr-primary-light-300)">placeholder3</p>
     <p style="color: var(--clr-primary-light-400)">placeholder4</p>
     <p style="color: var(--clr-primary-light-500)">placeholder5</p>
-    <Searchbox placeholder="Search for a store" @input-event="sendStoreQuery"/>
+    <h1>Frugality</h1>
+    <Searchbox :items="storeItems" placeholder="Search for a store" @input-event="sendStoreQuery"/>
 </template>
 
 <script setup lang="ts">
@@ -12,6 +13,7 @@ import Searchbox from "./components/Searchbox.vue"
 import { get } from "./utils"
 
 const baseURL = "http://localhost:8080"
+let storeItems: [key: string][] = []
 
 async function sendStoreQuery(query: string) {
     let s = `Sending query for: '${query}'`
@@ -23,8 +25,8 @@ async function sendStoreQuery(query: string) {
 </script>
 
 
-<style>
-#app {
-    text-align: center;
+<style scoped>
+h1 {
+    font-weight: bold;
 }
 </style>
