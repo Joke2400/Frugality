@@ -1,0 +1,37 @@
+# Set the Python base image'
+FROM python:3.12.1
+
+ARG ROOTDIR="/home/Frugality"
+ARG USERNAME="frugality_backend"
+
+ENV PYTHONBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Run apt-get update & install
+RUN apt-get update -y && apt-get install -y --no-install-recommends
+
+# Create project root & user
+RUN mkdir -p ${ROOTDIR}
+RUN mkdir -p ${ROOTDIR}/backend
+RUN adduser --system --group --home ${ROOTDIR} ${USERNAME}
+RUN chown -R ${USERNAME}:${USERNAME} ${ROOTDIR}
+USER ${USERNAME}
+
+# Create backend directory and setup for VSCODE & pip
+WORKDIR ${ROOTDIR}
+COPY ./Frugality.code-workspace .
+COPY ./backend/requirements.txt ./backend/
+
+# Install the Python requirements
+WORKDIR ${ROOTDIR}/backend
+RUN pip3 install --no-cache-dir --upgrade -r requirements.txt
+
+# Copy the rest of the files
+WORKDIR ${ROOTDIR}
+COPY --chown=${USERNAME}:${USERNAME} . ./backend/
+
+# Set PYTHONPATH
+ENV PYTHONPATH="${PYTHONPATH}:${WORKDIR}"
+
+#ENTRYPOINT ["tail", "-f", "/dev/null"]
+CMD ["python3", "./backend/main.py", "--container=True"]

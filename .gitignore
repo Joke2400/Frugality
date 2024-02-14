@@ -1,7 +1,4 @@
-.mypy_cache
-__pycache__
-frugality-env
+frugality_env
 .env
 .coverage
-debug.py
 *.log

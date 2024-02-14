@@ -2,51 +2,45 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: FastAPI",
-            "type": "python",
-            "request": "launch",
-            "module": "uvicorn",
-            "args": [
-                "main:app.app",
-                "--host",
-                "0.0.0.0",
-                "--port",
-                "80",
-                "--reload",
-                "--container=True"
-            ],
-            "jinja": true,
-            "justMyCode": true
-        },
-        {
-            "name": "Launch localhost",
+            "name": "Firefox Debugger",
             "type": "firefox",
             "request": "launch",
             "reAttach": true,
-            "url": "http://127.0.0.1:5000/",
-            "webRoot": "${workspaceFolder}",
+            "url": "http://localhost:5173",
             "pathMappings": [
                 {
-                    "url": "http://127.0.0.1:5000/static/js/index.js",
-                    "path": "${workspaceFolder}/data/static/js/index.js"
-                },
-                {
-                    "url": "http://127.0.0.1:5000/static/js/store.js",
-                    "path": "${workspaceFolder}/data/static/js/store.js"
-                },
-                {
-                    "url": "http://127.0.0.1:5000/static/js/utils.js",
-                    "path": "${workspaceFolder}/data/static/js/utils.js"
-                },
-                {
-                    "url": "http://127.0.0.1:5000/static/js/product.js",
-                    "path": "${workspaceFolder}/data/static/js/product.js"
-                },
-                {
-                    "url": "http://127.0.0.1:5000/static/js/results.js",
-                    "path": "${workspaceFolder}/data/static/js/results.js"
-                },
+                    "url": "http://localhost:5173",
+                    "path": "${workspaceFolder}/frontend/"
+                }
             ]
+        },
+        {
+            "name": "NPM: Debug Vue Frontend",
+            "request": "launch",
+            "type": "node",
+            "runtimeExecutable": "${userHome}/.nvm/versions/node/v16.20.0/bin/npm",
+            "runtimeArgs": [
+                "--prefix",
+                "${workspaceFolder}/frontend",
+                "run-script",
+                "dev"
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "restart": true,
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Debug FastAPI Backend",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "backend.main",
+            "args": [],
+            "justMyCode": true,
+            "console": "integratedTerminal"
         }
     ]
 }
+
+
