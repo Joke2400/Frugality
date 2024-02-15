@@ -9,3 +9,5 @@ pydantic
 python-dotenv
 psycopg2-binary
 ariadne
+pytest
+pytest-asyncio
