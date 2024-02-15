@@ -28,7 +28,7 @@ class DBStoreSearchStrategy(patterns.Strategy):
                     None, None,
                     tuple[DBSearchState, list[schemas.StoreDB]]
                 ]:
-        """TODO: DOCSTRING"""
+        """TODO: DOCSTRING, function doesn't use async yet"""
         context: SearchContext | None = kwargs.get("context")
         if not isinstance(context, SearchContext):
             raise TypeError("Required search context was not provided.")
