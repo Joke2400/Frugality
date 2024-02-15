@@ -53,7 +53,7 @@ def crud_returns_list_of_stores(*args, **kwargs):
     ]
 
 
-async def test_db_search_by_name_default(monkeypatch: MonkeyPatch):
+async def test_search_by_name_default(monkeypatch: MonkeyPatch):
     """Testcase for when only a store name is passed in."""
     query = StoreQuery(store_name="Store Name", store_id=None)
     # DB search should not interact with fields other than query
@@ -64,11 +64,11 @@ async def test_db_search_by_name_default(monkeypatch: MonkeyPatch):
     monkeypatch.setattr(crud, "get_store_by_id", assert_never)
     result = await DBStoreSearchStrategy.execute(context=context)
     assert result[0] is DBSearchState.SUCCESS
-    assert isinstance(result[1], list)
     assert isinstance(result[1][0], Store)
+    assert len(result[1]) == 3
 
 
-async def test_db_search_by_id_default(monkeypatch: MonkeyPatch):
+async def test_search_by_id_default(monkeypatch: MonkeyPatch):
     """Testcase for when only a store id is passed in."""
     query = StoreQuery(store_name=None, store_id=123)
     # DB search should not interact with fields other than query
@@ -78,11 +78,11 @@ async def test_db_search_by_id_default(monkeypatch: MonkeyPatch):
     monkeypatch.setattr(crud, "get_store_by_id", crud_returns_single_store)
     result = await DBStoreSearchStrategy.execute(context=context)
     assert result[0] is DBSearchState.SUCCESS
-    print(result[1])
     assert isinstance(result[1][0], StoreDB)
+    assert len(result[1]) == 1
 
 
-async def test_db_search_by_both_default(monkeypatch: MonkeyPatch):
+async def test_search_by_both_default(monkeypatch: MonkeyPatch):
     """Testcase for when both name and id are passed in."""
     query = StoreQuery(store_name="Store Name", store_id=123)
     # DB search should not interact with fields other than query
@@ -93,5 +93,30 @@ async def test_db_search_by_both_default(monkeypatch: MonkeyPatch):
     result = await DBStoreSearchStrategy.execute(context=context)
     assert result[0] is DBSearchState.SUCCESS
     assert isinstance(result[1][0], StoreDB)
+    assert len(result[1]) == 1
 
 
+async def test_name_search_no_result(monkeypatch: MonkeyPatch):
+    """Testcase for when name search yields no results."""
+    query = StoreQuery(store_name="Store Name", store_id=None)
+    # DB search should not interact with fields other than query
+    context = SearchContext(
+        query=query, strategy=None, task=None)  # type: ignore
+    monkeypatch.setattr(crud, "get_stores_by_name", lambda x: [])
+    monkeypatch.setattr(crud, "get_store_by_id", assert_never)
+    result = await DBStoreSearchStrategy.execute(context=context)
+    assert result[0] is DBSearchState.FAIL
+    assert len(result[1]) == 0
+
+
+async def test_id_search_no_result(monkeypatch: MonkeyPatch):
+    """Testcase for when id search yields no results."""
+    query = StoreQuery(store_name=None, store_id=123)
+    # DB search should not interact with fields other than query
+    context = SearchContext(
+        query=query, strategy=None, task=None)  # type: ignore
+    monkeypatch.setattr(crud, "get_stores_by_name", assert_never)
+    monkeypatch.setattr(crud, "get_store_by_id", lambda x: None)
+    result = await DBStoreSearchStrategy.execute(context=context)
+    assert result[0] is DBSearchState.FAIL
+    assert len(result[1]) == 0

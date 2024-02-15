@@ -2,7 +2,15 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Firefox Debugger",
+            "name": "Pytest",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "console": "integratedTerminal",
+            "args": ["${workspaceFolder}"]
+        },
+        {
+            "name": "Firefox Debugger (does not work atm)",
             "type": "firefox",
             "request": "launch",
             "reAttach": true,
@@ -15,7 +23,7 @@
             ]
         },
         {
-            "name": "NPM: Debug Vue Frontend",
+            "name": "Debug Frontend",
             "request": "launch",
             "type": "node",
             "runtimeExecutable": "${userHome}/.nvm/versions/node/v16.20.0/bin/npm",
@@ -32,7 +40,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Python: Debug FastAPI Backend",
+            "name": "Debug Backend",
             "type": "debugpy",
             "request": "launch",
             "module": "backend.main",
@@ -42,5 +50,3 @@
         }
     ]
 }
-
-
