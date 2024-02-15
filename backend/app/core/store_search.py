@@ -2,7 +2,7 @@
 from typing import Coroutine
 
 from backend.app.api import request
-from backend.app.api.skaupat import query_utils
+from backend.app.api import request_funcs
 
 from backend.app.core import parse
 from backend.app.core import tasks
@@ -42,15 +42,15 @@ class DBStoreSearchStrategy(patterns.Strategy):
             result = crud.get_stores_by_name(query.store_name)
         match result:
             case [] | None:
-                logger.info("DB search: Failed to find items for query '%s'.",
+                logger.info("DB search: Failed to find items for query %s.",
                             context.query)
                 return DBSearchState.FAIL, []
             case list() as data:
-                logger.info("DB search: Got %s results for query '%s'.",
+                logger.info("DB search: Got %s results for query %s.",
                             len(data), context.query)
                 return DBSearchState.SUCCESS, data
             case schemas.StoreDB() as data:
-                logger.info("DB search: Got result for query '%s'.",
+                logger.info("DB search: Got result for query %s.",
                             context.query)
                 return DBSearchState.SUCCESS, [data]
             case _ as data:
@@ -76,14 +76,14 @@ class APIStoreSearchStrategy(patterns.Strategy):
             query_value: str = str(query.store_id)
         else:
             query_value: str = str(query.store_name)
-        params = query_utils.build_request_params(
+        params = request_funcs.build_request_parameters(
             method="post",
-            operation=query_utils.Operation.STORE_SEARCH,
-            variables=query_utils.build_store_search_vars(query_value),
+            operation=request_funcs.Operation.STORE_SEARCH,
+            variables=request_funcs.build_store_variables(query_value),
             timeout=10)
 
         # Fetch API response
-        logger.debug("API search: Awaiting request for query '%s'.",
+        logger.debug("API search: Awaiting request for query %s.",
                      context.query)
         if (response := await request.send_request(params=params)) is None:
             logger.error(
@@ -91,7 +91,7 @@ class APIStoreSearchStrategy(patterns.Strategy):
             return APISearchState.NO_RESPONSE, []
 
         # Parse API response
-        logger.debug("API search: Parsing response for query '%s'.",
+        logger.debug("API search: Parsing response for query %s.",
                      context.query)
         match parse.parse_store_response(response, query_value):
             case None:
@@ -99,11 +99,11 @@ class APIStoreSearchStrategy(patterns.Strategy):
                 return APISearchState.PARSE_ERROR, []
             case []:
                 logger.info(
-                    "API search: Failed to find stores for query '%s'.",
+                    "API search: Failed to find stores for query %s.",
                     context.query)
                 return APISearchState.FAIL, []
             case list() as data:
-                logger.info("API search: Got %s results for query '%s'.",
+                logger.info("API search: Got %s results for query %s.",
                             len(data), context.query)
                 context.tasks.add_task(
                     tasks.save_store_results, results=data)

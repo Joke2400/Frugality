@@ -7,8 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from backend.app.core import config
 from backend.app.core.orm import database
-from backend.app.api.routes import store as store_route
-from backend.app.api.routes import product as product_route
+from backend.app.api.routes import store_route
+from backend.app.api.routes import product_route
 from backend.app.api.routes import index as index_route
 from backend.app.utils import patterns
 from backend.app.utils import exceptions

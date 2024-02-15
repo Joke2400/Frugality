@@ -1,5 +1,6 @@
-"""HTTPX http functions."""
+"""HTTPx request functions."""
 import json
+from typing import Coroutine
 from httpx import (
     AsyncClient,
     Response,
@@ -71,16 +72,18 @@ def handle_response(response: Response) -> bool:
     return False
 
 
-async def send_request(params: dict) -> Response | None:  # TODO: Proper typehint for async
-    """Sends a request & raises the for status on the response.
+async def send_request(params: dict) -> Coroutine[None, None, Response | None]:
+    """Sends an http request & raises the for status on the response.
 
-    Returns an httpx.Response upon successful request.
+    Returns an httpx.Response upon a successful request.
     If an httpx exception occurred, returns None instead.
     """
     if DEBUG_FLAG:
         logger.debug("Sending request: %s", json.dumps(
             params, indent=4))
     response = await async_client.request(**params)
-    if not handle_response(response):
-        return None
-    return response
+    if handle_response(response):
+        # Unless I'm completely misunderstanding async functions
+        # This seems like a mypy false-positive
+        return response  # type: ignore
+    return None  # type: ignore

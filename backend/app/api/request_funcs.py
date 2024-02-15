@@ -1,4 +1,4 @@
-"""TEMP"""
+"""Functions for creating request payloads."""
 from enum import Enum
 from ariadne import load_schema_from_path
 
@@ -21,8 +21,8 @@ class Operation(str, Enum):
     STORE_SEARCH = "StoreSearch"
 
 
-def build_headers_dict() -> dict:
-    """Build the request 'headers' field dict."""
+def build_request_headers() -> dict:
+    """Build the request headers."""
     return {
         "Content-Type": "application/json",
         "Accept": "*/*",
@@ -33,8 +33,12 @@ def build_headers_dict() -> dict:
     }
 
 
-def build_json_dict(operation: Operation, variables: dict):
-    """Build the request 'json' field dict."""
+def build_graphql_request_body(operation: Operation, variables: dict):
+    """Build a GraphQL request body.
+
+    Contains operation_name, query and variables.
+    See GraphQL docs online for details.
+    """
     if not isinstance(operation, Operation):
         raise TypeError(
             "Operation must be of Enum type 'Operation'")
@@ -53,7 +57,7 @@ def build_json_dict(operation: Operation, variables: dict):
     }
 
 
-def build_request_params(
+def build_request_parameters(
         method: str, operation: Operation,
         variables: dict, timeout: int = 10):
     """Build the request parameters dictionary."""
@@ -61,24 +65,32 @@ def build_request_params(
         "method": method,
         "url": GRAPHQL_ENDPOINT,
         "timeout": timeout,
-        "headers": build_headers_dict(),
-        "json": build_json_dict(operation, variables)
+        "headers": build_request_headers(),
+        "json": build_graphql_request_body(operation, variables)
     }
 
 
-def build_store_search_vars(value: str) -> dict:
-    """Build the variables dict for use in a store search."""
+def build_store_variables(value: str) -> dict:
+    """Build the required GraphQL variables dict.
+
+    In this case the variables required when the operation name is:
+        operation.STORE_SEARCH.
+    """
     return {
         "StoreBrand": None,
         "cursor": None,
         "query": value}
 
 
-def build_product_search_vars(
+def build_product_variables(
         store_id: int,
         query: dict[str, str],
         limit: int = 24) -> dict:
-    """Build the variables dict for use in a product search."""
+    """Build the required GraphQL variables dict.
+
+    In this case the variables required when the operation name is:
+        operation.PRODUCT_SEARCH.
+    """
     return {
         "StoreID": store_id,
         "query": query["query"],

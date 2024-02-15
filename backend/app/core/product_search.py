@@ -3,7 +3,7 @@ import asyncio
 from typing import Any
 
 from backend.app.api import request
-from backend.app.api.skaupat import query_utils
+from backend.app.api import request_funcs
 
 from backend.app.core import parse
 from backend.app.core import tasks
@@ -39,10 +39,10 @@ class APIProductSearchStrategy(patterns.Strategy):
         user_query: schemas.ProductQuery = context.query
         for store_id in user_query.stores:
             for query in user_query.queries:
-                params = query_utils.build_request_params(
+                params = request_funcs.build_request_parameters(
                     method="post",
-                    operation=query_utils.Operation.PRODUCT_SEARCH,
-                    variables=query_utils.build_product_search_vars(
+                    operation=request_funcs.Operation.PRODUCT_SEARCH,
+                    variables=request_funcs.build_product_variables(
                         store_id=store_id, query=query),
                     timeout=10)
                 logger.debug(
