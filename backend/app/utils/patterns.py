@@ -96,25 +96,13 @@ class TreeNode(Generic[T]):
         self.children.append(child)
 
 
-class StrategyContext(ABC, Generic[StrategyT]):
-    """An ABC for a context class that executes strategies."""
-    strategy: StrategyT
-
-    def __init__(self, strategy: StrategyT) -> None:
-        self.strategy = strategy
-
-    @abstractmethod
-    async def execute(self, *args: Any, **kwargs: Any):
-        """Implement this abstractmethod when inheriting."""
-
-
-class Strategy(ABC, Generic[StrategyContextT]):
+class Strategy(ABC):
     """ABC for a strategy pattern."""
 
     @staticmethod
     @abstractmethod
-    async def execute(context: StrategyContextT):
-        """Implement this abstractmethod when inheriting."""
+    async def execute(*args: Any, **kwargs: Any):
+        """Implement this method when inheriting."""
 
     @classmethod
     def __repr__(cls) -> str:

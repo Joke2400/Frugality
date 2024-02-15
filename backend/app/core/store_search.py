@@ -1,4 +1,5 @@
-from typing import Callable
+"""Contains strategies for performing store searches."""
+from typing import Coroutine
 
 from backend.app.api import request
 from backend.app.api.skaupat import query_utils
@@ -6,17 +7,15 @@ from backend.app.api.skaupat import query_utils
 from backend.app.core import parse
 from backend.app.core import tasks
 from backend.app.core.search_context import SearchContext
-from backend.app.core.search_context import SearchState
+from backend.app.core.search_context import APISearchState, DBSearchState
 from backend.app.core.orm import schemas
 from backend.app.core.orm import crud
 
 from backend.app.utils import patterns
-from backend.app.utils import exceptions
+from backend.app.utils.util_funcs import assert_never
 from backend.app.utils.logging import LoggerManager
 
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
-
-# TODO: Might do good with some refactoring in this file
 
 
 class DBStoreSearchStrategy(patterns.Strategy):
@@ -24,35 +23,38 @@ class DBStoreSearchStrategy(patterns.Strategy):
 
     @staticmethod
     async def execute(
-            context: SearchContext
-            ) -> tuple[SearchState, list[schemas.StoreDB]]:  # TODO: Proper typehint for async
-        query: str | int
-        crud_func: Callable
-        try:
-            query = int(context.query)
-            crud_func = crud.get_store_by_id
-        except ValueError:
-            query = str(context.query)
-            crud_func = crud.get_stores_by_name
-        # This is too hard to read, rework this function
-        match crud_func(query):
+            *args, **kwargs
+            ) -> Coroutine[
+                    None, None,
+                    tuple[DBSearchState, list[schemas.StoreDB]]
+                ]:
+        """TODO: DOCSTRING"""
+        context: SearchContext | None = kwargs.get("context")
+        if not isinstance(context, SearchContext):
+            raise TypeError("Required search context was not provided.")
+        query: schemas.StoreQuery = context.query
+
+        # Always using the ID if it's provided, even if the ID search fails,
+        # but the name search would not (less complexity).
+        if query.store_id is not None:
+            result = crud.get_store_by_id(query.store_id)
+        else:
+            result = crud.get_stores_by_name(query.store_name)
+        match result:
             case [] | None:
-                context.status = SearchState.FAIL
-                logger.info("DB: Failed to find items for query '%s'.",
+                logger.info("DB search: Failed to find items for query '%s'.",
                             context.query)
-                return context.status, []
+                return DBSearchState.FAIL, []
             case list() as data:
-                context.status = SearchState.SUCCESS
-                logger.info("DB: Got %s results for query '%s'.",
+                logger.info("DB search: Got %s results for query '%s'.",
                             len(data), context.query)
-                return context.status, data
+                return DBSearchState.SUCCESS, data
             case schemas.StoreDB() as data:
-                context.status = SearchState.SUCCESS
-                logger.info("DB: Got result for query '%s'.", context.query)
-                return context.status, [data]
+                logger.info("DB search: Got result for query '%s'.",
+                            context.query)
+                return DBSearchState.SUCCESS, [data]
             case _ as data:
-                raise ValueError(
-                    f"Match stmt matched an undefined value: {data}")
+                assert_never(data)
 
 
 class APIStoreSearchStrategy(patterns.Strategy):
@@ -60,41 +62,51 @@ class APIStoreSearchStrategy(patterns.Strategy):
 
     @staticmethod
     async def execute(
-            context: SearchContext
-            ) -> tuple[SearchState, list[schemas.Store]]:  # TODO: Proper typehint for async
+            *args, **kwargs
+            ) -> Coroutine[
+                    None, None,
+                    tuple[APISearchState, list[schemas.Store]]
+                ]:
+        """TODO: DOCSTRING"""
+        context: SearchContext | None = kwargs.get("context")
+        if not isinstance(context, SearchContext):
+            raise TypeError("Required search context was not provided.")
+        query: schemas.StoreQuery = context.query
+        if query.store_id is not None:
+            query_value: str = str(query.store_id)
+        else:
+            query_value: str = str(query.store_name)
         params = query_utils.build_request_params(
             method="post",
             operation=query_utils.Operation.STORE_SEARCH,
-            variables=query_utils.build_store_search_vars(
-                str(context.query)),
+            variables=query_utils.build_store_search_vars(query_value),
             timeout=10)
-        logger.debug("Awaiting request for query '%s'", context.query)
-        response = await request.send_request(params=params)
-        if response is None:
-            context.status = SearchState.NO_RESPONSE
+
+        # Fetch API response
+        logger.debug("API search: Awaiting request for query '%s'.",
+                     context.query)
+        if (response := await request.send_request(params=params)) is None:
             logger.error(
                 "Received no API response to parse.")
-            return context.status, []
+            return APISearchState.NO_RESPONSE, []
 
-        logger.debug("Parsing response for query '%s'", context.query)
-        match parse.parse_store_response(response, str(context.query)):
+        # Parse API response
+        logger.debug("API search: Parsing response for query '%s'.",
+                     context.query)
+        match parse.parse_store_response(response, query_value):
             case None:
-                context.status = SearchState.PARSE_ERROR
                 logger.error("Could not parse stores from API response.")
-                return context.status, []
+                return APISearchState.PARSE_ERROR, []
             case []:
-                context.status = SearchState.FAIL
                 logger.info(
-                    "API: Failed to find items for query '%s'.",
+                    "API search: Failed to find stores for query '%s'.",
                     context.query)
-                return context.status, []
+                return APISearchState.FAIL, []
             case list() as data:
-                logger.info("API: Got %s results for query '%s'.",
+                logger.info("API search: Got %s results for query '%s'.",
                             len(data), context.query)
-                context.status = SearchState.SUCCESS
-                context.background_tasks.add_task(
+                context.tasks.add_task(
                     tasks.save_store_results, results=data)
-                return context.status, data
+                return APISearchState.SUCCESS, data
             case _ as data:
-                raise exceptions.InvalidMatchCaseError(
-                    f"Could not match value: {data} to a predefined case.")
+                assert_never(data)

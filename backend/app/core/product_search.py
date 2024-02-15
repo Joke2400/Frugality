@@ -1,3 +1,4 @@
+"""Contains strategies for performing product searches."""
 import asyncio
 from typing import Any
 
@@ -8,7 +9,7 @@ from backend.app.core import parse
 from backend.app.core import tasks
 from backend.app.core.search_context import SearchContext
 from backend.app.core.orm import schemas
-from backend.app.core.typedefs import ProductSearchResultT
+from backend.app.core.typedefs import ProductResultT
 
 from backend.app.utils import patterns
 from backend.app.utils.logging import LoggerManager
@@ -33,7 +34,7 @@ class APIProductSearchStrategy(patterns.Strategy):
     @staticmethod
     async def execute(
             context: SearchContext
-            ) -> tuple[ProductSearchResultT, ProductSearchResultT]:
+            ) -> tuple[ProductResultT, ProductResultT]:
         async_tasks = []
         user_query: schemas.ProductQuery = context.query
         for store_id in user_query.stores:

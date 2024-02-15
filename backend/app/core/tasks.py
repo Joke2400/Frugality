@@ -5,7 +5,7 @@ from itertools import batched
 from backend.app.core.orm import schemas
 from backend.app.core.orm import models
 from backend.app.core.orm import crud
-from backend.app.core.typedefs import ProductSearchResultT
+from backend.app.core.typedefs import ProductResultT
 from backend.app.core.typedefs import SchemaInOrDict
 from backend.app.core.typedefs import OrmModel
 from backend.app.utils import LoggerManager
@@ -110,7 +110,7 @@ def save_store_results(results: Sequence[schemas.Store]) -> None:
     logger.debug("Saving of store results complete.")
 
 
-def save_product_results(results: ProductSearchResultT) -> None:
+def save_product_results(results: ProductResultT) -> None:
     """Save product results to the database.
 
     Intended to be used as a FastAPI background task.

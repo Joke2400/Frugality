@@ -12,11 +12,6 @@ ProductDataT = TypeVar("ProductDataT", bound="ProductDataDB")
 # ---------------------------------------
 
 
-class StoreBase(pydantic.BaseModel):
-    """Store base schema."""
-    store_name: str
-
-
 class Store(pydantic.BaseModel):
     """Store schema for items going in/out of routes."""
     store_name: str
@@ -106,7 +101,7 @@ class ProductDataDB(ProductData):
 
 
 class ProductQuery(pydantic.BaseModel):
-    """Schema for how product searches should look like."""
+    """Schema definition for Product queries."""
     stores: set[int]
     queries: list[dict[str, str]]
 
@@ -130,3 +125,27 @@ class ProductQuery(pydantic.BaseModel):
                 }
             ]
         })
+
+
+class StoreQuery(pydantic.BaseModel):
+    """Schema definition for Store queries"""
+    store_name: str | None
+    store_id: int | None
+
+    model_config = pydantic.ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
+            "examples": [
+                {
+                    "store_name": "Prisma Olari",
+                    "store_id": 542862479
+                }
+            ]
+        })
+
+    @pydantic.model_validator(mode="after")
+    def check_either_provided(self):
+        """Check that either a name or id was provided to the model."""
+        if self.store_name is None and self.store_id is None:
+            raise ValueError("Either a name or id is required.")
+        return self

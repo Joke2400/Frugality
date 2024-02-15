@@ -1,42 +1,67 @@
 """API routes for store retrieval."""
+from typing import cast
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 
+
+from backend.app.core.store_search import (
+    DBStoreSearchStrategy,
+    APIStoreSearchStrategy
+)
+from backend.app.core.search_context import (
+    APISearchState,
+    DBSearchState,
+    SearchContext
+)
 from backend.app.core import config
-from backend.app.core import store_search
-from backend.app.core import search_context as search
 from backend.app.core.orm import schemas
 from backend.app.core.orm import models
-from backend.app.utils import exceptions
+from backend.app.core.typedefs import StoreResultT as ResultT
+from backend.app.utils.util_funcs import assert_never
 
 router = APIRouter()
 MAX_REQUESTS_PER_QUERY = int(config.parser["API"]["max_requests_per_query"])
+strategies = (
+    DBStoreSearchStrategy,
+    APIStoreSearchStrategy
+)
 
 
-@router.get("/stores/{store_name}", response_model=list[schemas.Store])
+@router.post("/stores/", response_model=list[schemas.Store])
 async def get_stores(
-        store_name: str, background_tasks: BackgroundTasks
-        ) -> list[models.Store] | list[schemas.StoreBase] | list:
-    strategies = [store_search.DBStoreSearchStrategy(),
-                  store_search.APIStoreSearchStrategy()]
-    # Looping over strategies as the match-case syntax is the same for both
-    while strategies:
-        context = search.SearchContext(strategy=strategies.pop(0))
-        match await context.execute(query=store_name.strip(),
-                                    tasks=background_tasks):
-            case [search.SearchState.SUCCESS, list()] as result:
-                return result[1]  # Return the retrieved items
-            case [search.SearchState.FAIL | search.SearchState.NO_RESPONSE,
-                  list()]:
-                if len(strategies) != 0:
-                    continue  # Skip to the next strategy as this one failed.
-                raise HTTPException(
-                    detail="Unable to retrieve items.",
-                    status_code=404)
-            case [search.SearchState.PARSE_ERROR, list()]:
-                raise HTTPException(
-                    detail="Can't parse results from external API response.",
-                    status_code=500)
-            case _ as data:
-                raise exceptions.InvalidMatchCaseError(
-                    f"Could not match value: {data} to a predefined case.")
-    return []  # Linter appeasement procedure
+            query: schemas.StoreQuery,
+            background_tasks: BackgroundTasks
+        ) -> list[models.Store] | list:
+    """Perform a store search using the specified strategies.
+
+    TODO: Improve docstring
+    """
+    for strategy in strategies:
+        with SearchContext(query=query, strategy=strategy(),
+                           task=background_tasks) as context:
+            # Cast result of await to resultT so that mypy knows it's not 'Any'
+            result: ResultT = cast(ResultT, await context.execute_strategy())
+            match result:
+                case [DBSearchState.SUCCESS |
+                      APISearchState.SUCCESS, list()] as result:
+                    return result[1]  # Return the successful result
+                case [DBSearchState.FAIL, list()]:
+                    continue  # Continue onto APISearchStrategy
+                case [APISearchState.FAIL, list()]:
+                    raise HTTPException(
+                        detail="Could not find items from external API.",
+                        status_code=404
+                    )
+                case [APISearchState.PARSE_ERROR, list()]:
+                    raise HTTPException(
+                        detail="Could not parse results from external API.",
+                        status_code=500
+                    )
+                case [APISearchState.NO_RESPONSE, list()]:
+                    raise HTTPException(
+                        detail="Could not contact external API.",
+                        status_code=500
+                    )
+                case _ as data:
+                    assert_never(data)
+    # This code should never be reached
+    assert_never(None)  # type: ignore
