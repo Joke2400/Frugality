@@ -113,6 +113,7 @@ def parse_store_response(
             Returns a list of pydantic StoreBase instances.
             Returns None if an error occurred during parsing.
     """
+    logger.debug("Parsing response for query %s.", query)
     content = prepare_response_dict(response)
     if content is None:
         logger.debug(

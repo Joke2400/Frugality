@@ -18,7 +18,7 @@ from backend.app.core.typedefs import StoreResultT as ResultT
 from backend.app.utils.util_funcs import assert_never
 
 router = APIRouter()
-MAX_REQUESTS_PER_QUERY = int(config.parser["API"]["max_requests_per_query"])
+MAX_REQUESTS_PER_QUERY = int(config.parser["APP"]["max_requests_per_query"])
 strategies = (
     DBStoreSearchStrategy,
     APIStoreSearchStrategy
@@ -36,6 +36,7 @@ async def get_stores(
     upon a failed search is the external API used.
 
     Args:
+
         query (schemas.StoreQuery):
             A store query to use in the search.
             Contains a name or id or both, see schemas.StoreQuery.
@@ -45,6 +46,7 @@ async def get_stores(
             of background tasks.
 
     Raises:
+
         HTTPException 404:
             Raises exception 404 if no items are found in response.
 
@@ -53,6 +55,7 @@ async def get_stores(
             or if API response could not be parsed.
 
     Returns:
+
         list[schemas.Store]:
             Return value is coerced into a list of type: schemas.Store.
 

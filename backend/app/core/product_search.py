@@ -22,11 +22,21 @@ logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 
 
 class DBProductSearchStrategy(patterns.Strategy):
+    """Strategy pattern implementation for searching for products from the DB.
 
+    See patterns.Strategy for ABC implementation.
+
+    Implements execute() abstractmethod, the method should
+    be called via SearchContext.execute_strategy()
+    """
     @staticmethod
-    async def execute(context: SearchContext) -> None:
-        # TODO: This function
-        pass
+    async def execute(*args, **kwargs) -> None:
+        context: SearchContext | None = kwargs.get("context")
+        query: schemas.ProductQuery = kwargs.get("query")
+        if not isinstance(context, SearchContext):
+            raise TypeError("Required search context was not provided.")
+        if not isinstance(query, schemas.ProductQuery):
+            pass
 
 
 class APIProductSearchStrategy(patterns.Strategy):

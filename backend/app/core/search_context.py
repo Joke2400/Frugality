@@ -20,8 +20,8 @@ class DBSearchState(str, Enum):
     Used in both the search functions as well as
     the route match-case statements.
     """
-    SUCCESS = "SUCCESS"
-    FAIL = "FAIL"
+    SUCCESS = "DB_SUCCESS"
+    FAIL = "DB_FAIL"
 
 
 class APISearchState(str, Enum):
@@ -59,7 +59,8 @@ class SearchContext(Generic[StrategyT]):
 
     async def execute_strategy(self, *args: Any, **kwargs: Any) -> Coroutine:  # TODO: Remember to make this hint more specific
         """Execute the current strategy with the given set of args & kwargs"""
-        return await self.strategy.execute(*args, context=self, **kwargs)
+        return await self.strategy.execute(
+            *args, query=self.query, context=self, **kwargs)
 
     def __enter__(self) -> Self:
         logger.debug(f"Starting new search using: {self.strategy} ")
