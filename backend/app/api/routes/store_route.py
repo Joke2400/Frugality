@@ -14,7 +14,6 @@ from backend.app.core.search_context import (
 )
 from backend.app.core import config
 from backend.app.core.orm import schemas
-from backend.app.core.orm import models
 from backend.app.core.typedefs import StoreResultT as ResultT
 from backend.app.utils.util_funcs import assert_never
 
@@ -30,10 +29,33 @@ strategies = (
 async def get_stores(
             query: schemas.StoreQuery,
             background_tasks: BackgroundTasks
-        ) -> list[models.Store] | list:
-    """Perform a store search using the specified strategies.
+        ) -> list[schemas.Store]:
+    """API endpoint for retrieving store queries.
 
-    TODO: Improve docstring
+    Searches prioritize the internal database and only
+    upon a failed search is the external API used.
+
+    Args:
+        query (schemas.StoreQuery):
+            A store query to use in the search.
+            Contains a name or id or both, see schemas.StoreQuery.
+
+        background_tasks (BackgroundTasks):
+            Passed in by FastAPI in order to facilitate the running
+            of background tasks.
+
+    Raises:
+        HTTPException 404:
+            Raises exception 404 if no items are found in response.
+
+        HTTPException 500:
+            Raises exception 500 if external API did not respond
+            or if API response could not be parsed.
+
+    Returns:
+        list[schemas.Store]:
+            Return value is coerced into a list of type: schemas.Store.
+
     """
     for strategy in strategies:
         with SearchContext(query=query, strategy=strategy(),
@@ -63,5 +85,5 @@ async def get_stores(
                     )
                 case _ as data:
                     assert_never(data)
-    # This code should never be reached
+    # This code should never be reached, raises AssertionError
     assert_never(None)  # type: ignore
