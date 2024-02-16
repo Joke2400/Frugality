@@ -57,7 +57,7 @@ def build_graphql_request_body(operation: Operation, variables: dict):
     }
 
 
-def build_request_parameters(
+def build_request_payload(
         method: str, operation: Operation,
         variables: dict, timeout: int = 10):
     """Build the request parameters dictionary."""

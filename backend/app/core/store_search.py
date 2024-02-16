@@ -2,7 +2,7 @@
 from typing import Coroutine
 
 from backend.app.api import request
-from backend.app.api import request_funcs
+from backend.app.api import payload
 
 from backend.app.core import parse
 from backend.app.core import tasks
@@ -19,7 +19,13 @@ logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 
 
 class DBStoreSearchStrategy(patterns.Strategy):
-    """TODO: DOCSTRING"""
+    """Strategy pattern implementation for searching for a store from the DB.
+
+    See patterns.Strategy for ABC implementation.
+
+    Implements execute() abstractmethod, method should
+    be called via SearchContext.execute_strategy()
+    """
 
     @staticmethod
     async def execute(
@@ -28,7 +34,28 @@ class DBStoreSearchStrategy(patterns.Strategy):
                     None, None,
                     tuple[DBSearchState, list[schemas.StoreDB]]
                 ]:
-        """TODO: DOCSTRING, function doesn't use async yet"""
+        """Perform a search query on the database and return a result.
+
+        TODO: Eliminate side-effects by passing a query in via kwargs.
+
+        Args:
+            context (SearchContext):
+                A search context is required to be provided.
+
+        Raises:
+            TypeError:
+                Raised if kwarg 'context' was not provided or value was not
+                an instance of SearchContext
+
+        Returns:
+            Coroutine[
+                None, None,
+                tuple[DBSearchState, list[schemas.StoreDB]]
+            ]:
+                Returns a Coroutine, final value is a tuple containing
+                a search state Enum, and the results retrieved as a list.
+                List may be empty if no results were found.
+        """
         context: SearchContext | None = kwargs.get("context")
         if not isinstance(context, SearchContext):
             raise TypeError("Required search context was not provided.")
@@ -58,7 +85,13 @@ class DBStoreSearchStrategy(patterns.Strategy):
 
 
 class APIStoreSearchStrategy(patterns.Strategy):
-    """TODO: DOCSTRING"""
+    """Strategy pattern implementation for searching for a store from the API.
+
+    See patterns.Strategy for ABC implementation.
+
+    Implements execute() abstractmethod, method should
+    be called via SearchContext.execute_strategy()
+    """
 
     @staticmethod
     async def execute(
@@ -67,7 +100,29 @@ class APIStoreSearchStrategy(patterns.Strategy):
                     None, None,
                     tuple[APISearchState, list[schemas.Store]]
                 ]:
-        """TODO: DOCSTRING"""
+        """Perform a search query on the external API and return a result.
+
+        TODO: Eliminate side-effects by passing a query in via kwargs.
+        TODO: Split function, too long & too hard to test.
+
+        Args:
+            context (SearchContext):
+                A search context is required to be provided.
+
+        Raises:
+            TypeError:
+                Raised if kwarg 'context' was not provided or value was not
+                an instance of SearchContext
+
+        Returns:
+            Coroutine[
+                None, None,
+                tuple[APISearchState, list[schemas.Store]]
+            ]:
+                Returns a Coroutine, final value is a tuple containing
+                a search state Enum, and the results retrieved as a list.
+                List may be empty if no results were found.
+        """
         context: SearchContext | None = kwargs.get("context")
         if not isinstance(context, SearchContext):
             raise TypeError("Required search context was not provided.")
@@ -76,10 +131,10 @@ class APIStoreSearchStrategy(patterns.Strategy):
             query_value: str = str(query.store_id)
         else:
             query_value: str = str(query.store_name)
-        params = request_funcs.build_request_parameters(
+        params = payload.build_request_payload(
             method="post",
-            operation=request_funcs.Operation.STORE_SEARCH,
-            variables=request_funcs.build_store_variables(query_value),
+            operation=payload.Operation.STORE_SEARCH,
+            variables=payload.build_store_variables(query_value),
             timeout=10)
 
         # Fetch API response
@@ -89,6 +144,8 @@ class APIStoreSearchStrategy(patterns.Strategy):
             logger.error(
                 "Received no API response to parse.")
             return APISearchState.NO_RESPONSE, []
+
+        # TODO: Split the above code to another function, too hard to test this
 
         # Parse API response
         logger.debug("API search: Parsing response for query %s.",
