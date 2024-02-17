@@ -149,3 +149,13 @@ class StoreQuery(pydantic.BaseModel):
         if self.store_name is None and self.store_id is None:
             raise ValueError("Either a name or id is required.")
         return self
+
+
+class ProductResponse(pydantic.BaseModel):
+    """API Product response schema"""
+    pass
+
+
+class StoreResponse(pydantic.BaseModel):
+    """API Store response schema."""
+    results: list[Store]

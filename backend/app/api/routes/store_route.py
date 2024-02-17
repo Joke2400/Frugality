@@ -25,11 +25,11 @@ strategies = (
 )
 
 
-@router.post("/stores/", response_model=list[schemas.Store])
+@router.post("/stores/", response_model=schemas.StoreResponse)
 async def get_stores(
             query: schemas.StoreQuery,
             background_tasks: BackgroundTasks
-        ) -> list[schemas.Store]:
+        ):
     """API endpoint for retrieving store queries.
 
     Searches prioritize the internal database and only
@@ -55,10 +55,8 @@ async def get_stores(
             or if API response could not be parsed.
 
     Returns:
-
-        list[schemas.Store]:
-            Return value is coerced into a list of type: schemas.Store.
-
+        schemas.StoreResponse:
+            Contains a results key with the retrieved results.
     """
     for strategy in strategies:
         with SearchContext(query=query, strategy=strategy(),
@@ -68,7 +66,7 @@ async def get_stores(
             match result:
                 case [DBSearchState.SUCCESS |
                       APISearchState.SUCCESS, list()] as result:
-                    return result[1]  # Return the successful result
+                    return schemas.StoreResponse(results=result[1])
                 case [DBSearchState.FAIL, list()]:
                     continue  # Continue onto APISearchStrategy
                 case [APISearchState.FAIL, list()]:

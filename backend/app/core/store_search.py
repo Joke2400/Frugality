@@ -63,6 +63,7 @@ class DBStoreSearchStrategy(patterns.Strategy):
                 None, None,
                 tuple[DBSearchState, list[schemas.StoreDB]]
             ]:
+                NOTE: Not using db async querying yet so it's not actually async.
                 Returns a Coroutine, the final value is a tuple containing
                 a search state Enum, and the results retrieved as a list.
                 List may be empty if no results were found.
@@ -164,15 +165,15 @@ class APIStoreSearchStrategy(patterns.Strategy):
                 logger.info("API search: Got %s results for query %s.",
                             len(data), context.query)
                 # Add background task to save results to SearchContext
-                context.tasks.add_task(
+                context.task.add_task(
                     tasks.save_store_results, results=data)
                 return APISearchState.SUCCESS, data
             case _ as data:
                 assert_never(data)
 
-    @classmethod
+    @staticmethod
     async def _send_store_request(
-            cls, query: schemas.StoreQuery
+            query: schemas.StoreQuery
             ) -> Coroutine[None, None, Response | None]:
         """Build API request payload and send store request.
 

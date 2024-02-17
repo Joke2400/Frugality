@@ -74,4 +74,4 @@ class SearchContext(Generic[StrategyT]):
         # awaited strategy, then after returning result to user -> queue background
         # task here to paginate API results -> should result in backend fetching
         # all stores when querying for just the brand (ex. 'prisma')
-        return True
+        return False
