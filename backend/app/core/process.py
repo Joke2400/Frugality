@@ -17,7 +17,8 @@ from backend.app.utils.logging import LoggerManager
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 
 load_dotenv()  # Load environment variables from .env file
-DEBUG = bool(config.parser["APP"]["debug"])
+DEBUG = config.parser["APP"]["debug"] in ("True", "true")
+DEBUG_PURGE = config.parser["APP"]["debug_purge"] in ("True", "true")
 
 
 class Process(metaclass=patterns.SingletonMeta):
@@ -66,7 +67,7 @@ class Process(metaclass=patterns.SingletonMeta):
         )
 
         # Determine if debug code should be executed (i.e DEBUG is set to True)
-        if DEBUG:  # This check will not exist in the final version
+        if DEBUG and DEBUG_PURGE:  # This check will not exist in the future
             database.DBContext.prepare_context(
                 url=self.create_database_url(),
                 _purge=True  # Get a clean slate for when in DEBUG mode
@@ -113,7 +114,7 @@ class Process(metaclass=patterns.SingletonMeta):
         Imports and calls execute() from the file
         NOTE: This function will not exist in final versions
         """
-        logger.info("DEBUG set to True in config, executing debug code...")
+        logger.info("DEBUG set to 'True' in config, executing debug code...")
         try:
             from debug import execute  # Breaking convention, cheers :)
             execute()

@@ -1,14 +1,24 @@
 """API routes for product retrieval."""
-from fastapi import APIRouter, HTTPException, BackgroundTasks
-
-from backend.app.core import config
-from backend.app.core import product_search
-from backend.app.core import search_context as search
+from typing import cast
+from fastapi import (
+    APIRouter,
+    BackgroundTasks
+)
+from backend.app.core.product_search import (
+    DBProductSearchStrategy,
+    APIProductSearchStrategy
+)
+from backend.app.core.typedefs import ProductResultT
+from backend.app.core.search_context import SearchContext
 from backend.app.core.orm import schemas
+from backend.app.utils.util_funcs import assert_never
 
-
+resultT = ProductResultT
 router = APIRouter()
-MAX_REQUESTS_PER_QUERY = int(config.parser["API"]["max_requests_per_query"])
+strategies = (
+    DBProductSearchStrategy,
+    APIProductSearchStrategy
+)
 
 
 @router.post("/products/")
@@ -16,13 +26,11 @@ async def get_products(
         query: schemas.ProductQuery, background_tasks: BackgroundTasks):
     """
     """
-    if MAX_REQUESTS_PER_QUERY < len(query.stores) * len(query.queries):
-        raise HTTPException(
-            detail="Too many item requests per query.",
-            status_code=400)
-    strategies = [product_search.APIProductSearchStrategy()]
-
-    for _ in range(0, len(strategies)):
-        context = search.SearchContext(strategy=strategies.pop(0))
-        return await context.execute(query=query,
-                                     tasks=background_tasks)
+    for strategy in strategies:
+        with SearchContext(query=query, strategy=strategy(),
+                           task=background_tasks) as context:
+            results: dict[int, list] = cast(dict[int, list], await context.execute_strategy())
+            r = schemas.ProductResponse(results=results)  # type: ignore
+            return r
+    # This code should never be reached, raises AssertionError
+    assert_never(None)  # type: ignore

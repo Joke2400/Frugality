@@ -4,6 +4,7 @@ from datetime import datetime
 
 import pydantic
 
+from backend.app.core.search_state import SearchState
 
 StoreT = TypeVar("StoreT", bound="Store")
 ProductT = TypeVar("ProductT", bound="Product")
@@ -150,10 +151,27 @@ class StoreQuery(pydantic.BaseModel):
             raise ValueError("Either a name or id is required.")
         return self
 
+    def __str__(self) -> str:
+        return f"<store_name={self.store_name}, store_id={self.store_id}>"
+
 
 class ProductResponse(pydantic.BaseModel):
     """API Product response schema"""
-    pass
+    results: dict[
+        int,
+        list[
+            tuple[
+                SearchState,
+                dict[str, str | int],  # Contains original query info
+                list[
+                    tuple[
+                        Product,
+                        ProductData
+                    ]
+                ]
+            ]
+        ]
+    ]
 
 
 class StoreResponse(pydantic.BaseModel):

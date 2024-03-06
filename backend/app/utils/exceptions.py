@@ -9,5 +9,5 @@ class ExceptionInContext(Exception):
     """An exception occurred within the context of a context manager."""
 
 
-class UndefinedMatchCaseError(Exception):
-    """Pattern matching did not have a defined case for the value."""
+class ResourceNotInDBException(Exception):
+    """Raised by SearchContext if a resource was not found in the DB."""

@@ -105,12 +105,12 @@ def save_store_results(results: Sequence[schemas.Store]) -> None:
         results (Sequence[schemas.Store]):
             The parsed store results to be saved.
     """
-    logger.debug("Running background task to save store results...")
+    logger.info("Running background task to save store results...")
     save_items(items=results, model=models.Store, batch_size=50)
-    logger.debug("Saving of store results complete.")
+    logger.info("Finished the saving of store results.")
 
 
-def save_product_results(results: ProductResultT) -> None:
+def save_product_results(results: dict[int, list]) -> None:
     """Save product results to the database.
 
     Intended to be used as a FastAPI background task.

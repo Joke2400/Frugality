@@ -72,7 +72,7 @@ def handle_response(response: Response) -> bool:
     return False
 
 
-async def send_request(params: dict) -> Coroutine[None, None, Response | None]:
+async def send_request(params: dict) -> Response | None:
     """Sends an http request & raises the for status on the response.
 
     Returns an httpx.Response upon a successful request.
@@ -83,7 +83,5 @@ async def send_request(params: dict) -> Coroutine[None, None, Response | None]:
             params, indent=4))
     response = await async_client.request(**params)
     if handle_response(response):
-        # Unless I'm completely misunderstanding async functions
-        # This seems like a mypy false-positive
-        return response  # type: ignore
-    return None  # type: ignore
+        return response
+    return None

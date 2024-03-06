@@ -1,39 +1,34 @@
 
-from enum import Enum
-from typing import TypeVar, Generic, Any, Self, Coroutine
-from fastapi import BackgroundTasks
+from typing import TypeVar, Generic, Any, Self, cast
+from fastapi import BackgroundTasks, HTTPException
 
+from backend.app.core import tasks
+from backend.app.core.store_search import (
+    DBStoreSearchStrategy,
+    APIStoreSearchStrategy
+)
+from backend.app.core.product_search import (
+    DBProductSearchStrategy,
+    APIProductSearchStrategy
+)
+from backend.app.core.typedefs import (
+    StoreResultT,
+    ProductResultT
+)
+from backend.app.core.search_state import SearchState
 from backend.app.core.orm import schemas
-from backend.app.utils import patterns
+
+from backend.app.utils.patterns import Strategy
+from backend.app.utils.util_funcs import assert_never
+from backend.app.utils.exceptions import ResourceNotInDBException
 from backend.app.utils.logging import LoggerManager
 
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
-StrategyT = TypeVar("StrategyT", bound=patterns.Strategy)
+StrategyT = TypeVar("StrategyT", bound=Strategy)
 
-# is also defined in typedefs.py, redefined here to avoid circular import
-QueryType = schemas.StoreQuery | schemas.ProductQuery
+QueryT = schemas.StoreQuery | schemas.ProductQuery
 
-
-class DBSearchState(str, Enum):
-    """Enum for representing the state of a DB search.
-
-    Used in both the search functions as well as
-    the route match-case statements.
-    """
-    SUCCESS = "DB_SUCCESS"
-    FAIL = "DB_FAIL"
-
-
-class APISearchState(str, Enum):
-    """Enum for representing the state of an API search.
-
-    Used in both the search functions as well as
-    the route match-case statements.
-    """
-    SUCCESS = "SUCCESS"
-    FAIL = "FAIL"
-    PARSE_ERROR = "PARSE_ERROR"
-    NO_RESPONSE = "NO_RESPONSE"
+ResultT = StoreResultT | ProductResultT
 
 
 class SearchContext(Generic[StrategyT]):
@@ -45,33 +40,81 @@ class SearchContext(Generic[StrategyT]):
     """
 
     # Using predefined query formats from schemas.py
-    query: QueryType
+    query: QueryT
+    result: ResultT
     strategy: StrategyT
     task: BackgroundTasks
 
-    __slots__ = "query", "strategy", "task"
+    __slots__ = "query", "strategy", "task", "result"
 
-    def __init__(self, query: QueryType,
+    def __init__(self, query: QueryT,
                  strategy: StrategyT, task: BackgroundTasks) -> None:
         self.query = query
         self.strategy = strategy
         self.task = task
 
-    async def execute_strategy(self, *args: Any, **kwargs: Any) -> Coroutine:  # TODO: Remember to make this hint more specific
+    async def execute_strategy(
+            self, *args: Any, **kwargs: Any) -> list | dict:
         """Execute the current strategy with the given set of args & kwargs"""
-        return await self.strategy.execute(
-            *args, query=self.query, context=self, **kwargs)
+        # Cast result to ResultT so that mypy 'knows' it's not 'Any'
+        self.result = cast(ResultT, await self.strategy.execute(
+            *args, query=self.query, context=self, **kwargs))
+        state, data = self.result
+        logger.debug("Matching against %s...", state)
+        match state:
+            case SearchState.NO_RESPONSE:
+                logger.debug('Matched: SearchState.NO_RESPONSE')
+                raise HTTPException(
+                    detail="Got no response from external API.",
+                    status_code=500
+                )
+            case SearchState.PARSE_ERROR:
+                logger.debug('Matched: SearchState.PARSE_ERROR')
+                raise HTTPException(
+                    detail="Could not parse results from external API.",
+                    status_code=500
+                )
+            case SearchState.FAIL:
+                logger.debug('Matched: SearchState.FAIL')
+                if isinstance(
+                        self.strategy,
+                        (DBStoreSearchStrategy,
+                         DBProductSearchStrategy)):
+                    raise ResourceNotInDBException()
+                raise HTTPException(
+                    detail="Could not find any results for the query.",
+                    status_code=404)
+            case SearchState.SUCCESS:
+                logger.debug('Matched: SearchState.SUCCESS')
+                return data
+            case _ as x:
+                assert_never(x)
 
     def __enter__(self) -> Self:
-        logger.debug(f"Starting new search using: {self.strategy} ")
+        logger.debug(
+            "Performing a new search using %s", self.strategy)
+        logger.debug(
+            "Searching for results using query: %s", self.query)
         return self
 
     def __exit__(self, exc_type, exc_value, traceback) -> bool:
-        # Code calling additional background tasks will be here in the future
-        # For example -> background tasks for pagination
-        # there are around 800-900 s-ryhmä stores so:
-        # Check cursor location vs total length from API upon return of the
-        # awaited strategy, then after returning result to user -> queue background
-        # task here to paginate API results -> should result in backend fetching
-        # all stores when querying for just the brand (ex. 'prisma')
+        # Instantly suppress this as we still want to run the API
+        # search before yielding a 404-status code to the end-user
+        if exc_type is ResourceNotInDBException:
+            return True
+        if exc_type is None:
+            # Call background tasks to save results
+            if self.result[0] == SearchState.SUCCESS:
+                if isinstance(self.strategy, APIStoreSearchStrategy):
+                    # Cast to StoreResultT to help mypy type-checking
+                    store_result: StoreResultT = cast(
+                        StoreResultT, self.result)
+                    self.task.add_task(
+                        tasks.save_store_results, store_result[1])
+                if isinstance(self.strategy, APIProductSearchStrategy):
+                    # Cast to ProductResultT to help mypy type-checking
+                    product_result: ProductResultT = cast(
+                        ProductResultT, self.result)
+                    self.task.add_task(
+                        tasks.save_product_results, product_result[1])
         return False

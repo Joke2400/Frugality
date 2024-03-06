@@ -101,9 +101,9 @@ class Strategy(ABC):
 
     @staticmethod
     @abstractmethod
-    async def execute(*args: Any, **kwargs: Any):
+    async def execute(*args: Any, **kwargs: Any) -> Any:
         """Implement this method when inheriting."""
 
     @classmethod
-    def __repr__(cls) -> str:
+    def __str__(cls) -> str:
         return f"<{cls.__name__}>"

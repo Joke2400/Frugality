@@ -4,6 +4,7 @@ import json
 import httpx
 import pydantic
 
+from backend.app.core.search_state import SearchState
 from backend.app.core.orm import schemas
 from backend.app.utils.logging import LoggerManager
 
@@ -80,51 +81,49 @@ def parse_store_brand_from_string(string: str) -> str | None:
     return None
 
 
-def prepare_response_dict(response: httpx.Response | None) -> dict | None:
+def prepare_response_dict(response: httpx.Response) -> dict | None:
     """Convert httpx.Response to python dict.
 
     Returns type 'None' if a json.JSONDecodeError is raised.
     Also returns type 'None' if the given response is of that type.
     """
-    if response is None:
-        return None
     try:
         content = json.loads(response.text)
-    except json.JSONDecodeError:
+    except json.JSONDecodeError as err:
+        logger.debug(err)
         return None
     return content
 
 
 def parse_store_response(
         response: httpx.Response,
-        query: str
+        query: schemas.StoreQuery
         ) -> list[schemas.Store] | None:
     """Parse stores from a httpx.Response.
 
     Args:
         response (httpx.Response):
             Response instance received from the API.
-        query (str):
-            The query string that resulted in the response.
-            Used for creating logging messages.
-
+        query (schemas.StoreQuery):
+            The query that resulted in the response.
+            Used for logging purposes
     Returns:
-        list[schemas.StoreBase] | None:
-            Returns a list of pydantic StoreBase instances.
-            Returns None if an error occurred during parsing.
+        list[schemas.Store] | None:
+            Returns a list of pydantic Store instances.
+            Returns 'None' if an error occurred during parsing.
     """
-    logger.debug("Parsing response for query %s.", query)
+    logger.debug("Parsing response for query: %s.", query)
     content = prepare_response_dict(response)
     if content is None:
         logger.debug(
-            "Could not parse response body into JSON, query: '%s'.",
+            "Could not parse response body into JSON for query: %s.",
             query)
         return None
     try:
         key = content["data"]["searchStores"]["stores"]
     except KeyError:
         logger.debug(
-            "Could not access stores key in response for query: '%s'.",
+            "Could not access 'stores' key in response for query: %s.",
             query)
         return None
 
@@ -177,17 +176,19 @@ def parse_product_to_schema(
             label_unit=reformat_unit_string(data["basicQuantityUnit"]),
             comparison_unit=reformat_unit_string(data["comparisonUnit"]),
         )
-    except (KeyError, TypeError, pydantic.ValidationError) as err:
+    except (KeyError, TypeError, ValueError, pydantic.ValidationError) as err:
         logger.debug("Failed to validate a product schema: %s", err)
+        logger.debug("Raw data of the failed schema: %s", data)
     else:
         return product, product_data
     return None
 
 
 def parse_product_response(
-        response: httpx.Response | None,
-        query: dict[str, str]
+        response: httpx.Response,
+        query: dict[str, str | int]
         ) -> tuple[
+            SearchState,
             dict[str, str | int],
             list[
                 tuple[
@@ -202,11 +203,12 @@ def parse_product_response(
         response (httpx.Response | None):
         The response object provided by the httpx library.
         If the given response is of type 'None', return an empty list of items.
-        query (dict[str, str]):
+        query (dict[str, str | int]):
         A dict containing the store id, query string & query category.
 
     Returns:
         tuple[
+            SearchState
             dict[str, str | int],
             list[
                 tuple[
@@ -215,34 +217,31 @@ def parse_product_response(
                 ]
             ]
         ]:
-        Return a tuple with the first item being a dict with the query details.
-        The second item is a list with all the parsed product items inside it.
+        Return a tuple with the first item being a SearchState enum.
+        The second item is a dict with the original query details.
+        The third item is a list with all the parsed product items inside it.
         Each parsed item is a tuple containing two different pydantic schemas.
     """
-    # Creating new return dict to appease the linter
-    details: dict[str, str | int] = {
-        "query": query["query"],
-        "category": query["category"]
-    }
+    logger.debug(
+        "Parsing response for query: <query='%s', store_id=%s, category='%s'>",
+        query["query"], query["store_id"], query["category"])
     if (content := prepare_response_dict(response)) is None:
-        return details, []
+        return SearchState.PARSE_ERROR, query, []
     try:
         response_items = content["data"]["store"]["products"]["items"]
         store_name = content["data"]["store"]["name"]
-        store_id = content["data"]["store"]["id"]
-    except KeyError as err:
+    except (KeyError, ValueError) as err:
         logger.debug(err)
-        return details, []
+        return SearchState.PARSE_ERROR, query, []
+    query["store_name"] = store_name
     if len(response_items) == 0:
-        logger.debug(
-            "Key 'items' was empty for store response: ('%s', %s)",
-            store_name, store_id)
-        return details, []
-    details["store_id"] = store_id
+        logger.debug("No items found in response body.")
+        return SearchState.FAIL, query, []
     items: list[tuple[schemas.Product, schemas.ProductData]] = []
     for i in response_items:
         item = parse_product_to_schema(i)
         if not item:
             continue
         items.append(item)
-    return details, items
+    logger.debug("Parsed %s items from response.", len(items))
+    return SearchState.SUCCESS, query, items

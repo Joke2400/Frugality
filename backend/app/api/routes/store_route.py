@@ -1,24 +1,19 @@
 """API routes for store retrieval."""
 from typing import cast
-from fastapi import APIRouter, HTTPException, BackgroundTasks
-
-
+from fastapi import (
+    APIRouter,
+    BackgroundTasks
+)
 from backend.app.core.store_search import (
     DBStoreSearchStrategy,
     APIStoreSearchStrategy
 )
-from backend.app.core.search_context import (
-    APISearchState,
-    DBSearchState,
-    SearchContext
-)
-from backend.app.core import config
+from backend.app.core.search_context import SearchContext
 from backend.app.core.orm import schemas
-from backend.app.core.typedefs import StoreResultT as ResultT
 from backend.app.utils.util_funcs import assert_never
 
+resultT = list[schemas.Store] | list[schemas.StoreDB]
 router = APIRouter()
-MAX_REQUESTS_PER_QUERY = int(config.parser["APP"]["max_requests_per_query"])
 strategies = (
     DBStoreSearchStrategy,
     APIStoreSearchStrategy
@@ -36,55 +31,28 @@ async def get_stores(
     upon a failed search is the external API used.
 
     Args:
-
         query (schemas.StoreQuery):
-            A store query to use in the search.
-            Contains a name or id or both, see schemas.StoreQuery.
+            Contains a store name or store id or both
+            See schemas.StoreQuery.
 
         background_tasks (BackgroundTasks):
-            Passed in by FastAPI in order to facilitate the running
-            of background tasks.
-
+            Passed in by FastAPI in order to facilitate the
+            running of background tasks.
     Raises:
-
         HTTPException 404:
-            Raises exception 404 if no items are found in response.
+            Raises 404 if no items are found in the response.
 
         HTTPException 500:
-            Raises exception 500 if external API did not respond
-            or if API response could not be parsed.
-
+            Raises 500 if external API did not respond
+            Also raised if the API response could not be parsed.
     Returns:
         schemas.StoreResponse:
-            Contains a results key with the retrieved results.
+            Contains a 'results' key with the retrieved results.
     """
     for strategy in strategies:
         with SearchContext(query=query, strategy=strategy(),
                            task=background_tasks) as context:
-            # Cast result of await to resultT so that mypy knows it's not 'Any'
-            result: ResultT = cast(ResultT, await context.execute_strategy())
-            match result:
-                case [DBSearchState.SUCCESS |
-                      APISearchState.SUCCESS, list()] as result:
-                    return schemas.StoreResponse(results=result[1])
-                case [DBSearchState.FAIL, list()]:
-                    continue  # Continue onto APISearchStrategy
-                case [APISearchState.FAIL, list()]:
-                    raise HTTPException(
-                        detail="Could not find items from external API.",
-                        status_code=404
-                    )
-                case [APISearchState.PARSE_ERROR, list()]:
-                    raise HTTPException(
-                        detail="Could not parse results from external API.",
-                        status_code=500
-                    )
-                case [APISearchState.NO_RESPONSE, list()]:
-                    raise HTTPException(
-                        detail="Could not contact external API.",
-                        status_code=500
-                    )
-                case _ as data:
-                    assert_never(data)
+            result: resultT = cast(resultT, await context.execute_strategy())
+            return schemas.StoreResponse(results=result)
     # This code should never be reached, raises AssertionError
     assert_never(None)  # type: ignore

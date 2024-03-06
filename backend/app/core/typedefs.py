@@ -1,9 +1,6 @@
 """Contains type definitions for easier re-use throughout the app."""
 from backend.app.core.orm import schemas, models
-from backend.app.core.search_context import (
-    APISearchState,
-    DBSearchState,
-)
+from backend.app.core.search_state import SearchState
 
 # ---- Grouped Aliases ----
 OrmModel = models.Store | models.Product | models.ProductData
@@ -13,17 +10,27 @@ SchemaOut = schemas.StoreDB | schemas.ProductDB | schemas.ProductDataDB
 SchemaInOrDict = SchemaIn | dict
 SchemaOutOrDict = SchemaOut | dict
 
-QueryType = schemas.StoreQuery | schemas.ProductQuery
-StoreResultT = tuple[APISearchState | DBSearchState,
-                     list[schemas.Store | schemas.StoreDB]]
+StoreResultT = \
+    tuple[
+        SearchState,
+        list[schemas.Store] | list[schemas.StoreDB]
+    ]
+
 ProductResultT = \
-    list[
-        tuple[
-            dict[str, str | int],
+    tuple[
+        SearchState,
+        dict[
+            int,
             list[
                 tuple[
-                    schemas.Product,
-                    schemas.ProductData
+                    SearchState,
+                    dict[str, str | int],  # Contains original query info
+                    list[
+                        tuple[
+                            schemas.Product | schemas.ProductDB,
+                            schemas.ProductData | schemas.ProductDataDB
+                        ]
+                    ]
                 ]
             ]
         ]
