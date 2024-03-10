@@ -9,7 +9,7 @@ from backend.app.api import payload
 
 from backend.app.core import parse
 from backend.app.core import config
-from backend.app.core.typedefs import ProductResultT
+from backend.app.core.typedefs import ProductSearchResult
 from backend.app.core.orm import schemas
 from backend.app.core.orm import crud
 from backend.app.core.search_state import SearchState
@@ -23,9 +23,9 @@ logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 
 # Can be disabled in settings.cfg if needed for debugging.
 PERFORM_DB_SEARCHES = (
-    config.parser["APP"]["perform_db_searches"] in ("True", "true"))
+    config.parser["app"]["perform_db_searches"] in ("True", "true"))
 PERFORM_API_SEARCHES = (
-    config.parser["APP"]["perform_api_searches"] in ("True", "true"))
+    config.parser["app"]["perform_api_searches"] in ("True", "true"))
 
 
 class DBProductSearchStrategy(patterns.Strategy):
@@ -36,11 +36,17 @@ class DBProductSearchStrategy(patterns.Strategy):
     Implements execute() abstractmethod, the method should
     be called via SearchContext.execute_strategy()
     """
-    @staticmethod
-    async def execute(*args, **kwargs) -> Any:
+    @classmethod
+    async def execute(
+            cls, *args, **kwargs
+                ) -> ProductSearchResult:
+        if not PERFORM_DB_SEARCHES:
+            logger.info("Product API search failed, disabled in config.")
+            return SearchState.FAIL, {}
         query: schemas.ProductQuery | None = kwargs.get("query")
         if not isinstance(query, schemas.ProductQuery):
-            pass
+            raise TypeError(
+                "A 'query' param of type ProductQuery must be provided.")
         return SearchState.FAIL, {}
 
 
@@ -49,7 +55,7 @@ class APIProductSearchStrategy(patterns.Strategy):
     @classmethod
     async def execute(
             cls, *args, **kwargs
-            ) -> ProductResultT:
+            ) -> ProductSearchResult:
         if not PERFORM_API_SEARCHES:
             logger.info("Product API search failed, disabled in config.")
             return SearchState.FAIL, {}
@@ -62,16 +68,21 @@ class APIProductSearchStrategy(patterns.Strategy):
                 "API search: Received no API responses to parse.")
             return SearchState.NO_RESPONSE, {}
         results: dict[int, list] = defaultdict(list)
+        all_failed = True
         for response, orig_query in responses:
             if response is None:
-                # Add empty query to results
+                # Add empty result to results
                 results[int(orig_query["store_id"])].append(
                     (SearchState.NO_RESPONSE, orig_query, []))
                 continue
-            # Add parsed query to results
-            results[int(orig_query["store_id"])].append(
-                parse.parse_product_response(
-                    response=response, query=orig_query))
+            # Add parsed result to results
+            parsed = parse.parse_product_response(
+                    response=response, query=orig_query)
+            if parsed[0] is SearchState.SUCCESS and all_failed:
+                all_failed = False
+            results[int(orig_query["store_id"])].append(parsed)
+        if all_failed:
+            return SearchState.FAIL, results
         return SearchState.SUCCESS, results
 
     @classmethod

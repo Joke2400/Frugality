@@ -1,4 +1,5 @@
 """Contains CRUD operations for interaction with the database."""
+from ast import Tuple
 from typing import Type, Sequence
 from sqlalchemy import select, insert
 from sqlalchemy.sql import Select
@@ -38,6 +39,8 @@ def create_record(record: SchemaInOrDict, model: Type[OrmModel]) -> bool:
     """
     if not isinstance(record, dict):
         db_model: OrmModel = model(**dict(record))
+    else:
+        db_model = model(**record)
     with database.DBContext() as context:
         logger.debug(
             "Adding a single '%s' record to the database...",
@@ -148,9 +151,17 @@ def select_all[SchemaT: SchemaOut](
     return result
 
 
+def select_all_join[SchemaT: SchemaOut](
+        stmt: Select,
+        table_cast: Type[SchemaT],
+        join_cast: Type[SchemaT],
+        ) -> tuple[SchemaT, SchemaT]:
+    result: list[tuple[SchemaT, SchemaT]] = []
+    with database.DBContext(read_only=True) as context:
+        print(len(context.session.execute(stmt).all()))
+    return None
+
 # ---- STORE GET FUNCTIONS ----
-
-
 def get_store_by_id(store_id: int) -> schemas.StoreDB | None:
     """Get a store by id."""
     stmt = (

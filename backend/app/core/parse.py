@@ -163,7 +163,7 @@ def parse_product_to_schema(
             category=data["hierarchyPath"][0]["name"],
             ean=data["ean"],
             slug=data["slug"],
-            brand=data["brandName"],
+            brand=data["brandName"] if data["brandName"] is not None else "",
         )
         unit_prices_eur = str(float(data["price"])).split(".")
         cmp_prices_eur = str(float(data["comparisonPrice"])).split(".")

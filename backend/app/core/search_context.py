@@ -12,8 +12,8 @@ from backend.app.core.product_search import (
     APIProductSearchStrategy
 )
 from backend.app.core.typedefs import (
-    StoreResultT,
-    ProductResultT
+    StoreSearchResult,
+    ProductSearchResult
 )
 from backend.app.core.search_state import SearchState
 from backend.app.core.orm import schemas
@@ -28,7 +28,7 @@ StrategyT = TypeVar("StrategyT", bound=Strategy)
 
 QueryT = schemas.StoreQuery | schemas.ProductQuery
 
-ResultT = StoreResultT | ProductResultT
+ResultT = StoreSearchResult | ProductSearchResult
 
 
 class SearchContext(Generic[StrategyT]):
@@ -91,7 +91,7 @@ class SearchContext(Generic[StrategyT]):
                 assert_never(x)
 
     def __enter__(self) -> Self:
-        logger.debug(
+        logger.info(
             "Performing a new search using %s", self.strategy)
         logger.debug(
             "Searching for results using query: %s", self.query)
@@ -107,14 +107,14 @@ class SearchContext(Generic[StrategyT]):
             if self.result[0] == SearchState.SUCCESS:
                 if isinstance(self.strategy, APIStoreSearchStrategy):
                     # Cast to StoreResultT to help mypy type-checking
-                    store_result: StoreResultT = cast(
-                        StoreResultT, self.result)
+                    store_result: StoreSearchResult = cast(
+                        StoreSearchResult, self.result)
                     self.task.add_task(
-                        tasks.save_store_results, store_result[1])
+                        tasks.save_store_results, store_result)
                 if isinstance(self.strategy, APIProductSearchStrategy):
                     # Cast to ProductResultT to help mypy type-checking
-                    product_result: ProductResultT = cast(
-                        ProductResultT, self.result)
+                    product_result: ProductSearchResult = cast(
+                        ProductSearchResult, self.result)
                     self.task.add_task(
-                        tasks.save_product_results, product_result[1])
+                        tasks.save_product_results, product_result)
         return False

@@ -1,11 +1,11 @@
 """Contains background tasks used in the app."""
-from typing import Type, Sequence
+from typing import Type, Sequence, cast
 from itertools import batched
 
 from backend.app.core.orm import schemas
 from backend.app.core.orm import models
 from backend.app.core.orm import crud
-from backend.app.core.typedefs import ProductResultT
+from backend.app.core.typedefs import APIProductItem, ProductSearchResult, StoreSearchResult
 from backend.app.core.typedefs import SchemaInOrDict
 from backend.app.core.typedefs import OrmModel
 from backend.app.utils import LoggerManager
@@ -67,8 +67,9 @@ def save_in_batches[ModelT: OrmModel](
     return failed_batches
 
 
-def save_items[ModelT: OrmModel](items: Sequence[SchemaInOrDict],
-               model: Type[ModelT], batch_size: int = 24) -> None:
+def save_items[ModelT: OrmModel](
+            items: Sequence[SchemaInOrDict] | set[SchemaInOrDict],
+            model: Type[ModelT], batch_size: int = 24) -> None:
     """Background task for saving records into the database.
 
     Attempts to add the records in batches using a bulk insert.
@@ -96,7 +97,7 @@ def save_items[ModelT: OrmModel](items: Sequence[SchemaInOrDict],
             f"Was unable to add {failed_count} item(s), discarding...")
 
 
-def save_store_results(results: Sequence[schemas.Store]) -> None:
+def save_store_results(results: StoreSearchResult) -> None:
     """Save store results to the database.
 
     Intended to be used as a FastAPI background task.
@@ -106,11 +107,11 @@ def save_store_results(results: Sequence[schemas.Store]) -> None:
             The parsed store results to be saved.
     """
     logger.info("Running background task to save store results...")
-    save_items(items=results, model=models.Store, batch_size=50)
+    save_items(items=results[1], model=models.Store, batch_size=50)
     logger.info("Finished the saving of store results.")
 
 
-def save_product_results(results: dict[int, list]) -> None:
+def save_product_results(results: ProductSearchResult) -> None:
     """Save product results to the database.
 
     Intended to be used as a FastAPI background task.
@@ -119,20 +120,26 @@ def save_product_results(results: dict[int, list]) -> None:
         results (ProductSearchResultT):
             The parsed product results to be saved.
     """
-    logger.debug("Running background task to save product results...")
+    logger.info("Running background task to save product results...")
     products: list[schemas.Product] = []
     product_data: list[dict[str, str | int]] = []
-    for result in results:
-        for item in result[1]:  # Accessing the result tuple
-            products.append(item[0])  # item[0] type: schemas.Product
-            data = dict(item[1])  # Convert to dict
-            data["store_id"] = int(result[0]["store_id"])
-            data["product_ean"] = str(item[0].ean)
-            product_data.append(data)
+    # Flatten results & create separate lists for Product(s) & ProductData
+    for store_id, queries in results[1].items():  # Access the dict
+        for query in queries:
+            # Cast to list[APIProductItem] to narrow type for mypy
+            items = cast(list[APIProductItem], query[2])
+            for item in items:
+                data = dict(item[1])  # Convert to dict so we can add fields
+                data["store_id"] = store_id
+                data["product_ean"] = str(item[0].ean)
+                products.append(item[0])
+                product_data.append(data)
 
     # Save the Product(s) first
-    save_items(items=products, model=models.Product, batch_size=24)
+    save_items(items=set(products), model=models.Product, batch_size=24)
+    # Note the conversion to set() to remove duplicates, this also means that
+    # The pydantic model must be frozen=True so that pydantic implements a hash
 
     # Save the ProductData second
     save_items(items=product_data, model=models.ProductData, batch_size=50)
-    logger.debug("Saving of product results complete.")
+    logger.info("Saving of product results complete.")

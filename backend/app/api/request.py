@@ -14,7 +14,7 @@ from backend.app.core import config
 from backend.app.utils import LoggerManager
 
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
-DEBUG_FLAG = bool(config.parser["APP"]["debug"])
+DEBUG = config.parser["debug"]["run_debug_code"] in ("True", "true")
 
 
 async def log_request(r: Request) -> None:
@@ -65,7 +65,7 @@ def handle_response(response: Response) -> bool:
         logger.exception(err)
 
     else:
-        if DEBUG_FLAG:
+        if DEBUG:
             logger.debug("Received response: %s", json.dumps(
                 json.loads(response.text), indent=4))
         return True
@@ -78,7 +78,7 @@ async def send_request(params: dict) -> Response | None:
     Returns an httpx.Response upon a successful request.
     If an httpx exception occurred, returns None instead.
     """
-    if DEBUG_FLAG:
+    if DEBUG:
         logger.debug("Sending request: %s", json.dumps(
             params, indent=4))
     response = await async_client.request(**params)

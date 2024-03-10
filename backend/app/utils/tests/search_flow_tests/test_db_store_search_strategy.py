@@ -3,10 +3,8 @@ from datetime import datetime
 from pytest import MonkeyPatch
 
 from backend.app.core.store_search import DBStoreSearchStrategy
-from backend.app.core.search_context import (
-    SearchContext,
-    DBSearchState,
-)
+from backend.app.core.search_context import SearchContext
+from backend.app.core.search_state import SearchState
 from backend.app.core.orm.schemas import (
     StoreQuery,
     StoreDB,
@@ -63,7 +61,7 @@ async def test_search_by_name_default(monkeypatch: MonkeyPatch):
                         crud_returns_list_of_stores)
     monkeypatch.setattr(crud, "get_store_by_id", assert_never)
     result = await DBStoreSearchStrategy.execute(query=query, context=context)
-    assert result[0] is DBSearchState.SUCCESS
+    assert result[0] is SearchState.SUCCESS
     assert isinstance(result[1][0], Store)
     assert len(result[1]) == 3
 
@@ -77,7 +75,7 @@ async def test_search_by_id_default(monkeypatch: MonkeyPatch):
     monkeypatch.setattr(crud, "get_stores_by_name", assert_never)
     monkeypatch.setattr(crud, "get_store_by_id", crud_returns_single_store)
     result = await DBStoreSearchStrategy.execute(query=query, context=context)
-    assert result[0] is DBSearchState.SUCCESS
+    assert result[0] is SearchState.SUCCESS
     assert isinstance(result[1][0], StoreDB)
     assert len(result[1]) == 1
 
@@ -91,7 +89,7 @@ async def test_search_by_both_default(monkeypatch: MonkeyPatch):
     monkeypatch.setattr(crud, "get_stores_by_name", assert_never)
     monkeypatch.setattr(crud, "get_store_by_id", crud_returns_single_store)
     result = await DBStoreSearchStrategy.execute(query=query, context=context)
-    assert result[0] is DBSearchState.SUCCESS
+    assert result[0] is SearchState.SUCCESS
     assert isinstance(result[1][0], StoreDB)
     assert len(result[1]) == 1
 
@@ -105,7 +103,7 @@ async def test_name_search_no_result(monkeypatch: MonkeyPatch):
     monkeypatch.setattr(crud, "get_stores_by_name", lambda x: [])
     monkeypatch.setattr(crud, "get_store_by_id", assert_never)
     result = await DBStoreSearchStrategy.execute(query=query, context=context)
-    assert result[0] is DBSearchState.FAIL
+    assert result[0] is SearchState.FAIL
     assert len(result[1]) == 0
 
 
@@ -118,5 +116,5 @@ async def test_id_search_no_result(monkeypatch: MonkeyPatch):
     monkeypatch.setattr(crud, "get_stores_by_name", assert_never)
     monkeypatch.setattr(crud, "get_store_by_id", lambda x: None)
     result = await DBStoreSearchStrategy.execute(query=query, context=context)
-    assert result[0] is DBSearchState.FAIL
+    assert result[0] is SearchState.FAIL
     assert len(result[1]) == 0

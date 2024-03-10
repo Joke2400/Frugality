@@ -1,8 +1,10 @@
 """Contains Pydantic schema definitions."""
-from typing import TypeVar, Generic
+from typing import TypeVar, Generic, Annotated
 from datetime import datetime
+from annotated_types import Len
 
 import pydantic
+from pydantic import Field
 
 from backend.app.core.search_state import SearchState
 
@@ -22,16 +24,7 @@ class Store(pydantic.BaseModel):
 
     model_config = pydantic.ConfigDict(
         from_attributes=True,
-        json_schema_extra={
-            "examples": [
-                {
-                    "store_name": "Prisma Olari",
-                    "store_id": 542862479,
-                    "slug": "prisma-olari",
-                    "brand": "prisma"
-                }
-            ]
-        })
+        frozen=True)
 
 
 class StoreDB(Store, Generic[ProductT]):
@@ -43,24 +36,17 @@ class StoreDB(Store, Generic[ProductT]):
 
 
 # ---------------------------------------
-
-
-class ProductBase(pydantic.BaseModel):
-    "Product base schema."
+class Product(pydantic.BaseModel):
+    """Store schema for items going in/out of routes."""
     name: str
     category: str
-
-
-class Product(ProductBase):
-    """Store schema for items going in/out of routes."""
     ean: str
     slug: str
     brand: str
-    aliases: list[str] = pydantic.Field(
-        default_factory=list)
 
     model_config = pydantic.ConfigDict(
-        from_attributes=True)
+        from_attributes=True,
+        frozen=True)
 
 
 class ProductDB(Product, Generic[ProductDataT]):
@@ -84,7 +70,8 @@ class ProductData(pydantic.BaseModel):
     comparison_unit: str
 
     model_config = pydantic.ConfigDict(
-        from_attributes=True)
+        from_attributes=True,
+        frozen=True)
 
 
 class ProductDataDB(ProductData):
@@ -103,8 +90,8 @@ class ProductDataDB(ProductData):
 
 class ProductQuery(pydantic.BaseModel):
     """Schema definition for Product queries."""
-    stores: set[int]
-    queries: list[dict[str, str]]
+    stores: Annotated[set[int], Len(min_length=0, max_length=10)]
+    queries: Annotated[list[dict[str, str]], Len(min_length=0, max_length=30)]
 
     model_config = pydantic.ConfigDict(
         from_attributes=True,
@@ -113,14 +100,15 @@ class ProductQuery(pydantic.BaseModel):
                 {
                     "stores": [
                         542862479,
-                        647396324
+                        697942431
+
                     ],
                     "queries": [
                         {"query": "Maito Laktoositon 1L",
-                         "category": "Maito, munat ja rasvat"},
-                        {"query": "Naudan Jauheliha 400g",
                          "category": ""},
-                        {"query": "Leipä",
+                        {"query": "Naudan Jauheliha",
+                         "category": ""},
+                        {"query": "Peruna",
                          "category": ""}
                     ]
                 }
@@ -130,8 +118,8 @@ class ProductQuery(pydantic.BaseModel):
 
 class StoreQuery(pydantic.BaseModel):
     """Schema definition for Store queries"""
-    store_name: str | None
-    store_id: int | None
+    store_name: Annotated[str | None, Len(min_length=1, max_length=50)]
+    store_id: int | None = Field(ge=0, le=999999999)
 
     model_config = pydantic.ConfigDict(
         from_attributes=True,
@@ -152,7 +140,7 @@ class StoreQuery(pydantic.BaseModel):
         return self
 
     def __str__(self) -> str:
-        return f"<store_name={self.store_name}, store_id={self.store_id}>"
+        return f"<store_name='{self.store_name}', store_id={self.store_id}>"
 
 
 class ProductResponse(pydantic.BaseModel):
@@ -173,7 +161,26 @@ class ProductResponse(pydantic.BaseModel):
         ]
     ]
 
+    @pydantic.computed_field
+    def unique_queries(self) -> int:
+        """Get the unique query count in the response."""
+        try:
+            return len(next(iter(self.results.values())))
+        except IndexError:
+            return 0
+
+    @pydantic.computed_field
+    def total_queries(self) -> int:
+        """Get the total query count in the response."""
+        return self.unique_queries * len(self.results)  # type: ignore
+
+    def __str__(self) -> str:
+        return f"ProductResponse<total_queries={self.total_queries}>"
+
 
 class StoreResponse(pydantic.BaseModel):
     """API Store response schema."""
     results: list[Store]
+
+    def __str__(self) -> str:
+        return f"StoreResponse<length={len(self.results)} stores>"

@@ -10,13 +10,19 @@ SchemaOut = schemas.StoreDB | schemas.ProductDB | schemas.ProductDataDB
 SchemaInOrDict = SchemaIn | dict
 SchemaOutOrDict = SchemaOut | dict
 
-StoreResultT = \
+APIProductItem = \
     tuple[
-        SearchState,
-        list[schemas.Store] | list[schemas.StoreDB]
+        schemas.Product,
+        schemas.ProductData
     ]
 
-ProductResultT = \
+DBProductItem = \
+    tuple[
+        schemas.ProductDB,
+        schemas.ProductDataDB
+    ]
+
+ProductSearchResult = \
     tuple[
         SearchState,
         dict[
@@ -24,14 +30,15 @@ ProductResultT = \
             list[
                 tuple[
                     SearchState,
-                    dict[str, str | int],  # Contains original query info
-                    list[
-                        tuple[
-                            schemas.Product | schemas.ProductDB,
-                            schemas.ProductData | schemas.ProductDataDB
-                        ]
-                    ]
+                    dict[str, str | int],
+                    list[APIProductItem] | list[DBProductItem]
                 ]
             ]
         ]
+    ]
+
+StoreSearchResult = \
+    tuple[
+        SearchState,
+        list[schemas.Store] | list[schemas.StoreDB]
     ]

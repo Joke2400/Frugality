@@ -48,7 +48,6 @@ class Product(Base):
     # Some products may have the same names but different EANs
     name: Mapped[str] = mapped_column()
     slug: Mapped[str] = mapped_column()
-    aliases: Mapped[list[str]] = mapped_column(ARRAY(String))
     category: Mapped[str] = mapped_column()
     brand: Mapped[str] = mapped_column()
     timestamp: Mapped[datetime] = mapped_column(

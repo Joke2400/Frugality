@@ -11,7 +11,10 @@ from backend.app.core.store_search import (
 from backend.app.core.search_context import SearchContext
 from backend.app.core.orm import schemas
 from backend.app.utils.util_funcs import assert_never
+from backend.app.utils.logging import LoggerManager
 
+
+logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 resultT = list[schemas.Store] | list[schemas.StoreDB]
 router = APIRouter()
 strategies = (
@@ -49,10 +52,13 @@ async def get_stores(
         schemas.StoreResponse:
             Contains a 'results' key with the retrieved results.
     """
+    logger.info("Received a new store query.")
     for strategy in strategies:
         with SearchContext(query=query, strategy=strategy(),
                            task=background_tasks) as context:
             result: resultT = cast(resultT, await context.execute_strategy())
-            return schemas.StoreResponse(results=result)
+            response = schemas.StoreResponse(results=result)  # type: ignore
+            logger.info("Returning: %s", response)
+            return response
     # This code should never be reached, raises AssertionError
     assert_never(None)  # type: ignore

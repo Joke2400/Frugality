@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from backend.app.core import config
 from backend.app.core.orm import database
+from backend.app.core.orm.populate import populate_db
 from backend.app.api.routes import store_route
 from backend.app.api.routes import product_route
 from backend.app.api.routes import index as index_route
@@ -17,8 +18,12 @@ from backend.app.utils.logging import LoggerManager
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 
 load_dotenv()  # Load environment variables from .env file
-DEBUG = config.parser["APP"]["debug"] in ("True", "true")
-DEBUG_PURGE = config.parser["APP"]["debug_purge"] in ("True", "true")
+RUN_DEBUG_CODE = config.parser["debug"]["run_debug_code"] in (
+    "True", "true")
+PURGE_DB = config.parser["debug"]["purge_db"] in (
+    "True", "true")
+POPULATE_DB = config.parser["debug"]["populate_db"] in (
+    "True", "true")
 
 
 class Process(metaclass=patterns.SingletonMeta):
@@ -65,17 +70,12 @@ class Process(metaclass=patterns.SingletonMeta):
             allow_methods=["*"],
             allow_headers=["*"]
         )
-
-        # Determine if debug code should be executed (i.e DEBUG is set to True)
-        if DEBUG and DEBUG_PURGE:  # This check will not exist in the future
-            database.DBContext.prepare_context(
-                url=self.create_database_url(),
-                _purge=True  # Get a clean slate for when in DEBUG mode
-            )
+        database.DBContext.prepare_context(
+            url=self.create_database_url(), purge=PURGE_DB)
+        if POPULATE_DB:
+            populate_db()
+        if RUN_DEBUG_CODE:
             self._execute_debug_code()
-        else:
-            database.DBContext.prepare_context(
-                url=self.create_database_url())
         logger.info("FastAPI statup complete.")
 
     def create_database_url(self) -> str:
@@ -114,10 +114,10 @@ class Process(metaclass=patterns.SingletonMeta):
         Imports and calls execute() from the file
         NOTE: This function will not exist in final versions
         """
-        logger.info("DEBUG set to 'True' in config, executing debug code...")
+        logger.info("Executing debug code...")
         try:
-            from debug import execute  # Breaking convention, cheers :)
+            from backend.debug import execute  # Breaking convention, cheers :)
             execute()
         except ImportError:
             logger.info(
-                "Attempted to run debug code, but 'debug.py' not found.")
+                "Attempted to run debug code, but 'debug.py' was not found.")

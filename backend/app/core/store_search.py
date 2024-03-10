@@ -18,9 +18,9 @@ logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 
 # Can be disabled in settings.cfg if needed for debugging.
 PERFORM_DB_SEARCHES = (
-    config.parser["APP"]["perform_db_searches"] in ("True", "true"))
+    config.parser["app"]["perform_db_searches"] in ("True", "true"))
 PERFORM_API_SEARCHES = (
-    config.parser["APP"]["perform_api_searches"] in ("True", "true"))
+    config.parser["app"]["perform_api_searches"] in ("True", "true"))
 
 
 class DBStoreSearchStrategy(patterns.Strategy):

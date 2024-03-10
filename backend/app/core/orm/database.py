@@ -8,13 +8,10 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from sqlalchemy.orm import DeclarativeBase
 
-from backend.app.core import config
 from backend.app.utils import LoggerManager
 from backend.app.utils.exceptions import ExceptionInContext
 
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
-
-DEBUG = bool(config.parser["APP"]["DEBUG"])
 
 
 class Base(DeclarativeBase):
@@ -44,22 +41,23 @@ class DBContext:
     read_only: bool
 
     @classmethod
-    def prepare_context(cls, url: str, _purge: bool = False):
+    def prepare_context(
+            cls, url: str,
+            purge: bool = False):
         """
         Create engine and sessionmaker, call create_all().
 
         Must be called before the context manager is used for the first time.
         """
-        cls._engine = create_engine(url=url)
+        cls._engine = create_engine(url=url, pool_pre_ping=True)
         cls._sessionmaker = sessionmaker(bind=cls._engine)
 
-        # as a safeguard, DEBUG must also be True in app config
-        if _purge and DEBUG:
+        if purge:
             Base.metadata.drop_all(bind=cls._engine)
             logger.info(
-                "Purged all existing database tables. _purge was set to True")
+                "Purged the existing database tables. purge was set to True")
         Base.metadata.create_all(bind=cls._engine)
-        logger.info("Successfully prepared the database context.")
+        logger.info("Database context manager was successfully prepared.")
 
     def __init__(self, read_only: bool = False):
         self.read_only = read_only
@@ -69,7 +67,7 @@ class DBContext:
         self.session: Session = self._sessionmaker()
         self.status = CommitState.PENDING
         logger.debug(
-            "[Session ID: %s] Opened the database session.",
+            "[ID: %s] Opened the database session.",
             self.session.hash_key)
         return self
 
@@ -89,10 +87,10 @@ class DBContext:
                     raise exc_value
                 # All other "unknown" exceptions propagate further
                 raise ExceptionInContext(exc_value)
-        except IntegrityError:
+        except IntegrityError as err:
             logger.debug(
-                "[ID: %s] Transaction raised an IntegrityError.",
-                self.session.hash_key)
+                "[ID: %s] Transaction raised an IntegrityError %s",
+                self.session.hash_key, err)
         except SQLAlchemyError as err:
             logger.exception(
                 "[ID: %s] Transaction raised an error: %s",
@@ -103,9 +101,10 @@ class DBContext:
         else:
             # As no exception occurred -> set status to SUCCESS
             self.status = CommitState.SUCCESS
-            logger.debug(
-                "[Session ID: %s] Transaction successfully committed.",
-                self.session.hash_key)
+            if not self.read_only:
+                logger.debug(
+                    "[ID: %s] Transaction successfully committed.",
+                    self.session.hash_key)
         # Perform rollback as commit was not successful
         if self.status is CommitState.FAIL:
             self.session.rollback()
@@ -114,7 +113,7 @@ class DBContext:
                 self.session.hash_key)
         self.session.close()
         logger.debug(
-            "[Session ID: %s] Closed the database session.",
+            "[ID: %s] Closed the database session.",
             self.session.hash_key)
         if self.status is not CommitState.SUCCESS:
             if propagate_exc:
