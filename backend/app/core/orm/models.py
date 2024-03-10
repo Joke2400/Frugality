@@ -1,10 +1,10 @@
-"""Models definitions for the SQLAlchemy ORM."""
+"""Model definitions for the SQLAlchemy ORM."""
 from typing import List, Callable
 from datetime import datetime
 
 from sqlalchemy import func
 from sqlalchemy import ForeignKey
-from sqlalchemy.types import DateTime, ARRAY, String
+from sqlalchemy.types import DateTime
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
@@ -12,14 +12,15 @@ from sqlalchemy.orm import relationship
 from . import database
 Base = database.Base
 
-
-func: Callable  # type: ignore | False positive in sqlalchemy
-
-# TODO: Better documentation over relationships etc
+# False positive in sqlalchemy / mypy
+func: Callable  # type: ignore
 
 
 class Store(Base):
-    """An SQLAlchemy ORM mapping for a store item."""
+    """An SQLAlchemy ORM mapping for a Store item.
+
+    products: defines a one-to-many relationship to ProductData
+    """
     __tablename__ = "Stores"
 
     # Unique identifiers
@@ -38,7 +39,10 @@ class Store(Base):
 
 
 class Product(Base):
-    """An SQLAlchemy ORM mapping for a product item."""
+    """An SQLAlchemy ORM mapping for a Product item.
+
+    data: defines a one-to-many relationship to ProductData.
+    """
     __tablename__ = "Products"
 
     # Unique identifiers
@@ -61,7 +65,11 @@ class Product(Base):
 
 
 class ProductData(Base):
-    """An SQLAlchemy ORM mapping for a product data item."""
+    """An SQLAlchemy ORM mapping for a ProductData item.
+
+    store: Defines a many-to-one relationship to Store.
+    product: Defines a many-to-one relationship to Product.
+    """
     __tablename__ = "ProductData"
 
     # Unique identifiers

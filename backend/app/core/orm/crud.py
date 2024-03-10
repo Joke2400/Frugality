@@ -1,5 +1,4 @@
 """Contains CRUD operations for interaction with the database."""
-from ast import Tuple
 from typing import Type, Sequence
 from sqlalchemy import select, insert
 from sqlalchemy.sql import Select
@@ -91,7 +90,6 @@ def bulk_create_records(
 
 
 # ---- GENERAL READING FUNCTIONS ----
-
 def select_one[SchemaT: SchemaOut](
         stmt: Select, cast: Type[SchemaT]
         ) -> SchemaT | None:
@@ -194,8 +192,6 @@ def get_stores_by_name(
     return select_all(stmt=stmt, cast=schemas.StoreDB)
 
 # ---- PRODUCT GET FUNCTIONS ----
-
-
 def get_product_by_ean(ean: str) -> schemas.ProductDB | None:
     """Get a store by ean."""
     stmt = (

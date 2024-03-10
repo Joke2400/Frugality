@@ -16,7 +16,7 @@ ProductDataT = TypeVar("ProductDataT", bound="ProductDataDB")
 
 
 class Store(pydantic.BaseModel):
-    """Store schema for items going in/out of routes."""
+    """Schema for stores going into DB/out of routes."""
     store_name: str
     store_id: int
     slug: str
@@ -28,7 +28,7 @@ class Store(pydantic.BaseModel):
 
 
 class StoreDB(Store, Generic[ProductT]):
-    """Complete schema for a Store, equivalent to DB Store model."""
+    """Store schema equivalent to the orm model: 'Store'."""
     id: int
     timestamp: datetime
     products: list[ProductT] = pydantic.Field(
@@ -37,7 +37,7 @@ class StoreDB(Store, Generic[ProductT]):
 
 # ---------------------------------------
 class Product(pydantic.BaseModel):
-    """Store schema for items going in/out of routes."""
+    """Schema for products going into DB/out of routes."""
     name: str
     category: str
     ean: str
@@ -50,7 +50,7 @@ class Product(pydantic.BaseModel):
 
 
 class ProductDB(Product, Generic[ProductDataT]):
-    """Complete schema for a Product, equivalent to DB Product model."""
+    """Product schema equivalent to the orm model: 'Product'."""
     id: int
     timestamp: datetime
     data: list[ProductDataT] = pydantic.Field(
@@ -61,7 +61,7 @@ class ProductDB(Product, Generic[ProductDataT]):
 
 
 class ProductData(pydantic.BaseModel):
-    """ProductData schema."""
+    """Schema for productdata going into DB/out of routes."""
     eur_unit_price_whole: int
     eur_unit_price_decimal: int
     eur_cmp_price_whole: int
@@ -75,7 +75,7 @@ class ProductData(pydantic.BaseModel):
 
 
 class ProductDataDB(ProductData):
-    """Complete schema for ProductData, equivalent to DB ProductData Model"""
+    """Productdata schema equivalent to the orm model: 'ProductData'."""
     id: int
     timestamp: datetime
 
@@ -89,7 +89,7 @@ class ProductDataDB(ProductData):
 
 
 class ProductQuery(pydantic.BaseModel):
-    """Schema definition for Product queries."""
+    """Schema for how queries for products should look like"""
     stores: Annotated[set[int], Len(min_length=0, max_length=10)]
     queries: Annotated[list[dict[str, str]], Len(min_length=0, max_length=30)]
 
@@ -117,7 +117,7 @@ class ProductQuery(pydantic.BaseModel):
 
 
 class StoreQuery(pydantic.BaseModel):
-    """Schema definition for Store queries"""
+    """Schema for how queries for stores should look like"""
     store_name: Annotated[str | None, Len(min_length=1, max_length=50)]
     store_id: int | None = Field(ge=0, le=999999999)
 
@@ -144,7 +144,7 @@ class StoreQuery(pydantic.BaseModel):
 
 
 class ProductResponse(pydantic.BaseModel):
-    """API Product response schema"""
+    """Schema format for the response to a product query."""
     results: dict[
         int,
         list[
@@ -179,7 +179,7 @@ class ProductResponse(pydantic.BaseModel):
 
 
 class StoreResponse(pydantic.BaseModel):
-    """API Store response schema."""
+    """Schema format for the response to a store query."""
     results: list[Store]
 
     def __str__(self) -> str:
