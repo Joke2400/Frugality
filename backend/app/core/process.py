@@ -48,6 +48,7 @@ class Process(metaclass=patterns.SingletonMeta):
         self.postgres_user = self.get_envvar("POSTGRES_USER")
         self.postgres_password = self.get_envvar("POSTGRES_PASSWORD")
         self.postgres_db = self.get_envvar("POSTGRES_DB")
+        self.debug = self.get_envvar("DEBUG") in ("True", "true")
         try:
             # port is not necessary if running in a container
             self.postgres_port = self.get_envvar("POSTGRES_PORT")
@@ -70,12 +71,19 @@ class Process(metaclass=patterns.SingletonMeta):
             allow_methods=["*"],
             allow_headers=["*"]
         )
-        database.DBContext.prepare_context(
-            url=self.create_database_url(), purge=PURGE_DB)
-        if POPULATE_DB:
-            populate_db()
-        if RUN_DEBUG_CODE:
-            self._execute_debug_code()
+        if self.debug:
+            logger.info("ENVIRONMENT VARIABLE 'DEBUG' IS TRUE")
+            logger.info("FORCING USAGE OF TEST DATABASE")
+            self.postgres_db = "test_database"
+            database.DBContext.prepare_context(
+                url=self.create_database_url(), purge=PURGE_DB)
+            if POPULATE_DB:
+                populate_db()
+            if RUN_DEBUG_CODE:
+                self._execute_debug_code()
+        else:
+            database.DBContext.prepare_context(
+                url=self.create_database_url())
         logger.info("FastAPI statup complete.")
 
     def create_database_url(self) -> str:

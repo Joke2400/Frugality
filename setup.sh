@@ -9,6 +9,7 @@ postgres_user="frugality_user"
 postgres_password="pleasechangethispassword"
 postgres_db="test_database"
 postgres_port=5432
+debug=True
 
 # Create a .env file with default environment variables
 echo "Setting up dev environment..."
@@ -16,15 +17,8 @@ echo "POSTGRES_USER=$postgres_user" > .env
 echo "POSTGRES_PASSWORD=$postgres_password" >> .env
 echo "POSTGRES_DB=$postgres_db" >> .env
 echo "POSTGRES_PORT=$postgres_port" >> .env
+echo "DEBUG=$debug" >> .env
 echo "Created .env file with default values. Please remember to edit it with the appropriate values."
-
-# Install [virtualenv] if not already present
-if ! [ "$(pip3 list | grep -F virtualenv)" ]; then
-    echo "Installing 'virtualenv' package..."
-    command sudo apt install python3-virtualenv
-else
-    echo "Package 'virtualenv' is already installed. Skipping package install step..."
-fi
 
 if ! [ -d frugality_env ]; then
     echo "Directory '$env_name' does not exist. Creating virtualenv with name: '$env_name'..."
