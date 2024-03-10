@@ -27,7 +27,12 @@ POPULATE_DB = config.parser["debug"]["populate_db"] in (
 
 
 class Process(metaclass=patterns.SingletonMeta):
-    """Singleton for managing the execution of the entire app."""
+    """Singleton for managing the setup of the entire app.
+
+    Fetches environment variables & include FastAPI routers
+    Configures the CORS & prepares DBContext for use.
+    Also calls debug code if the debug ENVVAR is set to True.
+    """
     postgres_user: str
     postgres_password: str
     postgres_db: str
@@ -36,7 +41,6 @@ class Process(metaclass=patterns.SingletonMeta):
     app: FastAPI = FastAPI()
 
     def __init__(self) -> None:
-        """Fetch environment variables & include FastAPI routers"""
         logger.info("Starting FastAPI application...")
         # Check if -'-container=True' in launch args
         for arg in sys.argv[1:]:

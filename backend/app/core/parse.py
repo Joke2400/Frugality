@@ -1,4 +1,4 @@
-"""Parsing functions for parsing/modifying various responses/strings."""
+"""Contains parsing functions for parsing/modifying data."""
 import re
 import json
 import httpx

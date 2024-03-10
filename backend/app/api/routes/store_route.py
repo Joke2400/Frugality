@@ -51,6 +51,7 @@ async def get_stores(
     Returns:
         schemas.StoreResponse:
             Contains a 'results' key with the retrieved results.
+            See the schema definition for the response format.
     """
     logger.info("Received a new store query.")
     for strategy in strategies:

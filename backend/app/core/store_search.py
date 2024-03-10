@@ -29,7 +29,7 @@ class DBStoreSearchStrategy(patterns.Strategy):
     See patterns.Strategy for ABC implementation.
 
     Implements execute() abstractmethod, the method should
-    be called via SearchContext.execute_strategy()
+    be called via the execute_strategy() method in SearchContext.
     """
 
     @staticmethod
@@ -87,7 +87,7 @@ class APIStoreSearchStrategy(patterns.Strategy):
     See patterns.Strategy for ABC implementation.
 
     Implements execute() abstractmethod, the method should
-    be called via SearchContext.execute_strategy()
+    be called via the execute_strategy() method in SearchContext.
     """
 
     @classmethod
@@ -146,12 +146,9 @@ class APIStoreSearchStrategy(patterns.Strategy):
                 The store query to build the request with.
 
         Returns:
-            Coroutine[
-                None, None,
-                Response | None
-                ]:
-                Coroutine which final value is either a httpx.Response
-                or None if no response was received / an error occurred.
+            Response | None:
+                Either a httpx.Response or None if no response
+                was received or an error occurred.
         """
         if query.store_id is not None:
             store_query: str = str(query.store_id)

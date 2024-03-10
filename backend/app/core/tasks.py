@@ -1,13 +1,17 @@
-"""Contains background tasks used in the app."""
+"""Contains background tasks that are called by FastAPI."""
 from typing import Type, Sequence, cast
 from itertools import batched
 
 from backend.app.core.orm import schemas
 from backend.app.core.orm import models
 from backend.app.core.orm import crud
-from backend.app.core.typedefs import APIProductItem, ProductSearchResult, StoreSearchResult
-from backend.app.core.typedefs import SchemaInOrDict
-from backend.app.core.typedefs import OrmModel
+from backend.app.core.typedefs import (
+    APIProductItem,
+    ProductSearchResult,
+    StoreSearchResult,
+    SchemaInOrDict,
+    OrmModel
+)
 from backend.app.utils import LoggerManager
 
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)

@@ -16,13 +16,13 @@ STORE_GRAPHQL = load_schema_from_path(
 
 
 class Operation(str, Enum):
-    """Enumeration for graphql operation types."""
+    """String enum for graphql operation types."""
     PRODUCT_SEARCH = "GetProductByName"
     STORE_SEARCH = "StoreSearch"
 
 
 def build_request_headers() -> dict:
-    """Build the request headers."""
+    """Build & return the request headers dict."""
     return {
         "Content-Type": "application/json",
         "Accept": "*/*",
@@ -34,10 +34,10 @@ def build_request_headers() -> dict:
 
 
 def build_graphql_request_body(operation: Operation, variables: dict):
-    """Build a GraphQL request body.
+    """Build & return a GraphQL request body dict.
 
     Contains operation_name, query and variables.
-    See GraphQL docs online for details.
+    See the GraphQL docs online for details about the format.
     """
     if not isinstance(operation, Operation):
         raise TypeError(
@@ -60,7 +60,7 @@ def build_graphql_request_body(operation: Operation, variables: dict):
 def build_request_payload(
         method: str, operation: Operation,
         variables: dict, timeout: int = 10):
-    """Build the request parameters dictionary."""
+    """Build & return the request parameters dict."""
     return {
         "method": method,
         "url": GRAPHQL_ENDPOINT,
@@ -73,8 +73,8 @@ def build_request_payload(
 def build_store_variables(value: str) -> dict:
     """Build the required GraphQL variables dict.
 
-    In this case the variables required when the operation name is:
-        operation.STORE_SEARCH.
+    This function returns the appropriate variables for
+    the STORE_SEARCH operation.
     """
     return {
         "StoreBrand": None,
@@ -88,8 +88,8 @@ def build_product_variables(
         limit: int = 24) -> dict:
     """Build the required GraphQL variables dict.
 
-    In this case the variables required when the operation name is:
-        operation.PRODUCT_SEARCH.
+    This function returns the appropriate variables for
+    the PRODUCT_SEARCH operation.
     """
     return {
         "StoreID": store_id,

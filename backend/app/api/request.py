@@ -1,6 +1,5 @@
-"""HTTPx request functions."""
+"""HTTPx request & request handling functions."""
 import json
-from typing import Coroutine
 from httpx import (
     AsyncClient,
     Response,

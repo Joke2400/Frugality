@@ -1,4 +1,4 @@
-
+"Contains the SearchContext ctx manager used in the app search flows."
 from typing import TypeVar, Generic, Any, Self, cast
 from fastapi import BackgroundTasks, HTTPException
 
@@ -32,14 +32,11 @@ ResultT = StoreSearchResult | ProductSearchResult
 
 
 class SearchContext(Generic[StrategyT]):
-    """Context manager class for managing searches.
+    """Context manager for managing the search flow.
 
-    Used for both store and product searches.
-    Is intended to initiate the background task given upon exit.
-    (but not implemented now.)
+    Returns successful requests, raises HTTPExceptions upon failure &
+    sets up background tasks to be run by FastAPI post-search.
     """
-
-    # Using predefined query formats from schemas.py
     query: QueryT
     result: ResultT
     strategy: StrategyT
@@ -55,7 +52,27 @@ class SearchContext(Generic[StrategyT]):
 
     async def execute_strategy(
             self, *args: Any, **kwargs: Any) -> list | dict:
-        """Execute the current strategy with the given set of args & kwargs"""
+        """Execute the current strategy.
+
+        Args:
+            Passed in args & kwargs are passed onto the execute method
+            defined by the current strategy. self.query is also always
+            passed into the method as a keyword argument.
+        Raises:
+            HTTPException 500:
+                Raised if no response was received from the external api. 
+                Also raised if an error occurred when parsing the response.
+            HTTPException 404:
+                Raised if both the DB and API searches yielded no results.
+            ResourceNotInDBException:
+                Raised if the database search yields no results.
+                Is immediately suppressed by the __exit__ method so
+                that an API search may still be run afterwards.
+        Returns:
+            Returns either a list or a dict depending on the return value
+            of the current strategy. 
+            See typedefs StoreSearchResult & ProductSearchResult
+        """
         # Cast result to ResultT so that mypy 'knows' it's not 'Any'
         self.result = cast(ResultT, await self.strategy.execute(
             *args, query=self.query, context=self, **kwargs))
@@ -91,6 +108,7 @@ class SearchContext(Generic[StrategyT]):
                 assert_never(x)
 
     def __enter__(self) -> Self:
+        """Logs the current strategy & query before entering the context."""
         logger.info(
             "Performing a new search using %s", self.strategy)
         logger.debug(
@@ -98,6 +116,14 @@ class SearchContext(Generic[StrategyT]):
         return self
 
     def __exit__(self, exc_type, exc_value, traceback) -> bool:
+        """Exit the context & call background tasks.
+
+        If a ResourceNotInDBException was raised, suppress it.
+        Any other exceptions are re-raised (context returns false.)
+
+        If no exceptions were raised & SearchState is SUCCESS:
+            -> Calls background tasks to save the results to the DB.
+        """
         # Instantly suppress this as we still want to run the API
         # search before yielding a 404-status code to the end-user
         if exc_type is ResourceNotInDBException:

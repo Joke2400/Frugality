@@ -1,3 +1,4 @@
+"""Contains the SearchState enum used in managing the search flows."""
 from enum import Enum
 
 

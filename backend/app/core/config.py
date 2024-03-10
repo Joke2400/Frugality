@@ -1,4 +1,4 @@
-"""Create configparser & provide app config file."""
+"""Create a configparser & read the config file."""
 from configparser import ConfigParser
 from backend.app.utils import paths
 
