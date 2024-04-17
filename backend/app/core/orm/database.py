@@ -119,3 +119,47 @@ class DBContext:
             if propagate_exc:
                 return False
         return True
+
+
+class SessionContext:
+    session: Session
+    read_only: bool
+
+    def __init__(self, session: Session, read_only: bool,
+                 close_on_exit: bool = True) -> None:
+        self.session = session
+        self.read_only = read_only
+        self.close_on_exit = close_on_exit
+
+    def __enter__(self) -> Self:
+        logger.debug(
+            "[SESSION_ID: %s] Entered the database session.",
+            self.session.hash_key)
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback) -> bool:
+        if exc_type is not None:
+            logger.debug(
+                "[SESSION_ID: %s] Rolling back due to exception.",
+                self.session.hash_key)
+            self.session.rollback()
+            return False
+        try:
+            if not self.read_only:
+                self.session.commit()
+        except IntegrityError as err:
+            logger.debug(
+                "[SESSION_ID: %s] Transaction raised an IntegrityError %s",
+                self.session.hash_key, err)
+            self.session.rollback()
+            return True
+        except SQLAlchemyError as err:
+            logger.debug(
+                "[SESSION_ID: %s] Transaction raised an error %s",
+                self.session.hash_key, err)
+            self.session.rollback()
+            return False
+        finally:
+            if self.close_on_exit:
+                self.session.close()
+        return True
