@@ -47,6 +47,7 @@ This is a long-term project that I like to work on in my free time.
 
 2. **Or if you want to do this manually (Or you're running Windows)**
 
+    - *Note that you need to create the `.env` file manually if you didn't run setup.sh. The required variables can be read from the setup.sh script, there will be a batch file created later*
     - Ensure you have `virtualenv` installed. (Install with: `pip install virtualenv`).
     - Open the terminal & ensure you're in the project root directory.
     - Create a Python virtual environment by running the command below:

@@ -7,12 +7,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from backend.app.core import config
 from backend.app.core.orm import database
-from backend.app.core.orm.populate import populate_db
 from backend.app.api.routes import store_route
 from backend.app.api.routes import product_route
 from backend.app.api.routes import index as index_route
 from backend.app.utils import patterns
 from backend.app.utils import exceptions
+from backend.app.utils.populate import populate_db
 from backend.app.utils.logging import LoggerManager
 
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)

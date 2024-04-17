@@ -1,8 +1,7 @@
 """Contains functions that populate the database with test data."""
 from datetime import timezone, datetime, timedelta
 from backend.app.utils import LoggerManager
-from . import crud
-from . import models
+from backend.app.core.orm import crud, models
 
 
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
