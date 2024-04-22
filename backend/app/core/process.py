@@ -1,5 +1,4 @@
 """Contains a process singleton class for managing the application."""
-import os
 import sys
 from dotenv import load_dotenv
 from fastapi import FastAPI
@@ -14,6 +13,7 @@ from backend.app.utils import patterns
 from backend.app.utils import exceptions
 from backend.app.utils.populate import populate_db
 from backend.app.utils.logging import LoggerManager
+from backend.app.utils.util_funcs import get_envvar
 
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 
@@ -49,13 +49,13 @@ class Process(metaclass=patterns.SingletonMeta):
                     self.container = True
                     break
 
-        self.postgres_user = self.get_envvar("POSTGRES_USER")
-        self.postgres_password = self.get_envvar("POSTGRES_PASSWORD")
-        self.postgres_db = self.get_envvar("POSTGRES_DB")
-        self.debug = self.get_envvar("DEBUG") in ("True", "true")
+        self.postgres_user = get_envvar("POSTGRES_USER")
+        self.postgres_password = get_envvar("POSTGRES_PASSWORD")
+        self.postgres_db = get_envvar("POSTGRES_DB")
+        self.debug = get_envvar("DEBUG") in ("True", "true")
         try:
             # port is not necessary if running in a container
-            self.postgres_port = self.get_envvar("POSTGRES_PORT")
+            self.postgres_port = get_envvar("POSTGRES_PORT")
         except exceptions.MissingEnvironmentVar as exc:
             if self.container is False:
                 raise exceptions.MissingEnvironmentVar(
@@ -79,15 +79,14 @@ class Process(metaclass=patterns.SingletonMeta):
             logger.info("ENVIRONMENT VARIABLE 'DEBUG' IS TRUE")
             logger.info("FORCING USAGE OF TEST DATABASE")
             self.postgres_db = "test_database"
-            database.DBContext.prepare_context(
+            database.ORM(
                 url=self.create_database_url(), purge=PURGE_DB)
             if POPULATE_DB:
                 populate_db()
             if RUN_DEBUG_CODE:
                 self._execute_debug_code()
         else:
-            database.DBContext.prepare_context(
-                url=self.create_database_url())
+            database.ORM(url=self.create_database_url())
         logger.info("FastAPI statup complete.")
 
     def create_database_url(self) -> str:
@@ -100,23 +99,6 @@ class Process(metaclass=patterns.SingletonMeta):
         logger.info(f"Set postgres host to @{host}")
         return f"postgresql://{auth}@{host}"
 
-    @staticmethod
-    def get_envvar(key: str) -> str:
-        """Get an environment variable.
-        Args:
-            key (str): The key to fetch.
-
-        Raises:
-            exceptions.MissingEnvironmentVar:
-                Raised if the environment variable was not found.
-
-        Returns:
-            str: Always returns the found variable as a string
-        """
-        if (var := os.getenv(key=key)) in ("", None):
-            raise exceptions.MissingEnvironmentVar(
-                f"The required environment variable '{key}' was missing.")
-        return str(var)
 
     @staticmethod
     def _execute_debug_code() -> None:

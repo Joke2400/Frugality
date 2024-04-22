@@ -1,9 +1,11 @@
 """Contains CRUD operations for interaction with the database."""
-from typing import Type, Sequence
+from typing import Type, TypeVar, Sequence
 from sqlalchemy import select, insert
 from sqlalchemy.sql import Select
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 
-
+from backend.app.core.orm.database import SessionContext
 from backend.app.core.typedefs import SchemaInOrDict
 from backend.app.core.typedefs import SchemaOut
 from backend.app.core.typedefs import OrmModel
@@ -16,76 +18,41 @@ from . import database
 
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 
-# TODO: Implement asynchronous database operations
-
-# ---- GENERAL CREATION FUNCTIONS ----
+ModelT = TypeVar("ModelT", bound=OrmModel)
 
 
-def create_record(record: SchemaInOrDict, model: Type[OrmModel]) -> bool:
-    """Add a new record to the database.
+def create(record: ModelT, session_ctx: SessionContext) -> ModelT | None:
+    """Create a new database record.
 
     Args:
-        record (SchemaInOrDict):
-            A Pydantic Schema (IN type only, see typedefs.py) or a dict.
-        model (Type[OrmModelT]):
-            The type for an ORM model defined in models.py
+        record (ModelT):
+            The SQLAlchemy model for the record to be created.
+        session_ctx (SessionContext):
+            The context manager for handling errors & the session.
 
     Returns:
-        bool:
-            Returns True if the operation was successful.
-            If an SQLAlchemy error was raised, or any other exception
-            occurred inside the context (DBContext), returns False.
+        ModelT | None:
+            Returns the passed-in record when succesful; None upon fail.
     """
-    if not isinstance(record, dict):
-        db_model: OrmModel = model(**dict(record))
-    else:
-        db_model = model(**record)
-    with database.DBContext() as context:
-        logger.debug(
-            "Adding a single '%s' record to the database...",
-            record.__class__.__name__)
-        context.session.add(db_model)
-    if context.status is database.CommitState.SUCCESS:
-        return True
-    logger.debug(
-        "Unable to add record %s (%s) to the database.",
-        model, record.__class__.__name__)
-    return False
+    with session_ctx:
+        session_ctx.session.add(record)
+        session_ctx.session.commit()
+        logger.debug("Added a single record to the database.")
+        return record
+    return None
 
 
-def bulk_create_records(
-        records: Sequence[SchemaInOrDict],
-        model: Type[OrmModel]) -> bool:
-    """Add records to the database using a bulk insert.
-
-    Args:
-        records (list[SchemaInOrDict]):
-        The batch of items to be added to the database.
-        Items must be Pydantic Schemas (IN type only, see typedefs.py).
-        Alternatively dicts may also be passed
-
-    Returns:
-        bool:
-        A boolean indicating if the operation was successful.
-    """
-    if not isinstance(records[0], dict):
-        items: list[dict] = [dict(i) for i in records]  # Convert to dicts
-    else:
-        # Assuming the entire Sequence is a list of dicts
-        items = records  # type: ignore
-    with database.DBContext() as context:
-        logger.debug(
-            "Adding batch of %s '%s' records records to the database...",
-            len(items), records[0].__class__.__name__)
-        context.session.execute(
-            insert(model),
-            [*items]  # Unpack dicts into statement
+def bulk_create(
+        records: list[ModelT], session_ctx: SessionContext) -> bool:
+    with session_ctx:
+        session_ctx.session.execute(
+            insert(records[0]),  # insert model type
+            [*records]
         )
-    if context.status is database.CommitState.SUCCESS:
+        logger.debug(
+            "Added %s records to the database as a bulk insert.",
+            len(records))
         return True
-    logger.debug(
-        "Unable to add batch of records (%s) to the database.",
-        records[0].__class__.__name__)
     return False
 
 
