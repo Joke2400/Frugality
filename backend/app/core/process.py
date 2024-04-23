@@ -56,9 +56,9 @@ class Process(metaclass=patterns.SingletonMeta):
         try:
             # port is not necessary if running in a container
             self.postgres_port = get_envvar("POSTGRES_PORT")
-        except exceptions.MissingEnvironmentVar as exc:
+        except exceptions.MissingEnvironmentVariableError as exc:
             if self.container is False:
-                raise exceptions.MissingEnvironmentVar(
+                raise exceptions.MissingEnvironmentVariableError(
                     "Port is required when running locally.") from exc
             self.postgres_port = None
 
@@ -80,7 +80,7 @@ class Process(metaclass=patterns.SingletonMeta):
             logger.info("FORCING USAGE OF TEST DATABASE")
             self.postgres_db = "test_database"
             database.ORM(
-                url=self.create_database_url(), purge=PURGE_DB)
+                url=self.create_database_url(), _purge=PURGE_DB)
             if POPULATE_DB:
                 populate_db()
             if RUN_DEBUG_CODE:

@@ -20,7 +20,7 @@ from backend.app.core.orm import schemas
 
 from backend.app.utils.patterns import Strategy
 from backend.app.utils.util_funcs import assert_never
-from backend.app.utils.exceptions import ResourceNotInDBException
+from backend.app.utils.exceptions import MissingResourceError
 from backend.app.utils.logging import LoggerManager
 
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
@@ -70,7 +70,7 @@ class SearchContext(Generic[StrategyT]):
                 that an API search may still be run afterwards.
         Returns:
             Returns either a list or a dict depending on the return value
-            of the current strategy. 
+            of the current strategy.
             See typedefs StoreSearchResult & ProductSearchResult
         """
         # Cast result to ResultT so that mypy 'knows' it's not 'Any'
@@ -97,7 +97,7 @@ class SearchContext(Generic[StrategyT]):
                         self.strategy,
                         (DBStoreSearchStrategy,
                          DBProductSearchStrategy)):
-                    raise ResourceNotInDBException()
+                    raise MissingResourceError()
                 raise HTTPException(
                     detail="Could not find any results for the query.",
                     status_code=404)
@@ -126,7 +126,7 @@ class SearchContext(Generic[StrategyT]):
         """
         # Instantly suppress this as we still want to run the API
         # search before yielding a 404-status code to the end-user
-        if exc_type is ResourceNotInDBException:
+        if exc_type is MissingResourceError:
             return True
         if exc_type is None:
             # Call background tasks to save results

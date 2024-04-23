@@ -1,13 +1,19 @@
 """Contains custom exception classes."""
 
 
-class MissingEnvironmentVar(Exception):
+class FrugalityError(Exception):
+    """Exception base-class for exceptions raised by Frugality."""
+
+    def __init__(self, message: str = "Service is unavailable.",
+                 name: str = "Frugality") -> None:
+        self.message = message
+        self.name = name
+        super().__init__(self.message, self.name)
+
+
+class MissingEnvironmentVariableError(FrugalityError):
     """A required environment variable was not provided."""
 
 
-class ExceptionInContext(Exception):
-    """An exception occurred within the context of a context manager."""
-
-
-class ResourceNotInDBException(Exception):
-    """Raised by SearchContext if a resource was not found in the DB."""
+class MissingResourceError(FrugalityError):
+    """Raised when a resource is not found in the database."""

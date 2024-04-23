@@ -12,5 +12,5 @@ url = f"postgresql://{auth}@{host}"
 # Initializing ORM completely separate from process.py
 ORM(
     url=url,
-    purge=True
+    _purge=True
 )

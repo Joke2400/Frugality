@@ -28,7 +28,7 @@ def get_envvar(key: str) -> str:
         str: Always returns the found variable as a string
     """
     if (var := os.getenv(key=key)) in ("", None):
-        raise exceptions.MissingEnvironmentVar(
+        raise exceptions.MissingEnvironmentVariableError(
             f"The required environment variable '{key}' was missing.")
     return str(var)
 

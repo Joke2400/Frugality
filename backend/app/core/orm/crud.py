@@ -1,20 +1,14 @@
 """Contains CRUD operations for interaction with the database."""
-from typing import Type, TypeVar, Sequence
-from sqlalchemy import select, insert
+from typing import Type, TypeVar
+from sqlalchemy import select, insert as sql_insert
 from sqlalchemy.sql import Select
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
 
-from backend.app.core.orm.database import SessionContext
-from backend.app.core.typedefs import SchemaInOrDict
-from backend.app.core.typedefs import SchemaOut
-from backend.app.core.typedefs import OrmModel
-
+from backend.app.core.typedefs import SchemaOut, OrmModel
+from backend.app.core.orm.database import SessionContext, Base
 from backend.app.utils import LoggerManager
 
 from . import models
 from . import schemas
-from . import database
 
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 
@@ -22,17 +16,17 @@ ModelT = TypeVar("ModelT", bound=OrmModel)
 
 
 def create(record: ModelT, session_ctx: SessionContext) -> ModelT | None:
-    """Create a new database record.
+    """Create a new database record using the given model.
 
     Args:
         record (ModelT):
             The SQLAlchemy model for the record to be created.
         session_ctx (SessionContext):
-            The context manager for handling errors & the session.
+            The context manager for handling the database access.
 
     Returns:
         ModelT | None:
-            Returns the passed-in record when succesful; None upon fail.
+            Returns the same record when successful and None upon fail.
     """
     with session_ctx:
         session_ctx.session.add(record)
@@ -42,11 +36,24 @@ def create(record: ModelT, session_ctx: SessionContext) -> ModelT | None:
     return None
 
 
-def bulk_create(
-        records: list[ModelT], session_ctx: SessionContext) -> bool:
+def insert(
+        table: Type[Base], records: list[dict],
+        session_ctx: SessionContext) -> bool:
+    """Create multiple new database records from the given list.
+
+    Args:
+        record (ModelT):
+            The list of item-dicts to be inserted into the database.
+        session_ctx (SessionContext):
+            The context manager for handling the database access.
+
+    Returns:
+        bool:
+            Returns True if the insert is successful, False if not.
+    """
     with session_ctx:
         session_ctx.session.execute(
-            insert(records[0]),  # insert model type
+            sql_insert(table),  # Model type is fetched from first element
             [*records]
         )
         logger.debug(
