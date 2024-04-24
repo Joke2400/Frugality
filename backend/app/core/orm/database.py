@@ -2,7 +2,7 @@
 from typing_extensions import Self
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import Session, sessionmaker, DeclarativeBase
-from sqlalchemy.exc import IntegrityError, DataError, OperationalError
+from sqlalchemy.exc import IntegrityError, DataError, OperationalError, MultipleResultsFound
 
 from backend.app.utils import patterns
 from backend.app.utils import LoggerManager
@@ -72,7 +72,7 @@ class SessionContext:
         logger.debug(
             "[SESSION_ID: %s] Exited the session context.",
             self.session.hash_key)
-        if exc_type in (IntegrityError, DataError):
+        if exc_type in (IntegrityError, DataError, MultipleResultsFound):
             return True
         return False
 
@@ -113,6 +113,7 @@ class ORM(metaclass=patterns.SingletonMeta):
         except OperationalError:
             logger.error(
                 "Connection to database refused. Is the server running?")
+            raise
         logger.info("SQLAlchemy ORM is now operational.")
 
     def create_all(self) -> None:

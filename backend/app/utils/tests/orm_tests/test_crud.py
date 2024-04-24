@@ -1,7 +1,8 @@
 """Contains tests for crud operations"""
 from sqlalchemy import select
-from sqlalchemy.exc import DataError, IntegrityError
+from sqlalchemy.exc import DataError, IntegrityError, MultipleResultsFound
 from backend.app.utils.util_funcs import cleanup, log_test_name
+from backend.app.utils.populate import populate_stores
 from backend.app.core.orm import crud, models, database
 
 
@@ -165,3 +166,68 @@ def test_insert_duplicate_data():
         all_stores = ctx.session.scalars(stmt).all()
         assert len(all_stores) == 0
     ctx.session.close()
+
+
+@cleanup
+@log_test_name
+def test_read_one_default():
+    """Test crud read_one default behaviour."""
+    # Populate database with a consistent set of data
+    populate_stores(orm=database.ORM)
+    stmt = select(models.Store).where(models.Store.store_id == 542862479)
+    ctx = database.ORM().get_session_context()
+    result = crud.read_one(stmt=stmt, session_ctx=ctx)
+    assert isinstance(result, models.Store)
+    assert result.store_id == 542862479
+
+
+@cleanup
+@log_test_name
+def test_read_one_multiple_results():
+    """Test crud read_one fails when multiple results found."""
+    # Populate database with a consistent set of data
+    populate_stores(orm=database.ORM)
+    # The query selects all stores while read_one calls one_or_none()
+    stmt = select(models.Store)
+    ctx = database.ORM().get_session_context()
+    result = crud.read_one(stmt=stmt, session_ctx=ctx)
+    assert result is None
+    assert ctx.prev_exc is MultipleResultsFound
+
+
+@cleanup
+@log_test_name
+def test_read_one_no_result():
+    """Test crud read_one returns no result (and no error)."""
+    # Populate database with a consistent set of data
+    populate_stores(orm=database.ORM)
+    stmt = select(models.Store).where(models.Store.store_id == 123)
+    ctx = database.ORM().get_session_context()
+    result = crud.read_one(stmt=stmt, session_ctx=ctx)
+    assert result is None
+    assert ctx.prev_exc is None
+
+
+@cleanup
+@log_test_name
+def test_read_all_default():
+    """Test crud read_all default behaviour."""
+    # Populate database with a consistent set of data
+    populate_stores(orm=database.ORM)
+    stmt = select(models.Store)
+    ctx = database.ORM().get_session_context()
+    result = crud.read_all(stmt=stmt, session_ctx=ctx)
+    assert len(result) == 4
+
+
+@cleanup
+@log_test_name
+def test_read_all_no_result():
+    """"Test crud read_all returns no results (and no error)."""
+    # Populate database with a consistent set of data
+    populate_stores(orm=database.ORM)
+    stmt = select(models.Store).where(models.Store.store_id == 123)
+    ctx = database.ORM().get_session_context()
+    result = crud.read_all(stmt=stmt, session_ctx=ctx)
+    assert len(result) == 0
+    assert ctx.prev_exc is None

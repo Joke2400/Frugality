@@ -11,7 +11,7 @@ from backend.app.api.routes import product_route
 from backend.app.api.routes import index as index_route
 from backend.app.utils import patterns
 from backend.app.utils import exceptions
-from backend.app.utils.populate import populate_db
+from backend.app.utils.populate import populate_all
 from backend.app.utils.logging import LoggerManager
 from backend.app.utils.util_funcs import get_envvar
 
@@ -82,7 +82,7 @@ class Process(metaclass=patterns.SingletonMeta):
             database.ORM(
                 url=self.create_database_url(), _purge=PURGE_DB)
             if POPULATE_DB:
-                populate_db()
+                populate_all()
             if RUN_DEBUG_CODE:
                 self._execute_debug_code()
         else:

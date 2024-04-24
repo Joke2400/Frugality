@@ -1,7 +1,8 @@
 """Contains CRUD operations for interaction with the database."""
-from typing import Type, TypeVar
+from typing import Type, TypeVar, cast as cast_type
 from sqlalchemy import select, insert as sql_insert
 from sqlalchemy.sql import Select
+from pydantic import ValidationError
 
 from backend.app.core.typedefs import SchemaOut, OrmModel
 from backend.app.core.orm.database import SessionContext, Base
@@ -13,6 +14,7 @@ from . import schemas
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 
 ModelT = TypeVar("ModelT", bound=OrmModel)
+SchemaT = TypeVar("SchemaT", bound=SchemaOut)
 
 
 def create(record: ModelT, session_ctx: SessionContext) -> ModelT | None:
@@ -56,6 +58,7 @@ def insert(
             sql_insert(table),  # Model type is fetched from first element
             [*records]
         )
+        session_ctx.session.commit()
         logger.debug(
             "Added %s records to the database as a bulk insert.",
             len(records))
@@ -63,64 +66,42 @@ def insert(
     return False
 
 
-# ---- GENERAL READING FUNCTIONS ----
-def select_one[SchemaT: SchemaOut](
-        stmt: Select, cast: Type[SchemaT]
-        ) -> SchemaT | None:
-    """Get a single item from the database using the given select query.
-
-    The resulting ORM-object is casted to the specified
-    Pydantic schema before being returned from the function.
+def read_one(stmt: Select, session_ctx: SessionContext) -> OrmModel | None:
+    """Read a single record from the database.
 
     Args:
         stmt (Select):
-            A previously constructed SQLAlchemy Select object.
-            This is used in the call to session.scalars.
-        cast (Type[SchemaOut]):
-            The type of the Pydantic schema to cast the result to.
-            The upper bound is defined by SchemaOut (see typedefs).
+            The select statement to execute.
+        session_ctx (SessionContext):
+            The context manager for handling the database access.
 
     Returns:
-        SchemaOut | None:
-            The validated instance of the given SchemaT type.
-            Returns None if the item could not be retrieved.
+        OrmModel | None:
+            Returns an SQLAlchemy model bound to OrmModel. Returns
+            None instead if no result was found or if an exception occurred.
     """
-    result: SchemaT | None = None
-    with database.DBContext(read_only=True) as context:
-        item: OrmModel | None = context.session.scalars(stmt).one_or_none()
-        if item is not None:
-            result = cast.model_validate(item)
-    return result
+    with session_ctx:
+        return session_ctx.session.scalars(stmt).one_or_none()
+    return None
 
 
-def select_all[SchemaT: SchemaOut](
-        stmt: Select, cast: Type[SchemaT]
-        ) -> list[SchemaT]:
-    """Get a list of items from the database using the given select query.
-
-    The resulting ORM-objects are casted to the specified
-    Pydantic schema before being returned from the function.
+def read_all(stmt: Select, session_ctx: SessionContext) -> list[OrmModel]:
+    """Read multiple records from the database.
 
     Args:
         stmt (Select):
-            A previously constructed SQLAlchemy Select object.
-            This is used in the call to session.scalars.
-        cast (Type[SchemaT]):
-            The type of the Pydantic schema to cast the results to.
-            The upper bound is defined by SchemaOut (see typedefs).
+            The select statement to execute.
+        session_ctx (SessionContext):
+            The context manager for handling the database access.
 
     Returns:
-        list[SchemaT]:
-            A list of validated instances of the given SchemaT type.
-            The list may be empty if no items could be retrieved.
+        list[OrmModel]:
+            Returns a list of SQLAlchemy models bound to OrmModel. List may
+            be empty if no results were found or if an exception occurred.
     """
-    result: list[SchemaT] = []
-    with database.DBContext(read_only=True) as context:
-        items: list[OrmModel] = context.session.scalars(stmt).all()
-        result = [
-            cast.model_validate(item) for item in items
-        ]
-    return result
+    with session_ctx:
+        return session_ctx.session.scalars(stmt).all()
+    return []
 
 
 def select_all_join[SchemaT: SchemaOut](

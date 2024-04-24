@@ -7,14 +7,14 @@ from backend.app.core.orm import crud, models
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 
 
-def populate_db() -> None:
+def populate_all(orm) -> None:
     """Populate the database with consistent test data."""
     logger.info("Populating the database with test data...")
-    populate_stores()
-    populate_products()
+    populate_stores(orm)
+    populate_products(orm)
 
 
-def populate_stores() -> None:
+def populate_stores(orm) -> None:
     """Populate the database with a consistent set of stores."""
     stores = [
         {
@@ -42,12 +42,13 @@ def populate_stores() -> None:
             "brand": "s-market"
         },
     ]
-    for i in stores:
-        assert crud.create_record(record=i, model=models.Store) is True
+    ctx = orm().get_session_context()
+    assert crud.insert(
+        table=models.Store, records=stores, session_ctx=ctx) is True
     logger.info("Populated the database with test stores.")
 
 
-def populate_products() -> None:
+def populate_products(orm) -> None:
     """Populate the database with a consistent set of products."""
     products = [
         {
@@ -125,9 +126,10 @@ def populate_products() -> None:
             "timestamp": datetime.now(timezone.utc) - timedelta(days=2)
         }
     ]
-    for x in products:
-        assert crud.create_record(record=x, model=models.Product) is True
+    ctx = orm().get_session_context(close_on_exit=False)
+    assert crud.insert(
+        table=models.Product, records=products, session_ctx=ctx) is True
     logger.info("Populated the database with test products.")
-    for y in product_data:
-        assert crud.create_record(record=y, model=models.ProductData) is True
+    assert crud.insert(
+        table=models.ProductData, records=product_data, session_ctx=ctx) is True
     logger.info("Populated the database with test product_data.")
