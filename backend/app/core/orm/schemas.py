@@ -27,11 +27,11 @@ class Store(pydantic.BaseModel):
         frozen=True)
 
 
-class StoreDB(Store, Generic[ProductT]):
+class StoreDB(Store, Generic[ProductDataT]):
     """Store schema equivalent to the orm model: 'Store'."""
     id: int
     timestamp: datetime
-    products: list[ProductT] = pydantic.Field(
+    products: list[ProductDataT] = pydantic.Field(
         default_factory=list)
 
 

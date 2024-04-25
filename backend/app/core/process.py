@@ -82,7 +82,7 @@ class Process(metaclass=patterns.SingletonMeta):
             database.ORM(
                 url=self.create_database_url(), _purge=PURGE_DB)
             if POPULATE_DB:
-                populate_all()
+                populate_all(database.ORM)
             if RUN_DEBUG_CODE:
                 self._execute_debug_code()
         else:

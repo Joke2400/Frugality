@@ -1,28 +1,10 @@
-"""Contains tests for crud operations"""
-import pytest
+"""Contains integration tests for CRUD."""
 from sqlalchemy import select
 from sqlalchemy.exc import DataError, IntegrityError, MultipleResultsFound
 from backend.app.core.orm import crud, models, database
-from backend.app.utils.populate import populate_stores
+from backend.app.utils.populate import populate_stores, populate_all
 
-
-# Initializing ORM completely separate from process.py
-# module __init__ fetches envvars & creates url to 'test_database'
-# TODO: Re-evaluate if this is a smart thing to do in terms of security.
-# (not that envvars should be used anyway; Is a problem for the future me.)
-from . import _url
-database.ORM(
-    url=_url,
-    _purge=True
-)
-
-
-@pytest.fixture(scope="function")
-def setup_and_teardown():
-    """Create tables on setup & purge tables on teardown."""
-    database.ORM().create_all()
-    yield
-    database.ORM().purge_all()
+from .fixture import setup_and_teardown
 
 
 def test_create_default(setup_and_teardown):
@@ -178,12 +160,16 @@ def test_insert_duplicate_data(setup_and_teardown):
 def test_read_one_default(setup_and_teardown):
     """Test crud read_one default behaviour."""
     # Populate database with a consistent set of data
-    populate_stores(orm=database.ORM)
+    populate_all(orm=database.ORM)
     stmt = select(models.Store).where(models.Store.store_id == 542862479)
-    ctx = database.ORM().get_session_context()
+    ctx = database.ORM().get_session_context(close_on_exit=False)
     result = crud.read_one(stmt=stmt, session_ctx=ctx)
     assert isinstance(result, models.Store)
     assert result.store_id == 542862479
+    assert len(result.products) == 2
+    for i in result.products:
+        assert isinstance(i, models.ProductData)
+    ctx.session.close()
 
 
 def test_read_one_multiple_results(setup_and_teardown):
@@ -212,11 +198,16 @@ def test_read_one_no_result(setup_and_teardown):
 def test_read_all_default(setup_and_teardown):
     """Test crud read_all default behaviour."""
     # Populate database with a consistent set of data
-    populate_stores(orm=database.ORM)
+    populate_all(orm=database.ORM)
     stmt = select(models.Store)
-    ctx = database.ORM().get_session_context()
+    ctx = database.ORM().get_session_context(close_on_exit=False)
     result = crud.read_all(stmt=stmt, session_ctx=ctx)
     assert len(result) == 4
+    for i in result:
+        assert isinstance(i, models.Store)
+        for y in i.products:
+            assert isinstance(y, models.ProductData)
+    ctx.session.close()
 
 
 def test_read_all_no_result(setup_and_teardown):
