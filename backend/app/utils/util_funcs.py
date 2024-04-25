@@ -43,8 +43,8 @@ def cleanup(func: Callable[..., None]) -> Callable[..., None]:
     return wrapper
 
 
-def log_test_name(func: Callable[..., None]) -> Callable[..., None]:
-    """Decorator that logs the function name of the test that is being run."""
+def log_func_name(func: Callable[..., None]) -> Callable[..., None]:
+    """Decorator that logs the function name."""
     def wrapper(*args, **kwargs):
         logger.debug("Running test: %s()", func.__name__)
         return func(*args, **kwargs)

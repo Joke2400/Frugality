@@ -1,14 +1,31 @@
 """Contains tests for crud operations"""
+import pytest
 from sqlalchemy import select
 from sqlalchemy.exc import DataError, IntegrityError, MultipleResultsFound
-from backend.app.utils.util_funcs import cleanup, log_test_name
-from backend.app.utils.populate import populate_stores
 from backend.app.core.orm import crud, models, database
+from backend.app.utils.populate import populate_stores
 
 
-@cleanup
-@log_test_name
-def test_create_default():
+# Initializing ORM completely separate from process.py
+# module __init__ fetches envvars & creates url to 'test_database'
+# TODO: Re-evaluate if this is a smart thing to do in terms of security.
+# (not that envvars should be used anyway; Is a problem for the future me.)
+from . import _url
+database.ORM(
+    url=_url,
+    _purge=True
+)
+
+
+@pytest.fixture(scope="function")
+def setup_and_teardown():
+    """Create tables on setup & purge tables on teardown."""
+    database.ORM().create_all()
+    yield
+    database.ORM().purge_all()
+
+
+def test_create_default(setup_and_teardown):
     """Test crud create default behaviour."""
     store = models.Store(
         store_name="Test Store 1",
@@ -21,9 +38,7 @@ def test_create_default():
     assert result is store
 
 
-@cleanup
-@log_test_name
-def test_create_invalid_data():
+def test_create_invalid_data(setup_and_teardown):
     """Test crud create fails with invalid data."""
     store_1 = models.Store(
         store_name="Test Store 1",
@@ -37,9 +52,7 @@ def test_create_invalid_data():
     assert ctx.prev_exc is DataError
 
 
-@cleanup
-@log_test_name
-def test_create_duplicate_data():
+def test_create_duplicate_data(setup_and_teardown):
     """Test crud create fails with duplicate data."""
     store_1 = models.Store(
         store_name="Test Store 1",
@@ -61,9 +74,7 @@ def test_create_duplicate_data():
     assert ctx.prev_exc is IntegrityError
 
 
-@cleanup
-@log_test_name
-def test_insert_default():
+def test_insert_default(setup_and_teardown):
     """Test crud insert default behaviour."""
     store_1_dict = {
         "store_name": "Test Store 1",
@@ -96,9 +107,7 @@ def test_insert_default():
     ctx.session.close()
 
 
-@cleanup
-@log_test_name
-def test_insert_invalid_data():
+def test_insert_invalid_data(setup_and_teardown):
     """Test crud insert fails with invalid data."""
     store_1_dict = {
         "store_name": "Test Store 1",
@@ -132,9 +141,7 @@ def test_insert_invalid_data():
     ctx.session.close()
 
 
-@cleanup
-@log_test_name
-def test_insert_duplicate_data():
+def test_insert_duplicate_data(setup_and_teardown):
     """Test crud insert fails with duplicate value."""
     store_1_dict = {
         "store_name": "Test Store 1",
@@ -168,9 +175,7 @@ def test_insert_duplicate_data():
     ctx.session.close()
 
 
-@cleanup
-@log_test_name
-def test_read_one_default():
+def test_read_one_default(setup_and_teardown):
     """Test crud read_one default behaviour."""
     # Populate database with a consistent set of data
     populate_stores(orm=database.ORM)
@@ -181,9 +186,7 @@ def test_read_one_default():
     assert result.store_id == 542862479
 
 
-@cleanup
-@log_test_name
-def test_read_one_multiple_results():
+def test_read_one_multiple_results(setup_and_teardown):
     """Test crud read_one fails when multiple results found."""
     # Populate database with a consistent set of data
     populate_stores(orm=database.ORM)
@@ -195,9 +198,7 @@ def test_read_one_multiple_results():
     assert ctx.prev_exc is MultipleResultsFound
 
 
-@cleanup
-@log_test_name
-def test_read_one_no_result():
+def test_read_one_no_result(setup_and_teardown):
     """Test crud read_one returns no result (and no error)."""
     # Populate database with a consistent set of data
     populate_stores(orm=database.ORM)
@@ -208,9 +209,7 @@ def test_read_one_no_result():
     assert ctx.prev_exc is None
 
 
-@cleanup
-@log_test_name
-def test_read_all_default():
+def test_read_all_default(setup_and_teardown):
     """Test crud read_all default behaviour."""
     # Populate database with a consistent set of data
     populate_stores(orm=database.ORM)
@@ -220,9 +219,7 @@ def test_read_all_default():
     assert len(result) == 4
 
 
-@cleanup
-@log_test_name
-def test_read_all_no_result():
+def test_read_all_no_result(setup_and_teardown):
     """"Test crud read_all returns no results (and no error)."""
     # Populate database with a consistent set of data
     populate_stores(orm=database.ORM)

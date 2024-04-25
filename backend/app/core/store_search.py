@@ -7,7 +7,7 @@ from backend.app.api import payload
 from backend.app.core import parse
 from backend.app.core import config
 from backend.app.core.orm import schemas
-from backend.app.core.orm import crud
+from backend.app.core.orm import operations
 from backend.app.core.search_state import SearchState
 
 from backend.app.utils import patterns
@@ -59,9 +59,9 @@ class DBStoreSearchStrategy(patterns.Strategy):
                 "A 'query' param of type StoreQuery must be provided.")
         result: list[schemas.StoreDB] | schemas.StoreDB | None
         if query.store_id is not None:
-            result = crud.get_store_by_id(query.store_id)
+            result = operations.get_store_by_id(query.store_id)
         else:
-            result = crud.get_stores_by_name(query.store_name)  # type: ignore
+            result = operations.get_stores_by_name(query.store_name)  # type: ignore
         match result:
             case [] | None:
                 logger.info("DB search: Failed to find stores for query: %s.",

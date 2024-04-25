@@ -11,11 +11,10 @@ from backend.app.core.orm.schemas import (
     Store
 )
 from backend.app.utils.util_funcs import assert_never
+from backend.app.core.orm import operations
 
-import backend.app.core.orm.crud as crud
 
-
-def crud_returns_single_store(*args, **kwargs):
+def returns_single_store(*args, **kwargs):
     """Mock for when the DB returns a result."""
     return StoreDB(
         store_name="Store Name",
@@ -27,7 +26,7 @@ def crud_returns_single_store(*args, **kwargs):
     )
 
 
-def crud_returns_list_of_stores(*args, **kwargs):
+def returns_list_of_stores(*args, **kwargs):
     """Mock for when the DB returns multiple results."""
     return [
         Store(
@@ -57,9 +56,9 @@ async def test_search_by_name_default(monkeypatch: MonkeyPatch):
     # DB search should not interact with fields other than query
     context = SearchContext(
         query=query, strategy=None, task=None)  # type: ignore
-    monkeypatch.setattr(crud, "get_stores_by_name",
-                        crud_returns_list_of_stores)
-    monkeypatch.setattr(crud, "get_store_by_id", assert_never)
+    monkeypatch.setattr(operations, "get_stores_by_name",
+                        returns_list_of_stores)
+    monkeypatch.setattr(operations, "get_store_by_id", assert_never)
     result = await DBStoreSearchStrategy.execute(query=query, context=context)
     assert result[0] is SearchState.SUCCESS
     assert isinstance(result[1][0], Store)
@@ -72,8 +71,8 @@ async def test_search_by_id_default(monkeypatch: MonkeyPatch):
     # DB search should not interact with fields other than query
     context = SearchContext(
         query=query, strategy=None, task=None)  # type: ignore
-    monkeypatch.setattr(crud, "get_stores_by_name", assert_never)
-    monkeypatch.setattr(crud, "get_store_by_id", crud_returns_single_store)
+    monkeypatch.setattr(operations, "get_stores_by_name", assert_never)
+    monkeypatch.setattr(operations, "get_store_by_id", returns_single_store)
     result = await DBStoreSearchStrategy.execute(query=query, context=context)
     assert result[0] is SearchState.SUCCESS
     assert isinstance(result[1][0], StoreDB)
@@ -86,8 +85,8 @@ async def test_search_by_both_default(monkeypatch: MonkeyPatch):
     # DB search should not interact with fields other than query
     context = SearchContext(
         query=query, strategy=None, task=None)  # type: ignore
-    monkeypatch.setattr(crud, "get_stores_by_name", assert_never)
-    monkeypatch.setattr(crud, "get_store_by_id", crud_returns_single_store)
+    monkeypatch.setattr(operations, "get_stores_by_name", assert_never)
+    monkeypatch.setattr(operations, "get_store_by_id", returns_single_store)
     result = await DBStoreSearchStrategy.execute(query=query, context=context)
     assert result[0] is SearchState.SUCCESS
     assert isinstance(result[1][0], StoreDB)
@@ -100,8 +99,8 @@ async def test_name_search_no_result(monkeypatch: MonkeyPatch):
     # DB search should not interact with fields other than query
     context = SearchContext(
         query=query, strategy=None, task=None)  # type: ignore
-    monkeypatch.setattr(crud, "get_stores_by_name", lambda x: [])
-    monkeypatch.setattr(crud, "get_store_by_id", assert_never)
+    monkeypatch.setattr(operations, "get_stores_by_name", lambda x: [])
+    monkeypatch.setattr(operations, "get_store_by_id", assert_never)
     result = await DBStoreSearchStrategy.execute(query=query, context=context)
     assert result[0] is SearchState.FAIL
     assert len(result[1]) == 0
@@ -113,8 +112,8 @@ async def test_id_search_no_result(monkeypatch: MonkeyPatch):
     # DB search should not interact with fields other than query
     context = SearchContext(
         query=query, strategy=None, task=None)  # type: ignore
-    monkeypatch.setattr(crud, "get_stores_by_name", assert_never)
-    monkeypatch.setattr(crud, "get_store_by_id", lambda x: None)
+    monkeypatch.setattr(operations, "get_stores_by_name", assert_never)
+    monkeypatch.setattr(operations, "get_store_by_id", lambda x: None)
     result = await DBStoreSearchStrategy.execute(query=query, context=context)
     assert result[0] is SearchState.FAIL
     assert len(result[1]) == 0

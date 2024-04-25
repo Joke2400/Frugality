@@ -1,16 +1,9 @@
 from backend.app.utils.util_funcs import get_envvar
-from backend.app.core.orm.database import ORM
 
-postgres_user = get_envvar("POSTGRES_USER")
-postgres_password = get_envvar("POSTGRES_PASSWORD")
-postgres_port = get_envvar("POSTGRES_PORT")
+_postgres_user = get_envvar("POSTGRES_USER")
+_postgres_password = get_envvar("POSTGRES_PASSWORD")
+_postgres_port = get_envvar("POSTGRES_PORT")
 
-auth = f"{postgres_user}:{postgres_password}"
-host = f"localhost:{postgres_port}/test_database"
-url = f"postgresql://{auth}@{host}"
-
-# Initializing ORM completely separate from process.py
-ORM(
-    url=url,
-    _purge=True
-)
+_auth = f"{_postgres_user}:{_postgres_password}"
+_host = f"localhost:{_postgres_port}/test_database"
+_url = f"postgresql://{_auth}@{_host}"
