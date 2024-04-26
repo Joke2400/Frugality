@@ -5,14 +5,12 @@ from backend.app.api import request
 from backend.app.api import payload
 
 from backend.app.core import parse
-from backend.app.core import config
 from backend.app.core.orm import schemas
 from backend.app.core.orm import operations
-from backend.app.core.search_state import SearchState
+from backend.app.core.search.state import SearchState
 
-from backend.app.utils import patterns
+from backend.app.utils import config, patterns, LoggerManager
 from backend.app.utils.util_funcs import assert_never
-from backend.app.utils.logging import LoggerManager
 
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 

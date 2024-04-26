@@ -3,11 +3,11 @@ from typing import TypeVar, Generic, Any, Self, cast
 from fastapi import BackgroundTasks, HTTPException
 
 from backend.app.core import tasks
-from backend.app.core.store_search import (
+from backend.app.core.search.store_flow import (
     DBStoreSearchStrategy,
     APIStoreSearchStrategy
 )
-from backend.app.core.product_search import (
+from backend.app.core.search.product_flow import (
     DBProductSearchStrategy,
     APIProductSearchStrategy
 )
@@ -15,7 +15,7 @@ from backend.app.core.typedefs import (
     StoreSearchResult,
     ProductSearchResult
 )
-from backend.app.core.search_state import SearchState
+from backend.app.core.search.state import SearchState
 from backend.app.core.orm import schemas
 
 from backend.app.utils.patterns import Strategy

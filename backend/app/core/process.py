@@ -4,13 +4,11 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.app.core import config
 from backend.app.core.orm import database
 from backend.app.api.routes import store_route
 from backend.app.api.routes import product_route
 from backend.app.api.routes import index as index_route
-from backend.app.utils import patterns
-from backend.app.utils import exceptions
+from backend.app.utils import config, patterns, exceptions
 from backend.app.utils.populate import populate_all
 from backend.app.utils.logging import LoggerManager
 from backend.app.utils.util_funcs import get_envvar

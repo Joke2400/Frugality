@@ -6,7 +6,7 @@ from annotated_types import Len
 import pydantic
 from pydantic import Field
 
-from backend.app.core.search_state import SearchState
+from backend.app.core.search.state import SearchState
 
 StoreT = TypeVar("StoreT", bound="Store")
 ProductT = TypeVar("ProductT", bound="Product")

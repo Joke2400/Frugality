@@ -4,7 +4,7 @@ import json
 import httpx
 import pydantic
 
-from backend.app.core.search_state import SearchState
+from backend.app.core.search.state import SearchState
 from backend.app.core.orm import schemas
 from backend.app.utils.logging import LoggerManager
 

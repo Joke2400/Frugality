@@ -1,6 +1,6 @@
 """Contains type definitions for use throughout the app."""
 from backend.app.core.orm import schemas, models
-from backend.app.core.search_state import SearchState
+from backend.app.core.search.state import SearchState
 
 
 OrmModel = models.Store | models.Product | models.ProductData

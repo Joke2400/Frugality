@@ -9,8 +9,8 @@ from httpx import (
     ConnectError,
     ConnectTimeout
 )
-from backend.app.core import config
-from backend.app.utils import LoggerManager
+from backend.app.utils import config, LoggerManager
+
 
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 DEBUG = config.parser["debug"]["run_debug_code"] in ("True", "true")

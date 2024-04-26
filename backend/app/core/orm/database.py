@@ -2,10 +2,13 @@
 from typing_extensions import Self
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import Session, sessionmaker, DeclarativeBase
-from sqlalchemy.exc import IntegrityError, DataError, OperationalError, MultipleResultsFound
-
-from backend.app.utils import patterns
-from backend.app.utils import LoggerManager
+from sqlalchemy.exc import (
+    IntegrityError,
+    DataError,
+    OperationalError,
+    MultipleResultsFound
+)
+from backend.app.utils import patterns, LoggerManager
 
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 
@@ -66,7 +69,7 @@ class SessionContext:
         self.session.rollback()
         self.prev_exc = exc_type
         logger.debug(
-            "[SESSION_ID: %s] Transaction raised an %s %s",
+            "[SESSION_ID: %s] Transaction raised an %s: %s",
             self.session.hash_key, exc_type.__name__, exc_value)
         self.session.close()
         logger.debug(

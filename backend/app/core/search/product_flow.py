@@ -8,14 +8,11 @@ from backend.app.api import request
 from backend.app.api import payload
 
 from backend.app.core import parse
-from backend.app.core import config
 from backend.app.core.typedefs import ProductSearchResult
 from backend.app.core.orm import schemas
-from backend.app.core.orm import crud
-from backend.app.core.search_state import SearchState
+from backend.app.core.search.state import SearchState
 
-from backend.app.utils import patterns
-from backend.app.utils.util_funcs import assert_never
+from backend.app.utils import config, patterns
 from backend.app.utils.logging import LoggerManager
 
 

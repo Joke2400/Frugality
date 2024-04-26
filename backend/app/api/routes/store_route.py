@@ -4,11 +4,11 @@ from fastapi import (
     APIRouter,
     BackgroundTasks
 )
-from backend.app.core.store_search import (
+from backend.app.core.search.store_flow import (
     DBStoreSearchStrategy,
     APIStoreSearchStrategy
 )
-from backend.app.core.search_context import SearchContext
+from backend.app.core.search.context import SearchContext
 from backend.app.core.orm import schemas
 from backend.app.utils.util_funcs import assert_never
 from backend.app.utils.logging import LoggerManager

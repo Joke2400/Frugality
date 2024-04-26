@@ -2,9 +2,9 @@
 from datetime import datetime
 from pytest import MonkeyPatch
 
-from backend.app.core.store_search import DBStoreSearchStrategy
-from backend.app.core.search_context import SearchContext
-from backend.app.core.search_state import SearchState
+from backend.app.core.search.store_flow import DBStoreSearchStrategy
+from backend.app.core.search.context import SearchContext
+from backend.app.core.search.state import SearchState
 from backend.app.core.orm.schemas import (
     StoreQuery,
     StoreDB,
