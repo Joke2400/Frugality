@@ -92,7 +92,7 @@ class Process(metaclass=patterns.SingletonMeta):
         auth = f"{self.postgres_user}:{self.postgres_password}"
         host = f"localhost:{self.postgres_port}/{self.postgres_db}"
         if self.container:
-            host = f"postgres_db/{self.postgres_db}"
+            host = f"frugality_db/{self.postgres_db}"
 
         logger.info(f"Set postgres host to @{host}")
         return f"postgresql://{auth}@{host}"

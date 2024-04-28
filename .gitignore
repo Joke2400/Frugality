@@ -1,5 +1,7 @@
 __pycache__
 frugality_env
+*_env
 .env
+*.env
 .coverage
 *.log
