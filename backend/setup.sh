@@ -36,5 +36,5 @@ fi
 echo "Activating Python virtual environment..."
 command source ./$env_name/bin/activate
 echo "Installing project requirements..."
-command pip install -r ./backend/requirements.txt
+command pip install -r ./requirements.txt
 echo "Project setup complete."

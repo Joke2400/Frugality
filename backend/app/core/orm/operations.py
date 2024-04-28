@@ -1,8 +1,8 @@
 """Contains operations for fetching (& converting) data from db."""
 from sqlalchemy import select
 from pydantic import ValidationError
-from backend.app.core.orm import models, schemas, crud, database
-from backend.app.utils import LoggerManager
+from app.core.orm import models, schemas, crud, database
+from app.utils import LoggerManager
 
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 

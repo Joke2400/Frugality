@@ -2,28 +2,17 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Pytest",
+            "name": "PYTEST: Run all tests",
             "type": "debugpy",
             "request": "launch",
             "module": "pytest",
             "console": "integratedTerminal",
-            "args": ["${workspaceFolder}"]
+            "justMyCode": true,
+            "cwd": "${workspaceFolder}/backend",
+            "args": ["${workspaceFolder}/backend"]
         },
         {
-            "name": "Firefox Debugger (does not work atm)",
-            "type": "firefox",
-            "request": "launch",
-            "reAttach": true,
-            "url": "http://localhost:5173",
-            "pathMappings": [
-                {
-                    "url": "http://localhost:5173",
-                    "path": "${workspaceFolder}/frontend/"
-                }
-            ]
-        },
-        {
-            "name": "Debug Frontend",
+            "name": "DEBUG: Run frontend",
             "request": "launch",
             "type": "node",
             "runtimeExecutable": "${userHome}/.nvm/versions/node/v16.20.0/bin/npm",
@@ -40,11 +29,12 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Debug Backend",
+            "name": "DEBUG: Run backend",
             "type": "debugpy",
             "request": "launch",
-            "module": "backend.main",
+            "module": "main",
             "args": [],
+            "cwd": "${workspaceFolder}/backend",
             "justMyCode": true,
             "console": "integratedTerminal"
         }

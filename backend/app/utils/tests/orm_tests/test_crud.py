@@ -1,8 +1,8 @@
 """Contains integration tests for CRUD."""
 from sqlalchemy import select
 from sqlalchemy.exc import DataError, IntegrityError, MultipleResultsFound
-from backend.app.core.orm import crud, models, database
-from backend.app.utils.populate import populate_stores, populate_all
+from app.core.orm import crud, models, database
+from app.utils.populate import populate_stores, populate_all
 
 from .fixture import setup_and_teardown
 

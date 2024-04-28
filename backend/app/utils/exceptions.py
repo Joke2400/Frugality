@@ -17,3 +17,7 @@ class MissingEnvironmentVariableError(FrugalityError):
 
 class MissingResourceError(FrugalityError):
     """Raised when a resource is not found in the database."""
+
+
+class UnknownPathError(FrugalityError):
+    """Raised when a project path could not be determined."""

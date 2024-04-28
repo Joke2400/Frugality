@@ -1,16 +1,16 @@
 """Contains strategies for performing store searches."""
 from httpx import Response
 
-from backend.app.api import request
-from backend.app.api import payload
+from app.api import request
+from app.api import payload
 
-from backend.app.core import parse
-from backend.app.core.orm import schemas
-from backend.app.core.orm import operations
-from backend.app.core.search.state import SearchState
+from app.core import parse
+from app.core.orm import schemas
+from app.core.orm import operations
+from app.core.search.state import SearchState
 
-from backend.app.utils import config, patterns, LoggerManager
-from backend.app.utils.util_funcs import assert_never
+from app.utils import config, patterns, LoggerManager
+from app.utils.util_funcs import assert_never
 
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 

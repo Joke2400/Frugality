@@ -8,7 +8,7 @@ from sqlalchemy.exc import (
     OperationalError,
     MultipleResultsFound
 )
-from backend.app.utils import patterns, LoggerManager
+from app.utils import patterns, LoggerManager
 
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 

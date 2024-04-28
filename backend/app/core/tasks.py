@@ -2,17 +2,17 @@
 from typing import Type, Sequence, cast
 from itertools import batched
 
-from backend.app.core.orm import schemas
-from backend.app.core.orm import models
-from backend.app.core.orm import crud
-from backend.app.core.typedefs import (
+from app.core.orm import schemas
+from app.core.orm import models
+from app.core.orm import crud
+from app.core.typedefs import (
     APIProductItem,
     ProductSearchResult,
     StoreSearchResult,
     SchemaInOrDict,
     OrmModel
 )
-from backend.app.utils import LoggerManager
+from app.utils import LoggerManager
 
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 

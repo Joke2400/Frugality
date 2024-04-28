@@ -1,6 +1,6 @@
 """Contains ORM fixtures for testing."""
 import pytest
-from backend.app.core.orm import database
+from app.core.orm import database
 
 # Initializing ORM completely separate from process.py
 # module __init__ fetches envvars & creates url to 'test_database'

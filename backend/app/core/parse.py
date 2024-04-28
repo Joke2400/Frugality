@@ -4,9 +4,9 @@ import json
 import httpx
 import pydantic
 
-from backend.app.core.search.state import SearchState
-from backend.app.core.orm import schemas
-from backend.app.utils.logging import LoggerManager
+from app.core.search.state import SearchState
+from app.core.orm import schemas
+from app.utils.logging import LoggerManager
 
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 

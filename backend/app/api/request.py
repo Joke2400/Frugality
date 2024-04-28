@@ -9,7 +9,7 @@ from httpx import (
     ConnectError,
     ConnectTimeout
 )
-from backend.app.utils import config, LoggerManager
+from app.utils import config, LoggerManager
 
 
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)

@@ -4,14 +4,14 @@ from fastapi import (
     APIRouter,
     BackgroundTasks
 )
-from backend.app.core.search.store_flow import (
+from app.core.search.store_flow import (
     DBStoreSearchStrategy,
     APIStoreSearchStrategy
 )
-from backend.app.core.search.context import SearchContext
-from backend.app.core.orm import schemas
-from backend.app.utils.util_funcs import assert_never
-from backend.app.utils.logging import LoggerManager
+from app.core.search.context import SearchContext
+from app.core.orm import schemas
+from app.utils.util_funcs import assert_never
+from app.utils.logging import LoggerManager
 
 
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)

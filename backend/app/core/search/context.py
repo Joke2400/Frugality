@@ -2,26 +2,26 @@
 from typing import TypeVar, Generic, Any, Self, cast
 from fastapi import BackgroundTasks, HTTPException
 
-from backend.app.core import tasks
-from backend.app.core.search.store_flow import (
+from app.core import tasks
+from app.core.search.store_flow import (
     DBStoreSearchStrategy,
     APIStoreSearchStrategy
 )
-from backend.app.core.search.product_flow import (
+from app.core.search.product_flow import (
     DBProductSearchStrategy,
     APIProductSearchStrategy
 )
-from backend.app.core.typedefs import (
+from app.core.typedefs import (
     StoreSearchResult,
     ProductSearchResult
 )
-from backend.app.core.search.state import SearchState
-from backend.app.core.orm import schemas
+from app.core.search.state import SearchState
+from app.core.orm import schemas
 
-from backend.app.utils.patterns import Strategy
-from backend.app.utils.util_funcs import assert_never
-from backend.app.utils.exceptions import MissingResourceError
-from backend.app.utils.logging import LoggerManager
+from app.utils.patterns import Strategy
+from app.utils.util_funcs import assert_never
+from app.utils.exceptions import MissingResourceError
+from app.utils.logging import LoggerManager
 
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 StrategyT = TypeVar("StrategyT", bound=Strategy)

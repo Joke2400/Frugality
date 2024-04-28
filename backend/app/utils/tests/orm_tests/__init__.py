@@ -1,4 +1,4 @@
-from backend.app.utils.util_funcs import get_envvar
+from app.utils.util_funcs import get_envvar
 
 _postgres_user = get_envvar("POSTGRES_USER")
 _postgres_password = get_envvar("POSTGRES_PASSWORD")

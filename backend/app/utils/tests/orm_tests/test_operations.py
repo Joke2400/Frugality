@@ -2,8 +2,8 @@
 from datetime import datetime
 from pytest import MonkeyPatch
 from pydantic import ValidationError
-from backend.app.core.orm import crud, models, schemas, operations, database
-from backend.app.utils.populate import populate_all
+from app.core.orm import crud, models, schemas, operations, database
+from app.utils.populate import populate_all
 
 from .fixture import setup_and_teardown
 

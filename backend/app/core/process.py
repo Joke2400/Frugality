@@ -4,14 +4,14 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.app.core.orm import database
-from backend.app.api.routes import store_route
-from backend.app.api.routes import product_route
-from backend.app.api.routes import index as index_route
-from backend.app.utils import config, patterns, exceptions
-from backend.app.utils.populate import populate_all
-from backend.app.utils.logging import LoggerManager
-from backend.app.utils.util_funcs import get_envvar
+from app.core.orm import database
+from app.api.routes import store_route
+from app.api.routes import product_route
+from app.api.routes import index as index_route
+from app.utils import config, patterns, exceptions
+from app.utils.populate import populate_all
+from app.utils.logging import LoggerManager
+from app.utils.util_funcs import get_envvar
 
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 
@@ -108,7 +108,7 @@ class Process(metaclass=patterns.SingletonMeta):
         """
         logger.info("Executing debug code...")
         try:
-            from backend.debug import execute  # Breaking convention, cheers :)
+            from debug import execute  # Breaking convention, cheers :)
             execute()
         except ImportError:
             logger.info(

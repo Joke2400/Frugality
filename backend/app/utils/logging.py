@@ -4,9 +4,13 @@ import logging
 from pathlib import Path
 from typing_extensions import TypeAlias
 
-from backend.app.utils.patterns import SingletonMeta, TreeNode
+from app.utils import paths
+from app.utils.patterns import SingletonMeta, TreeNode
 
 Handler: TypeAlias = logging.StreamHandler | logging.FileHandler
+
+# TODO: this whole file needs yet another rewrite as its some nice spaghetti atm
+# also has some features I don't think I need
 
 
 class LoggerManager(metaclass=SingletonMeta):
@@ -56,7 +60,7 @@ class LoggerManager(metaclass=SingletonMeta):
                 "Log path must be provided on first call to class.")
         self.log_path: Path = Path(log_path)
         if root_dir is None:
-            self.root_dir = Path.cwd()
+            self.root_dir = paths.Project.root_path()
         else:
             self.root_dir = root_dir
         if self.log_path.exists():

@@ -3,9 +3,9 @@ from typing import Type, TypeVar
 from sqlalchemy import insert as sql_insert
 from sqlalchemy.sql import Select
 
-from backend.app.core.typedefs import SchemaOut, OrmModel
-from backend.app.core.orm.database import SessionContext, Base
-from backend.app.utils import LoggerManager
+from app.core.typedefs import SchemaOut, OrmModel
+from app.core.orm.database import SessionContext, Base
+from app.utils import LoggerManager
 
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 

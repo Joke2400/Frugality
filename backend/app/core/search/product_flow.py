@@ -4,16 +4,16 @@ from typing import Any
 from collections import defaultdict
 from httpx import Response
 
-from backend.app.api import request
-from backend.app.api import payload
+from app.api import request
+from app.api import payload
 
-from backend.app.core import parse
-from backend.app.core.typedefs import ProductSearchResult
-from backend.app.core.orm import schemas
-from backend.app.core.search.state import SearchState
+from app.core import parse
+from app.core.typedefs import ProductSearchResult
+from app.core.orm import schemas
+from app.core.search.state import SearchState
 
-from backend.app.utils import config, patterns
-from backend.app.utils.logging import LoggerManager
+from app.utils import config, patterns
+from app.utils.logging import LoggerManager
 
 
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)

@@ -1,8 +1,8 @@
 import os
 from typing import NoReturn, Never, Any, Callable
-from backend.app.core.orm.database import ORM
-from backend.app.utils import exceptions
-from backend.app.utils import LoggerManager
+from app.core.orm.database import ORM
+from app.utils import exceptions
+from app.utils import LoggerManager
 
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 

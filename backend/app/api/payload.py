@@ -2,7 +2,7 @@
 from enum import Enum
 from ariadne import load_schema_from_path
 
-from backend.app.utils import config, paths
+from app.utils import config, paths
 
 USER_AGENT = str(config.parser["api"]["user_agent"])
 GRAPHQL_ENDPOINT = config.parser["skaupat_urls"]["api_graphql"]

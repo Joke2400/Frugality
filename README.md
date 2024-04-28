@@ -54,7 +54,7 @@ This is a long-term project that I like to work on in my free time.
         - `virtualenv name_for_your_env --python='path_to_your_python_3.12.exe'`
     - Next up, activate the virtual environment by running the following:
         - Windows - `./name_for_your_env/Scripts/activate`
-        - Linux - `source /name_for_your_env/Scripts/activate`
+        - Linux - `source /name_for_your_env/bin/activate`
     - Then install the required dependencies with pip:
         - `pip install -r ./backend/requirements.txt`
     

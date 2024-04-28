@@ -2,16 +2,16 @@
 from datetime import datetime
 from pytest import MonkeyPatch
 
-from backend.app.core.search.store_flow import DBStoreSearchStrategy
-from backend.app.core.search.context import SearchContext
-from backend.app.core.search.state import SearchState
-from backend.app.core.orm.schemas import (
+from app.core.search.store_flow import DBStoreSearchStrategy
+from app.core.search.context import SearchContext
+from app.core.search.state import SearchState
+from app.core.orm.schemas import (
     StoreQuery,
     StoreDB,
     Store
 )
-from backend.app.utils.util_funcs import assert_never
-from backend.app.core.orm import operations
+from app.utils.util_funcs import assert_never
+from app.core.orm import operations
 
 
 def returns_single_store(*args, **kwargs):
