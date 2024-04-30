@@ -49,3 +49,14 @@ def log_func_name(func: Callable[..., None]) -> Callable[..., None]:
         logger.debug("Running test: %s()", func.__name__)
         return func(*args, **kwargs)
     return wrapper
+
+
+def build_db_url(usr: str, passwd: str, db: str, testing: bool) -> str:
+    """Build a database connect URL."""
+    auth: str = f"{usr}:{passwd}"
+    if not testing:
+        host: str = f"frugality_db/{db}"
+    else:
+        host = "localhost:5433/test_database"
+    logger.info(f"Set postgres host to @{host}")
+    return f"postgresql://{auth}@{host}"

@@ -13,6 +13,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends
 # Create project root & user
 RUN mkdir -p ${ROOTDIR}
 RUN mkdir -p ${ROOTDIR}/backend
+RUN mkdir -p ${ROOTDIR}/env
 RUN adduser --system --group --home ${ROOTDIR} ${USERNAME}
 RUN chown -R ${USERNAME}:${USERNAME} ${ROOTDIR}
 USER ${USERNAME}
@@ -21,6 +22,7 @@ USER ${USERNAME}
 WORKDIR ${ROOTDIR}
 COPY ./Frugality.code-workspace .
 COPY ./backend/requirements.txt ./backend/
+COPY ./env/prod.env ./env/
 
 # Install the Python requirements
 WORKDIR ${ROOTDIR}/backend

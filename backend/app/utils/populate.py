@@ -1,20 +1,21 @@
 """Contains functions that populate the database with test data."""
+from typing import Type
 from datetime import timezone, datetime, timedelta
 from app.utils import LoggerManager
-from app.core.orm import crud, models
+from app.core.orm import crud, models, database
 
 
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 
 
-def populate_all(orm) -> None:
+def populate_all(orm: Type[database.ORM]) -> None:
     """Populate the database with consistent test data."""
     logger.info("Populating the database with test data...")
     populate_stores(orm)
     populate_products(orm)
 
 
-def populate_stores(orm) -> None:
+def populate_stores(orm: Type[database.ORM]) -> None:
     """Populate the database with a consistent set of stores."""
     stores = [
         {
@@ -48,7 +49,7 @@ def populate_stores(orm) -> None:
     logger.info("Populated the database with test stores.")
 
 
-def populate_products(orm) -> None:
+def populate_products(orm: Type[database.ORM]) -> None:
     """Populate the database with a consistent set of products."""
     products = [
         {

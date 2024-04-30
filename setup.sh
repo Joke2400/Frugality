@@ -31,28 +31,33 @@ fi
 echo "Script prerequisites verified as installed on current system."
 echo "---------------------------------------"
 
-ENV_NAME="frugality_env"
+ENV_NAME="frugality-env"
 PYTHON_PATH="/usr/bin/python3.12"
 read -r -p "Please enter a name for the PostgreSQL user: " postgres_user
 read -s -r -p "Please enter a password for the PostgreSQL user: " postgres_pass
 echo
-read -r -p "Please enter a name for the PostgreSQL database: " postgres_db
 echo "---------------------------------------"
-echo "Creating .env files at: '$PWD' ..."
+echo "Creating .env files at: '$PWD/env' ..."
+if ! [ -d "./env" ]; then
+    echo "Could not find directory 'env' in $PWD. Creating directory..."
+    sudo mkdir env
+    sudo chown $USER:$USER env
+fi
+
 
 # Create prod.env
-echo "POSTGRES_USER=$postgres_user" > prod.env
-echo "POSTGRES_PASSWORD=$postgres_pass" >> prod.env
-echo "POSTGRES_PORT=5432">> prod.env
-echo "POSTGRES_DB=$postgres_db" >> prod.env
-echo "DEBUG=False" >> prod.env
+echo "POSTGRES_USER=$postgres_user" > ./env/prod.env
+echo "POSTGRES_PASSWORD=$postgres_pass" >> ./env/prod.env
+echo "POSTGRES_PORT=5432">> ./env/prod.env
+echo "POSTGRES_DB=frugality_database" >> ./env/prod.env
+echo "DEBUG=False" >> ./env/prod.env
 
 # Create dev.env
-echo "POSTGRES_USER=$postgres_user" > dev.env
-echo "POSTGRES_PASSWORD=$postgres_pass" >> dev.env
-echo "POSTGRES_PORT=5432" >> dev.env
-echo "POSTGRES_DB=test_database" >> dev.env
-echo "DEBUG=True" >> dev.env
+echo "POSTGRES_USER=$postgres_user" > ./env/dev.env
+echo "POSTGRES_PASSWORD=$postgres_pass" >> ./env/dev.env
+echo "POSTGRES_PORT=5433" >> ./env/dev.env
+echo "POSTGRES_DB=test_database" >> ./env/dev.env
+echo "DEBUG=True" >> ./env/dev.env
 
 
 if ! [ -e "./backend/$ENV_NAME/bin/activate" ]; then

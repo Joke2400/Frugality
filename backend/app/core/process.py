@@ -8,14 +8,13 @@ from app.core.orm import database
 from app.api.routes import store_route
 from app.api.routes import product_route
 from app.api.routes import index as index_route
-from app.utils import config, patterns, exceptions
+from app.utils import config, patterns
 from app.utils.populate import populate_all
 from app.utils.logging import LoggerManager
-from app.utils.util_funcs import get_envvar
+from app.utils.util_funcs import build_db_url
 
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 
-load_dotenv()  # Load environment variables from .env file
 RUN_DEBUG_CODE = config.parser["debug"]["run_debug_code"] in (
     "True", "true")
 PURGE_DB = config.parser["debug"]["purge_db"] in (
@@ -31,38 +30,14 @@ class Process(metaclass=patterns.SingletonMeta):
     Configures the CORS & prepares DBContext for use.
     Also calls debug code if the debug ENVVAR is set to True.
     """
-    postgres_user: str
-    postgres_password: str
-    postgres_db: str
-    postgres_port: str | None
-    container: bool = False
     app: FastAPI = FastAPI()
 
     def __init__(self) -> None:
         logger.info("Starting FastAPI application...")
-        # Check if -'-container=True' in launch args
-        for arg in sys.argv[1:]:
-            if "--container" in arg:
-                if arg.split("=")[1].lower() == "true":
-                    self.container = True
-                    break
-
-        self.postgres_user = get_envvar("POSTGRES_USER")
-        self.postgres_password = get_envvar("POSTGRES_PASSWORD")
-        self.postgres_db = get_envvar("POSTGRES_DB")
-        self.debug = get_envvar("DEBUG") in ("True", "true")
-        try:
-            # port is not necessary if running in a container
-            self.postgres_port = get_envvar("POSTGRES_PORT")
-        except exceptions.MissingEnvironmentVariableError as exc:
-            if self.container is False:
-                raise exceptions.MissingEnvironmentVariableError(
-                    "Port is required when running locally.") from exc
-            self.postgres_port = None
-
-        self.app.include_router(index_route.router)
-        self.app.include_router(store_route.router)
-        self.app.include_router(product_route.router)
+        # Add FastAPI routers
+        self.app.include_router(router=index_route.router)
+        self.app.include_router(router=store_route.router)
+        self.app.include_router(router=product_route.router)
 
         # Enable CORS for frontend
         origins = ["http://localhost:5173"]
@@ -73,30 +48,26 @@ class Process(metaclass=patterns.SingletonMeta):
             allow_methods=["*"],
             allow_headers=["*"]
         )
-        if self.debug:
-            logger.info("ENVIRONMENT VARIABLE 'DEBUG' IS TRUE")
-            logger.info("FORCING USAGE OF TEST DATABASE")
-            self.postgres_db = "test_database"
+        if not config.ENV().debug:
             database.ORM(
-                url=self.create_database_url(), _purge=PURGE_DB)
+                url=build_db_url(
+                    usr=config.ENV().postgres_user,
+                    passwd=config.ENV().postgres_password,
+                    db=config.ENV().postgres_db,
+                    testing=False))
+        else:
+            database.ORM(
+                url=build_db_url(
+                    usr=config.ENV().postgres_user,
+                    passwd=config.ENV().postgres_password,
+                    db=config.ENV().postgres_db,
+                    testing=True),
+                _purge=PURGE_DB)
             if POPULATE_DB:
                 populate_all(database.ORM)
             if RUN_DEBUG_CODE:
                 self._execute_debug_code()
-        else:
-            database.ORM(url=self.create_database_url())
         logger.info("FastAPI statup complete.")
-
-    def create_database_url(self) -> str:
-        """Create the database URL-string."""
-        auth = f"{self.postgres_user}:{self.postgres_password}"
-        host = f"localhost:{self.postgres_port}/{self.postgres_db}"
-        if self.container:
-            host = f"frugality_db/{self.postgres_db}"
-
-        logger.info(f"Set postgres host to @{host}")
-        return f"postgresql://{auth}@{host}"
-
 
     @staticmethod
     def _execute_debug_code() -> None:

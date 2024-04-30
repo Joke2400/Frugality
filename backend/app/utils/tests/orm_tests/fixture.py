@@ -1,14 +1,15 @@
 """Contains ORM fixtures for testing."""
 import pytest
 from app.core.orm import database
+from app.utils import config, util_funcs
 
 # Initializing ORM completely separate from process.py
-# module __init__ fetches envvars & creates url to 'test_database'
-# TODO: Re-evaluate if this is a smart thing to do in terms of security.
-# (not that envvars should be used anyway; Is a problem for the future me.)
-from . import _url
 database.ORM(
-    url=_url,
+    url=util_funcs.build_db_url(
+        usr=config.ENV().postgres_user,
+        passwd=config.ENV().postgres_password,
+        db=config.ENV().postgres_db,
+        testing=True),
     _purge=True
 )
 

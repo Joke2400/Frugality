@@ -9,7 +9,7 @@
 			"**/__pycache__": true,
 			"**/.mypy_cache": true,
 			".pytest_cache": true,
-			"frugality_env": true
+			"frugality-env": true
 		},
 	},
 }
