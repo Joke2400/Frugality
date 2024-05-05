@@ -1,6 +1,6 @@
 """Contains a process singleton class for managing the application."""
-import sys
-from dotenv import load_dotenv
+import uvicorn
+from typing import Literal
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -68,6 +68,19 @@ class Process(metaclass=patterns.SingletonMeta):
             if RUN_DEBUG_CODE:
                 self._execute_debug_code()
         logger.info("FastAPI statup complete.")
+
+    def startup(self) -> None:
+        """Start the FastAPI Backend."""
+        reload: bool = config.ENV().in_container
+        port: Literal[80, 8080] = 80 if config.ENV().in_container else 8080
+        uvicorn.run(
+            app="main:fastapi.app",
+            host="0.0.0.0",
+            port=port,
+            log_level="info",
+            reload=reload,
+            reload_includes="*.py"
+        )
 
     @staticmethod
     def _execute_debug_code() -> None:
