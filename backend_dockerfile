@@ -1,6 +1,7 @@
 # Set the Python base image'
 FROM python:3.12.1
 
+ARG UID="1000"
 ARG ROOTDIR="/home/Frugality"
 ARG USERNAME="frugality_backend"
 
@@ -14,7 +15,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends
 RUN mkdir -p ${ROOTDIR}
 RUN mkdir -p ${ROOTDIR}/backend
 RUN mkdir -p ${ROOTDIR}/env
-RUN adduser --system --group --home ${ROOTDIR} ${USERNAME}
+RUN adduser --system --group --home ${ROOTDIR} --uid ${UID} ${USERNAME}
 RUN chown -R ${USERNAME}:${USERNAME} ${ROOTDIR}
 USER ${USERNAME}
 
