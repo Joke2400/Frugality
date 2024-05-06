@@ -1,15 +1,11 @@
 """Contains operations for fetching (& converting) data from db."""
-from typing import TypeAlias
 from sqlalchemy import select
 from pydantic import ValidationError
+from app.core.typedefs import StoreDB as StoreDB, ProductDB as ProductDB
 from app.core.orm import models, schemas, crud, database
 from app.utils import LoggerManager
 
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
-
-# Workaround to help Pylance understand the expected type
-StoreDB: TypeAlias = schemas.StoreDB[schemas.ProductDataDB]
-ProductDB: TypeAlias = schemas.ProductDB[schemas.ProductDataDB]
 
 
 def get_store_by_id(store_id: int) -> StoreDB | None:

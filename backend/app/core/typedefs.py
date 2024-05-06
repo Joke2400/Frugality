@@ -3,6 +3,9 @@ from typing import TypeAlias
 from app.core.orm import schemas, models
 from app.core.search.state import SearchState
 
+# These aliases are a fix that narrows down the type for Pylance.
+# (Underlying schemas need to be defined using generics,
+# as they're reliant on eachother & are defined in the same file)
 StoreDB: TypeAlias = schemas.StoreDB[schemas.ProductDataDB]
 ProductDB: TypeAlias = schemas.ProductDB[schemas.ProductDataDB]
 
