@@ -1,4 +1,5 @@
 """Functions for creating request payloads."""
+from typing import Any, TypeAlias, TypeVar
 from enum import Enum
 from ariadne import load_schema_from_path
 
@@ -13,6 +14,12 @@ PRODUCT_GRAPHQL = load_schema_from_path(
 STORE_GRAPHQL = load_schema_from_path(
     path=paths.Project.graphql_path() / "store.graphql")
 
+BasicJsonType: TypeAlias = str | int | float | bool | None
+JsonType: TypeAlias = \
+    BasicJsonType | list[BasicJsonType] | dict[str, BasicJsonType]
+JsonTypeT_co = TypeVar("JsonTypeT_co", covariant=True, bound=JsonType)
+# Gotta love the dynamic typing life
+
 
 class Operation(str, Enum):
     """String enum for graphql operation types."""
@@ -20,7 +27,7 @@ class Operation(str, Enum):
     STORE_SEARCH = "StoreSearch"
 
 
-def build_request_headers() -> dict:
+def build_request_headers() -> dict[str, str]:
     """Build & return the request headers dict."""
     return {
         "Content-Type": "application/json",
@@ -32,23 +39,20 @@ def build_request_headers() -> dict:
     }
 
 
-def build_graphql_request_body(operation: Operation, variables: dict):
+def build_graphql_request_body(
+        operation: Operation,
+        variables: dict[str, JsonTypeT_co]
+        ) -> dict[str, str | dict[str, JsonTypeT_co]]:
     """Build & return a GraphQL request body dict.
 
     Contains operation_name, query and variables.
     See the GraphQL docs online for details about the format.
     """
-    if not isinstance(operation, Operation):
-        raise TypeError(
-            "Operation must be of Enum type 'Operation'")
     match operation:
         case operation.PRODUCT_SEARCH:
             query = PRODUCT_GRAPHQL
         case operation.STORE_SEARCH:
             query = STORE_GRAPHQL
-        case _:
-            raise ValueError(
-                "Provided operation type was undefined.")
     return {
         "operation_name": operation.value,
         "query": query,
@@ -58,7 +62,8 @@ def build_graphql_request_body(operation: Operation, variables: dict):
 
 def build_request_payload(
         method: str, operation: Operation,
-        variables: dict, timeout: int = 10):
+        variables: dict[str, JsonTypeT_co],
+        timeout: int = 10) -> dict[str, Any]:
     """Build & return the request parameters dict."""
     return {
         "method": method,
@@ -69,7 +74,7 @@ def build_request_payload(
     }
 
 
-def build_store_variables(value: str) -> dict:
+def build_store_variables(value: str) -> dict[str, str | None]:
     """Build the required GraphQL variables dict.
 
     This function returns the appropriate variables for
@@ -84,7 +89,7 @@ def build_store_variables(value: str) -> dict:
 def build_product_variables(
         store_id: int,
         query: dict[str, str],
-        limit: int = 24) -> dict:
+        limit: int = 24) -> dict[str, int | str]:
     """Build the required GraphQL variables dict.
 
     This function returns the appropriate variables for

@@ -1,10 +1,11 @@
 """Contains strategies for performing store searches."""
+from typing import Any, cast
 from httpx import Response
 
 from app.api import request
 from app.api import payload
 
-from app.core import parse
+from app.core import parse, typedefs
 from app.core.orm import schemas
 from app.core.orm import operations
 from app.core.search.state import SearchState
@@ -30,10 +31,10 @@ class DBStoreSearchStrategy(patterns.Strategy):
     be called via the execute_strategy() method in SearchContext.
     """
 
-    @staticmethod
+    @classmethod
     async def execute(
-            *args, **kwargs
-            ) -> tuple[SearchState, list[schemas.StoreDB]]:
+            cls, *args: Any, **kwargs: Any
+            ) -> typedefs.DBStoreSearchResult:
         """Perform a search on the database and return a result.
 
         Args:
@@ -55,11 +56,13 @@ class DBStoreSearchStrategy(patterns.Strategy):
         if not isinstance(query, schemas.StoreQuery):
             raise TypeError(
                 "A 'query' param of type StoreQuery must be provided.")
-        result: list[schemas.StoreDB] | schemas.StoreDB | None
+        result: list[typedefs.StoreDB] | typedefs.StoreDB | None
         if query.store_id is not None:
             result = operations.get_store_by_id(query.store_id)
         else:
-            result = operations.get_stores_by_name(query.store_name)  # type: ignore
+            # Explicit cast, model validator has ensured its not 'None'
+            q: str = cast(str, query.store_name)
+            result = operations.get_stores_by_name(q)
         match result:
             case [] | None:
                 logger.info("DB search: Failed to find stores for query: %s.",
@@ -90,8 +93,8 @@ class APIStoreSearchStrategy(patterns.Strategy):
 
     @classmethod
     async def execute(
-            cls, *args, **kwargs
-            ) -> tuple[SearchState, list[schemas.Store]]:
+            cls, *args: Any, **kwargs: Any
+            ) -> typedefs.APIStoreSearchResult:
         """Perform a search on the external API and return a result.
 
         Args:

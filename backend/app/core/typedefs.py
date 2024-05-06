@@ -1,24 +1,35 @@
 """Contains type definitions for use throughout the app."""
+from typing import TypeAlias
 from app.core.orm import schemas, models
 from app.core.search.state import SearchState
+
+StoreDB: TypeAlias = schemas.StoreDB[schemas.ProductDataDB]
+ProductDB: TypeAlias = schemas.ProductDB[schemas.ProductDataDB]
 
 
 OrmModel = models.Store | models.Product | models.ProductData
 SchemaIn = schemas.Store | schemas.Product | schemas.ProductData
-SchemaOut = schemas.StoreDB | schemas.ProductDB | schemas.ProductDataDB
-SchemaInOrDict = SchemaIn | dict
-SchemaOutOrDict = SchemaOut | dict
+SchemaOut = StoreDB | ProductDB | schemas.ProductDataDB
 
-# SchemaIn defines the possible formats of records going into the database
-# SchemaOut defines the possible formats of records coming out of the database
+DBStoreSearchResult = \
+    tuple[
+        SearchState,
+        list[StoreDB]
+    ]
 
-# i.e:
-#       When creating a record:
-#           SchemaIn -> OrmModel
+APIStoreSearchResult = \
+    tuple[
+        SearchState,
+        list[schemas.Store]
+    ]
 
-#       When reading a record:
-#           OrmModel -> SchemaOut
+StoreSearchResult = DBStoreSearchResult | APIStoreSearchResult
 
+DBProductItem = \
+    tuple[
+        ProductDB,
+        schemas.ProductDataDB
+    ]
 
 APIProductItem = \
     tuple[
@@ -26,31 +37,37 @@ APIProductItem = \
         schemas.ProductData
     ]
 
-DBProductItem = \
+DBProductResultItem = \
     tuple[
-        schemas.ProductDB,
-        schemas.ProductDataDB
+        SearchState,
+        dict[str, str | int],
+        list[DBProductItem]
     ]
 
-# This is the format that a product search strategy returns
-ProductSearchResult = \
+APIProductResultItem = \
+    tuple[
+        SearchState,
+        dict[str, str | int],
+        list[APIProductItem]
+    ]
+
+DBProductSearchResult = \
     tuple[
         SearchState,
         dict[
             int,
-            list[
-                tuple[
-                    SearchState,
-                    dict[str, str | int],
-                    list[APIProductItem] | list[DBProductItem]
-                ]
-            ]
+            list[DBProductResultItem]
         ]
     ]
 
-# This is the format that a store search strategy returns
-StoreSearchResult = \
+
+APIProductSearchResult = \
     tuple[
         SearchState,
-        list[schemas.Store] | list[schemas.StoreDB]
+        dict[
+            int,
+            list[APIProductResultItem]
+        ]
     ]
+
+ProductSearchResult = DBProductSearchResult | APIProductSearchResult

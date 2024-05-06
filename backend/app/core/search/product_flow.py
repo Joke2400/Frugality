@@ -7,8 +7,7 @@ from httpx import Response
 from app.api import request
 from app.api import payload
 
-from app.core import parse
-from app.core.typedefs import ProductSearchResult
+from app.core import parse, typedefs
 from app.core.orm import schemas
 from app.core.search.state import SearchState
 
@@ -35,8 +34,8 @@ class DBProductSearchStrategy(patterns.Strategy):
     """
     @classmethod
     async def execute(
-            cls, *args, **kwargs
-                ) -> ProductSearchResult:
+            cls, *args: Any, **kwargs: Any
+                ) -> typedefs.DBProductSearchResult:
         if not PERFORM_DB_SEARCHES:
             logger.info("Product API search failed, disabled in config.")
             return SearchState.FAIL, {}
@@ -51,8 +50,8 @@ class APIProductSearchStrategy(patterns.Strategy):
 
     @classmethod
     async def execute(
-            cls, *args, **kwargs
-            ) -> ProductSearchResult:
+            cls, *args: Any, **kwargs: Any
+            ) -> typedefs.APIProductSearchResult:
         if not PERFORM_API_SEARCHES:
             logger.info("Product API search failed, disabled in config.")
             return SearchState.FAIL, {}
@@ -64,7 +63,12 @@ class APIProductSearchStrategy(patterns.Strategy):
             logger.error(
                 "API search: Received no API responses to parse.")
             return SearchState.NO_RESPONSE, {}
-        results: dict[int, list] = defaultdict(list)
+        results: dict[int, list[
+            tuple[
+                SearchState, dict[str, str | int],
+                list[
+                    tuple[schemas.Product,
+                          schemas.ProductData]]]]] = defaultdict(list)
         all_failed = True
         for response, orig_query in responses:
             if response is None:
@@ -87,12 +91,13 @@ class APIProductSearchStrategy(patterns.Strategy):
             cls, user_query: schemas.ProductQuery
             ) -> list[tuple[Response | None, dict[str, str | int]]]:
 
+        # Task used for asyncio.gather -->
         async def send_query(
                 params: dict[str, Any], orig_query: dict[str, str | int]
                 ) -> tuple[Response | None, dict[str, str | int]]:
             return await request.send_request(params=params), orig_query
 
-        tasks = []
+        tasks: list[Any] = []
         for store_id in user_query.stores:
             for query in user_query.queries:
                 combined: dict[str, str | int] = {"store_id": store_id}

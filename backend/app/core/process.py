@@ -1,6 +1,6 @@
 """Contains a process singleton class for managing the application."""
-import uvicorn
 from typing import Literal
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 

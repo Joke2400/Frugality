@@ -2,12 +2,10 @@
 from typing import List, Callable
 from datetime import datetime
 
-from sqlalchemy import func
-from sqlalchemy import ForeignKey
+from sqlalchemy import func, ForeignKey
 from sqlalchemy.types import DateTime
-from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import Mapped, relationship
 from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
 
 from . import database
 Base = database.Base

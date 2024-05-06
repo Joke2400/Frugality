@@ -1,4 +1,5 @@
 """Contains operations for fetching (& converting) data from db."""
+from typing import TypeAlias
 from sqlalchemy import select
 from pydantic import ValidationError
 from app.core.orm import models, schemas, crud, database
@@ -6,10 +7,14 @@ from app.utils import LoggerManager
 
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 
+# Workaround to help Pylance understand the expected type
+StoreDB: TypeAlias = schemas.StoreDB[schemas.ProductDataDB]
+ProductDB: TypeAlias = schemas.ProductDB[schemas.ProductDataDB]
 
-def get_store_by_id(store_id: int) -> schemas.StoreDB | None:
+
+def get_store_by_id(store_id: int) -> StoreDB | None:
     """Get a single store from the database by its ID."""
-    item: schemas.StoreDB | None = None
+    item: StoreDB | None = None
     stmt = (
         select(models.Store)
         .where(models.Store.store_id == store_id)
@@ -26,9 +31,9 @@ def get_store_by_id(store_id: int) -> schemas.StoreDB | None:
 
 
 def get_stores_by_name(
-        name: str, brand: str | None = None) -> list[schemas.StoreDB]:
+        name: str, brand: str | None = None) -> list[StoreDB]:
     """Get multiple stores from the database by searching by name."""
-    items: list[schemas.StoreDB] = []
+    items: list[StoreDB] = []
     stmt = (
         select(models.Store)
         .where(models.Store.store_name.ilike(
@@ -48,9 +53,9 @@ def get_stores_by_name(
     return items
 
 
-def get_product_by_ean(ean: str) -> schemas.ProductDB | None:
+def get_product_by_ean(ean: str) -> ProductDB | None:
     """Get a single product from the database by its EAN."""
-    item: schemas.ProductDB | None = None
+    item: ProductDB | None = None
     stmt = (
         select(models.Product)
         .where(models.Product.ean == ean)
@@ -67,9 +72,9 @@ def get_product_by_ean(ean: str) -> schemas.ProductDB | None:
 
 
 def get_products_by_name(
-        name: str, category: str | None = None) -> list[schemas.ProductDB]:
+        name: str, category: str | None = None) -> list[ProductDB]:
     """Get multiple products from the database by searching by name."""
-    items: list[schemas.ProductDB] = []
+    items: list[ProductDB] = []
     stmt = (
         select(models.Product)
         .where(models.Product.name.ilike(

@@ -99,9 +99,9 @@ class TreeNode(Generic[T]):
 class Strategy(ABC):
     """ABC for a strategy pattern."""
 
-    @staticmethod
+    @classmethod
     @abstractmethod
-    async def execute(*args: Any, **kwargs: Any) -> Any:
+    async def execute(cls, *args: Any, **kwargs: Any) -> Any:
         """Implement this method when inheriting."""
 
     @classmethod

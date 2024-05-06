@@ -1,5 +1,6 @@
 """HTTPx request & request handling functions."""
 import json
+from typing import Any
 from httpx import (
     AsyncClient,
     Response,
@@ -71,7 +72,7 @@ def handle_response(response: Response) -> bool:
     return False
 
 
-async def send_request(params: dict) -> Response | None:
+async def send_request(params: dict[str, Any]) -> Response | None:
     """Sends an http request & raises the for status on the response.
 
     Returns an httpx.Response upon a successful request.
