@@ -80,7 +80,7 @@ class ProductDataDB(ProductData):
     timestamp: datetime
 
     store_id: int
-    product_ean: int
+    ean: int
     store: Store
     product: Product
 
@@ -146,17 +146,12 @@ class StoreQuery(pydantic.BaseModel):
 class ProductResponse(pydantic.BaseModel):
     """Schema format for the response to a product query."""
     results: dict[
-        int,
+        int,  # The store_id is used as dict-key to group results
         list[
             tuple[
-                SearchState,
-                dict[str, str | int],  # Contains original query info
-                list[
-                    tuple[
-                        Product,
-                        ProductData
-                    ]
-                ]
+                # Dict contains original query and search state
+                dict[str, SearchState | str | int],
+                list[tuple[Product, ProductData]]
             ]
         ]
     ]

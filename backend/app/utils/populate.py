@@ -83,7 +83,7 @@ def populate_products(orm: Type[database.ORM]) -> None:
             "label_unit": "KPL",
             "comparison_unit": "kg",
             "store_id": 542862479,
-            "product_ean": "6414893500167"
+            "ean": "6414893500167"
         },
         {
             "eur_unit_price_whole": 7,
@@ -93,7 +93,7 @@ def populate_products(orm: Type[database.ORM]) -> None:
             "label_unit": "KPL",
             "comparison_unit": "kg",
             "store_id": 697942431,
-            "product_ean": "6414893500167"
+            "ean": "6414893500167"
         },
         {
             "eur_unit_price_whole": 1,
@@ -103,7 +103,7 @@ def populate_products(orm: Type[database.ORM]) -> None:
             "label_unit": "KPL",
             "comparison_unit": "L",
             "store_id": 697942431,
-            "product_ean": "6415712506117"
+            "ean": "6415712506117"
         },
         {
             "eur_unit_price_whole": 2,
@@ -113,7 +113,7 @@ def populate_products(orm: Type[database.ORM]) -> None:
             "label_unit": "KPL",
             "comparison_unit": "L",
             "store_id": 542862479,
-            "product_ean": "6408430011667"
+            "ean": "6408430011667"
         },
         {
             "eur_unit_price_whole": 2,
@@ -123,7 +123,7 @@ def populate_products(orm: Type[database.ORM]) -> None:
             "label_unit": "KPL",
             "comparison_unit": "L",
             "store_id": 697942431,
-            "product_ean": "6408430011667",
+            "ean": "6408430011667",
             "timestamp": datetime.now(timezone.utc) - timedelta(days=2)
         }
     ]

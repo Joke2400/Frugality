@@ -9,6 +9,7 @@ from app.api import payload
 
 from app.core import parse, typedefs
 from app.core.orm import schemas
+from app.core.orm import operations
 from app.core.search.state import SearchState
 
 from app.utils import config, patterns
@@ -43,7 +44,47 @@ class DBProductSearchStrategy(patterns.Strategy):
         if not isinstance(query, schemas.ProductQuery):
             raise TypeError(
                 "A 'query' param of type ProductQuery must be provided.")
-        return SearchState.FAIL, {}
+        query_results = cls.get_products(user_query=query)
+        results: dict[
+            int, list[typedefs.DBProductResultItem]] = defaultdict(list)
+        # TODO: this code below is spaghetti & needs refactoring
+        all_failed = True
+        for items, original_query in query_results:
+            if len(items) == 0:
+                # TODO: Is supposed to skip & forward to API
+                # eq. SearchState.FAIL
+                continue
+            if len(items) < 5:
+                # TODO: Threshold not reached, keep items but forward request
+                # eq. SearchState.PARTIAL_RESULT
+                pass
+            all_failed = False
+            results[int(original_query["store_id"])].append((original_query, items))
+        if all_failed:
+            return SearchState.FAIL, results
+        return SearchState.SUCCESS, results
+
+
+    @classmethod
+    def get_products(
+            cls, user_query: schemas.ProductQuery
+            ) -> list[
+                tuple[list[typedefs.DBProductItem], dict[str, str | int]]]:
+        # Ideally, would fetch the records for multiple stores at once, but simpler
+        # to organize the output like this, so doing it like this for now
+        results: list[
+            tuple[list[typedefs.DBProductItem], dict[str, str | int]]] = []
+        for store_id in user_query.stores:  # TODO: < --Remove this row & query all specified store ids
+            for query in user_query.queries:
+                combined: dict[str, str | int] = {"store_id": store_id}
+                combined.update(query)
+                result: list[typedefs.DBProductItem] = operations.\
+                    get_recent_complete_product_records(
+                        query=query["query"],
+                        store_ids=[store_id],
+                        timedelta_hours=24)
+                results.append((result, combined))
+        return results
 
 
 class APIProductSearchStrategy(patterns.Strategy):
@@ -59,29 +100,28 @@ class APIProductSearchStrategy(patterns.Strategy):
         if not isinstance(query, schemas.ProductQuery):
             raise TypeError(
                 "A 'query' param of type ProductQuery must be provided.")
+
         if not any((responses := await cls._send_product_queries(query))):
             logger.error(
                 "API search: Received no API responses to parse.")
             return SearchState.NO_RESPONSE, {}
-        results: dict[int, list[
-            tuple[
-                SearchState, dict[str, str | int],
-                list[
-                    tuple[schemas.Product,
-                          schemas.ProductData]]]]] = defaultdict(list)
+        results: dict[
+            int, list[typedefs.APIProductResultItem]] = defaultdict(list)
+        # TODO: this code below is spaghetti & needs refactoring
         all_failed = True
-        for response, orig_query in responses:
+        for response, original_query in responses:
             if response is None:
                 # Add empty result to results
-                results[int(orig_query["store_id"])].append(
-                    (SearchState.NO_RESPONSE, orig_query, []))
+                original_query["state"] = SearchState.NO_RESPONSE
+                results[int(original_query["store_id"])].append(
+                    (original_query, []))
                 continue
             # Add parsed result to results
             parsed = parse.parse_product_response(
-                    response=response, query=orig_query)
-            if parsed[0] is SearchState.SUCCESS and all_failed:
+                    response=response, query=original_query)
+            if parsed[0]["state"] is SearchState.SUCCESS and all_failed:
                 all_failed = False
-            results[int(orig_query["store_id"])].append(parsed)
+            results[int(original_query["store_id"])].append(parsed)
         if all_failed:
             return SearchState.FAIL, results
         return SearchState.SUCCESS, results
@@ -91,13 +131,14 @@ class APIProductSearchStrategy(patterns.Strategy):
             cls, user_query: schemas.ProductQuery
             ) -> list[tuple[Response | None, dict[str, str | int]]]:
 
-        # Task used for asyncio.gather -->
+        # The task used for asyncio.gather()
         async def send_query(
                 params: dict[str, Any], orig_query: dict[str, str | int]
                 ) -> tuple[Response | None, dict[str, str | int]]:
             return await request.send_request(params=params), orig_query
 
-        tasks: list[Any] = []
+        # TODO: Below code needs improvement
+        tasks: list = []
         for store_id in user_query.stores:
             for query in user_query.queries:
                 combined: dict[str, str | int] = {"store_id": store_id}

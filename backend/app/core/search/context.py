@@ -129,6 +129,9 @@ class SearchContext(Generic[StrategyT]):
         if exc_type is MissingResourceError:
             return True
         if exc_type is None:
+            # temporarily disabled saving
+            return False
+            
             # Call background tasks to save results
             if self.result[0] == SearchState.SUCCESS:
                 if isinstance(self.strategy, APIStoreSearchStrategy):

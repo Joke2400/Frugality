@@ -1,4 +1,5 @@
 """Contains unit & integration tests for predefined crud operations."""
+from typing import Any
 from datetime import datetime
 from pytest import MonkeyPatch
 from pydantic import ValidationError
@@ -8,7 +9,7 @@ from app.utils.populate import populate_all
 from .fixture import setup_and_teardown
 
 
-def return_single_store_record(*args, **kwargs):
+def return_single_store_record(*args: Any, **kwargs: Any):
     """Mock for when crud returns a single store model."""
     return models.Store(
         id=1,
@@ -20,7 +21,7 @@ def return_single_store_record(*args, **kwargs):
     )
 
 
-def return_multiple_store_records(*args, **kwargs):
+def return_multiple_store_records(*args: Any, **kwargs: Any):
     """Mock for when crud returns multiple store models."""
     return [
         models.Store(
@@ -50,7 +51,7 @@ def return_multiple_store_records(*args, **kwargs):
     ]
 
 
-def return_single_product_record(*args, **kwargs):
+def return_single_product_record(*args: Any, **kwargs: Any):
     """Mock for when crud returns a single product model."""
     return models.Product(
         id=1,
@@ -63,7 +64,7 @@ def return_single_product_record(*args, **kwargs):
     )
 
 
-def return_multiple_product_records(*args, **kwargs):
+def return_multiple_product_records(*args: Any, **kwargs: Any):
     """Mock for when crud returns multiple product models."""
     return [
         models.Product(
@@ -96,7 +97,7 @@ def return_multiple_product_records(*args, **kwargs):
     ]
 
 
-def throw_pydantic_validation_error(*args, **kwargs):
+def throw_pydantic_validation_error(*args: Any, **kwargs: Any):
     """Mock that simply throws a ValidationError."""
     raise ValidationError.from_exception_data(
         'Test Error', [], hide_input=True)

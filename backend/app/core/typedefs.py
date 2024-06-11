@@ -14,6 +14,9 @@ OrmModel = models.Store | models.Product | models.ProductData
 SchemaIn = schemas.Store | schemas.Product | schemas.ProductData
 SchemaOut = StoreDB | ProductDB | schemas.ProductDataDB
 
+# temporarily re-added
+SchemaInOrDict = SchemaIn | dict
+
 DBStoreSearchResult = \
     tuple[
         SearchState,
@@ -43,14 +46,13 @@ APIProductItem = \
 DBProductResultItem = \
     tuple[
         SearchState,
-        dict[str, str | int],
+        dict[str, SearchState | str | int],
         list[DBProductItem]
     ]
 
 APIProductResultItem = \
     tuple[
-        SearchState,
-        dict[str, str | int],
+        dict[str, SearchState | str | int],
         list[APIProductItem]
     ]
 

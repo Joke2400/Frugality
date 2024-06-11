@@ -12,6 +12,8 @@ logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 
 CHAINS = ("prisma", "s-market", "smarket", "alepa", "sale")
 
+# TODO: NEED TO MAKE TYPEHINTS MORE SPECIFIC THROUGHOUT THIS FILE
+
 
 def reformat_unit_string(string: str):
     """Reformat a unit string."""
@@ -188,8 +190,7 @@ def parse_product_response(
         response: httpx.Response,
         query: dict[str, str | int]
         ) -> tuple[
-            SearchState,
-            dict[str, str | int],
+            dict[str, SearchState | str | int],
             list[
                 tuple[
                     schemas.Product,
@@ -209,7 +210,7 @@ def parse_product_response(
     Returns:
         tuple[
             SearchState
-            dict[str, str | int],
+            dict[str, SearchState | str | int],
             list[
                 tuple[
                     schemas.Product,
@@ -225,18 +226,22 @@ def parse_product_response(
     logger.debug(
         "Parsing response for query: <query='%s', store_id=%s, category='%s'>",
         query["query"], query["store_id"], query["category"])
+    # Set query state to FAIL initially
+    query["state"] = SearchState.FAIL
     if (content := prepare_response_dict(response)) is None:
-        return SearchState.PARSE_ERROR, query, []
+        query["state"] = SearchState.PARSE_ERROR
+        return query, []
     try:
         response_items = content["data"]["store"]["products"]["items"]
         store_name = content["data"]["store"]["name"]
     except (KeyError, ValueError) as err:
         logger.debug(err)
-        return SearchState.PARSE_ERROR, query, []
+        query["state"] = SearchState.PARSE_ERROR
+        return query, []
     query["store_name"] = store_name
     if len(response_items) == 0:
         logger.debug("No items found in response body.")
-        return SearchState.FAIL, query, []
+        return query, []
     items: list[tuple[schemas.Product, schemas.ProductData]] = []
     for i in response_items:
         item = parse_product_to_schema(i)
@@ -244,4 +249,5 @@ def parse_product_response(
             continue
         items.append(item)
     logger.debug("Parsed %s items from response.", len(items))
-    return SearchState.SUCCESS, query, items
+    query["state"] = SearchState.SUCCESS
+    return query, items

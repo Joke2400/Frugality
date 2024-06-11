@@ -1,8 +1,10 @@
 """Contains operations for fetching (& converting) data from db."""
-from sqlalchemy import select
+from datetime import datetime, timedelta
+from sqlalchemy import select, and_, join
 from pydantic import ValidationError
-from app.core.typedefs import StoreDB as StoreDB, ProductDB as ProductDB
+from app.core.typedefs import StoreDB, ProductDB
 from app.core.orm import models, schemas, crud, database
+from app.core import parse
 from app.utils import LoggerManager
 
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
@@ -85,6 +87,43 @@ def get_products_by_name(
     try:
         if len(result) > 0:
             items = [schemas.ProductDB.model_validate(i) for i in result]
+    except ValidationError as err:
+        logger.debug(err)
+    ctx.session.close()
+    return items
+
+
+def get_recent_complete_product_records(
+        query: str, store_ids: list[int], timedelta_hours: int
+        ) -> list[tuple[ProductDB, schemas.ProductDataDB]]:
+    """TODO: Needs improvement & tests"""
+    items: list[tuple[ProductDB, schemas.ProductDataDB]] = []
+    time_offset = datetime.now() - timedelta(hours=timedelta_hours)
+    stmt = (
+        select(
+            models.Product, models.ProductData)
+        .select_from(
+            join(
+                models.Product, models.ProductData,
+                models.Product.ean == models.ProductData.ean))
+        .where(
+            and_(
+                models.Product.slug.like(f"%{parse.slugify(query)}%"),
+                models.ProductData.timestamp >= time_offset,
+                models.ProductData.store_id.in_([*store_ids])
+            )
+        )
+    )
+    ctx = database.ORM().get_session_context(close_on_exit=False)
+    result = ctx.session.execute(stmt).all()
+    try:
+        if len(result) > 0:
+            for p, d in result:
+                validated = (
+                    # Pylance is unhappy without the [] below
+                    schemas.ProductDB[schemas.ProductDataDB].model_validate(p),
+                    schemas.ProductDataDB.model_validate(d))
+                items.append(validated)
     except ValidationError as err:
         logger.debug(err)
     ctx.session.close()

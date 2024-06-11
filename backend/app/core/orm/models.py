@@ -84,7 +84,7 @@ class ProductData(Base):
 
     # Foreign keys for parent store id & parent product id
     store_id: Mapped[int] = mapped_column(ForeignKey("Stores.store_id"))
-    product_ean: Mapped[int] = mapped_column(ForeignKey(
+    ean: Mapped[int] = mapped_column(ForeignKey(
         "Products.ean", ondelete="CASCADE"))
 
     # Reverse sides (Many-to-One) of the One-To-Many relationships
