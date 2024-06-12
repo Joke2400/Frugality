@@ -20,24 +20,25 @@ SchemaInOrDict = SchemaIn | dict
 DBStoreSearchResult = \
     tuple[
         SearchState,
-        list[StoreDB]
+        list[StoreDB],
     ]
+
 
 APIStoreSearchResult = \
     tuple[
         SearchState,
-        list[schemas.Store]
+        list[schemas.Store],
     ]
 
 StoreSearchResult = DBStoreSearchResult | APIStoreSearchResult
 
-DBProductItem = \
+ProductTupleDB = \
     tuple[
         ProductDB,
         schemas.ProductDataDB
     ]
 
-APIProductItem = \
+ProductTupleAPI = \
     tuple[
         schemas.Product,
         schemas.ProductData
@@ -45,15 +46,14 @@ APIProductItem = \
 
 DBProductResultItem = \
     tuple[
-        SearchState,
-        dict[str, SearchState | str | int],
-        list[DBProductItem]
+        dict[str, str | int | SearchState],
+        list[ProductTupleDB]
     ]
 
 APIProductResultItem = \
     tuple[
-        dict[str, SearchState | str | int],
-        list[APIProductItem]
+        dict[str, str | int | SearchState],
+        list[ProductTupleAPI]
     ]
 
 DBProductSearchResult = \
@@ -62,7 +62,8 @@ DBProductSearchResult = \
         dict[
             int,
             list[DBProductResultItem]
-        ]
+        ],
+        list[dict[str, str | int | SearchState]]
     ]
 
 
@@ -72,7 +73,7 @@ APIProductSearchResult = \
         dict[
             int,
             list[APIProductResultItem]
-        ]
+        ],
     ]
 
 ProductSearchResult = DBProductSearchResult | APIProductSearchResult

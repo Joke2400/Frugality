@@ -15,7 +15,7 @@ from app.utils.logging import LoggerManager
 
 
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
-resultT = list[schemas.Store] | list[schemas.StoreDB]
+resultT = list[schemas.Store] | list[schemas.StoreDB[schemas.ProductDataDB]]
 router = APIRouter()
 strategies = (
     DBStoreSearchStrategy,
@@ -57,7 +57,11 @@ async def get_stores(
     for strategy in strategies:
         with SearchContext(query=query, strategy=strategy(),
                            task=background_tasks) as context:
-            result: resultT = cast(resultT, await context.execute_strategy())
+            result = await context.execute_strategy()
+            # Continue onto next strategy if result is None, this indicates a fail
+            # Will be improved later, SearchContext needs major changes first
+            if result is None:
+                continue
             response = schemas.StoreResponse(results=result)  # type: ignore
             logger.info("Returning: %s", response)
             return response

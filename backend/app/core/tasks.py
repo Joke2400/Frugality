@@ -6,7 +6,7 @@ from app.core.orm import schemas
 from app.core.orm import models
 from app.core.orm import crud
 from app.core.typedefs import (
-    APIProductItem,
+    ProductTupleAPI,
     ProductSearchResult,
     StoreSearchResult,
     SchemaInOrDict,
@@ -131,7 +131,7 @@ def save_product_results(results: ProductSearchResult) -> None:
     for store_id, queries in results[1].items():  # Access the dict
         for query in queries:
             # Cast to list[APIProductItem] to narrow type for mypy
-            items = cast(list[APIProductItem], query[2])
+            items = cast(list[ProductTupleAPI], query[2])
             for item in items:
                 data = dict(item[1])  # Convert to dict so we can add fields
                 data["store_id"] = store_id

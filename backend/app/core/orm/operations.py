@@ -94,9 +94,11 @@ def get_products_by_name(
 
 
 def get_recent_complete_product_records(
-        query: str, store_ids: list[int], timedelta_hours: int
+        query: str, store_id: int, timedelta_hours: int
         ) -> list[tuple[ProductDB, schemas.ProductDataDB]]:
-    """TODO: Needs improvement & tests"""
+    """Get complete Product records by name & store_id.
+    TODO: More specific docstring.
+    """
     items: list[tuple[ProductDB, schemas.ProductDataDB]] = []
     time_offset = datetime.now() - timedelta(hours=timedelta_hours)
     stmt = (
@@ -110,7 +112,7 @@ def get_recent_complete_product_records(
             and_(
                 models.Product.slug.like(f"%{parse.slugify(query)}%"),
                 models.ProductData.timestamp >= time_offset,
-                models.ProductData.store_id.in_([*store_ids])
+                models.ProductData.store_id == store_id
             )
         )
     )

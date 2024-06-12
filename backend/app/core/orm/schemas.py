@@ -104,7 +104,7 @@ class ProductQuery(pydantic.BaseModel):
 
                     ],
                     "queries": [
-                        {"query": "Maito Laktoositon 1L",
+                        {"query": "Maito",
                          "category": ""},
                         {"query": "Naudan Jauheliha",
                          "category": ""},
@@ -150,7 +150,7 @@ class ProductResponse(pydantic.BaseModel):
         list[
             tuple[
                 # Dict contains original query and search state
-                dict[str, SearchState | str | int],
+                dict[str, str | int | SearchState],
                 list[tuple[Product, ProductData]]
             ]
         ]

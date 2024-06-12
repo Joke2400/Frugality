@@ -34,9 +34,14 @@ async def get_products(
     for strategy in strategies:
         with SearchContext(query=query, strategy=strategy(),
                            task=background_tasks) as context:
-            results: dict[int, list] = cast(
-                dict[int, list], await context.execute_strategy())
-            response = schemas.ProductResponse(results=results)  # type: ignore
+            result = await context.execute_strategy()
+            if isinstance(result, list):
+                # Continue onto next strategy if result is a list,
+                # this indicates the need to do the next strategy
+                # Will be improved later, SearchContext needs major changes first
+                logger.info("Carryover requests: %s", result)
+                continue
+            response = schemas.ProductResponse(results=result)  # type: ignore
             logger.info("Returning ProductResponse: %s", response)
             return response
     # This code should never be reached, raises AssertionError

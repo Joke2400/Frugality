@@ -1,6 +1,6 @@
 """Contains strategies for performing product searches."""
 import asyncio
-from typing import Any
+from typing import Any, TypeAlias
 from collections import defaultdict
 from httpx import Response
 
@@ -15,6 +15,7 @@ from app.core.search.state import SearchState
 from app.utils import config, patterns
 from app.utils.logging import LoggerManager
 
+from app.utils.util_funcs import timer
 
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 
@@ -24,6 +25,7 @@ PERFORM_DB_SEARCHES = (
 PERFORM_API_SEARCHES = (
     config.parser["app"]["perform_api_searches"] in ("True", "true"))
 
+QueryDictType: TypeAlias = dict[str, str | int | SearchState]
 
 class DBProductSearchStrategy(patterns.Strategy):
     """Strategy pattern implementation for searching for products from the DB.
@@ -39,52 +41,52 @@ class DBProductSearchStrategy(patterns.Strategy):
                 ) -> typedefs.DBProductSearchResult:
         if not PERFORM_DB_SEARCHES:
             logger.info("Product API search failed, disabled in config.")
-            return SearchState.FAIL, {}
+            return SearchState.FAIL, {}, []
         query: schemas.ProductQuery | None = kwargs.get("query")
         if not isinstance(query, schemas.ProductQuery):
             raise TypeError(
                 "A 'query' param of type ProductQuery must be provided.")
-        query_results = cls.get_products(user_query=query)
-        results: dict[
-            int, list[typedefs.DBProductResultItem]] = defaultdict(list)
-        # TODO: this code below is spaghetti & needs refactoring
-        all_failed = True
-        for items, original_query in query_results:
-            if len(items) == 0:
-                # TODO: Is supposed to skip & forward to API
-                # eq. SearchState.FAIL
-                continue
-            if len(items) < 5:
-                # TODO: Threshold not reached, keep items but forward request
-                # eq. SearchState.PARTIAL_RESULT
-                pass
-            all_failed = False
-            results[int(original_query["store_id"])].append((original_query, items))
-        if all_failed:
-            return SearchState.FAIL, results
-        return SearchState.SUCCESS, results
-
+        results, to_forward, = cls._fetch_products(
+            user_query=query, threshold=10)
+        if len(to_forward) != 0:  # Temporary logic
+            return SearchState.FAIL, results, to_forward
+        return SearchState.SUCCESS, results, []
 
     @classmethod
-    def get_products(
-            cls, user_query: schemas.ProductQuery
-            ) -> list[
-                tuple[list[typedefs.DBProductItem], dict[str, str | int]]]:
-        # Ideally, would fetch the records for multiple stores at once, but simpler
-        # to organize the output like this, so doing it like this for now
-        results: list[
-            tuple[list[typedefs.DBProductItem], dict[str, str | int]]] = []
-        for store_id in user_query.stores:  # TODO: < --Remove this row & query all specified store ids
-            for query in user_query.queries:
-                combined: dict[str, str | int] = {"store_id": store_id}
-                combined.update(query)
-                result: list[typedefs.DBProductItem] = operations.\
+    @timer
+    def _fetch_products(
+            cls, user_query: schemas.ProductQuery, threshold: int
+            ) -> tuple[
+                dict[int, list[typedefs.DBProductResultItem]],
+                list[QueryDictType]]:
+        results: dict[  # Gotta love all the typing gore here
+            int, list[typedefs.DBProductResultItem]] = defaultdict(list)
+        to_forward: list[QueryDictType] = []
+        for store_id in user_query.stores:
+            store_results = results[store_id]  # Get the store result list
+            for query_dict in user_query.queries:
+                combined_dict: QueryDictType = {
+                    "store_id": store_id,
+                    "state": SearchState.FAIL  # Set the default state to FAIL
+                }
+                combined_dict.update(query_dict)  # Add the rest of the data
+                result: list[typedefs.ProductTupleDB] = operations.\
                     get_recent_complete_product_records(
-                        query=query["query"],
-                        store_ids=[store_id],
+                        query=query_dict["query"],
+                        store_id=store_id,
                         timedelta_hours=24)
-                results.append((result, combined))
-        return results
+                logger.debug(
+                    "DB Search: Found %s results for query: ('%s' %s)",
+                    len(results), query_dict["query"], store_id)
+                # Set the state variable based on threshold
+                if len(result) >= threshold:
+                    combined_dict["state"] = SearchState.SUCCESS
+                else:
+                    if 0 < len(result) < threshold:
+                        combined_dict["state"] = SearchState.PARTIAL_RESULT
+                    to_forward.append(combined_dict)
+                store_results.append((combined_dict, result))
+        return results, to_forward
 
 
 class APIProductSearchStrategy(patterns.Strategy):

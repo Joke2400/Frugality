@@ -1,4 +1,6 @@
+"""Contains utility functions used for tests, debugging etc."""
 import os
+import time
 from typing import NoReturn, Never, Any, Callable
 from app.core.orm.database import ORM
 from app.utils import exceptions
@@ -43,14 +45,6 @@ def cleanup(func: Callable[..., None]) -> Callable[..., None]:
     return wrapper
 
 
-def log_func_name(func: Callable[..., None]) -> Callable[..., None]:
-    """Decorator that logs the function name."""
-    def wrapper(*args, **kwargs):
-        logger.debug("Running test: %s()", func.__name__)
-        return func(*args, **kwargs)
-    return wrapper
-
-
 def build_db_url(usr: str, passwd: str, db: str, testing: bool) -> str:
     """Build a database connect URL."""
     auth: str = f"{usr}:{passwd}"
@@ -60,3 +54,16 @@ def build_db_url(usr: str, passwd: str, db: str, testing: bool) -> str:
         host = "localhost:5433/test_database"
     logger.info(f"Set postgres host to @{host}")
     return f"postgresql://{auth}@{host}"
+
+
+def timer(func: Callable[..., Any]) -> Callable[..., Any]:
+    """A timer decorator."""
+    def wrapper(*args: Any, **kwargs: Any):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        elapsed_time = (end_time - start_time) * 1000
+        print(
+            f"Function '{func.__name__}()' took {elapsed_time:.2f}ms")
+        return result
+    return wrapper
