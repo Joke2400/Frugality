@@ -8,8 +8,7 @@ services:
       args:
       - devcontainercli=true
     env_file:
-      - path: ./env/prod.env
-        required: true
+      - ./env/prod.env
     ports:
       - 8080:80
     depends_on:
@@ -30,8 +29,7 @@ services:
     container_name: frugality_db
     image: postgres:16.0-alpine3.18
     env_file:
-    - path: ./env/prod.env
-      required: true
+    - ./env/prod.env
     volumes:
       - database:/var/lib/postgres/data
 
@@ -46,8 +44,7 @@ services:
     container_name: test_db
     image: postgres:16.0-alpine3.18
     env_file:
-    - path: ./env/dev.env
-      required: true
+    - ./env/dev.env
     ports:
       - 5433:5432
 
