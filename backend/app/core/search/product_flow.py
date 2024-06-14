@@ -36,25 +36,32 @@ class DBProductSearchStrategy(patterns.Strategy):
             cls, *args: Any, **kwargs: Any
                 ) -> typedefs.DBProductSearchResult:
         query: schemas.ProductQuery | None = kwargs.get("query")
+        threshold: int | None = kwargs.get("threshold")
+        t = int(threshold) if threshold is not None else 5
         if not isinstance(query, schemas.ProductQuery):
             raise TypeError(
                 "A 'query' param of type ProductQuery must be provided.")
-        results, to_forward, = cls._fetch_products(
-            user_query=query, threshold=10)
-        if len(to_forward) != 0:  # Temporary logic
-            return SearchState.FAIL, results, to_forward
-        return SearchState.SUCCESS, results, []
+        results, queries_to_forward, has_successful, has_partial = \
+            cls._fetch_products(user_query=query, threshold=t)
+        if has_successful and len(queries_to_forward) == 0:
+            return SearchState.SUCCESS, results
+        if not has_partial:
+            return SearchState.FAIL, results, queries_to_forward
+        return SearchState.PARTIAL_RESULT, results, queries_to_forward
 
     @classmethod
-    @timer
     def _fetch_products(
             cls, user_query: schemas.ProductQuery, threshold: int
             ) -> tuple[
                 dict[int, list[typedefs.DBProductResultItem]],
-                list[QueryDictType]]:
+                list[QueryDictType],
+                bool, bool]:
         results: dict[  # Gotta love all the typing gore here
             int, list[typedefs.DBProductResultItem]] = defaultdict(list)
-        to_forward: list[QueryDictType] = []
+        queries_to_forward: list[QueryDictType] = []
+        # Not liking the bools, but more performant than looping again
+        has_successful = False
+        has_partial = False
         for store_id in user_query.stores:
             store_results = results[store_id]  # Get the store result list
             for query_dict in user_query.queries:
@@ -74,16 +81,24 @@ class DBProductSearchStrategy(patterns.Strategy):
                 # Set the state variable based on threshold
                 if len(result) >= threshold:
                     combined_dict["state"] = SearchState.SUCCESS
+                    has_successful = True
                 else:
                     if 0 < len(result) < threshold:
                         combined_dict["state"] = SearchState.PARTIAL_RESULT
-                    to_forward.append(combined_dict)
+                        has_partial = True
+                    queries_to_forward.append(combined_dict)
                 store_results.append((combined_dict, result))
-        return results, to_forward
+        return results, queries_to_forward, has_successful, has_partial
 
 
 class APIProductSearchStrategy(patterns.Strategy):
+    """Strategy pattern implementation for searching for products from the API.
 
+    See patterns.Strategy for ABC implementation.
+
+    Implements execute() abstractmethod, the method should
+    be called via SearchContext.execute_strategy()
+    """
     @classmethod
     async def execute(
             cls, *args: Any, **kwargs: Any

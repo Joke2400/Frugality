@@ -62,6 +62,12 @@ DBProductSearchResult = \
         dict[
             int,
             list[DBProductResultItem]
+        ]
+    ] | tuple[
+        SearchState,
+        dict[
+            int,
+            list[DBProductResultItem]
         ],
         list[dict[str, str | int | SearchState]]
     ]

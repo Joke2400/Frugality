@@ -92,6 +92,7 @@ class ProductQuery(pydantic.BaseModel):
     """Schema for how queries for products should look like"""
     stores: Annotated[set[int], Len(min_length=0, max_length=10)]
     queries: Annotated[list[dict[str, str]], Len(min_length=0, max_length=30)]
+    # TODO: Ensure all queries are converted to alphabetic+åäö
 
     model_config = pydantic.ConfigDict(
         from_attributes=True,
@@ -120,6 +121,7 @@ class StoreQuery(pydantic.BaseModel):
     """Schema for how queries for stores should look like"""
     store_name: Annotated[str | None, Len(min_length=1, max_length=50)]
     store_id: int | None = Field(ge=0, le=999999999)
+    # TODO: Ensure name is converted to alphabetic+åäö
 
     model_config = pydantic.ConfigDict(
         from_attributes=True,

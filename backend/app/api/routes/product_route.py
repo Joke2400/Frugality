@@ -25,12 +25,26 @@ strategies = (
 )
 
 
-@router.post("/products/")
+@router.post("/products/", response_model=schemas.ProductResponse)
 async def get_products(
         query: schemas.ProductQuery, background_tasks: BackgroundTasks):
+    """TODO: Docstring"""
+    logger.info("Performing new ProductSearch...")
     """
-    """
-    logger.info("Received a new product query.")
+    # Search the database
+    with SearchContext(
+            background_tasks=background_tasks,
+            strategy=DBProductSearchStrategy()) as context:
+        results: resultT = cast(
+            resultT, await context.execute(user_query=query))
+        
+    
+    with SearchContext(
+            background_tasks=background_tasks,
+            strategy=APIProductSearchStrategy()) as context:
+    
+    
+    
     for strategy in strategies:
         with SearchContext(query=query, strategy=strategy(),
                            task=background_tasks) as context:
@@ -46,3 +60,4 @@ async def get_products(
             return response
     # This code should never be reached, raises AssertionError
     assert_never(None)  # type: ignore
+    """
