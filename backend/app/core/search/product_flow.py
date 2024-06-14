@@ -12,20 +12,16 @@ from app.core.orm import schemas
 from app.core.orm import operations
 from app.core.search.state import SearchState
 
-from app.utils import config, patterns
+from app.utils import patterns
 from app.utils.logging import LoggerManager
 
 from app.utils.util_funcs import timer
 
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 
-# Can be disabled in settings.cfg if needed for debugging.
-PERFORM_DB_SEARCHES = (
-    config.parser["app"]["perform_db_searches"] in ("True", "true"))
-PERFORM_API_SEARCHES = (
-    config.parser["app"]["perform_api_searches"] in ("True", "true"))
 
 QueryDictType: TypeAlias = dict[str, str | int | SearchState]
+
 
 class DBProductSearchStrategy(patterns.Strategy):
     """Strategy pattern implementation for searching for products from the DB.
@@ -39,9 +35,6 @@ class DBProductSearchStrategy(patterns.Strategy):
     async def execute(
             cls, *args: Any, **kwargs: Any
                 ) -> typedefs.DBProductSearchResult:
-        if not PERFORM_DB_SEARCHES:
-            logger.info("Product API search failed, disabled in config.")
-            return SearchState.FAIL, {}, []
         query: schemas.ProductQuery | None = kwargs.get("query")
         if not isinstance(query, schemas.ProductQuery):
             raise TypeError(
@@ -95,9 +88,6 @@ class APIProductSearchStrategy(patterns.Strategy):
     async def execute(
             cls, *args: Any, **kwargs: Any
             ) -> typedefs.APIProductSearchResult:
-        if not PERFORM_API_SEARCHES:
-            logger.info("Product API search failed, disabled in config.")
-            return SearchState.FAIL, {}
         query: schemas.ProductQuery | None = kwargs.get("query")
         if not isinstance(query, schemas.ProductQuery):
             raise TypeError(

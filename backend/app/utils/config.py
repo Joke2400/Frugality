@@ -1,7 +1,7 @@
 """Create a configparser & read the config file."""
 import sys
-from dotenv import load_dotenv
 from configparser import ConfigParser
+from dotenv import load_dotenv
 from app.utils import paths, patterns
 from app.utils.util_funcs import get_envvar
 

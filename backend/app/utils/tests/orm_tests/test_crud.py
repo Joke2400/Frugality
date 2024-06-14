@@ -3,11 +3,10 @@ from sqlalchemy import select
 from sqlalchemy.exc import DataError, IntegrityError, MultipleResultsFound
 from app.core.orm import crud, models, database
 from app.utils.populate import populate_stores, populate_all
+from app.utils.tests.fixture import orm_create_and_purge
 
-from .fixture import setup_and_teardown
 
-
-def test_create_default(setup_and_teardown):
+def test_create_default(orm_create_and_purge):
     """Test crud create default behaviour."""
     store = models.Store(
         store_name="Test Store 1",
@@ -20,7 +19,7 @@ def test_create_default(setup_and_teardown):
     assert result is store
 
 
-def test_create_invalid_data(setup_and_teardown):
+def test_create_invalid_data(orm_create_and_purge):
     """Test crud create fails with invalid data."""
     store_1 = models.Store(
         store_name="Test Store 1",
@@ -34,7 +33,7 @@ def test_create_invalid_data(setup_and_teardown):
     assert ctx.prev_exc is DataError
 
 
-def test_create_duplicate_data(setup_and_teardown):
+def test_create_duplicate_data(orm_create_and_purge):
     """Test crud create fails with duplicate data."""
     store_1 = models.Store(
         store_name="Test Store 1",
@@ -56,7 +55,7 @@ def test_create_duplicate_data(setup_and_teardown):
     assert ctx.prev_exc is IntegrityError
 
 
-def test_insert_default(setup_and_teardown):
+def test_insert_default(orm_create_and_purge):
     """Test crud insert default behaviour."""
     store_1_dict = {
         "store_name": "Test Store 1",
@@ -89,7 +88,7 @@ def test_insert_default(setup_and_teardown):
     ctx.session.close()
 
 
-def test_insert_invalid_data(setup_and_teardown):
+def test_insert_invalid_data(orm_create_and_purge):
     """Test crud insert fails with invalid data."""
     store_1_dict = {
         "store_name": "Test Store 1",
@@ -123,7 +122,7 @@ def test_insert_invalid_data(setup_and_teardown):
     ctx.session.close()
 
 
-def test_insert_duplicate_data(setup_and_teardown):
+def test_insert_duplicate_data(orm_create_and_purge):
     """Test crud insert fails with duplicate value."""
     store_1_dict = {
         "store_name": "Test Store 1",
@@ -157,7 +156,7 @@ def test_insert_duplicate_data(setup_and_teardown):
     ctx.session.close()
 
 
-def test_read_one_default(setup_and_teardown):
+def test_read_one_default(orm_create_and_purge):
     """Test crud read_one default behaviour."""
     # Populate database with a consistent set of data
     populate_all(orm=database.ORM)
@@ -172,7 +171,7 @@ def test_read_one_default(setup_and_teardown):
     ctx.session.close()
 
 
-def test_read_one_multiple_results(setup_and_teardown):
+def test_read_one_multiple_results(orm_create_and_purge):
     """Test crud read_one fails when multiple results found."""
     # Populate database with a consistent set of data
     populate_stores(orm=database.ORM)
@@ -184,7 +183,7 @@ def test_read_one_multiple_results(setup_and_teardown):
     assert ctx.prev_exc is MultipleResultsFound
 
 
-def test_read_one_no_result(setup_and_teardown):
+def test_read_one_no_result(orm_create_and_purge):
     """Test crud read_one returns no result (and no error)."""
     # Populate database with a consistent set of data
     populate_stores(orm=database.ORM)
@@ -195,7 +194,7 @@ def test_read_one_no_result(setup_and_teardown):
     assert ctx.prev_exc is None
 
 
-def test_read_all_default(setup_and_teardown):
+def test_read_all_default(orm_create_and_purge):
     """Test crud read_all default behaviour."""
     # Populate database with a consistent set of data
     populate_all(orm=database.ORM)
@@ -210,7 +209,7 @@ def test_read_all_default(setup_and_teardown):
     ctx.session.close()
 
 
-def test_read_all_no_result(setup_and_teardown):
+def test_read_all_no_result(orm_create_and_purge):
     """"Test crud read_all returns no results (and no error)."""
     # Populate database with a consistent set of data
     populate_stores(orm=database.ORM)

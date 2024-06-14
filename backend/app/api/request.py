@@ -1,5 +1,6 @@
 """HTTPx request & request handling functions."""
 import json
+import time
 from typing import Any
 from httpx import (
     AsyncClient,
@@ -81,7 +82,11 @@ async def send_request(params: dict[str, Any]) -> Response | None:
     if DEBUG:
         logger.debug("Sending request: %s", json.dumps(
             params, indent=4))
+    start_time = time.time()
     response = await async_client.request(**params)
+    end_time = time.time()
+    duration = (end_time - start_time) * 1000
+    logger.info("Request took %.2fms to execute.", duration)
     if handle_response(response):
         return response
     return None

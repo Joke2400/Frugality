@@ -10,16 +10,10 @@ from app.core.orm import schemas
 from app.core.orm import operations
 from app.core.search.state import SearchState
 
-from app.utils import config, patterns, LoggerManager
+from app.utils import patterns, LoggerManager
 from app.utils.util_funcs import assert_never
 
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
-
-# Can be disabled in settings.cfg if needed for debugging.
-PERFORM_DB_SEARCHES = (
-    config.parser["app"]["perform_db_searches"] in ("True", "true"))
-PERFORM_API_SEARCHES = (
-    config.parser["app"]["perform_api_searches"] in ("True", "true"))
 
 
 class DBStoreSearchStrategy(patterns.Strategy):
@@ -49,9 +43,6 @@ class DBStoreSearchStrategy(patterns.Strategy):
             tuple[SearchState, list[schemas.StoreDB]]
                 A tuple containing the SearchState and a list of results.
         """
-        if not PERFORM_DB_SEARCHES:
-            logger.info("Store DB search failed, disabled in config.")
-            return SearchState.FAIL, []
         query: schemas.StoreQuery | None = kwargs.get("query")
         if not isinstance(query, schemas.StoreQuery):
             raise TypeError(
@@ -65,17 +56,18 @@ class DBStoreSearchStrategy(patterns.Strategy):
             result = operations.get_stores_by_name(q)
         match result:
             case [] | None:
-                logger.info("DB search: Failed to find stores for query: %s.",
-                            query)
+                logger.info(
+                    "DB search: Failed to find results for query: %s.",
+                    query)
                 return SearchState.FAIL, []
             case list() as data:
                 logger.info(
-                    "DB search: Got %s store results for query: %s.",
+                    "DB search: Got %s results for query: %s.",
                     len(data), query)
                 return SearchState.SUCCESS, data
             case schemas.StoreDB() as data:
                 logger.info(
-                    "DB search: Got 1 store results for query: %s.",
+                    "DB search: Got 1 results for query: %s.",
                     query)
                 return SearchState.SUCCESS, [data]
             case _ as data:
@@ -107,9 +99,6 @@ class APIStoreSearchStrategy(patterns.Strategy):
             tuple[SearchState, list[schemas.Store]]:
                 A tuple containing the SearchState and a list of results.
         """
-        if not PERFORM_API_SEARCHES:
-            logger.info("Store API search failed, disabled in config.")
-            return SearchState.FAIL, []
         query: schemas.StoreQuery | None = kwargs.get("query")
         if not isinstance(query, schemas.StoreQuery):
             raise TypeError(
@@ -122,11 +111,11 @@ class APIStoreSearchStrategy(patterns.Strategy):
         match parsed:
             case None:
                 logger.error(
-                    "API search: Failed to parse stores from API response.")
+                    "API search: Failed to parse results from response.")
                 return SearchState.PARSE_ERROR, []
             case []:
                 logger.info(
-                    "API search: Failed to find stores for query: %s.",
+                    "API search: Got 0 results for query: %s.",
                     query)
                 return SearchState.FAIL, []
             case list() as data:

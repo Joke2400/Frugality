@@ -2,6 +2,7 @@
 from typing import Literal
 import uvicorn
 from fastapi import FastAPI
+from fastapi.testclient import TestClient
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.orm import database
@@ -25,7 +26,7 @@ POPULATE_DB = config.parser["debug"]["populate_db"] in (
 
 class Process(metaclass=patterns.SingletonMeta):
     """Singleton for managing the setup of the entire app.
-
+    TODO: Rewrite this docstring
     Fetches environment variables & include FastAPI routers
     Configures the CORS & prepares DBContext for use.
     Also calls debug code if the debug ENVVAR is set to True.
@@ -49,20 +50,9 @@ class Process(metaclass=patterns.SingletonMeta):
             allow_headers=["*"]
         )
         if not config.ENV().debug:
-            database.ORM(
-                url=build_db_url(
-                    usr=config.ENV().postgres_user,
-                    passwd=config.ENV().postgres_password,
-                    db=config.ENV().postgres_db,
-                    testing=False))
+            self._init_orm(testing=False)
         else:
-            database.ORM(
-                url=build_db_url(
-                    usr=config.ENV().postgres_user,
-                    passwd=config.ENV().postgres_password,
-                    db=config.ENV().postgres_db,
-                    testing=True),
-                _purge=PURGE_DB)
+            self._init_orm(testing=True, purge=PURGE_DB)
             if POPULATE_DB:
                 populate_all(database.ORM)
             if RUN_DEBUG_CODE:
@@ -81,6 +71,17 @@ class Process(metaclass=patterns.SingletonMeta):
             reload=reload,
             reload_includes="*.py"
         )
+
+    def _init_orm(self, testing: bool, purge: bool = False) -> database.ORM:
+        """Initialize the orm & return it."""
+        # TODO: Not a big fan of this function
+        return database.ORM(
+            url=build_db_url(
+                usr=config.ENV().postgres_user,
+                passwd=config.ENV().postgres_password,
+                db=config.ENV().postgres_db,
+                testing=testing),
+            _purge=purge)
 
     @staticmethod
     def _execute_debug_code() -> None:

@@ -1,5 +1,6 @@
 "Contains the SearchContext ctx manager used in the app search flows."
-from typing import Type, TypeVar, Generic, Any, Self, cast, Literal
+import time
+from typing import Type, TypeVar, Generic, Any, Self, Tuple
 from fastapi import BackgroundTasks, HTTPException
 
 from app.core import tasks
@@ -10,10 +11,6 @@ from app.core.search.store_flow import (
 from app.core.search.product_flow import (
     DBProductSearchStrategy,
     APIProductSearchStrategy
-)
-from app.core.typedefs import (
-    StoreSearchResult,
-    ProductSearchResult
 )
 from app.core.search.state import SearchState
 from app.core.orm import schemas
@@ -26,122 +23,113 @@ logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 StrategyT = TypeVar("StrategyT", bound=Strategy)
 
 QueryT = schemas.StoreQuery | schemas.ProductQuery
-ResultT = StoreSearchResult | ProductSearchResult
-     
+
 
 class SearchContext(Generic[StrategyT]):
-    """Context manager for managing the search flow.
+    """A SearchContext to serve as the context for search strategies.
 
-    Returns successful requests, raises HTTPExceptions upon failure &
-    sets up background tasks to be run by FastAPI post-search.
+    Args:
+        background_tasks (BackgroundTasks):
+            Required, a FastAPI.BackgroundTasks must be provided.
+        strategy (StrategyT | None):
+            Can be provided on initialization, but has to have been
+            set before call to 'execute()'.
     """
-    query: QueryT
-    strategy: StrategyT
-    result_data: Any   # Set these to Any for now
-    carryover_data: Any
-    tasks: BackgroundTasks
+    _strategy: StrategyT | None
+    _background_tasks: BackgroundTasks
 
-    __slots__ = "query", "strategy", "tasks", "result_data", "carryover_data"
+    __slots__ = "_strategy", "_background_tasks"
 
-    def __init__(self, query: QueryT,
-                 strategy: StrategyT, task: BackgroundTasks) -> None:
-        self.query = query
-        self.strategy = strategy
-        self.tasks = task
-        self.carryover_data = None
+    def __init__(
+            self, background_tasks: BackgroundTasks,
+            strategy: StrategyT | None = None) -> None:
+        self._background_tasks = background_tasks
+        self._strategy = strategy
 
-    async def execute_strategy(
-            self, *args: Any, **kwargs: Any) -> Any:
-        """Execute the current strategy.
+    @property
+    def strategy(self) -> StrategyT | None:
+        """Strategy property getter."""
+        return self._strategy
+
+    @strategy.setter
+    def strategy(self, new_strategy: StrategyT) -> None:
+        """Strategy property setter."""
+        if not isinstance(new_strategy, Strategy):
+            raise ValueError(
+                "New Strategy must be instance of patterns.Strategy.")
+        self._strategy = new_strategy
+
+    async def execute(
+            self, user_query: QueryT, *args: Any, **kwargs: Any) -> Any:
+        """Execute the current strategy with the provided user query.
 
         Args:
-            Passed in args & kwargs are passed onto the execute method
-            defined by the current strategy. self.query is also always
-            passed into the method as a keyword argument.
+            user_query (QueryT): Either a StoreQuery or ProductQuery
+            Any other *args or **kwargs given will be passed into the strategy
+
         Raises:
-            HTTPException 500:
-                Raised if no response was received from the external api. 
-                Also raised if an error occurred when parsing the response.
-            HTTPException 404:
-                Raised if both the DB and API searches yielded no results.
-            ResourceNotInDBException:
-                Raised if the database search yields no results.
-                Is immediately suppressed by the __exit__ method so
-                that an API search may still be run afterwards.
+            HTTPException(500):
+                Raised if request state is NO_RESPONSE or PARSE_ERROR
+                or if some other error occurred during search.
+
         Returns:
-            Returns either a list or a dict depending on the return value
-            of the current strategy.
-            See typedefs StoreSearchResult & ProductSearchResult
+            Any: _description_
         """
-        # Cast result to ResultT so that linters 'know' it's not 'Any'
-        result = cast(ResultT, await self.strategy.execute(
-            *args, query=self.query, context=self, **kwargs))
-        state, self.result_data = result[0], result[1]
-        if len(result) == 3:
-            self.carryover_data = result[2]
-        logger.debug("Matching against %s...", state)
+        if self.strategy is None:
+            raise ValueError(
+                "A search strategy was not set before call to execute().")
+        start_time = time.time()
+        result: Tuple[SearchState, Any] = await self.strategy.execute(
+            *args, query=user_query, **kwargs)
+        end_time = time.time()
+        duration = (end_time - start_time) * 1000
+        logger.info("%s Took %.2fms to execute.", self.strategy, duration)
+        state, data = result
+        # Match against the state variable in the returned tuple
+        # Nested parts of query may have a different SearchState
+        # Responsibility of handling this is on the calling route
         match state:
-            case SearchState.NO_RESPONSE:
+            case SearchState.NO_RESPONSE | SearchState.PARSE_ERROR:
                 raise HTTPException(
-                    detail="Got no response from external API.",
-                    status_code=500
-                )
-            case SearchState.PARSE_ERROR:
-                raise HTTPException(
-                    detail="Could not parse results from external API.",
+                    detail="Internal Server Error",
                     status_code=500
                 )
             case SearchState.FAIL | SearchState.PARTIAL_RESULT:
-                if isinstance(
-                        self.strategy,
-                        (DBStoreSearchStrategy,
-                         DBProductSearchStrategy)):
-                    return self.carryover_data
-                raise HTTPException(
-                    detail="Could not find any results for the query.",
-                    status_code=404)
+                # If current strategy is not a database search -> raise error
+                if not isinstance(
+                    self.strategy,
+                    (DBStoreSearchStrategy,
+                     DBProductSearchStrategy)):
+                    raise HTTPException(
+                        detail="Could not fulfill the requested query.",
+                        status_code=404)
+                # Otherwise return the data for the route to handle
+                return data
             case SearchState.SUCCESS:
-                logger.debug('Matched: SearchState.SUCCESS')
-                return self.result_data
-            case _ as x:
+                return data
+
+            case _ as x:  # type: ignore
                 assert_never(x)
 
     def __enter__(self) -> Self:
-        """Logs the current strategy & query before entering the context."""
-        logger.info(
-            "Performing a new search using %s", self.strategy)
-        logger.debug(
-            "Searching for results using query: %s", self.query)
+        logger.debug("Entering SearchContext(strategy=%s)", self.strategy)
         return self
 
     def __exit__(
             self, exc_type: Type[BaseException] | None,
             exc_value: BaseException | None,
-            traceback: Type[BaseException] | None) -> Literal[False]:
-        """Exit the context & call background tasks.
-
-        If a ResourceNotInDBException was raised, suppress it.
-        Any other exceptions are re-raised (context returns false.)
-
-        If no exceptions were raised & SearchState is SUCCESS:
-            -> Calls background tasks to save the results to the DB.
-        """
-        if exc_type is None:
-            # temporarily disabled saving
-            return False
-            
-            # Call background tasks to save results
-            if self.result_data[0] == SearchState.SUCCESS:
-                if isinstance(self.strategy, APIStoreSearchStrategy):
-                    # Cast to StoreResultT to help mypy type-checking
-                    store_result: StoreSearchResult = cast(
-                        StoreSearchResult, self.result_data)
-                    self.tasks.add_task(
-                        tasks.save_store_results, store_result)
-                if isinstance(self.strategy, APIProductSearchStrategy):
-                    # Cast to ProductResultT to help mypy type-checking
-                    product_result: ProductSearchResult = cast(
-                        ProductSearchResult, self.result_data)
-                    self.tasks.add_task(
-                        tasks.save_product_results, product_result)
+            traceback: Type[BaseException] | None
+            ):
+        logger.debug("Exiting SearchContext(strategy=%s)", self.strategy)
+        # Catch possible exceptions here ...
+        if exc_type is not None:
+            if exc_type is HTTPException:
+                return False
+            raise HTTPException(
+                detail="Internal Server Error",
+                status_code=500
+            )
+        # Call background tasks to save results.
+        logger.debug(
+            "Appending tasks to 'BackgroundTasks' to save query results.")
         return False

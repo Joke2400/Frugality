@@ -34,7 +34,7 @@ async def get_products(
     for strategy in strategies:
         with SearchContext(query=query, strategy=strategy(),
                            task=background_tasks) as context:
-            result = await context.execute_strategy()
+            result = await context.execute()
             if isinstance(result, list):
                 # Continue onto next strategy if result is a list,
                 # this indicates the need to do the next strategy

@@ -1,5 +1,5 @@
 """Contains CRUD operations for interaction with the database."""
-from typing import Type, TypeVar
+from typing import Type, TypeVar, Any
 from sqlalchemy import insert as sql_insert
 from sqlalchemy.sql import Select
 
@@ -35,7 +35,7 @@ def create(record: ModelT, session_ctx: SessionContext) -> ModelT | None:
 
 
 def insert(
-        table: Type[Base], records: list[dict],
+        table: Type[Base], records: list[dict[Any, Any]],
         session_ctx: SessionContext) -> bool:
     """Create multiple new database records from the given list.
 

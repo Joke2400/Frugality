@@ -5,8 +5,7 @@ from pytest import MonkeyPatch
 from pydantic import ValidationError
 from app.core.orm import crud, models, schemas, operations, database
 from app.utils.populate import populate_all
-
-from .fixture import setup_and_teardown
+from app.utils.tests.fixture import orm_create_and_purge
 
 
 def return_single_store_record(*args: Any, **kwargs: Any):
@@ -129,7 +128,7 @@ def test_get_store_by_id_validation_fail(monkeypatch: MonkeyPatch):
     assert result is None
 
 
-def test_get_store_by_id_integration(setup_and_teardown):
+def test_get_store_by_id_integration(orm_create_and_purge):
     """Integration test for get_store_by_id."""
     populate_all(database.ORM)
     result = operations.get_store_by_id(store_id=542862479)
@@ -164,7 +163,7 @@ def test_get_stores_by_name_validation_fail(monkeypatch: MonkeyPatch):
     assert result == []
 
 
-def test_get_stores_by_name_integration(setup_and_teardown):
+def test_get_stores_by_name_integration(orm_create_and_purge):
     """Integration test for get_stores_by_name."""
     populate_all(database.ORM)
     result = operations.get_stores_by_name(name="Prisma")
@@ -200,7 +199,7 @@ def test_get_product_by_ean_validation_fail(monkeypatch: MonkeyPatch):
     assert result is None
 
 
-def test_get_product_by_ean_integration(setup_and_teardown):
+def test_get_product_by_ean_integration(orm_create_and_purge):
     """Integration test for get_product_by_ean."""
     populate_all(database.ORM)
     result = operations.get_product_by_ean(ean="6414893500167")
@@ -235,7 +234,7 @@ def test_get_products_by_name_validation_fail(monkeypatch: MonkeyPatch):
     assert result == []
 
 
-def test_get_products_by_name_integration(setup_and_teardown):
+def test_get_products_by_name_integration(orm_create_and_purge):
     """Integration test for get_products_by_name."""
     populate_all(database.ORM)
     result = operations.get_products_by_name(name="Kotimaista")
