@@ -62,7 +62,8 @@ class Process(metaclass=patterns.SingletonMeta):
     def startup(self) -> None:
         """Start the FastAPI Backend."""
         reload: bool = not config.ENV().in_container
-        port: Literal[80, 8080] = 80 if config.ENV().in_container else 8080
+        port: Literal[
+            8081, 8080] = 8081 if not config.ENV().in_container else 8080
         uvicorn.run(
             app="main:fastapi.app",
             host="0.0.0.0",
