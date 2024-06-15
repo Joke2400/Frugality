@@ -2,7 +2,8 @@
 from typing import cast
 from fastapi import (
     APIRouter,
-    BackgroundTasks
+    BackgroundTasks,
+    HTTPException
 )
 from app.core.search.product_flow import (
     DBProductSearchStrategy,
@@ -30,34 +31,19 @@ async def get_products(
         query: schemas.ProductQuery, background_tasks: BackgroundTasks):
     """TODO: Docstring"""
     logger.info("Performing new ProductSearch...")
-    """
+    raise HTTPException(
+        detail="Route currently disabled",
+        status_code=501
+    )
     # Search the database
     with SearchContext(
             background_tasks=background_tasks,
             strategy=DBProductSearchStrategy()) as context:
         results: resultT = cast(
             resultT, await context.execute(user_query=query))
-        
-    
+        print(results)
+
     with SearchContext(
             background_tasks=background_tasks,
             strategy=APIProductSearchStrategy()) as context:
-    
-    
-    
-    for strategy in strategies:
-        with SearchContext(query=query, strategy=strategy(),
-                           task=background_tasks) as context:
-            result = await context.execute()
-            if isinstance(result, list):
-                # Continue onto next strategy if result is a list,
-                # this indicates the need to do the next strategy
-                # Will be improved later, SearchContext needs major changes first
-                logger.info("Carryover requests: %s", result)
-                continue
-            response = schemas.ProductResponse(results=result)  # type: ignore
-            logger.info("Returning ProductResponse: %s", response)
-            return response
-    # This code should never be reached, raises AssertionError
-    assert_never(None)  # type: ignore
-    """
+        return None

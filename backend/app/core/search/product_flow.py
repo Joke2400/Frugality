@@ -15,7 +15,6 @@ from app.core.search.state import SearchState
 from app.utils import patterns
 from app.utils.logging import LoggerManager
 
-from app.utils.util_funcs import timer
 
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 
@@ -49,6 +48,7 @@ class DBProductSearchStrategy(patterns.Strategy):
             return SearchState.FAIL, results, queries_to_forward
         return SearchState.PARTIAL_RESULT, results, queries_to_forward
 
+    # This function has too many responsibilities
     @classmethod
     def _fetch_products(
             cls, user_query: schemas.ProductQuery, threshold: int
