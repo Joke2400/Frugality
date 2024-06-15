@@ -12,8 +12,7 @@ from app.core.orm import operations
 StoreDB: TypeAlias = schemas.StoreDB[schemas.ProductDataDB]
 
 
-def returns_single_store(
-        *args: Any, **kwargs: Any) -> StoreDB:
+def returns_single_store(*args: Any, **kwargs: Any) -> StoreDB:
     """Mock for when the DB returns a result."""
     return schemas.StoreDB[schemas.ProductDataDB](
         store_name="Store Name",
