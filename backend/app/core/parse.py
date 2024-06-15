@@ -3,6 +3,7 @@ import re
 import json
 import httpx
 import pydantic
+from typing import Any
 
 from app.core.search.state import SearchState
 from app.core.orm import schemas
@@ -83,7 +84,7 @@ def parse_store_brand_from_string(string: str) -> str | None:
     return None
 
 
-def prepare_response_dict(response: httpx.Response) -> dict | None:
+def prepare_response_dict(response: httpx.Response) -> dict[Any, Any] | None:
     """Convert httpx.Response to python dict.
 
     Returns type 'None' if a json.JSONDecodeError is raised.
@@ -148,7 +149,8 @@ def parse_store_response(
 
 
 def parse_product_to_schema(
-        data: dict) -> tuple[schemas.Product, schemas.ProductData] | None:
+        data: dict[Any, Any]
+        ) -> tuple[schemas.Product, schemas.ProductData] | None:
     """Parse a product item dict into two pydantic product schemas.
 
     Args:

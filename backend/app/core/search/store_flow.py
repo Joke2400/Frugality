@@ -70,7 +70,7 @@ class DBStoreSearchStrategy(patterns.Strategy):
                     "DB search: Got 1 results for query: %s.",
                     query)
                 return SearchState.SUCCESS, [data]
-            case _ as data:
+            case _ as data:  # type: ignore
                 assert_never(data)
 
 
@@ -122,7 +122,7 @@ class APIStoreSearchStrategy(patterns.Strategy):
                 logger.info("API search: Got %s results for query: %s.",
                             len(data), query)
                 return SearchState.SUCCESS, data
-            case _ as data:
+            case _ as data:  # type: ignore
                 assert_never(data)
 
     @staticmethod
