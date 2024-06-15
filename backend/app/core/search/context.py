@@ -60,7 +60,8 @@ class SearchContext(Generic[StrategyT]):
         self._strategy = new_strategy
 
     async def execute(
-            self, user_query: QueryT, *args: Any, **kwargs: Any) -> Any:
+            self, user_query: QueryT, *args: Any, **kwargs: Any
+            ) -> tuple[SearchState, Any]:
         """Execute the current strategy with the provided user query.
 
         Args:
@@ -73,7 +74,8 @@ class SearchContext(Generic[StrategyT]):
                 or if some other error occurred during search.
 
         Returns:
-            Any: _description_
+            tuple[SearchState, Any]:
+                Returns the SearchState and result data as a tuple.
         """
         if self.strategy is None:
             raise ValueError(
@@ -94,20 +96,9 @@ class SearchContext(Generic[StrategyT]):
                     detail="Internal Server Error",
                     status_code=500
                 )
-            case SearchState.FAIL | SearchState.PARTIAL_RESULT:
-                # If current strategy is not a database search -> raise error
-                if not isinstance(
-                    self.strategy,
-                    (DBStoreSearchStrategy,
-                     DBProductSearchStrategy)):
-                    raise HTTPException(
-                        detail="Could not fulfill the requested query.",
-                        status_code=404)
-                # Otherwise return the data for the route to handle
-                return data
-            case SearchState.SUCCESS:
-                return data
-
+            case SearchState.SUCCESS | SearchState.FAIL \
+                    | SearchState.PARTIAL_RESULT:
+                return state, data
             case _ as x:  # type: ignore
                 assert_never(x)
 
