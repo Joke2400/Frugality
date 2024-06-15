@@ -19,17 +19,6 @@ async def mock_no_response(*args: Any, **kwargs: Any) -> None:
     return None
 
 
-def mock_parsing_returns_none(*args: Any, **kwargs: Any) -> None:
-    """Mock for when parse_store_response() returns None."""
-    return None
-
-
-def mock_parsing_returns_empty(
-        *args: Any, **kwargs: Any) -> list[schemas.Store]:
-    """Mock for when parse_store_response() returns empty list."""
-    return []
-
-
 def mock_parsing_is_successful(
         *args: Any, **kwargs: Any) -> list[schemas.Store]:
     """Mock for when parse_store_response() is successful."""
@@ -74,7 +63,7 @@ async def test_search_no_results(monkeypatch: MonkeyPatch):
     monkeypatch.setattr(
         APIStoreSearchStrategy, "_send_store_query", mock_got_response)
     monkeypatch.setattr(
-        parse, "parse_store_response", mock_parsing_returns_empty)
+        parse, "parse_store_response", lambda x, y: [])  # type: ignore
     result = await APIStoreSearchStrategy.execute(query=query)
     assert result[0] is SearchState.FAIL
     assert len(result[1]) == 0
@@ -86,7 +75,7 @@ async def test_search_parse_error(monkeypatch: MonkeyPatch):
     monkeypatch.setattr(
         APIStoreSearchStrategy, "_send_store_query", mock_got_response)
     monkeypatch.setattr(
-        parse, "parse_store_response", mock_parsing_returns_none)
+        parse, "parse_store_response", lambda x, y: None)  # type: ignore
     result = await APIStoreSearchStrategy.execute(query=query)
     assert result[0] is SearchState.PARSE_ERROR
     assert len(result[1]) == 0
