@@ -88,7 +88,8 @@ def build_store_variables(value: str) -> dict[str, str | None]:
 
 def build_product_variables(
         store_id: int,
-        query: dict[str, str],
+        query: str,
+        category: str,
         limit: int = 24) -> dict[str, int | str]:
     """Build the required GraphQL variables dict.
 
@@ -97,7 +98,7 @@ def build_product_variables(
     """
     return {
         "StoreID": store_id,
-        "query": query["query"],
-        "slugs": query["category"],
+        "query": query,
+        "slugs": category,
         "limit": limit
     }

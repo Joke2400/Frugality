@@ -39,7 +39,7 @@ async def get_stores(
                 results=db_results)  # type: ignore
             logger.info("Returning response: %s", response)
             return response
-    # relatively simple query so not combining any results
+    # relatively simple query so not combining any results from prev query
     with SearchContext(
             background_tasks=background_tasks,
             strategy=APIStoreSearchStrategy()) as context:

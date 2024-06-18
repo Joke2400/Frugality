@@ -1,6 +1,6 @@
 """Contains strategies for performing product searches."""
 import asyncio
-from typing import Any, TypeAlias
+from typing import Any
 from collections import defaultdict
 from httpx import Response
 
@@ -19,9 +19,6 @@ from app.utils.logging import LoggerManager
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 
 
-QueryDictType: TypeAlias = dict[str, str | int | SearchState]
-
-
 class DBProductSearchStrategy(patterns.Strategy):
     """Strategy pattern implementation for searching for products from the DB.
 
@@ -34,61 +31,60 @@ class DBProductSearchStrategy(patterns.Strategy):
     async def execute(
             cls, *args: Any, **kwargs: Any
                 ) -> typedefs.DBProductSearchResult:
-        query: schemas.ProductQuery | None = kwargs.get("query")
-        threshold: int | None = kwargs.get("threshold")
-        t = int(threshold) if threshold is not None else 5
-        if not isinstance(query, schemas.ProductQuery):
-            raise TypeError(
-                "A 'query' param of type ProductQuery must be provided.")
-        results, queries_to_forward, has_successful, has_partial = \
-            cls._fetch_products(user_query=query, threshold=t)
+        user_query: list[typedefs.ProductQueryDictT] = kwargs["user_query"]
+        threshold: int = int(kwargs["threshold"])
+        logger.debug("DB product search: Set threshold to %s", threshold)
+        has_successful, has_partial = False, False
+        queries_to_forward: list[typedefs.ProductQueryDictT] = []
+        search_results: \
+            dict[int, list[typedefs.DBProductResultItem]] = defaultdict(list)
+        for query_dict in user_query:
+            query_dict, results = cls._fetch_product_query(
+                query_dict=query_dict,
+                timedelta_hours=24,
+                length_threshold=5)
+            if query_dict["state"] is SearchState.SUCCESS:
+                has_successful = True
+            else:
+                if query_dict["state"] is SearchState.PARTIAL_RESULT:
+                    has_partial = True
+                queries_to_forward.append(query_dict)
+            search_results[int(query_dict["store_id"])].append(
+                (query_dict, results))
+        # Determine what the 'higher-level' SearchState needs to be set to
         if has_successful and len(queries_to_forward) == 0:
-            return SearchState.SUCCESS, results
-        if not has_partial:
-            return SearchState.FAIL, results, queries_to_forward
-        return SearchState.PARTIAL_RESULT, results, queries_to_forward
+            logger.debug(
+                "DB product search: Success!")
+            return SearchState.SUCCESS, (search_results, [])
+        if not has_partial and not has_successful:
+            logger.debug(
+                "DB product search: Failed to fulfill ANY user queries.")
+            return SearchState.FAIL, (search_results, queries_to_forward)
+        logger.debug(
+            "DB product search: Was able to partially fulfill user queries")
+        return SearchState.PARTIAL_RESULT, (search_results, queries_to_forward)
 
-    # This function has too many responsibilities
     @classmethod
-    def _fetch_products(
-            cls, user_query: schemas.ProductQuery, threshold: int
-            ) -> tuple[
-                dict[int, list[typedefs.DBProductResultItem]],
-                list[QueryDictType],
-                bool, bool]:
-        results: dict[  # Gotta love all the typing gore here
-            int, list[typedefs.DBProductResultItem]] = defaultdict(list)
-        queries_to_forward: list[QueryDictType] = []
-        # Not liking the bools, but more performant than looping again
-        has_successful = False
-        has_partial = False
-        for store_id in user_query.stores:
-            store_results = results[store_id]  # Get the store result list
-            for query_dict in user_query.queries:
-                combined_dict: QueryDictType = {
-                    "store_id": store_id,
-                    "state": SearchState.FAIL  # Set the default state to FAIL
-                }
-                combined_dict.update(query_dict)  # Add the rest of the data
-                result: list[typedefs.ProductTupleDB] = operations.\
-                    get_recent_complete_product_records(
-                        query=query_dict["query"],
-                        store_id=store_id,
-                        timedelta_hours=24)
-                logger.debug(
-                    "DB Search: Found %s results for query: ('%s' %s)",
-                    len(results), query_dict["query"], store_id)
-                # Set the state variable based on threshold
-                if len(result) >= threshold:
-                    combined_dict["state"] = SearchState.SUCCESS
-                    has_successful = True
-                else:
-                    if 0 < len(result) < threshold:
-                        combined_dict["state"] = SearchState.PARTIAL_RESULT
-                        has_partial = True
-                    queries_to_forward.append(combined_dict)
-                store_results.append((combined_dict, result))
-        return results, queries_to_forward, has_successful, has_partial
+    def _fetch_product_query(
+            cls, query_dict: typedefs.ProductQueryDictT,
+            timedelta_hours: int, length_threshold: int
+            ) -> tuple[typedefs.ProductQueryDictT,
+                       list[typedefs.ProductTupleDB]]:
+        logger.debug(
+            "DB search: Fetching results for query: %s", query_dict)
+        results: list[typedefs.ProductTupleDB] = operations.\
+            get_recent_complete_product_records(
+                query=str(query_dict["query"]),
+                store_id=int(query_dict["store_id"]),
+                timedelta_hours=timedelta_hours)
+        logger.debug(
+            "DB Search: Found %s results for query: %s",
+            len(results), query_dict)
+        if len(results) >= length_threshold:
+            query_dict["state"] = SearchState.SUCCESS
+        elif 0 < len(results) < length_threshold:
+            query_dict["state"] = SearchState.PARTIAL_RESULT
+        return query_dict, results
 
 
 class APIProductSearchStrategy(patterns.Strategy):
@@ -103,62 +99,48 @@ class APIProductSearchStrategy(patterns.Strategy):
     async def execute(
             cls, *args: Any, **kwargs: Any
             ) -> typedefs.APIProductSearchResult:
-        query: schemas.ProductQuery | None = kwargs.get("query")
-        if not isinstance(query, schemas.ProductQuery):
-            raise TypeError(
-                "A 'query' param of type ProductQuery must be provided.")
+        user_query: list[typedefs.ProductQueryDictT] = kwargs["user_query"]
+        results_dict: \
+            dict[int, list[typedefs.APIProductResultItem]] = defaultdict(list)
+        tasks: list[asyncio.Task[
+            tuple[typedefs.ProductQueryDictT,
+                  list[typedefs.ProductTupleAPI]]]] = []
+        for query_dict in user_query:
+            logger.debug(
+                "Creating task for query: %s", query_dict)
+            task = asyncio.create_task(
+                cls._fetch_product_query(query_dict=query_dict))
+            tasks.append(task)
+        results = await asyncio.gather(*tasks)
+        has_successful = False
+        for item in results:
+            results_dict[int(item[0]["store_id"])].append(item)
+            if item[0]["state"] is SearchState.SUCCESS:
+                has_successful = True
+        if not has_successful:
+            return SearchState.FAIL, results_dict
+        return SearchState.SUCCESS, results_dict
 
-        if not any((responses := await cls._send_product_queries(query))):
-            logger.error(
-                "API search: Received no API responses to parse.")
-            return SearchState.NO_RESPONSE, {}
-        results: dict[
-            int, list[typedefs.APIProductResultItem]] = defaultdict(list)
-        # TODO: this code below is spaghetti & needs refactoring
-        all_failed = True
-        for response, original_query in responses:
-            if response is None:
-                # Add empty result to results
-                original_query["state"] = SearchState.NO_RESPONSE
-                results[int(original_query["store_id"])].append(
-                    (original_query, []))
-                continue
-            # Add parsed result to results
-            parsed = parse.parse_product_response(
-                    response=response, query=original_query)
-            if parsed[0]["state"] is SearchState.SUCCESS and all_failed:
-                all_failed = False
-            results[int(original_query["store_id"])].append(parsed)
-        if all_failed:
-            return SearchState.FAIL, results
-        return SearchState.SUCCESS, results
 
     @classmethod
-    async def _send_product_queries(
-            cls, user_query: schemas.ProductQuery
-            ) -> list[tuple[Response | None, dict[str, str | int]]]:
-
-        # The task used for asyncio.gather()
-        async def send_query(
-                params: dict[str, Any], orig_query: dict[str, str | int]
-                ) -> tuple[Response | None, dict[str, str | int]]:
-            return await request.send_request(params=params), orig_query
-
-        # TODO: Below code needs improvement
-        tasks: list = []
-        for store_id in user_query.stores:
-            for query in user_query.queries:
-                combined: dict[str, str | int] = {"store_id": store_id}
-                combined.update(query)
-                params = payload.build_request_payload(
-                    method="post",
-                    operation=payload.Operation.PRODUCT_SEARCH,
-                    variables=payload.build_product_variables(
-                        store_id=store_id, query=query),
-                    timeout=10)
-                logger.debug(
-                    "Creating task for: (store_id: %s, query: %s)",
-                    store_id, user_query)
-                tasks.append(asyncio.create_task(
-                    send_query(params, combined)))
-        return await asyncio.gather(*tasks)
+    async def _fetch_product_query(
+            cls, query_dict: typedefs.ProductQueryDictT
+            ) -> tuple[typedefs.ProductQueryDictT,
+                       list[typedefs.ProductTupleAPI]]:
+        params = payload.build_request_payload(
+            method="post",
+            operation=payload.Operation.PRODUCT_SEARCH,
+            variables=payload.build_product_variables(
+                store_id=int(query_dict["store_id"]),
+                query=str(query_dict["query"]),
+                category=str(query_dict["category"])),
+            timeout=10)
+        logger.debug(
+            "DB search: Fetching results for query: %s", query_dict)
+        response = await request.send_request(params=params)
+        query_dict, results = parse.parse_product_response(
+                    response=response, query_dict=query_dict)
+        logger.debug(
+            "DB Search: Found %s results for query: %s",
+            len(results), query_dict)
+        return query_dict, results

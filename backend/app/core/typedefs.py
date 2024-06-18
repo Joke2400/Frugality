@@ -17,6 +17,9 @@ SchemaOut = StoreDB | ProductDB | schemas.ProductDataDB
 # temporarily re-added
 SchemaInOrDict = SchemaIn | dict
 
+
+ProductQueryDictT: TypeAlias = dict[str, str | int | SearchState]
+
 DBStoreSearchResult = \
     tuple[
         SearchState,
@@ -30,7 +33,6 @@ APIStoreSearchResult = \
         list[schemas.Store],
     ]
 
-StoreSearchResult = DBStoreSearchResult | APIStoreSearchResult
 
 ProductTupleDB = \
     tuple[
@@ -59,17 +61,13 @@ APIProductResultItem = \
 DBProductSearchResult = \
     tuple[
         SearchState,
-        dict[
-            int,
-            list[DBProductResultItem]
+        tuple[
+            dict[
+                int,
+                list[DBProductResultItem]
+            ],
+            list[dict[str, str | int | SearchState]]
         ]
-    ] | tuple[
-        SearchState,
-        dict[
-            int,
-            list[DBProductResultItem]
-        ],
-        list[dict[str, str | int | SearchState]]
     ]
 
 
@@ -81,5 +79,3 @@ APIProductSearchResult = \
             list[APIProductResultItem]
         ],
     ]
-
-ProductSearchResult = DBProductSearchResult | APIProductSearchResult

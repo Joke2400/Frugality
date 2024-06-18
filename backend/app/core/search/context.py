@@ -3,17 +3,9 @@ import time
 from typing import Type, TypeVar, Generic, Any, Self, Tuple
 from fastapi import BackgroundTasks, HTTPException
 
-from app.core import tasks
-from app.core.search.store_flow import (
-    DBStoreSearchStrategy,
-    APIStoreSearchStrategy
-)
-from app.core.search.product_flow import (
-    DBProductSearchStrategy,
-    APIProductSearchStrategy
-)
-from app.core.search.state import SearchState
+from app.core import typedefs
 from app.core.orm import schemas
+from app.core.search.state import SearchState
 
 from app.utils.patterns import Strategy
 from app.utils.util_funcs import assert_never
@@ -22,7 +14,7 @@ from app.utils.logging import LoggerManager
 logger = LoggerManager().get_logger(path=__name__, sh=0, fh=10)
 StrategyT = TypeVar("StrategyT", bound=Strategy)
 
-QueryT = schemas.StoreQuery | schemas.ProductQuery
+QueryT = schemas.StoreQuery | list[typedefs.ProductQueryDictT]
 
 
 class SearchContext(Generic[StrategyT]):
@@ -82,7 +74,7 @@ class SearchContext(Generic[StrategyT]):
                 "A search strategy was not set before call to execute().")
         start_time = time.time()
         result: Tuple[SearchState, Any] = await self.strategy.execute(
-            *args, query=user_query, **kwargs)
+            *args, user_query=user_query, **kwargs)
         end_time = time.time()
         duration = (end_time - start_time) * 1000
         logger.info("%s Took %.2fms to execute.", self.strategy, duration)
@@ -116,6 +108,9 @@ class SearchContext(Generic[StrategyT]):
         if exc_type is not None:
             if exc_type is HTTPException:
                 return False
+            logger.error(
+                "An exception occurred.",
+                exc_info=(exc_type, exc_value, traceback))  # type: ignore
             raise HTTPException(
                 detail="Internal Server Error",
                 status_code=500

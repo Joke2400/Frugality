@@ -1,10 +1,11 @@
 """Contains parsing functions for parsing/modifying data."""
+from typing import Any
 import re
 import json
 import httpx
 import pydantic
-from typing import Any
 
+from app.core import typedefs
 from app.core.search.state import SearchState
 from app.core.orm import schemas
 from app.utils.logging import LoggerManager
@@ -189,10 +190,10 @@ def parse_product_to_schema(
 
 
 def parse_product_response(
-        response: httpx.Response,
-        query: dict[str, str | int]
+        response: httpx.Response | None,
+        query_dict: typedefs.ProductQueryDictT
         ) -> tuple[
-            dict[str, SearchState | str | int],
+            typedefs.ProductQueryDictT,
             list[
                 tuple[
                     schemas.Product,
@@ -206,13 +207,13 @@ def parse_product_response(
         response (httpx.Response | None):
         The response object provided by the httpx library.
         If the given response is of type 'None', return an empty list of items.
-        query (dict[str, str | int]):
-        A dict containing the store id, query string & query category.
+        query_dict (dict[str, str | int | SearchState]):
+        A dict containing the store id, query string, category and SearchState.
 
     Returns:
         tuple[
             SearchState
-            dict[str, SearchState | str | int],
+            ProductQueryDictT,
             list[
                 tuple[
                     schemas.Product,
@@ -227,23 +228,26 @@ def parse_product_response(
     """
     logger.debug(
         "Parsing response for query: <query='%s', store_id=%s, category='%s'>",
-        query["query"], query["store_id"], query["category"])
-    # Set query state to FAIL initially
-    query["state"] = SearchState.FAIL
+        query_dict["query"], query_dict["store_id"], query_dict["category"])
+    # TODO: Needs refactoring?
+    if response is None:
+        query_dict["state"] = SearchState.NO_RESPONSE
+        return query_dict, []
     if (content := prepare_response_dict(response)) is None:
-        query["state"] = SearchState.PARSE_ERROR
-        return query, []
+        query_dict["state"] = SearchState.PARSE_ERROR
+        return query_dict, []
     try:
         response_items = content["data"]["store"]["products"]["items"]
         store_name = content["data"]["store"]["name"]
     except (KeyError, ValueError) as err:
         logger.debug(err)
-        query["state"] = SearchState.PARSE_ERROR
-        return query, []
-    query["store_name"] = store_name
+        query_dict["state"] = SearchState.PARSE_ERROR
+        return query_dict, []
+    query_dict["store_name"] = store_name
     if len(response_items) == 0:
+        query_dict["state"] = SearchState.FAIL
         logger.debug("No items found in response body.")
-        return query, []
+        return query_dict, []
     items: list[tuple[schemas.Product, schemas.ProductData]] = []
     for i in response_items:
         item = parse_product_to_schema(i)
@@ -251,5 +255,5 @@ def parse_product_response(
             continue
         items.append(item)
     logger.debug("Parsed %s items from response.", len(items))
-    query["state"] = SearchState.SUCCESS
-    return query, items
+    query_dict["state"] = SearchState.SUCCESS
+    return query_dict, items

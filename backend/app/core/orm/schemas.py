@@ -4,7 +4,6 @@ from datetime import datetime
 from annotated_types import Len
 
 import pydantic
-from pydantic import Field
 
 from app.core.search.state import SearchState
 
@@ -93,6 +92,7 @@ class ProductQuery(pydantic.BaseModel):
     stores: Annotated[set[int], Len(min_length=0, max_length=10)]
     queries: Annotated[list[dict[str, str]], Len(min_length=0, max_length=30)]
     # TODO: Ensure all queries are converted to alphabetic+åäö
+    # TODO: Enforce a max threshold for query complexity
 
     model_config = pydantic.ConfigDict(
         from_attributes=True,
@@ -116,11 +116,23 @@ class ProductQuery(pydantic.BaseModel):
             ]
         })
 
+    def get_as_dicts(self) -> list[dict[str, str | int | SearchState]]:
+        """Return queries as a list individul dictionaries."""
+        return [
+            {
+                "query": query["query"],
+                "category": query["category"],
+                "store_id": store_id,
+                "state": SearchState.FAIL
+            }
+            for query in self.queries for store_id in self.stores
+        ]
+
 
 class StoreQuery(pydantic.BaseModel):
     """Schema for how queries for stores should look like"""
     store_name: Annotated[str | None, Len(min_length=1, max_length=50)]
-    store_id: int | None = Field(ge=0, le=999999999)
+    store_id: int | None = pydantic.Field(ge=0, le=999999999)
     # TODO: Ensure name is converted to alphabetic+åäö
 
     model_config = pydantic.ConfigDict(

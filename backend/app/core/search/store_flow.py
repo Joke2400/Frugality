@@ -43,32 +43,29 @@ class DBStoreSearchStrategy(patterns.Strategy):
             tuple[SearchState, list[schemas.StoreDB]]
                 A tuple containing the SearchState and a list of results.
         """
-        query: schemas.StoreQuery | None = kwargs.get("query")
-        if not isinstance(query, schemas.StoreQuery):
-            raise TypeError(
-                "A 'query' param of type StoreQuery must be provided.")
+        user_query: schemas.StoreQuery = kwargs["user_query"]
         result: list[typedefs.StoreDB] | typedefs.StoreDB | None
-        if query.store_id is not None:
-            result = operations.get_store_by_id(query.store_id)
+        if user_query.store_id is not None:
+            result = operations.get_store_by_id(user_query.store_id)
         else:
             # Explicit cast, model validator has ensured its not 'None'
-            q: str = cast(str, query.store_name)
+            q: str = cast(str, user_query.store_name)
             result = operations.get_stores_by_name(q)
         match result:
             case [] | None:
                 logger.info(
-                    "DB search: Failed to find results for query: %s.",
-                    query)
+                    "DB store search: Failed to find results for query: %s.",
+                    user_query)
                 return SearchState.FAIL, []
             case list() as data:
                 logger.info(
-                    "DB search: Got %s results for query: %s.",
-                    len(data), query)
+                    "DB store search: Got %s results for query: %s.",
+                    len(data), user_query)
                 return SearchState.SUCCESS, data
             case schemas.StoreDB() as data:
                 logger.info(
-                    "DB search: Got 1 results for query: %s.",
-                    query)
+                    "DB store search: Got 1 results for query: %s.",
+                    user_query)
                 return SearchState.SUCCESS, [data]
             case _ as data:  # type: ignore
                 assert_never(data)
@@ -99,35 +96,33 @@ class APIStoreSearchStrategy(patterns.Strategy):
             tuple[SearchState, list[schemas.Store]]:
                 A tuple containing the SearchState and a list of results.
         """
-        query: schemas.StoreQuery | None = kwargs.get("query")
-        if not isinstance(query, schemas.StoreQuery):
-            raise TypeError(
-                "A 'query' param of type ProductQuery must be provided.")
-        if (response := await cls._send_store_query(query=query)) is None:
+        user_query: schemas.StoreQuery = kwargs["user_query"]
+        if (response := await cls._send_store_query(
+                user_query=user_query)) is None:
             logger.error(
-                "API search: Received no API response to parse.")
+                "API store search: Received no API response to parse.")
             return SearchState.NO_RESPONSE, []
-        parsed = parse.parse_store_response(response, query)
+        parsed = parse.parse_store_response(response, user_query)
         match parsed:
             case None:
                 logger.error(
-                    "API search: Failed to parse results from response.")
+                    "API store search: Failed to parse results from response.")
                 return SearchState.PARSE_ERROR, []
             case []:
                 logger.info(
-                    "API search: Got 0 results for query: %s.",
-                    query)
+                    "API store search: Got 0 results for query: %s.",
+                    user_query)
                 return SearchState.FAIL, []
             case list() as data:
-                logger.info("API search: Got %s results for query: %s.",
-                            len(data), query)
+                logger.info("API store search: Got %s results for query: %s.",
+                            len(data), user_query)
                 return SearchState.SUCCESS, data
             case _ as data:  # type: ignore
                 assert_never(data)
 
     @staticmethod
     async def _send_store_query(
-            query: schemas.StoreQuery
+            user_query: schemas.StoreQuery
             ) -> Response | None:
         """Build API request payload and send store request.
 
@@ -140,14 +135,14 @@ class APIStoreSearchStrategy(patterns.Strategy):
                 Either a httpx.Response or None if no response
                 was received or an error occurred.
         """
-        if query.store_id is not None:
-            store_query: str = str(query.store_id)
+        if user_query.store_id is not None:
+            store_query: str = str(user_query.store_id)
         else:
-            store_query = str(query.store_name)
+            store_query = str(user_query.store_name)
         params = payload.build_request_payload(
             method="post",
             operation=payload.Operation.STORE_SEARCH,
             variables=payload.build_store_variables(store_query),
             timeout=10)
-        logger.debug("API search: Awaiting request for query %s.", query)
+        logger.debug("API search: Awaiting request for query %s.", user_query)
         return await request.send_request(params=params)
