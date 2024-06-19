@@ -42,7 +42,7 @@ class DBProductSearchStrategy(patterns.Strategy):
             query_dict, results = cls._fetch_product_query(
                 query_dict=query_dict,
                 timedelta_hours=24,
-                length_threshold=5)
+                length_threshold=threshold)
             if query_dict["state"] is SearchState.SUCCESS:
                 has_successful = True
             else:

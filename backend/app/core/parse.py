@@ -243,7 +243,6 @@ def parse_product_response(
         logger.debug(err)
         query_dict["state"] = SearchState.PARSE_ERROR
         return query_dict, []
-    query_dict["store_name"] = store_name
     if len(response_items) == 0:
         query_dict["state"] = SearchState.FAIL
         logger.debug("No items found in response body.")

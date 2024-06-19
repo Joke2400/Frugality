@@ -34,30 +34,42 @@ async def get_products(
     with SearchContext(
             background_tasks=background_tasks,
             strategy=DBProductSearchStrategy()) as context:
-        state, db_results = cast(
+        db_state, db_results = cast(
             DBResultT, await context.execute(
-                user_query=query.get_as_dicts(), threshold=1))
-        if state is SearchState.SUCCESS:
+                user_query=query.get_as_dicts(), threshold=10))
+        if db_state is SearchState.SUCCESS:
             # Schema handles conversion: schemas.ProductDB -> schemas.Product
             response = schemas.ProductResponse(
                 results=db_results[0])  # type: ignore
             logger.info("Returning response: %s", response)
             return response
     api_query: list[typedefs.ProductQueryDictT] | schemas.ProductQuery
-    if state is SearchState.PARTIAL_RESULT:
+    if db_state is SearchState.PARTIAL_RESULT:
         api_query = db_results[1]
     else:
-        # Run entire query
+        # If all queries failed, re-run the entire query again
         api_query = query.get_as_dicts()
     with SearchContext(
             background_tasks=background_tasks,
             strategy=APIProductSearchStrategy()) as context:
-        state, api_results = cast(
+        api_state, api_results = cast(
             APIResultT, await context.execute(user_query=api_query))
-        if state is SearchState.SUCCESS:
-            # TODO: COMBINE RESULTS FROM QUERIES BEFORE RETURNING!
-
-            response = schemas.ProductResponse(results=api_results)
+        if api_state is SearchState.SUCCESS:
+            # Combine query results with the partial result from db
+            if db_state is SearchState.PARTIAL_RESULT:
+                # Expensive operation so might have to refactor the search strategy.
+                for store_id, api_queries in api_results.items():
+                    for query_dict, items in api_queries:
+                        for inx, val in enumerate(db_results[0][store_id]):
+                            if query_dict == val[0]:
+                                # Replace the tuple at the index location
+                                db_results[0][store_id][inx] = \
+                                    (query_dict, items)
+                                break
+                            
+                response = schemas.ProductResponse(results=db_results[0])
+            else:
+                response = schemas.ProductResponse(results=api_results)
             logger.info("Returning response: %s", response)
             return response
         raise HTTPException(
