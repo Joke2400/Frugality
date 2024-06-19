@@ -6,7 +6,7 @@ query GetProductByName($StoreID: ID!, $query: String, $limit: Int, $slugs: Strin
         products(
             limit: $limit
             includeAgeLimitedByAlcohol: true
-            searchProvider: elasticsearch
+            searchProvider: loop54
             queryString: $query
             slug: $slugs
         ) {
