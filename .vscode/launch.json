@@ -2,29 +2,37 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "bashdb",
+            "name": "(Debug) Browser - Firefox",
+            "type": "firefox",
             "request": "launch",
-            "name": "Bash-Debug (select script from list of sh files)",
-            "cwd": "${workspaceFolder}",
-            "program": "${command:SelectScriptName}",
-            "terminalKind": "integrated",
-            "args": []
+            "reAttach": true,
+            "url": "http://localhost:5173/",
+            "profile": "debug",
+            "webRoot": "${workspaceFolder}/frontend",
+            "skipFiles": [
+                "${workspaceFolder}/frontend/node_modules/**"
+            ],
+            "pathMappings": [
+                {
+                    "url": "webpack:///src/",
+                    "path": "${webRoot}/src"
+                },
+                {
+                    "url": "webpack:///node_modules/",
+                    "path": "${webRoot}/node_modules"
+                },
+                {
+                    "url": "webpack:///",
+                    "path": "${webRoot}"
+                },
+
+            ]
         },
         {
-            "name": "PYTEST: Run all tests",
-            "type": "debugpy",
-            "request": "launch",
-            "module": "pytest",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "cwd": "${workspaceFolder}/backend",
-            "args": ["${workspaceFolder}/backend"]
-        },
-        {
-            "name": "DEBUG: Run frontend",
+            "name": "(Debug) Frontend Local",
             "request": "launch",
             "type": "node",
-            "runtimeExecutable": "${userHome}/.nvm/versions/node/v16.20.0/bin/npm",
+            "runtimeExecutable": "npm",
             "runtimeArgs": [
                 "--prefix",
                 "${workspaceFolder}/frontend",
@@ -38,7 +46,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "DEBUG: Run backend",
+            "name": "(Debug) Backend Local",
             "type": "debugpy",
             "request": "launch",
             "module": "main",
@@ -46,6 +54,27 @@
             "cwd": "${workspaceFolder}/backend",
             "justMyCode": true,
             "console": "integratedTerminal"
-        }
+        },
+        {
+            "name": "(Debug) Bash Select",
+            "type": "bashdb",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${command:SelectScriptName}",
+            "terminalKind": "integrated",
+            "args": []
+        },
+        {
+            "name": "(Debug): Pytest",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "cwd": "${workspaceFolder}/backend",
+            "args": [
+                "${workspaceFolder}/backend"
+            ]
+        },
     ]
 }
