@@ -1,6 +1,7 @@
 :root {
     /* Color definitions */
     --primary-text-light: hsl(200, 100%, 100%);
+    --secondary-text-light: hsl(200, 50%, 100%);
     --primary-text-dark: hsl(hsl(0, 0%, 25%));
     --secondary-text-dark: hsl(0, 0%, 40%);
 
