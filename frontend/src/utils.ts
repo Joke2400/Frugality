@@ -1,34 +1,53 @@
 export { get, post, put, del}
 
 interface RequestParams {
-    method: string
+    method: string;
     url: string;
-    params?: {[key: string]: any}
+    params?: {[key: string]: any};
 }
 
-async function request(requestParams: RequestParams): Promise<any> {
-    let options: { [key: string]: any} = {
-        method: requestParams.method,
+class HttpError extends Error {
+    constructor(public statusCode: number, message?: string) {
+        super(message);
+        this.name = "HttpError";
     }
+}
+
+async function request(requestParams: RequestParams): Promise<Response> {
+    const options: { [key: string]: any} = {
+        method: requestParams.method
+    };
     if (requestParams.method === "GET") {
         options.headers = {
             "Accept": "text/html, application/json"
-        }
+        };
         if (requestParams.params !== undefined) {
             requestParams.url += '?' + (
                 new URLSearchParams(requestParams.params)).toString();
-        }
+        };
     } else {
-        options.body = JSON.stringify(requestParams);
+        options.body = JSON.stringify(requestParams.params);
         options.headers = {
             "Accept": "text/html, application/json",
-            "Content-Type": "application/json"}
+            "Content-Type": "application/json"
+        };
+    };
+    try {
+        const response = await fetch(requestParams.url, options);
+        if (!response.ok) {
+            throw new HttpError(response.status, `Request failed with status ${response.status}`);
+        };
+        return response
+    } catch (error) {
+        if (error instanceof HttpError) {
+            console.error(`HTTP Error: ${error.statusCode} - ${error.message}`);
+            return Promise.reject(error)
+
+        } else {
+            console.error('Unexpected Error:', error);
+            return Promise.reject(new Error('An unexpected error occurred.'))
+        };
     }
-    const response = await fetch(requestParams.url, options)
-    if (!response.ok) {
-        return Promise.reject(new Error("Unable to complete request."))
-    }
-    return await response.json()
 }
 
 const get = (
