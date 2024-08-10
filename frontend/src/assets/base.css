@@ -1,5 +1,29 @@
 :root {
     /* Color definitions */
+    --primary-light-100: hsl(197, 100%, 95%);
+    --primary-light-200: hsl(202, 95%, 90%);
+    --primary-light-300: hsl(205, 80%, 80%);
+    --primary-light-400: hsl(207, 70%, 70%);
+    --primary-light-500: hsl(210, 50%, 60%);
+    --primary-light-600: hsl(212, 54%, 55%);
+    --primary-light-700: hsl(215, 57%, 50%);
+    --primary-light-800: hsl(217, 61%, 45%);
+    --primary-light-900: hsl(219, 63%, 37%);
+
+    --grey-100: hsl(210, 38%, 97%);
+    --grey-200: hsl(210, 32%, 93%);
+    --grey-300: hsl(210, 28%, 87%);
+    --grey-400: hsl(210, 16%, 77%);
+    --grey-500: hsl(210, 12%, 65%);
+    --grey-600: hsl(211, 13%, 58%);
+    --grey-700: hsl(212, 14%, 46%);
+    --grey-800: hsl(212, 14%, 32%);
+    --grey-900: hsl(212, 16%, 24%);
+
+    --red-500: hsl(0, 90%, 60%);
+    --yellow-500: hsl(50, 90%, 60%);
+    --green-500: hsl(120, 90%, 60%);
+
     --primary-text-light: hsl(200, 100%, 100%);
     --secondary-text-light: hsl(200, 50%, 100%);
     --primary-text-dark: hsl(hsl(0, 0%, 25%));
@@ -21,8 +45,8 @@
 }
 
 :root {
-    --clr-primary-text: var(--primary-text-dark);
-    --clr-background: var(--clr-background-light);
+    --clr-text: var(--grey-800);
+    --clr-background: var(--grey-200);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -40,7 +64,7 @@
 
 body {
     min-height: 100vh;
-    color: var(--clr-primary-text);
+    color: var(--clr-text);
     background-color: var(--clr-background);
     transition:
         color 0.5s,
