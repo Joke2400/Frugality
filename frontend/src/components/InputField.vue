@@ -11,7 +11,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     input: [query: string],
-    select: [select: {id: number, name: string}]
+    select: [select: number]
 }>();
 
 let dropdownIsToggled = ref(false);
@@ -43,8 +43,8 @@ function handleUserInput(event: Event): void {
     }, 600)
 };
 
-function handleItemSelect(item: {id: number, name: string}): void {
-    emit("select", item)
+function handleItemSelect(itemId: number): void {
+    emit("select", itemId)
     // Note that this does not mutate results, just disables the dropdown
     dropdownIsEnabled.value = false;
 };
@@ -65,7 +65,8 @@ watch(props.results, () => {
 /*
 Since I had to create a mouse click handler:
 both the equivalent to "@focus" and "@blur" are handled here
-The difference is that the click event is checked on the container <div> instead of the <input>
+The difference is that the click event is checked on the
+container <div> instead of the <input>
 */
 useDetectClickElement(containerElement, updateDropdownState)
 </script>
@@ -75,7 +76,7 @@ useDetectClickElement(containerElement, updateDropdownState)
         <input class="field" :placeholder="placeholder" @input="handleUserInput"/>
         <ul class="dropdown" v-show="dropdownIsEnabled && dropdownIsToggled">
             <li class="item" v-for="item in props.results" :key="item.id">
-                <button class="button" @click="handleItemSelect(item)">
+                <button class="button" @click="handleItemSelect(item.id)">
                     {{ item.name }}
                 </button>
             </li>
@@ -85,30 +86,31 @@ useDetectClickElement(containerElement, updateDropdownState)
 
 <style scoped lang="css">
     .container {
+        width: 100%;
         display: flex;
         flex-flow: column;
-        width: 24rem;
+        position: relative;
         align-items: center;
     }
 
     .field {
         border: 0;
         outline: 0;
+        width: 80%;
+        height: 2.5rem;
+        margin-top: 0.25rem;
         border-radius: 1.5rem;
-        font-size: 1.1rem;
+        font-size: 1.125rem;
+        z-index: 2;
         font-weight: bold;
         text-align: center;
-        height: 2.5rem;
-        width: 19.6rem;
-        margin-top: 0.2rem;
-        color: var(--clr-text);
+        color: var(--grey-800);
         background-color: var(--grey-100);
-        z-index: 2;
         box-shadow: inset 0 1px 3px hsla(0, 0%, 0%, 0.4), 0 1px 0 hsl(210, 30%, 90%)
     }
 
     .field:hover {
-        background-color: var(--primary-light-200);
+        background-color: var(--primary-light-100);
     }
 
     .field:focus::placeholder {
@@ -116,14 +118,13 @@ useDetectClickElement(containerElement, updateDropdownState)
     }
 
     .dropdown {
-        position: absolute;
-        list-style: none;
-        padding: 0;
+        width: 83%;
+        padding: 0.25rem;
+        padding-top: 3rem;
         border-radius: 1.5rem;
-        width: 20rem;
         z-index: 1;
-        padding: 0.2rem;
-        padding-top: 2.9rem;
+        list-style: none;
+        position: absolute;
         background-color: var(--grey-200);
         box-shadow: inset 0 1px 0 hsl(210, 30%, 97%), 0 1px 3px hsla(0, 0%, 0%, 0.4)
     }
@@ -135,14 +136,14 @@ useDetectClickElement(containerElement, updateDropdownState)
 
     .button {
         width: 100%;
-        padding: 0.4rem 0.8rem;
-        font-size: 1.1rem;
+        border: 0;
+        padding: 0.5rem 0.75rem;
+        font-size: 1.125rem;
         font-weight: bold;
         font-style: oblique;
         text-align: center;
         color: var(--grey-700);
         background-color: var(--grey-200);
-        border: 0;
     }
 
     .button:hover {
