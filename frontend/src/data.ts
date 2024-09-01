@@ -31,7 +31,7 @@ export class Store {
     }
 }
 
-export interface Product {}
+export class Product {}
 
 export interface StoreResponse {
     results: {store_id: number, store_name: string, slug: string, brand: string}[];
