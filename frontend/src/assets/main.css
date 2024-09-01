@@ -3,11 +3,12 @@
 #app {
     display: flex;
     flex-direction: column;
-    height: 200vh;
+    min-height: 120vh;
+    height: 120vh;
 }
 
 
-/* Simple style definitions */
+/* Simple inline style definitions */
 .shadow-light {
     box-shadow: 0 1px 3px hsla(0, 0%, 0%, .2);
 }
@@ -18,4 +19,16 @@
 
 .shadow-heavy {
     box-shadow: 0 15px 35px hsla(0, 0%, 0%, .2);
+}
+
+.shadow-inset-light {
+    box-shadow: inset 0 1px 3px hsla(0, 0%, 0%, .2);
+}
+
+.shadow-inset-medium {
+    box-shadow: inset 0 4px 6px hsla(0, 0%, 0%, .2);
+}
+
+.shadow-inset-heavy {
+    box-shadow: inset 0 15px 35px hsla(0, 0%, 0%, .2);
 }

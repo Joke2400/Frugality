@@ -30,22 +30,54 @@
     --debug-yellow: rgba(255, 255, 0, 0.15);
 }
 
-:root {
-    --clr-text: var(--grey-800);
-    --clr-background: var(--grey-200);
-}
-
+/* TODO: Color scheme needs to be determined */
 @media (prefers-color-scheme: dark) {
     :root {
     }
 }
 
+/* Small Mobile Devices */
+@media (max-width: 480px) {
+    :root {
+        font-size: 8px;
+    }
+}
+
+/* Medium Mobile Devices */
+@media (max-width: 760px) {
+    :root {
+        font-size: 12px;
+    }
+}
+
+/* Tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+    :root {
+        font-size: 14px;
+    }
+}
+
+/* Small Desktop Devices */
+@media (min-width: 1025px) and (max-width: 1440px) {
+    :root {
+        font-size: 20px;
+    }
+}
+
+/* Large Desktop Devices */
+@media (min-width: 1441px) {
+    :root {
+        font-size: 24px;
+    }
+}
+
+
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
-  margin: 0;
-  font-weight: normal;
+    margin: 0;
+    box-sizing: border-box;
+    font-weight: normal;
 }
 
 body {
@@ -55,10 +87,9 @@ body {
     transition:
         color 0.5s,
         background-color 0.5s;
-    line-height: 1.6;
+    line-height: 1.5;
     text-rendering: optimizeLegibility;
-    font-size: 1rem;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-family: sans-serif;
+    font-family: Noto Sans, sans-serif;
 }
