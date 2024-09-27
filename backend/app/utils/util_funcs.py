@@ -1,4 +1,5 @@
 """Contains utility functions used for tests, debugging etc."""
+
 import os
 import time
 from typing import NoReturn, Never, Any, Callable
@@ -31,17 +32,20 @@ def get_envvar(key: str) -> str:
     """
     if (var := os.getenv(key=key)) in ("", None):
         raise exceptions.MissingEnvironmentVariableError(
-            f"The required environment variable '{key}' was missing.")
+            f"The required environment variable '{key}' was missing."
+        )
     return str(var)
 
 
 def cleanup(func: Callable[..., None]) -> Callable[..., None]:
     """A cleanup decorator that purges the database after function call."""
+
     def wrapper(*args: Any, **kwargs: Any) -> Any:
         func(*args, **kwargs)
         logger.debug("Cleanup wrapper is resetting the database...")
         ORM().purge_all()
         ORM().create_all()
+
     return wrapper
 
 
@@ -49,7 +53,7 @@ def build_db_url(usr: str, passwd: str, db: str, testing: bool) -> str:
     """Build a database connect URL."""
     auth: str = f"{usr}:{passwd}"
     if not testing:
-        host: str = f"frugality_db/{db}"
+        host: str = f"frugality_database/{db}"
     else:
         host = "localhost:5433/test_database"
     logger.info(f"Set postgres host to @{host}")
@@ -58,12 +62,13 @@ def build_db_url(usr: str, passwd: str, db: str, testing: bool) -> str:
 
 def timer(func: Callable[..., Any]) -> Callable[..., Any]:
     """A timer decorator."""
+
     def wrapper(*args: Any, **kwargs: Any):
         start_time = time.time()
         result = func(*args, **kwargs)
         end_time = time.time()
         elapsed_time = (end_time - start_time) * 1000
-        print(
-            f"Function '{func.__name__}()' took {elapsed_time:.2f}ms")
+        print(f"Function '{func.__name__}()' took {elapsed_time:.2f}ms")
         return result
+
     return wrapper
