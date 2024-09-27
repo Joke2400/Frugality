@@ -51,7 +51,7 @@ async def test_search_default(monkeypatch: MonkeyPatch):
         APIStoreSearchStrategy, "_send_store_query", mock_got_response)
     monkeypatch.setattr(
         parse, "parse_store_response", mock_parsing_is_successful)
-    result = await APIStoreSearchStrategy.execute(query=query)
+    result = await APIStoreSearchStrategy.execute(user_query=query)
     assert result[0] is SearchState.SUCCESS
     assert isinstance(result[1][0], schemas.Store)
     assert len(result[1]) == 3
@@ -64,7 +64,7 @@ async def test_search_no_results(monkeypatch: MonkeyPatch):
         APIStoreSearchStrategy, "_send_store_query", mock_got_response)
     monkeypatch.setattr(
         parse, "parse_store_response", lambda x, y: [])  # type: ignore
-    result = await APIStoreSearchStrategy.execute(query=query)
+    result = await APIStoreSearchStrategy.execute(user_query=query)
     assert result[0] is SearchState.FAIL
     assert len(result[1]) == 0
 
@@ -76,7 +76,7 @@ async def test_search_parse_error(monkeypatch: MonkeyPatch):
         APIStoreSearchStrategy, "_send_store_query", mock_got_response)
     monkeypatch.setattr(
         parse, "parse_store_response", lambda x, y: None)  # type: ignore
-    result = await APIStoreSearchStrategy.execute(query=query)
+    result = await APIStoreSearchStrategy.execute(user_query=query)
     assert result[0] is SearchState.PARSE_ERROR
     assert len(result[1]) == 0
 
@@ -88,6 +88,6 @@ async def test_search_no_response(monkeypatch: MonkeyPatch):
         APIStoreSearchStrategy, "_send_store_query", mock_no_response)
     monkeypatch.setattr(
         parse, "parse_store_response", assert_never)  # raises assertion error
-    result = await APIStoreSearchStrategy.execute(query=query)
+    result = await APIStoreSearchStrategy.execute(user_query=query)
     assert result[0] is SearchState.NO_RESPONSE
     assert len(result[1]) == 0
