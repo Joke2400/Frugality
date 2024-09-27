@@ -26,7 +26,7 @@ services:
         window: 60s
 
   database:
-    container_name: frugality_db
+    container_name: frugality_database
     image: postgres:16.0-alpine3.18
     env_file:
     - ./env/prod.env
@@ -41,7 +41,7 @@ services:
         window: 120s
 
   test_database:
-    container_name: test_db
+    container_name: test_database
     image: postgres:16.0-alpine3.18
     env_file:
     - ./env/dev.env
