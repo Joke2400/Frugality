@@ -1,10 +1,12 @@
 "Contains the SearchContext ctx manager used in the app search flows."
 import time
-from typing import Type, TypeVar, Generic, Any, Self, Tuple
+from typing import Type, TypeVar, Generic, Any, Self, Tuple, cast
 from fastapi import BackgroundTasks, HTTPException
 
 from app.core import typedefs
-from app.core.orm import schemas
+from app.core.orm import schemas, operations
+from app.core.search.store_flow import APIStoreSearchStrategy
+from app.core.search.product_flow import APIProductSearchStrategy
 from app.core.search.state import SearchState
 
 from app.utils.patterns import Strategy
@@ -29,14 +31,15 @@ class SearchContext(Generic[StrategyT]):
     """
     _strategy: StrategyT | None
     _background_tasks: BackgroundTasks
+    _last_result: Tuple[SearchState, Any]
 
-    __slots__ = "_strategy", "_background_tasks"
+    __slots__ = "_strategy", "_background_tasks", "_last_result"
 
     def __init__(
             self, background_tasks: BackgroundTasks,
             strategy: StrategyT | None = None) -> None:
         self._background_tasks = background_tasks
-        self._strategy = strategy
+        self.strategy = strategy
 
     @property
     def strategy(self) -> StrategyT | None:
@@ -44,12 +47,13 @@ class SearchContext(Generic[StrategyT]):
         return self._strategy
 
     @strategy.setter
-    def strategy(self, new_strategy: StrategyT) -> None:
+    def strategy(self, new_strategy: Any) -> None:
         """Strategy property setter."""
         if not isinstance(new_strategy, Strategy):
+            self._strategy = new_strategy
+        else:
             raise ValueError(
                 "New Strategy must be instance of patterns.Strategy.")
-        self._strategy = new_strategy
 
     async def execute(
             self, user_query: QueryT, *args: Any, **kwargs: Any
@@ -73,12 +77,13 @@ class SearchContext(Generic[StrategyT]):
             raise ValueError(
                 "A search strategy was not set before call to execute().")
         start_time = time.time()
-        result: Tuple[SearchState, Any] = await self.strategy.execute(
-            *args, user_query=user_query, **kwargs)
+        self._last_result = await self.strategy.execute(
+            *args, user_query=user_query,
+            background_tasks=self._background_tasks, **kwargs)
         end_time = time.time()
         duration = (end_time - start_time) * 1000
         logger.info("%s Took %.2fms to execute.", self.strategy, duration)
-        state, data = result
+        state, data = self._last_result
         # Match against the state variable in the returned tuple
         # Nested parts of query may have a different SearchState
         # Responsibility of handling this is on the calling route
@@ -100,8 +105,8 @@ class SearchContext(Generic[StrategyT]):
 
     def __exit__(
             self, exc_type: Type[BaseException] | None,
-            exc_value: BaseException | None,
-            traceback: Type[BaseException] | None
+            exc_value: Any,
+            traceback: Any
             ):
         logger.debug("Exiting SearchContext(strategy=%s)", self.strategy)
         # Catch possible exceptions here ...
@@ -110,12 +115,18 @@ class SearchContext(Generic[StrategyT]):
                 return False
             logger.error(
                 "An exception occurred.",
-                exc_info=(exc_type, exc_value, traceback))  # type: ignore
+                exc_info=(exc_type, exc_value, traceback))
             raise HTTPException(
                 detail="Internal Server Error",
                 status_code=500
             )
-        # Call background tasks to save results.
-        logger.debug(
-            "Appending tasks to 'BackgroundTasks' to save query results.")
+        match self.strategy:
+            case APIStoreSearchStrategy():
+                items = cast(list[schemas.Store], self._last_result[1])
+                self._background_tasks.add_task(
+                    operations.save_stores, items=items)
+            case APIProductSearchStrategy():
+                pass
+            case _:
+                pass
         return False

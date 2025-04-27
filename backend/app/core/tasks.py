@@ -1,4 +1,6 @@
-"""Contains background tasks that are called by FastAPI."""
+"""Contains background tasks that are called by FastAPI.
+
+NOTE THE CONTENT IN THIS FILE IS DEPRECATED, DO NOT CALL THESE FUNCTIONS"""
 from typing import Type, Sequence, cast
 from itertools import batched
 
@@ -19,6 +21,9 @@ logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 # TODO: Asynchronous operations
 
 
+# NOTE THE CONTENT IN THIS FILE IS DEPRECATED, DO NOT CALL THESE FUNCTIONS
+
+
 def save_one_by_one[ModelT: OrmModel](
         items: Sequence[SchemaInOrDict], model: Type[ModelT]) -> int:
     """Add a sequence of items to the database one-by-one.
@@ -35,7 +40,7 @@ def save_one_by_one[ModelT: OrmModel](
     """
     failed_count: int = 0
     for store in items:
-        if not crud.create_record(record=store, model=model):
+        if not crud.create(record=store, model=model):
             failed_count += 1
     return failed_count
 
@@ -61,7 +66,7 @@ def save_in_batches[ModelT: OrmModel](
     failed_count: int = 0
     failed_batches: list[tuple[SchemaInOrDict, ...]] = []
     for batch in batched(iterable=items, n=batch_size):
-        if not crud.bulk_create_records(records=batch, model=model):
+        if not crud.insert(records=batch, model=model):
             failed_count += len(batch)
             failed_batches.append(batch)
     logger.debug(

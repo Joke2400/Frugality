@@ -3,14 +3,13 @@ from typing import Type, TypeVar, Any
 from sqlalchemy import insert as sql_insert
 from sqlalchemy.sql import Select
 
-from app.core.typedefs import SchemaOut, OrmModel
+from app.core.typedefs import OrmModel
 from app.core.orm.database import SessionContext, Base
 from app.utils import LoggerManager
 
 logger = LoggerManager().get_logger(__name__, sh=0, fh=10)
 
 ModelT = TypeVar("ModelT", bound=OrmModel)
-SchemaT = TypeVar("SchemaT", bound=SchemaOut)
 
 
 def create(record: ModelT, session_ctx: SessionContext) -> ModelT | None:
@@ -40,7 +39,9 @@ def insert(
     """Create multiple new database records from the given list.
 
     Args:
-        record (ModelT):
+        table: (Type[Base]):
+            The table to insert into. Is retrieved from the model type.
+        record (list[dict[Any, Any]]):
             The list of item-dicts to be inserted into the database.
         session_ctx (SessionContext):
             The context manager for handling the database access.
@@ -51,7 +52,7 @@ def insert(
     """
     with session_ctx:
         session_ctx.session.execute(
-            sql_insert(table),  # Model type is fetched from first element
+            sql_insert(table),  # i.e the model type
             [*records]
         )
         session_ctx.session.commit()

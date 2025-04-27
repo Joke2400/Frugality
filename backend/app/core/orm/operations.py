@@ -1,7 +1,10 @@
 """Contains operations for fetching (& converting) data from db."""
 from datetime import datetime, timedelta
+from itertools import batched
+
 from sqlalchemy import select, and_, join
 from pydantic import ValidationError
+
 from app.core.typedefs import StoreDB, ProductDB
 from app.core.orm import models, schemas, crud, database
 from app.core import parse
@@ -98,6 +101,7 @@ def get_recent_complete_product_records(
         ) -> list[tuple[ProductDB, schemas.ProductDataDB]]:
     """Get complete Product records by name & store_id.
     TODO: More specific docstring.
+    NOTE: func needs tests, and a better name
     """
     items: list[tuple[ProductDB, schemas.ProductDataDB]] = []
     time_offset = datetime.now() - timedelta(hours=timedelta_hours)
@@ -118,15 +122,70 @@ def get_recent_complete_product_records(
     )
     ctx = database.ORM().get_session_context(close_on_exit=False)
     result = ctx.session.execute(stmt).all()
+    if len(result) == 0:
+        return []
     try:
-        if len(result) > 0:
-            for p, d in result:
-                validated = (
-                    # Pylance is unhappy without the [] below
-                    schemas.ProductDB[schemas.ProductDataDB].model_validate(p),
-                    schemas.ProductDataDB.model_validate(d))
-                items.append(validated)
+        for p, d in result:
+            validated = (
+                # Pylance is unhappy without the [] below
+                schemas.ProductDB[schemas.ProductDataDB].model_validate(p),
+                schemas.ProductDataDB.model_validate(d))
+            items.append(validated)
     except ValidationError as err:
         logger.debug(err)
     ctx.session.close()
     return items
+
+
+def save_stores(items: list[schemas.Store]) -> list[schemas.Store]:
+    """Save stores to database."""
+    failed_count = 0
+    failed_items: list[schemas.Store] = []
+    ctx = database.ORM().get_session_context(close_on_exit=True)
+    for item in items:
+        record = models.Store(**dict(item))
+        if not crud.create(record=record, session_ctx=ctx):
+            failed_count += 1
+            failed_items.append(item)
+    logger.debug(
+        "Save operation on table '{%s}';"
+        "\tsaved %s out of a total of %s item(s).",
+        type(models.Store), failed_count, len(items))
+    return failed_items
+
+
+def save_stores_batched(
+        items: list[schemas.Store], batch_size: int = 24
+        ) -> list[tuple[schemas.Store, ...]]:
+    """Save stores to database in batches. TODO: Improve docstring"""
+    failed_count: int = 0
+    failed_batches: list[tuple[schemas.Store, ...]] = []
+    ctx = database.ORM().get_session_context(close_on_exit=True)
+    for batch in batched(iterable=items, n=batch_size):
+        if not crud.insert(
+                table=models.Store,
+                records=[dict(i) for i in items],  # Note the conversion
+                session_ctx=ctx):
+            failed_batches.append(batch)
+            failed_count += len(batch)
+    logger.debug(
+        "Batched save operation on table '{%s}';"
+        "\tsaved %s out of a total of %s item(s).",
+        type(models.Store), failed_count, len(items))
+    return failed_batches
+
+
+def save_products():
+    pass
+
+
+def save_products_batched():
+    pass
+
+
+def save_product_data():
+    pass
+
+
+def save_product_data_batched():
+    pass

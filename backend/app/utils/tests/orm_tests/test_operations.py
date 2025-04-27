@@ -3,8 +3,10 @@ from typing import Any
 from datetime import datetime
 from pytest import MonkeyPatch
 from pydantic import ValidationError
+from sqlalchemy import select
+
 from app.core.orm import crud, models, schemas, operations, database
-from app.utils.populate import populate_all
+from app.utils.populate import populate_all, populate_stores
 from app.utils.tests.fixture import orm_create_and_purge
 
 
@@ -130,7 +132,7 @@ def test_get_store_by_id_validation_fail(monkeypatch: MonkeyPatch):
 
 def test_get_store_by_id_integration(orm_create_and_purge):
     """Integration test for get_store_by_id."""
-    populate_all(database.ORM)
+    populate_stores(database.ORM)
     result = operations.get_store_by_id(store_id=542862479)
     assert isinstance(result, schemas.StoreDB)
     assert result.store_id == 542862479
@@ -165,7 +167,7 @@ def test_get_stores_by_name_validation_fail(monkeypatch: MonkeyPatch):
 
 def test_get_stores_by_name_integration(orm_create_and_purge):
     """Integration test for get_stores_by_name."""
-    populate_all(database.ORM)
+    populate_stores(database.ORM)
     result = operations.get_stores_by_name(name="Prisma")
     assert len(result) == 2
     for i in result:
@@ -242,3 +244,83 @@ def test_get_products_by_name_integration(orm_create_and_purge):
     for i in result:
         assert isinstance(i, schemas.ProductDB)
         assert "Kotimaista" in i.name
+
+
+def test_save_stores_default(monkeypatch: MonkeyPatch):
+    """Test that save_stores returns empty list when all items created."""
+    monkeypatch.setattr(crud, "create", lambda record, session_ctx: True)
+    stores = [
+        schemas.Store(
+            store_id=1,
+            store_name="Test Store 1",
+            slug="test-store-1",
+            brand="store"
+        ),
+        schemas.Store(
+            store_id=2,
+            store_name="Test Store 2",
+            slug="test-store-2",
+            brand="store"
+        )
+    ]
+    result = operations.save_stores(items=stores)
+    assert len(result) == 0
+    assert not result
+
+
+def test_save_stores_failed(monkeypatch: MonkeyPatch):
+    """Test that save_stores returns items when db create fails."""
+    monkeypatch.setattr(crud, "create", lambda record, session_ctx: False)
+    stores = [
+        schemas.Store(
+            store_id=1,
+            store_name="Test Store 1",
+            slug="test-store-1",
+            brand="store"
+        ),
+        schemas.Store(
+            store_id=2,
+            store_name="Test Store 2",
+            slug="test-store-2",
+            brand="store"
+        )
+    ]
+    result = operations.save_stores(items=stores)
+    assert len(result) == 2
+    assert result == stores
+
+
+def test_save_stores_integration(orm_create_and_purge):
+    """Integration test for save_stores."""
+    populate_stores(database.ORM)
+    stores = [
+        schemas.Store(
+            store_id=1,
+            store_name="Test Store 1",
+            slug="test-store-1",
+            brand="store"
+        ),
+        schemas.Store(
+            store_id=2,
+            store_name="Test Store 2",
+            slug="test-store-2",
+            brand="store"
+        )
+    ]
+    result = operations.save_stores(items=stores)
+    assert len(result) == 0
+
+    # Then we read the db separately
+    ctx = database.ORM().get_session_context(close_on_exit=False)
+    stmt = select(models.Store)
+    check = crud.read_all(stmt=stmt, session_ctx=ctx)
+
+    # Ignoring the type-errors as these are normally converted to schemas
+    # in the read operations, here we just care about the values.
+    assert check[0].store_id == stores[0].store_id  # type: ignore
+    assert check[0].store_name == stores[0].store_name  # type: ignore
+    assert check[1].store_id == stores[1].store_id  # type: ignore
+    assert check[1].store_name == stores[1].store_name  # type: ignore
+
+    # Finally close session as close_on_exit is False
+    ctx.session.close()
